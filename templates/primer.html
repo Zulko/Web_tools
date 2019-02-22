@@ -1,0 +1,37 @@
+{% extends 'base_layout.html' %}
+
+{% block content %}
+    <div class="row">
+      <div class="column side">
+        <h2>Options</h2>
+        <div class="options">
+            <form action="/action_page.php">
+              <fieldset>
+                Select a file: <input type="file" name="myFile"><br><br>
+                <input type="submit" value="Submit">
+              </fieldset>
+            </form>
+
+{#            {% block results %}#}
+            <br><br>
+            <fieldset>
+                Created file:<a href="{{ abs_path }}" download> <p>{{ outfile_name }}</p> </a>
+            </fieldset>
+{#            {% endblock %}#}
+
+        </div>
+      </div>
+
+      <div class="column middle">
+        <h2>Normalization Script</h2>
+        <p> Script description here...</p>
+      </div>
+
+        {% comment %}
+        <div class="column side">
+        <h2>Side</h2>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit..</p>
+        </div>
+        {% endcomment %}
+    </div>
+{% endblock%}

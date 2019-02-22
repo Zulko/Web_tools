@@ -14,13 +14,16 @@ def spoting(request):
         num_pattern = request.POST['num_pattern']
         pattern = request.POST['pattern']
         outfile_name, abs_path = run_spotting(int(num_sources), int(num_well), int(num_pattern), int(pattern))
-        print(outfile_name, abs_path)
         return render(request, 'spoting.html', {'outfile_name': outfile_name,'abs_path': abs_path})
     return render(request, 'spoting.html', {'outfile_name':'', 'abs_path':''})
 
 
 def normalization(request):
     return render(request, 'normalization.html')
+
+
+def primer(request):
+    return render(request, 'primer.html')
 
 
 def about(request):

@@ -24,6 +24,7 @@ urlpatterns = [
     path('about/',views.about),
     path('spoting/',views.spoting),
     path('normalization/',views.normalization),
+    path('primer/',views.primer),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
