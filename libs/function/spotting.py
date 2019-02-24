@@ -95,7 +95,7 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
     num_pattern = int(total_destination/total_source)
     '''Add the header'''
     if pattern == BY_ROW:
-        file_path_out = 'output/source_' + str(total_source) + '_' + str(num_pattern) + 'spot_byrow.csv'
+        file_path_out = 'media/source_' + str(total_source) + '_' + str(num_pattern) + 'spot_byrow.csv'
         file.verify_path(file_path_out)
         outfile = file.create(file_path_out, 'w')
         outcsv = file.create_writer_CSV(outfile)
@@ -118,7 +118,7 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
 
 
     elif pattern == BY_COL:
-        file_path_out = 'output/source_' + str(total_source) + '_' + str(num_pattern) + 'spot_bycol.csv'
+        file_path_out = 'media/source_' + str(total_source) + '_' + str(num_pattern) + 'spot_bycol.csv'
         file.verify_path(file_path_out)
         outfile = file.create(file_path_out, 'w')
         outcsv = file.create_writer_CSV(outfile)

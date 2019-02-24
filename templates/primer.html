@@ -3,28 +3,40 @@
 {% block content %}
     <div class="row">
       <div class="column side">
+
         <h2>Options</h2>
+
         <div class="options">
-            <form action="/action_page.php">
+            <form method="post" enctype="multipart/form-data"> {% csrf_token %}
               <fieldset>
-                Select a file: <input type="file" name="myFile"><br><br>
-                <input type="submit" value="Submit">
+                Select a file: <br><br>
+                <input type="file" name="myFile"><br><br>
+                <input type="submit" value="Submit"></input>
               </fieldset>
             </form>
 
-{#            {% block results %}#}
+
             <br><br>
+
+            {% if url %}
             <fieldset>
-                Created file:<a href="{{ abs_path }}" download> <p>{{ outfile_name }}</p> </a>
+                Uploaded file: <a href="{{ url }}" target="_blank" ><p>{{ uploadfile_name }}</p></a>
+
+                {% if outfile_name %}
+                    <br><br>
+                    Output file: <a href="{{ abs_path }}" target="_blank" download> <p>{{ outfile_name }}</p> </a>
+                {% endif %}
+
             </fieldset>
-{#            {% endblock %}#}
+            {% endif %}
+
 
         </div>
       </div>
 
       <div class="column middle">
-        <h2>Normalization Script</h2>
-        <p> Script description here...</p>
+        <h2>Primer Script</h2>
+        <p> Script uses Primer3 package to create the forward and reverse primers.</p>
       </div>
 
         {% comment %}
@@ -35,3 +47,10 @@
         {% endcomment %}
     </div>
 {% endblock%}
+
+<script>
+function myFunction() {
+  var x = document.getElementById("myFile").value;
+  document.getElementById("demo").innerHTML = x;
+}
+</script>

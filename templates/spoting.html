@@ -42,12 +42,13 @@
               </fieldset>
             </form>
 
-{#            {% block results %}#}
+
             <br><br>
+            {% if outfile_name %}
             <fieldset>
-                Created file:<a href="{{ abs_path }}" download> <p>{{ outfile_name }}</p> </a>
+                Output file: <a href="{{ abs_path }}" target="_blank" download> <p>{{ outfile_name }}</p> </a>
             </fieldset>
-{#            {% endblock %}#}
+            {% endif %}
 
         </div>
       </div>

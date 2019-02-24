@@ -8,52 +8,74 @@
 
             <form method="post"> {% csrf_token %}
               <fieldset>
-                <br>
-                Number of Source Plate:
-                <select name="num_sources">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                </select>
-                <br><br>
+
+                Select a file: <br><br>
+                <input type="file" name="myFile"><br><br>
+
                 Source Plate Wells:
                 <select name="num_well">
                 <option value="96">96 Wells</option>
                 <option value="384">384 Wells</option>
                 </select>
                 <br><br>
-                Number of spotting:
-                <select name="num_pattern">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="6">6</option>
-                <option value="8">8</option>
+
+                Destination Plate Wells:
+                <select name="num_well">
+                <option value="96">96 Wells</option>
+                <option value="384">384 Wells</option>
                 </select>
-                <select name="pattern">
-                <option value="0">by row</option>
-                <option value="1">by column</option>
-                </select>
+                <br><br>
+
                 <br><br><br>
                 <input type="submit" value="Submit">
               </fieldset>
             </form>
 
-{#            {% block results %}#}
+
             <br><br>
+            {% if outfile_name %}
             <fieldset>
-                Created file:<a href="{{ abs_path }}" download> <p>{{ outfile_name }}</p> </a>
+                Created file:<a href="{{ abs_path }}" target="_blank" download> <p>{{ outfile_name }}</p> </a>
             </fieldset>
-{#            {% endblock %}#}
+            {% endif %}
+
 
         </div>
       </div>
 
       <div class="column middle">
-        <h2>Normalization Script</h2>
-        <p> Script description here...</p>
+        <h2>Normalization Script - Not Finished</h2>
+        <p> Example of an input file to be normalized </p><br>
+            <table>
+                <tr>
+                    <th> Source Plate Name</th>
+                    <th> Source Well </th>
+                    <th> Destination Plate Name </th>
+                    <th> Destination Well </th>
+                    <th> Volume </th>
+                </tr>
+                <tr>
+                    <th> Plate S1</th>
+                    <th> A1 </th>
+                    <th> Plate D1 </th>
+                    <th> A1 </th>
+                    <th> 4 </th>
+                </tr>
+                <tr>
+                    <th> Plate S1</th>
+                    <th> A2 </th>
+                    <th> Plate D1 </th>
+                    <th> A2 </th>
+                    <th> 4 </th>
+                </tr>
+                <tr>
+                    <th> Plate S1</th>
+                    <th> A3 </th>
+                    <th> Plate D1 </th>
+                    <th> A3 </th>
+                    <th> 4 </th>
+                </tr>
+            </table>
       </div>
 
         {% comment %}
