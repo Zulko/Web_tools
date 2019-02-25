@@ -1,0 +1,49 @@
+{% load static from staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+
+<body>
+
+<div class="header">
+    <div class="image"></div><div class="text"> Genome Foundry - Web Tools </div>
+</div>
+
+<div class="topnav">
+  <a href="">Sign Up</a>
+</div>
+
+
+    <div class="row">
+      <div class="column side">
+        <h2></h2>
+      </div>
+
+      <div class="column middle">
+          <div class="fieldlogin">
+              <div class="login-container">
+                <form action="/accounts/signup/" method="post">
+                {% csrf_token %}
+                {{ form }}
+                <input type="submit" value="Signup">
+                </form>
+              </div>
+          </div>
+      </div>
+
+      <div class="column side">
+        <h2></h2>
+      </div>
+    </div>
+
+<div class="row">
+    <div class="footer">
+      <h4><a href="https://www.concordia.ca/research/casb/genome-foundry.html">Concordia Genome Foundry</a></h4>
+    </div>
+</div>
+
+</body>
+</html>

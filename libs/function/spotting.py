@@ -48,10 +48,10 @@ def run_spotting(num_source_plates, num_wells, num_pattern, pattern):
     total_plates = ver_num_source + total_destination
     if total_plates > MAX_PLATES:
         print('The total plates (%d) exceeds the biomek limit of %d' % (total_plates, MAX_PLATES))
-
+        return None, None
     else:
-        print('The total plates in biomek is %d' % total_plates)
-        print('The total destination plate(s) is %d and total source plate(s) is %d' % (total_destination, ver_num_source))
+        # print('The total plates in biomek is %d' % total_plates)
+        # print('The total destination plate(s) is %d and total source plate(s) is %d' % (total_destination, ver_num_source))
         outfile_name, abs_path = create_output_file(ver_num_source, num_wells, total_destination, pattern)
         html_abs_path = abs_path
 
@@ -82,7 +82,6 @@ def create_plate(num_wells, name):
     rows, cols = calc.rows_columns(int(num_wells))
     new_plate = plate.Plate(rows, cols, name)
     return new_plate
-
 
 
 def create_output_file(total_source, num_wells, total_destination, pattern):
@@ -116,8 +115,7 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
         print(file.colours.BOLD + 'Output File: ' + outfile_name + file.colours.BOLD)
         return outfile_name, abs_path
 
-
-    elif pattern == BY_COL:
+    else:
         file_path_out = 'media/source_' + str(total_source) + '_' + str(num_pattern) + 'spot_bycol.csv'
         file.verify_path(file_path_out)
         outfile = file.create(file_path_out, 'w')
@@ -138,6 +136,3 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
         abs_path = os.path.abspath(file_path_out)
         print(file.colours.BOLD + 'Output File: ' + outfile_name + file.colours.BOLD)
         return outfile_name, abs_path
-    else:
-        print('Invalid option')
-        sys.exit()

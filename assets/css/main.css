@@ -3,13 +3,37 @@
 }
 
 /* Style the header */
-.header {
+
+.header{
   background-color: #f1f1f1;
+}
+
+.header .image {
+
   background-image: url("../images/foundry_logo.jpg");
   background-repeat: no-repeat;
+  width: 379px;
+  height: 140px;
   background-size: 379px 140px;
+
+}
+
+.header .text {
   padding: 50px;
   text-align: center;
+  font-size: 30px;
+  margin: auto;
+  position: absolute;
+  /*top:0;*/
+  /*bottom: 0;*/
+  /*left: 0;*/
+  /*right: 0;*/
+}
+
+.header .image,
+.header .text {
+    display: inline-block;
+    vertical-align: middle;
 }
 
 body{
@@ -49,6 +73,23 @@ a, a:hover, a:visited{
   color: black;
 }
 
+/* Style the button inside the input container */
+.topnav .login-container button {
+  float: right;
+  padding: 6px 10px;
+  margin-top: 8px;
+  margin-right: 50px;
+  background-color: #7d7d7d;
+  color: white;
+  font-size: 17px;
+  border: none;
+  cursor: pointer;
+}
+
+.topnav .login-container button:hover {
+  background: #ccc;
+}
+
 /* Clear floats after the columns */
 .row:after {
   content: "";
@@ -77,7 +118,6 @@ table {
 }
 
 th, td {
-
   padding: 8px;
   text-align: left;
   border-bottom: 1px solid #ddd;
@@ -104,6 +144,18 @@ fieldset
   background-color:#ddd;
   max-width:500px;
   padding:16px;
+}
+
+.fieldlogin
+{
+  -moz-border-radius:8px;
+  -webkit-border-radius:8px;
+  border:2px solid #333;
+  background-color:#ddd;
+  max-width:500px;
+  padding:16px;
+  text-align:center;
+  margin: auto;
 }
 
 /* Footer */
@@ -143,4 +195,13 @@ img:hover {
     float: none;
     width: 100%;
   }
+}
+
+input[type=text], input[type=password] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
 }

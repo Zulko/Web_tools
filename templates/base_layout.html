@@ -9,7 +9,7 @@
 <body>
 
 <div class="header">
-    <h1> Genome Foundry - Web Tools </h1>
+    <div class="image"></div><div class="text"> Genome Foundry - Web Tools </div>
 </div>
 
 <div class="topnav">
@@ -19,6 +19,13 @@
   <a href="/combinatorial/">Combinatorial</a>
   <a href="/primer/">Primer</a>
   <a href="/about/">About</a>
+
+  <div class="login-container">
+    <form class="logout-link" action="{% url 'accounts:logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+    </form>
+  </div>
 </div>
 
 

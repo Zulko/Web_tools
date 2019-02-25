@@ -4,13 +4,17 @@ from libs.function.spotting import run_spotting
 from libs.function.fasta2primer3 import run_primer
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
+from django.contrib.auth.decorators import login_required
 import os
 
+
 # TODO: Automatically remove files from media
+@login_required(login_url="/accounts/login/")
 def home(request):
     return render(request, 'home.html')
 
 
+@login_required(login_url="/accounts/login/")
 def spoting(request):
     context = {}
     if request.method == "POST":
@@ -20,17 +24,22 @@ def spoting(request):
         pattern = request.POST['pattern']
         ''' Calling Python Script'''
         outfile_name, abs_path = run_spotting(int(num_sources), int(num_well), int(num_pattern), int(pattern))
-        context['outfile_name'] = outfile_name
-        return render(request, 'spoting.html', {'outfile_name': outfile_name,'abs_path': abs_path})
+        if outfile_name is not None:
+            context['outfile_name'] = outfile_name
+            return render(request, 'spoting.html', {'outfile_name': outfile_name,'abs_path': abs_path})
+        else:
+            return render(request, 'spoting.html', {'outfile_name': 'Choose a different parameters combination', 'abs_path': ''})
     return render(request, 'spoting.html', {'outfile_name':'', 'abs_path':''})
 
 
+@login_required(login_url="/accounts/login/")
 def normalization(request):
     if request.method == "POST":
         return render(request, 'normalization.html')
     return render(request, 'normalization.html')
 
 
+@login_required(login_url="/accounts/login/")
 def primer(request):
     context = {}
     if request.method == 'POST':
@@ -46,10 +55,12 @@ def primer(request):
     return render(request, 'primer.html', {'uploadfile_name': '', 'url': '', 'outfile_name': '','abs_path': ''})
 
 
+@login_required(login_url="/accounts/login/")
 def combinatorial(request):
     return render(request, 'under_construction.html')
 
 
+@login_required(login_url="/accounts/login/")
 def about(request):
     return render(request, 'under_construction.html')
 
