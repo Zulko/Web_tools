@@ -46,7 +46,9 @@
             <br><br>
             {% if outfile_name %}
             <fieldset>
-                Output file: <a href="{{ abs_path }}" target="_blank" download> <p>{{ outfile_name }}</p> </a>
+{#                Output file: <a href="{{ abs_path }}" target="_blank" download> <p><strong>{{ outfile_name }}</strong></p> </a>#}
+                Output file: <a href="{{ outfile_url }}" target="_blank" download> <p><strong> Download File </strong></p> </a>
+
             </fieldset>
             {% endif %}
 

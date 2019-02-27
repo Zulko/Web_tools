@@ -13,7 +13,7 @@ def combinatorial_data():
 
 
 def data_normalization():
-    filepath = input('Inform the filepath (biomek/input/database.csv): ')
+    filepath = input('Inform the filepath (biomek/input/to_be_normalized.csv): ')
     in_num_well = input('Inform the number of wells in source plate: ')
     out_num_well = input('Inform the number of wells in destination plate: ')
     # filepath = 'biomek/input/database.csv'

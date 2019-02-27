@@ -35,7 +35,8 @@
             <br><br>
             {% if outfile_name %}
             <fieldset>
-                Created file:<a href="{{ abs_path }}" target="_blank" download> <p>{{ outfile_name }}</p> </a>
+                Created file: <a href="{{ outfile_url }}" target="_blank" download> <p>{{ outfile_name }}</p> </a>
+
             </fieldset>
             {% endif %}
 
@@ -46,7 +47,7 @@
       <div class="column middle">
         <h2>Normalization Script</h2><br>
 
-        <p> Example of an input file to be normalized </p><br>
+        <p> Example of an input file to be normalized <a href="{% static 'docs/to_be_normalized.csv' %}" target="_blank" download> Example.csv </a> </p> <br>
             <table>
                   <tr>
                     <th>Part</th>
