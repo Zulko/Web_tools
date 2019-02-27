@@ -1,4 +1,5 @@
 {% extends 'base_layout.html' %}
+{% load static from staticfiles %}
 
 {% block content %}
     <div class="row">
@@ -6,21 +7,21 @@
         <h2>Options</h2>
         <div class="options">
 
-            <form method="post"> {% csrf_token %}
+            <form method="post" enctype="multipart/form-data"> {% csrf_token %}
               <fieldset>
 
                 Select a file: <br><br>
                 <input type="file" name="myFile"><br><br>
 
                 Source Plate Wells:
-                <select name="num_well">
+                <select name="num_well_source">
                 <option value="96">96 Wells</option>
                 <option value="384">384 Wells</option>
                 </select>
                 <br><br>
 
                 Destination Plate Wells:
-                <select name="num_well">
+                <select name="num_well_destination">
                 <option value="96">96 Wells</option>
                 <option value="384">384 Wells</option>
                 </select>
@@ -33,10 +34,13 @@
 
 
             <br><br>
-            {% if outfile_name %}
+            {% if url %}
             <fieldset>
-                Created file: <a href="{{ outfile_url }}" target="_blank" download> <p>{{ outfile_name }}</p> </a>
-
+                Uploaded file: <a href="{{ url }}" target="_blank" ><p>{{ uploadfile_name }}</p></a>
+                {% if outfile_name %}
+                    <br><br>
+                    Output file: <a href="{{ outfile_url }}" target="_blank" download> <p>{{ outfile_name }}</p> </a>
+                {% endif %}
             </fieldset>
             {% endif %}
 
@@ -47,7 +51,7 @@
       <div class="column middle">
         <h2>Normalization Script</h2><br>
 
-        <p> Example of an input file to be normalized <a href="{% static 'docs/to_be_normalized.csv' %}" target="_blank" download> Example.csv </a> </p> <br>
+        <p> Example of an input file to be normalized (<a href="{% static 'docs/to_be_normalized.csv' %}" target="_blank" download><strong> Example.csv </strong></a>) </p> <br>
             <table>
                   <tr>
                     <th>Part</th>

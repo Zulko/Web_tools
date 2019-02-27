@@ -1,4 +1,6 @@
 {% extends 'base_layout.html' %}
+{% load static from staticfiles %}
+
 
 {% block content %}
     <div class="row">
@@ -24,7 +26,7 @@
 
                 {% if outfile_name %}
                     <br><br>
-                    Output file: <a href="{{ abs_path }}" target="_blank" download> <p>{{ outfile_name }}</p> </a>
+                    Output file: <a href="{{ outfile_url }}" target="_blank" download> <p>{{ outfile_name }}</p> </a>
                 {% endif %}
 
             </fieldset>
@@ -36,7 +38,58 @@
 
       <div class="column middle">
         <h2>Primer Script</h2>
-        <p> Script uses Primer3 package to create the forward and reverse primers.</p>
+        <p> Example of an input fasta file (<a href="{% static 'docs/seq.fasta' %}" target="_blank" download><strong> Example.csv </strong></a>)</p>
+        <p> Script uses Primer3 package to create the forward and reverse primers. </p>
+
+        <h4> Input File: </h4>
+        <h5>>HSGLTH1 Human theta 1-globin gene<br>
+        <strong>CCACTGCACTCACCGCA</strong>CCCGGCCAATTTTTGTGTTTTTAGTAGAGACTAAATACCATATAGTGAACACCTAAGA
+        CGGGGGGCCTTGGATCCAGGGCGATTCAGAGGGCCCCGGTCGGAGCTGTCGGAGATTGAGCGCGCGCGGTCCCGG
+        GATCTCCGACGAGGCCCTGGACCCCCGGGCGGCGAAGCTGCGGCGCGGCGCCCCCTGGAGGCCGCGGGACCCCTG
+        GCCGGTCCGCGCAGGCGCAGCGGGGTCGCAGGGCGCGGCGGGTTCCAGCGCGGGGATGGCGCTGTCCGCGGAGGA
+        CCGGGCGCTGGTGCGCGCCCTGTGGAAGAAGCTGGGCAGCAACGTCGGCGTCTACACGACAGAGGCCCTGGAAAG
+        GTGCGGCAGGCTGGGCGCCCCCGCCCCCAGGGGCCCTCCCTCCCCAAGCCCCCCGGACGCGCCTCACCCACGTTC
+        CTCTCGCAGGACCTTCCTGGCTTTCCCCGCCACGAAGACCTACTTCTCCCACCTGGACCTGAGCCCCGGCTCCTC
+        ACAAGTCAGAGCCCACGGCCAGAAGGTGGCGGACGCGCTGAGCCTCGCCGTGGAGCGCCTGGACGACCTACCCCA
+        CGCGCTGTCCGCGCTGAGCCACCTGCACGCGTGCCAGCTGCGAGTGGACCCGGCCAGCTTCCAGGTGAGCGGCTG
+        CCGTGCTGGGCCCCTGTCCCCGGGAGGGCCCCGGCGGGGTGGGTGCGGGGGGCGTGCGGGGCGGGTGCAGGCGAG
+        TGAGCCTTGAGCGCTCGCCGCAGCTCCTGGGCCACTGCCTGCTGGTAACCCTCGCCCGGCACTACCCCGGAGACT
+        TCAGCCCCGCGCTGCAGGCGTCGCTGGACAAGTTCCTGAGCCACGTTATCTCGGCGCTGGTTTCCGAGTACCGCT
+        GAACTGTGGGTGGGTGGCCGCGGGATCCCCAGGCGACCTTCCCCGTGTTTGAGTAAAGCCTCTCCCAGGAGCAGC
+        CTTCTTGCCGTGCTCTCTCGAGGTCAGGA<strong>CGCGAGAGGAAGGCGC</strong></h5>
+        <br><br><br>
+        <h4> Output File: </h4>
+        <h5>
+        <table>
+          <tr>
+            <th>GeneID</th>
+            <th>UpstreamPrimerSequence</th>
+            <th>DownstreamPrimerSequence</th>
+            <th>UpstreamPrimerLength</th>
+            <th>DownstreamPrimerLength</th>
+            <th>ProductLength</th>
+          </tr>
+          <tr>
+            <td>HSGLTH1</td>
+            <td>CCACTGCACTCACCGCA</td>
+            <td>GCGCCTTCCTCTCGCG</td>
+            <td>17</td>
+            <td>16</td>
+            <td>1020</td>
+          </tr>
+        </table>
+        </h5>
+
+        <p id="demo"></p>
+
+        <script>
+        function myFunction() {
+          var x = document.getElementById("myText").value;
+          document.getElementById("demo").innerHTML = x;
+        }
+        </script>
+
+
       </div>
 
         {% comment %}

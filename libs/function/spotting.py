@@ -111,9 +111,8 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
             '''Call Function to write the CSV by rows'''
             file.write_by_row(source_plate, destination_plates, num_pattern, outcsv, VOLUME)
         outfile_name = os.path.basename(file_path_out)
-        abs_path = os.path.abspath(file_path_out)
         print(file.colours.BOLD + 'Output File: ' + outfile_name + file.colours.BOLD)
-        return outfile_name, abs_path
+        return outfile_name
 
     else:
         file_path_out = 'media/source_' + str(total_source) + '_' + str(num_pattern) + 'spot_bycol.csv'
@@ -133,6 +132,5 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
             '''Call Function to write the CSV by rows'''
             file.write_by_col(source_plate, destination_plates, num_pattern, outcsv, VOLUME)
         outfile_name = os.path.basename(file_path_out)
-        abs_path = os.path.abspath(file_path_out)
         print(file.colours.BOLD + 'Output File: ' + outfile_name + file.colours.BOLD)
-        return outfile_name, abs_path
+        return outfile_name

@@ -9,7 +9,6 @@
 }
 
 .header .image {
-
   background-image: url("../images/foundry_logo.jpg");
   background-repeat: no-repeat;
   width: 379px;
@@ -21,13 +20,8 @@
 .header .text {
   padding: 50px;
   text-align: center;
-  font-size: 30px;
   margin: auto;
   position: absolute;
-  /*top:0;*/
-  /*bottom: 0;*/
-  /*left: 0;*/
-  /*right: 0;*/
 }
 
 .header .image,
@@ -205,4 +199,9 @@ input[type=text], input[type=password] {
   display: inline-block;
   border: 1px solid #ccc;
   box-sizing: border-box;
+}
+
+textarea {
+  border: 1px solid #888;
+  resize: none;
 }

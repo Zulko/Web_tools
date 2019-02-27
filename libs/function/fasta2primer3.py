@@ -111,6 +111,5 @@ def run_primer(path, fastafile):
     # with open(fastafile + "-stubbornseqs.fasta", "w") as stubbornfile:
     #     SeqIO.write(stubbornseqs, stubbornfile, "fasta")
 
-    out_name = os.path.basename(outfile.name)
     outfile.close()
-    return out_name
+    return outfile

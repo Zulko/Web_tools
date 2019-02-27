@@ -211,16 +211,16 @@ def create_destination_plates(plates_in, in_well, out_well):
         return plates_out
 
 
-def run_normalization(path, in_well, out_well):
+def run_normalization(path, filename, in_well, out_well):
     """
     Creates a CSV file to be used in Biomek with the volume of sample and water to normalize the sample
     :param path: input file with parts information
     :param in_well: number of well of input plate
     :param out_well: number of well of output plate
     """
-    filein = file.verify(path)
+    filein = file.verify(path+"/"+filename)
     reader_csv = file.create_reader_CSV(filein)
-    fileout = file.create('biomek/media/dilution_' + str(os.path.basename(path)), 'w')
+    fileout = file.create(path+"/"+'dilution_' + str(filename), 'w')
     writer_csv = file.create_writer_CSV(fileout)
     file.set_normal_header(writer_csv)
 
@@ -252,3 +252,4 @@ def run_normalization(path, in_well, out_well):
     print(file.colours.BOLD + 'Output File: ' + fileout.name + file.colours.ENDC)
     filein.close()
     fileout.close()
+    return fileout
