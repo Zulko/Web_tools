@@ -52,10 +52,9 @@ def run_spotting(num_source_plates, num_wells, num_pattern, pattern):
     else:
         # print('The total plates in biomek is %d' % total_plates)
         # print('The total destination plate(s) is %d and total source plate(s) is %d' % (total_destination, ver_num_source))
-        outfile_name, abs_path = create_output_file(ver_num_source, num_wells, total_destination, pattern)
-        html_abs_path = abs_path
+        outfile_name = create_output_file(ver_num_source, num_wells, total_destination, pattern)
 
-    return outfile_name, html_abs_path
+    return outfile_name
 
 
 def generate_random_names(name, init, end):
