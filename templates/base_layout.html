@@ -22,7 +22,7 @@
   <a href="/about/">About</a>
 
   <div class="login-container">
-    <form class="logout-link" action="{% url 'accounts:logout' %}" method="post">
+    <form action="{% url 'accounts:logout' %}" method="post">
         {% csrf_token %}
         <button type="submit">Logout</button>
     </form>
