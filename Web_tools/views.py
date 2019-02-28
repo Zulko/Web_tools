@@ -16,7 +16,7 @@ def home(request):
 
 
 # @login_required(login_url="/accounts/login/")
-def spoting(request):
+def spotting(request):
     context = {}
     if request.method == "POST":
         num_sources = request.POST['num_sources']
@@ -29,10 +29,10 @@ def spoting(request):
             fs = FileSystemStorage()
             context['outfile_name'] = outfile_name
             outfile_url = fs.url(os.path.basename(outfile_name))
-            return render(request, 'spoting.html', {'outfile_name': outfile_name, 'outfile_url': outfile_url})
+            return render(request, 'spotting.html', {'outfile_name': outfile_name, 'outfile_url': outfile_url})
         else:
-            return render(request, 'spoting.html', {'outfile_name': 'Choose a different parameters combination', 'outfile_url': ''})
-    return render(request, 'spoting.html', {'outfile_name':'', 'abs_path':''})
+            return render(request, 'spotting.html', {'outfile_name': 'Choose a different parameters combination', 'outfile_url': ''})
+    return render(request, 'spotting.html', {'outfile_name': '', 'abs_path': ''})
 
 
 # @login_required(login_url="/accounts/login/")

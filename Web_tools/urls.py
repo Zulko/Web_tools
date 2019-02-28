@@ -26,7 +26,7 @@ urlpatterns = [
     path('',views.home, name='home'),
     path('admin/', admin.site.urls),
     path('about/',views.about, name='about'),
-    path('spoting/',views.spoting, name='spoting'),
+    path('spotting/', views.spotting, name='spotting'),
     path('normalization/',views.normalization, name='normalization'),
     path('primer/',views.primer, name='primer'),
     path('combinatorial/',views.combinatorial, name='combinatorial'),
