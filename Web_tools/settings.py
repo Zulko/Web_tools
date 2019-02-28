@@ -25,7 +25,7 @@ SECRET_KEY = '&ty^-p09dly9byg05%9v%mnq)vdqdoc_4@d_(c5n*69!!qddjr'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]', '0.0.0.0']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]', '0.0.0.0', 'biofoundry.concordia.ca']
 
 
 # Application definition
