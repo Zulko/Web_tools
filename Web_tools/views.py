@@ -39,38 +39,41 @@ def spoting(request):
 def normalization(request):
     context = {}
     if request.method == "POST":
-        upload = request.FILES['myFile']
-        fs = FileSystemStorage()
-        name = fs.save(upload.name, upload)
-        context['url'] = fs.url(name)
-        url = fs.url(name)
-
-        in_well = request.POST['num_well_source']
-        out_well = request.POST['num_well_destination']
-        ''' Calling Python Script'''
-        outfile = run_normalization(settings.MEDIA_ROOT, name, int(in_well), int(out_well))
-        if outfile is not None:
-            outfile_name = os.path.basename(outfile.name)
-            outfile_url = fs.url(outfile_name)
-            return render(request, 'normalization.html', {'uploadfile_name': upload.name, 'url': url, 'outfile_name': outfile_name,'outfile_url': outfile_url})
-    return render(request, 'normalization.html')
+        if len(request.FILES) != 0:
+            upload = request.FILES['myFile']
+            fs = FileSystemStorage()
+            name = fs.save(upload.name, upload)
+            context['url'] = fs.url(name)
+            url = fs.url(name)
+            in_well = request.POST['num_well_source']
+            out_well = request.POST['num_well_destination']
+            ''' Calling Python Script'''
+            outfile = run_normalization(settings.MEDIA_ROOT, name, int(in_well), int(out_well))
+            if outfile is not None:
+                outfile_name = os.path.basename(outfile.name)
+                outfile_url = fs.url(outfile_name)
+                return render(request, 'normalization.html', {'uploadfile_name': upload.name, 'url': url, 'outfile_name': outfile_name,'outfile_url': outfile_url})
+    return render(request, 'normalization.html', {'uploadfile_name': '', 'url': '', 'outfile_name': '','outfile_url': ''})
 
 
 # @login_required(login_url="/accounts/login/")
 def primer(request):
     context = {}
     if request.method == 'POST':
-        upload = request.FILES['myFile']
-        fs = FileSystemStorage()
-        name = fs.save(upload.name, upload)
-        context['url'] = fs.url(name)
-        url = fs.url(name)
-        ''' Calling Python Script'''
-        outfile = run_primer(settings.MEDIA_ROOT, name)
-        if outfile is not None:
-            outfile_name = os.path.basename(outfile.name)
-            outfile_url = fs.url(outfile_name)
-            return render(request, 'primer.html', {'uploadfile_name': upload.name, 'url': url, 'outfile_name': outfile_name,'outfile_url': outfile_url})
+        if len(request.FILES) != 0:
+            upload = request.FILES['myFile']
+            fs = FileSystemStorage()
+            name = fs.save(upload.name, upload)
+            context['url'] = fs.url(name)
+            url = fs.url(name)
+            ''' Calling Python Script'''
+            outfile = run_primer(settings.MEDIA_ROOT, name)
+            if outfile is not None:
+                outfile_name = os.path.basename(outfile.name)
+                outfile_url = fs.url(outfile_name)
+                return render(request, 'primer.html', {'uploadfile_name': upload.name, 'url': url, 'outfile_name': outfile_name,'outfile_url': outfile_url})
+        else:
+            return render(request, 'primer.html', {'uploadfile_name': '', 'url': '', 'outfile_name': 'Missing an Input File', 'abs_path': ''})
     return render(request, 'primer.html', {'uploadfile_name': '', 'url': '', 'outfile_name': '','abs_path': ''})
 
 
