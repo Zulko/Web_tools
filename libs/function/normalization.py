@@ -4,7 +4,7 @@
 
 from ..container import plate
 from ..misc import file, calc
-import os
+import os, sys
 
 
 def verify_sample_volume(volume_needed, volume_available):
@@ -178,16 +178,19 @@ def create_source_plates(filein, in_well):
     plates_in = []
     for line in filein:
         found = False
-        samp_name, samp_len, samp_conc, volume, plate_name, plate_well = line
-        if plate_name != '':
-            if len(plates_in) == 0:
-                plates_in.append(create_plate(in_well, plate_name))
-            else:
-                for i in range(0, len(plates_in)):
-                    if plates_in[i].name == plate_name:
-                        found = True
-                if found is False:
+        try:
+            samp_name, samp_len, samp_conc, volume, plate_name, plate_well = line
+            if plate_name != '':
+                if len(plates_in) == 0:
                     plates_in.append(create_plate(in_well, plate_name))
+                else:
+                    for i in range(0, len(plates_in)):
+                        if plates_in[i].name == plate_name:
+                            found = True
+                    if found is False:
+                        plates_in.append(create_plate(in_well, plate_name))
+        except ValueError:
+            sys.exit(0)
     return plates_in
 
 
