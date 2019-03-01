@@ -28,13 +28,19 @@ def load_seqs(path, fastafile):
     return valid_seqs
 
 
-def make_boulderio(seqid, seq):
-    length = len(seq)-1
+def make_boulderio(seqid, seq, start, end):
+    print(end)
+    if end.find('length') == -1:
+        length = int(end)
+    else:
+        length = len(seq) - 1
     boulder = {
     "SEQUENCE_ID":seqid,
     "SEQUENCE_TEMPLATE":seq,
-    "SEQUENCE_FORCE_LEFT_START":0,
+    "SEQUENCE_FORCE_LEFT_START":start,
     "SEQUENCE_FORCE_RIGHT_START":length,
+    # "SEQUENCE_FORCE_LEFT_START": 0,
+    # "SEQUENCE_FORCE_RIGHT_START": length,
     "PRIMER_TASK":"generic",
     "PRIMER_PICK_LEFT_PRIMER":5,
     "PRIMER_PICK_INTERNAL_OLIGO":0,
@@ -84,7 +90,7 @@ def create_output_file(path, fastafile):
     return outfile
 
 
-def run_primer(path, fastafile):
+def run_primer(path, fastafile, start, end):
     '''Read the fasta sequences from input file'''
     seqs = load_seqs(path, fastafile)
     stubbornseqs = []
@@ -92,7 +98,7 @@ def run_primer(path, fastafile):
     outfile = create_output_file(path, fastafile)
 
     for record in seqs:
-        boulderfile = make_boulderio(record.id, str(record.seq))
+        boulderfile = make_boulderio(record.id, str(record.seq), int(start), end)
         primer3out = run_primer3(boulderfile)
         primerdict = make_primerout_dict(primer3out)
         if "PRIMER_LEFT_0_SEQUENCE" not in primerdict.keys() or "PRIMER_RIGHT_0_SEQUENCE" not in primerdict.keys():

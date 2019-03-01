@@ -62,12 +62,14 @@ def primer(request):
     if request.method == 'POST':
         if len(request.FILES) != 0:
             upload = request.FILES['myFile']
+            start_prime = request.POST['start_prime']
+            end_prime = request.POST['end_prime']
             fs = FileSystemStorage()
             name = fs.save(upload.name, upload)
             context['url'] = fs.url(name)
             url = fs.url(name)
             ''' Calling Python Script'''
-            outfile = run_primer(settings.MEDIA_ROOT, name)
+            outfile = run_primer(settings.MEDIA_ROOT, name, start_prime, end_prime)
             if outfile is not None:
                 outfile_name = os.path.basename(outfile.name)
                 outfile_url = fs.url(outfile_name)

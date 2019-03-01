@@ -12,7 +12,10 @@
             <form method="post" enctype="multipart/form-data"> {% csrf_token %}
               <fieldset>
                 Select a file: <br><br>
-                <input type="file" name="myFile"><br><br>
+                <input type="file" name="myFile"><br><br><br>
+                Start position:<br>
+                Foward Primer: <input type="text" name="start_prime" value="0" style="width:80px"><br>
+                Reverse Primer: <input type="text" name="end_prime" value="length" style="width:80px"><br>
                 <input type="submit" value="Submit">
               </fieldset>
             </form>

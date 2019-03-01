@@ -43,6 +43,7 @@ def calc_normalization_from_plate(sample, plate_in, plate_water, i, j):
     :param j: integer
     :return: list r_norm = [part, plate_name, well_name, fmol, vol_sample, vol_water, message]
     """
+    #TODO calculate the concentration in fmol based on part type, if type 8 uses 40fmol, for others 80fmol
     fmol, final_concent = calc.fmol(sample.get_length(), sample.get_concentration())
     dilut_factor = calc.dilution_factor(fmol, sample.get_concentration())
 
@@ -102,7 +103,7 @@ def populate_plates_sample(plates_in, filein):
     """
     file.get_header(filein)
     for line in filein:
-        samp_name, samp_len, samp_conc, volume, plate_name, plate_well = line
+        samp_name, samp_type, samp_len, samp_conc, volume, plate_name, plate_well = line
         for i in range(0, len(plates_in)):
             if plates_in[i].name == plate_name:
                 row, col = calc.wellname_to_coordinates(plate_well)
@@ -179,7 +180,7 @@ def create_source_plates(filein, in_well):
     for line in filein:
         found = False
         try:
-            samp_name, samp_len, samp_conc, volume, plate_name, plate_well = line
+            samp_name, samp_type, samp_len, samp_conc, volume, plate_name, plate_well = line
             if plate_name != '':
                 if len(plates_in) == 0:
                     plates_in.append(create_plate(in_well, plate_name))
