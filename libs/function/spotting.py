@@ -16,6 +16,7 @@ MAX_PLATES = 12
 VOLUME = 4
 BY_ROW = 0
 BY_COL = 1
+BIOMEK = 2
 
 
 def verify_entry(type, num):
@@ -88,7 +89,8 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
     Create a random output file name, and plates names
     :param total_source: integer number
     :param total_destination: integer number
-    :param pattern: integer number 0 -> BY_ROW or 1 -> BY_COL
+    :param pattern: integer number 0 -> BY_ROW or 1 -> BY_COL, New option
+           BIOMEK = 2 (Outputs a CSV file efficient for that robot)
     """
     num_pattern = int(total_destination/total_source)
     '''Add the header'''
@@ -113,7 +115,7 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
         print(file.colours.BOLD + 'Output File: ' + outfile_name + file.colours.BOLD)
         return outfile_name
 
-    else:
+    elif pattern == BY_COL:
         file_path_out = 'media/source_' + str(total_source) + '_' + str(num_pattern) + 'spot_bycol.csv'
         file.verify_path(file_path_out)
         outfile = file.create(file_path_out, 'w')
@@ -130,6 +132,32 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
                 destination_plates.append(create_plate(num_wells, destination_names[j]))
             '''Call Function to write the CSV by rows'''
             file.write_by_col(source_plate, destination_plates, num_pattern, outcsv, VOLUME)
+        outfile_name = os.path.basename(file_path_out)
+        print(file.colours.BOLD + 'Output File: ' + outfile_name + file.colours.BOLD)
+        return outfile_name
+
+    else:
+        file_path_out = 'media/source_' + str(total_source) + '_' + str(num_pattern) + 'spot_biomek.csv'
+        file_worklist_path_out = 'media/source_' + str(total_source) + '_' + str(num_pattern) + 'spot_worklist.csv'
+        file.verify_path(file_path_out)
+        file.verify_path(file_worklist_path_out)
+        outfile = file.create(file_path_out, 'w')
+        out_worklist = file.create(file_worklist_path_out, 'w')
+        outcsv = file.create_writer_CSV(outfile)
+        outcsv_worklist = file.create_writer_CSV(out_worklist)
+        file.set_biomek_header(outcsv)
+        file.set_worklist_header(outcsv_worklist)
+        ''' Create the source plates'''
+        for i in range(0, total_source):
+            plateS_num = i + 1
+            source_name = 'PlateS' + str(plateS_num)
+            source_plate = create_plate(num_wells, source_name)
+            destination_names = generate_random_names('PlateD', num_pattern * i + 1, num_pattern * i + num_pattern + 1)
+            destination_plates = []
+            for j in range(0, len(destination_names)):
+                destination_plates.append(create_plate(num_wells, destination_names[j]))
+            '''Call Function to write the CSV by rows'''
+            file.write_scol_dcol_by_spot(source_plate, destination_plates, num_pattern, outcsv, VOLUME, outcsv_worklist)
         outfile_name = os.path.basename(file_path_out)
         print(file.colours.BOLD + 'Output File: ' + outfile_name + file.colours.BOLD)
         return outfile_name

@@ -81,7 +81,7 @@ def primer(request):
 
 # @login_required(login_url="/accounts/login/")
 def combinatorial(request):
-    return render(request, 'under_construction.html')
+    return render(request, 'combinatorial.html')
 
 
 # @login_required(login_url="/accounts/login/")

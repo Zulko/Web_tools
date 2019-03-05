@@ -64,6 +64,19 @@ class Plate:
                 for k in range(0, n):
                     yield self.wells[i][j]
 
+    def iterRC_by_spot(self, n):
+        start = 0
+        count = n
+        while count <= self.num_cols:
+            for i in range(self.num_rows):
+                for j in range(start, count):
+                    yield self.wells[i][j]
+            if count < self.num_cols:
+                start+=n
+                count+=n
+            else:
+                return
+
 
 class Well:
 

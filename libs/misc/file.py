@@ -6,6 +6,7 @@
 import os
 import sys
 import csv
+import re
 
 # DATABASE = "../input/database.csv"
 
@@ -78,6 +79,17 @@ def get_header(filein):
 
 def set_header(fileout):
     header = 'Source ID', 'Source Plate Name','Source Well','Destination ID','Destination Plate Name','Destination Well','Volume'
+    fileout.writerow(header)
+
+
+def set_biomek_header(fileout):
+    header = 'Source ID', 'Source Plate Name','Source Well','Destination ID','Destination Plate Name','Destination Well','Volume',\
+             'Source Row','Source Column','Destination Row','Destination Column','Plate+Row'
+    fileout.writerow(header)
+
+
+def set_worklist_header(fileout):
+    header = 'header','Splate','Dplate','col'
     fileout.writerow(header)
 
 
@@ -157,6 +169,33 @@ def write_by_row(source_plate, destination_plates, num_pattern, outfile, VOLUME)
             except StopIteration:
                 break
 
+
+def write_scol_dcol_by_spot(source_plate, destination_plates, num_pattern, outfile, VOLUME):
+    """
+    Create a .csv file to be used in biomek
+    :param source_plate: source_plates: object from Plate Class
+    :param destination_plates: a vector with of Plate Class that will receive the samples from source plate
+    :param num_pattern: number of repetitions samples get from source plates
+    :param outfile: A CSV file to be used in biomek with the choosed pattern
+    with 1 source plate and num_pattern = 2, the output file will be like:
+    Source Plate ID,Source Plate Name,Source Well,Destination Plate ID,Destination Plate Name,Destination Well,Volume
+    IDPS1,PlateS1,A1,IDPD1,PlateD1,A1,4
+    IDPS1,PlateS1,A1,IDPD1,PlateD1,A2,4
+    IDPS1,PlateS1,B1,IDPD1,PlateD1,B1,4
+    IDPS1,PlateS1,B1,IDPD1,PlateD1,B2,4
+    """
+    source_wells = source_plate.iterC(num_pattern)
+    for plateD in destination_plates:
+        dest_wells = plateD.iterRC_by_spot(num_pattern)
+        while dest_wells:
+            try:
+                wellD = next(dest_wells)
+                wellS = next(source_wells)
+                result = source_plate.id, source_plate.name, wellS.name, plateD.id, plateD.name, wellD.name, VOLUME, \
+                         wellS.name[0], re.findall('\d+', wellS.name)[0], wellD.name[0], re.findall('\d+', wellD.name)[0], source_plate.id
+                outfile.writerow(result)
+            except StopIteration:
+                break
 
 
 

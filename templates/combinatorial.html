@@ -1,21 +1,102 @@
 {% extends 'base_layout.html' %}
+{% load static from staticfiles %}
 
 {% block content %}
     <div class="row">
       <div class="column side">
-        <h2>Side</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit..</p>
+        <h2>Options</h2>
+        <div class="options">
+
+            <form method="post" enctype="multipart/form-data"> {% csrf_token %}
+              <fieldset>
+
+                Select an Inventory file: <br><br>
+                <input type="file" name="myFile"><br><br>
+
+                Select a file with DNA parts to combine: <br><br>
+                <input type="file" name="myFile"><br><br>
+
+                Source Plate Wells:
+                <select name="num_well_source">
+                <option value="96">96 Wells</option>
+                <option value="384">384 Wells</option>
+                </select>
+                <br><br>
+
+                Destination Plate Wells:
+                <select name="num_well_destination">
+                <option value="96">96 Wells</option>
+                <option value="384">384 Wells</option>
+                </select>
+                <br><br>
+
+                <br><br><br>
+                <input type="submit" value="Submit">
+              </fieldset>
+            </form>
+
+
+            <br><br>
+            {% if url %}
+            <fieldset>
+                Uploaded file: <a href="{{ url }}" target="_blank" ><p>{{ uploadfile_name }}</p></a>
+                {% if outfile_name %}
+                    <br><br>
+                    Output file: <a href="{{ outfile_url }}" target="_blank" download> <p>{{ outfile_name }}</p> </a>
+                {% endif %}
+            </fieldset>
+            {% endif %}
+
+
+        </div>
       </div>
 
       <div class="column middle">
-        <h2>Main Content</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sit amet pretium urna. Vivamus venenatis velit nec neque ultricies, eget elementum magna tristique. Quisque vehicula, risus eget aliquam placerat, purus leo tincidunt eros, eget luctus quam orci in velit. Praesent scelerisque tortor sed accumsan convallis.</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sit amet pretium urna. Vivamus venenatis velit nec neque ultricies, eget elementum magna tristique. Quisque vehicula, risus eget aliquam placerat, purus leo tincidunt eros, eget luctus quam orci in velit. Praesent scelerisque tortor sed accumsan convallis.</p>
+        <h2>Combinatorial Script</h2>
+          <p> Example of an input file to be normalized (<a href="{% static 'docs/to_be_normalized.csv' %}" target="_blank" download><strong> Example.csv </strong></a>) </p> <br>
+             <table>
+                  <tr>
+                    <th>Part</th>
+                    <th>Type</th>
+                    <th>Length</th>
+                    <th>ng/uL</th>
+                    <th>Vol</th>
+                    <th>Source plate</th>
+                    <th>Source well</th>
+                  </tr>
+                  <tr>
+                    <td>TU1-5'</td>
+                    <td>1</td>
+                    <td>556</td>
+                    <td>5</td>
+                    <td>100</td>
+                    <td>Plate1</td>
+                    <td>A1</td>
+                  </tr>
+                  <tr>
+                    <td>PSMB gblock</td>
+                    <td>2</td>
+                    <td>848</td>
+                    <td>10</td>
+                    <td>10</td>
+                    <td>Plate1</td>
+                    <td>A3</td>
+                  </tr>
+             </table>
+             <br><p> Example of an input file to be normalized (<a href="{% static 'docs/to_be_normalized.csv' %}" target="_blank" download><strong> Example.csv </strong></a>) </p> <br>
+             <table>
+                  <tr>
+{#                    <td>[Type1_A, Type1_B][Type2_A, Type2_B, Type2_C][Type8]</td>#}
+                      <td>[Type1_A, Type1_B]</td>
+                      <td>[Type2_A, Type2_B,]</td>
+                      <td>[Type2_C]</td>
+                  </tr>
+             </table>
       </div>
 
       <div class="column side">
-        <h2>Side</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit..</p>
+        <h2></h2>
+        <p></p>
       </div>
     </div>
 {% endblock%}
