@@ -85,6 +85,7 @@ def create_plate(num_wells, name):
 
 
 def create_output_file(total_source, num_wells, total_destination, pattern):
+    'TODO: Receive from html the plates names'
     """
     Create a random output file name, and plates names
     :param total_source: integer number
@@ -103,9 +104,9 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
         ''' Create the source plates'''
         for i in range(0, total_source):
             plateS_num = i + 1
-            source_name = 'PlateS' + str(plateS_num)
+            source_name = 'Source_' + str(plateS_num)
             source_plate = create_plate(num_wells, source_name)
-            destination_names = generate_random_names('PlateD', num_pattern*i+1, num_pattern*i+num_pattern+1)
+            destination_names = generate_random_names('Destination_', num_pattern*i+1, num_pattern*i+num_pattern+1)
             destination_plates = []
             for j in range(0, len(destination_names)):
                 destination_plates.append(create_plate(num_wells, destination_names[j]))
@@ -124,9 +125,9 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
         ''' Create the source plates'''
         for i in range(0, total_source):
             plateS_num = i + 1
-            source_name = 'PlateS' + str(plateS_num)
+            source_name = 'Source_' + str(plateS_num)
             source_plate = create_plate(num_wells, source_name)
-            destination_names = generate_random_names('PlateD', num_pattern * i + 1, num_pattern * i + num_pattern + 1)
+            destination_names = generate_random_names('Destination_', num_pattern * i + 1, num_pattern * i + num_pattern + 1)
             destination_plates = []
             for j in range(0, len(destination_names)):
                 destination_plates.append(create_plate(num_wells, destination_names[j]))
@@ -150,9 +151,9 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
         ''' Create the source plates'''
         for i in range(0, total_source):
             plateS_num = i + 1
-            source_name = 'PlateS' + str(plateS_num)
+            source_name = 'Source_' + str(plateS_num)
             source_plate = create_plate(num_wells, source_name)
-            destination_names = generate_random_names('PlateD', num_pattern * i + 1, num_pattern * i + num_pattern + 1)
+            destination_names = generate_random_names('Destination_', num_pattern * i + 1, num_pattern * i + num_pattern + 1)
             destination_plates = []
             for j in range(0, len(destination_names)):
                 destination_plates.append(create_plate(num_wells, destination_names[j]))
