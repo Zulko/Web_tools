@@ -24,15 +24,24 @@ def spotting(request):
         num_pattern = request.POST['num_pattern']
         pattern = request.POST['pattern']
         ''' Calling Python Script'''
-        outfile_name = run_spotting(int(num_sources), int(num_well), int(num_pattern), int(pattern))
-        if outfile_name is not None:
+        outfile_name, worklist_name = run_spotting(int(num_sources), int(num_well), int(num_pattern), int(pattern))
+
+        if worklist_name is not None:
+            fs = FileSystemStorage()
+            outfile_url = fs.url(os.path.basename(outfile_name))
+            context['worklist_name'] = worklist_name
+            outfileworklist_url = fs.url(os.path.basename(worklist_name))
+            print(outfile_url, outfileworklist_url)
+            return render(request, 'spotting.html', {'outfile_name': outfile_name, 'outfile_url': outfile_url, 'worklist_name': worklist_name, 'outfileworklist_url': outfileworklist_url})
+
+        elif outfile_name is not None:
             fs = FileSystemStorage()
             context['outfile_name'] = outfile_name
             outfile_url = fs.url(os.path.basename(outfile_name))
-            return render(request, 'spotting.html', {'outfile_name': outfile_name, 'outfile_url': outfile_url})
+            return render(request, 'spotting.html', {'outfile_name': outfile_name, 'outfile_url': outfile_url, 'worklist_name': '', 'outfileworklist_url': ''})
         else:
-            return render(request, 'spotting.html', {'outfile_name': 'Choose a different parameters combination', 'outfile_url': ''})
-    return render(request, 'spotting.html', {'outfile_name': '', 'abs_path': ''})
+            return render(request, 'spotting.html', {'outfile_name': 'Choose a different parameters combination', 'outfile_url': '','worklist_name': '', 'outfileworklist_url': ''})
+    return render(request, 'spotting.html', {'outfile_name': '', 'outfile_url': '', 'worklist_name': '', 'outfileworklist_url':''})
 
 
 # @login_required(login_url="/accounts/login/")

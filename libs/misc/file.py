@@ -170,20 +170,9 @@ def write_by_row(source_plate, destination_plates, num_pattern, outfile, VOLUME)
                 break
 
 
-def write_scol_dcol_by_spot(source_plate, destination_plates, num_pattern, outfile, VOLUME):
-    """
-    Create a .csv file to be used in biomek
-    :param source_plate: source_plates: object from Plate Class
-    :param destination_plates: a vector with of Plate Class that will receive the samples from source plate
-    :param num_pattern: number of repetitions samples get from source plates
-    :param outfile: A CSV file to be used in biomek with the choosed pattern
-    with 1 source plate and num_pattern = 2, the output file will be like:
-    Source Plate ID,Source Plate Name,Source Well,Destination Plate ID,Destination Plate Name,Destination Well,Volume
-    IDPS1,PlateS1,A1,IDPD1,PlateD1,A1,4
-    IDPS1,PlateS1,A1,IDPD1,PlateD1,A2,4
-    IDPS1,PlateS1,B1,IDPD1,PlateD1,B1,4
-    IDPS1,PlateS1,B1,IDPD1,PlateD1,B2,4
-    """
+def write_scol_dcol_by_spot(source_plate, destination_plates, num_pattern, outfile, VOLUME, out_worklist):
+
+    worklist_header = -1
     source_wells = source_plate.iterC(num_pattern)
     for plateD in destination_plates:
         dest_wells = plateD.iterRC_by_spot(num_pattern)
@@ -192,8 +181,20 @@ def write_scol_dcol_by_spot(source_plate, destination_plates, num_pattern, outfi
                 wellD = next(dest_wells)
                 wellS = next(source_wells)
                 result = source_plate.id, source_plate.name, wellS.name, plateD.id, plateD.name, wellD.name, VOLUME, \
-                         wellS.name[0], re.findall('\d+', wellS.name)[0], wellD.name[0], re.findall('\d+', wellD.name)[0], source_plate.id
+                         wellS.name[0], re.findall('\d+', wellS.name)[0], wellD.name[0], re.findall('\d+', wellD.name)[
+                             0], re.findall('\d+', source_plate.name)[0]+re.findall('\d+', plateD.name)[0]+re.findall('\d+', wellS.name)[0]
                 outfile.writerow(result)
+
+                temp_work_header = re.findall('\d+', source_plate.name)[0] + re.findall('\d+', plateD.name)[0] + re.findall('\d+', wellS.name)[0]
+
+                if temp_work_header != worklist_header:
+                    worklist_header = temp_work_header
+                    s_plate = re.findall('\d+', source_plate.name)[0]
+                    d_plate = re.findall('\d+', plateD.name)[0]
+                    col = re.findall('\d+', wellS.name)[0]
+                    worklist_result = worklist_header, s_plate, d_plate, col
+                    out_worklist.writerow(worklist_result)
+
             except StopIteration:
                 break
 

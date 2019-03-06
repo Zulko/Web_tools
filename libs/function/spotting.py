@@ -113,7 +113,7 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
             file.write_by_row(source_plate, destination_plates, num_pattern, outcsv, VOLUME)
         outfile_name = os.path.basename(file_path_out)
         print(file.colours.BOLD + 'Output File: ' + outfile_name + file.colours.BOLD)
-        return outfile_name
+        return outfile_name, None
 
     elif pattern == BY_COL:
         file_path_out = 'media/source_' + str(total_source) + '_' + str(num_pattern) + 'spot_bycol.csv'
@@ -134,7 +134,7 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
             file.write_by_col(source_plate, destination_plates, num_pattern, outcsv, VOLUME)
         outfile_name = os.path.basename(file_path_out)
         print(file.colours.BOLD + 'Output File: ' + outfile_name + file.colours.BOLD)
-        return outfile_name
+        return outfile_name, None
 
     else:
         file_path_out = 'media/source_' + str(total_source) + '_' + str(num_pattern) + 'spot_biomek.csv'
@@ -159,5 +159,6 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
             '''Call Function to write the CSV by rows'''
             file.write_scol_dcol_by_spot(source_plate, destination_plates, num_pattern, outcsv, VOLUME, outcsv_worklist)
         outfile_name = os.path.basename(file_path_out)
-        print(file.colours.BOLD + 'Output File: ' + outfile_name + file.colours.BOLD)
-        return outfile_name
+        outfile_worlistname = os.path.basename(file_worklist_path_out)
+        print(file.colours.BOLD + 'Output File: ' + outfile_name + '\tWorklist: ' + outfile_worlistname + file.colours.BOLD)
+        return outfile_name, outfile_worlistname

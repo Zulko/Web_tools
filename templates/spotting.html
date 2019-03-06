@@ -44,13 +44,15 @@
               </fieldset>
             </form>
 
-
             <br><br>
-            {% if outfile_name %}
+            {% if worklist_name %}
             <fieldset>
-{#                Output file: <a href="{{ abs_path }}" target="_blank" download> <p><strong>{{ outfile_name }}</strong></p> </a>#}
+                Output file: <a href="{{ outfile_url }}" target="_blank" download> <strong> Download File </strong> </a> <br><br>
+                Output worklist: <a href="{{ outfileworklist_url }}" target="_blank" download> <strong> Download File </strong> </a>
+            </fieldset>
+            {% elif outfile_name %}
+            <fieldset>
                 Output file: <a href="{{ outfile_url }}" target="_blank" download> <p><strong> Download File </strong></p> </a>
-
             </fieldset>
             {% endif %}
 
