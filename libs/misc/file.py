@@ -199,4 +199,11 @@ def write_scol_dcol_by_spot(source_plate, destination_plates, num_pattern, outfi
                 break
 
 
+def write_combinations(outfile, list_combinations):
+    for list in list_combinations:
+        for parts in list:
+            for i in range(0, len(parts)-1):
+                outfile.write(parts[i] + ",")
+            outfile.write(parts[i] + "\n")
+    outfile.close()
 

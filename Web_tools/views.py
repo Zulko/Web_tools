@@ -3,6 +3,7 @@ from django.shortcuts import render
 from libs.function.spotting import run_spotting
 from libs.function.normalization import run_normalization
 from libs.function.fasta2primer3 import run_primer
+from libs.function.combinatorial import run_combination
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.decorators import login_required
@@ -90,7 +91,30 @@ def primer(request):
 
 # @login_required(login_url="/accounts/login/")
 def combinatorial(request):
-    return render(request, 'combinatorial.html')
+    context = {}
+    if request.method == "POST":
+        if len(request.FILES) != 0:
+            upload = request.FILES['myFile']
+            fs = FileSystemStorage()
+            name = fs.save(upload.name, upload)
+            context['url'] = fs.url(name)
+            url = fs.url(name)
+            ''' Calling Python Script'''
+            outfile = run_combination(settings.MEDIA_ROOT, name)
+            if outfile is not None:
+                outfile_name = os.path.basename(outfile.name)
+                outfile_url = fs.url(outfile_name)
+                return render(request, 'combinatorial.html',
+                              {'uploadfile_name': upload.name, 'url': url, 'outfile_name': outfile_name,
+                               'outfile_url': outfile_url})
+            else:
+                return render(request, 'combinatorial.html',
+                              {'uploadfile_name': '', 'url': '', 'outfile_name': '',
+                               'outfile_url': ''})
+
+    return render(request, 'combinatorial.html',
+                  {'uploadfile_name': '', 'url': '', 'outfile_name': '',
+                   'outfile_url': ''})
 
 
 # @login_required(login_url="/accounts/login/")
