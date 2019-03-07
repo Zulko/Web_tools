@@ -204,6 +204,6 @@ def write_combinations(outfile, list_combinations):
         for parts in list:
             for i in range(0, len(parts)-1):
                 outfile.write(parts[i] + ",")
-            outfile.write(parts[i] + "\n")
+            outfile.write(parts[i+1] + "\n")
     outfile.close()
 
