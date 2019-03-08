@@ -102,3 +102,24 @@ def coordinates_to_wellname(coords):
     """Convert (0,0)->A1, (4,3)->D5, (12, 12)->M13, etc."""
     row, column = coords
     return number_to_rowname(row)+str(column+1)
+
+
+def num_listsparts(lists_parts):
+    list_set_num_parts = []
+    for list in lists_parts:
+        input_num_parts = []
+        for parts in list:
+            num_parts = len(parts)
+            input_num_parts.append(num_parts)
+        list_set_num_parts.append(input_num_parts)
+    return list_set_num_parts
+
+
+def num_combinations(list_combinations):
+    num_combinations_in_list = []
+    num_parts = 0
+    for list in list_combinations:
+        for parts in list:
+            num_parts +=1
+        num_combinations_in_list.append(num_parts)
+    return num_combinations_in_list

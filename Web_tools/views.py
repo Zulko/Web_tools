@@ -100,21 +100,21 @@ def combinatorial(request):
             context['url'] = fs.url(name)
             url = fs.url(name)
             ''' Calling Python Script'''
-            outfile = run_combination(settings.MEDIA_ROOT, name)
+            outfile, list_num_parts, list_num_combinations = run_combination(settings.MEDIA_ROOT, name)
             if outfile is not None:
                 outfile_name = os.path.basename(outfile.name)
                 outfile_url = fs.url(outfile_name)
                 return render(request, 'combinatorial.html',
                               {'uploadfile_name': upload.name, 'url': url, 'outfile_name': outfile_name,
-                               'outfile_url': outfile_url})
+                               'outfile_url': outfile_url, 'num_parts': list_num_parts, 'num_combin': list_num_combinations})
             else:
                 return render(request, 'combinatorial.html',
                               {'uploadfile_name': '', 'url': '', 'outfile_name': '',
-                               'outfile_url': ''})
+                               'outfile_url': '', 'num_parts': '', 'num_combin': ''})
 
     return render(request, 'combinatorial.html',
                   {'uploadfile_name': '', 'url': '', 'outfile_name': '',
-                   'outfile_url': ''})
+                   'outfile_url': '', 'num_parts': '', 'num_combin': ''})
 
 
 # @login_required(login_url="/accounts/login/")

@@ -22,9 +22,27 @@
             {% if url %}
             <fieldset>
                 Uploaded file: <a href="{{ url }}" target="_blank" ><p>{{ uploadfile_name }}</p></a>
+                <ol>
+                {% for set in num_parts %}
+                    <li>
+                    {% for num in set %}
+                        [ {{ num }} ]
+                    {% endfor %}
+                    </li>
+                {% endfor %}
+                </ol>
+
                 {% if outfile_name %}
                     <br><br>
                     Output file: <a href="{{ outfile_url }}" target="_blank" download> <p>{{ outfile_name }}</p> </a>
+                    <ol>
+                    {% for num in num_combin %}
+                        <li>{{ num }} Combinations</li>
+                    {% endfor %}
+                    </ol>
+
+
+
                 {% endif %}
             </fieldset>
             {% endif %}
