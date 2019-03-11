@@ -8,15 +8,15 @@ import numpy as np
 import re
 
 
-def fmol_by_parttype(type, bb_fmol, part_fmol):
+def fmol_by_parttype(samp_type, bb_fmol, part_fmol):
 
-    if '8' in type:
+    if '8' in samp_type or '7' in samp_type:
         return bb_fmol
     else:
         return part_fmol
 
 
-def fmol(type, length, concentration, bb_fmol, part_fmol):
+def fmol(samp_type, length, concentration, bb_fmol, part_fmol):
     """Return 20fmol or 40fmol of sample based on type of part"""
     try:
         length = float(length)
@@ -25,7 +25,7 @@ def fmol(type, length, concentration, bb_fmol, part_fmol):
         print(str(length) + 'is not a number')
     else:
         '''Choose 20fmol or 40fmol based on sample type'''
-        concent_fmol = fmol_by_parttype(type, bb_fmol, part_fmol)
+        concent_fmol = fmol_by_parttype(samp_type, bb_fmol, part_fmol)
 
         fmol = round((float(concent_fmol)/1000) * 660 * 1 / 10 ** 6 * length * 1000, 2)
         return fmol, concent_fmol
