@@ -57,13 +57,15 @@ def normalization(request):
             url = fs.url(name)
             in_well = request.POST['num_well_source']
             out_well = request.POST['num_well_destination']
+            bb_fmol = request.POST['bb_fmol']
+            part_fmol = request.POST['part_fmol']
             ''' Calling Python Script'''
-            outfile = run_normalization(settings.MEDIA_ROOT, name, int(in_well), int(out_well))
+            outfile, alert = run_normalization(settings.MEDIA_ROOT, name, int(in_well), int(out_well), int(bb_fmol), int(part_fmol))
             if outfile is not None:
                 outfile_name = os.path.basename(outfile.name)
                 outfile_url = fs.url(outfile_name)
-                return render(request, 'normalization.html', {'uploadfile_name': upload.name, 'url': url, 'outfile_name': outfile_name,'outfile_url': outfile_url})
-    return render(request, 'normalization.html', {'uploadfile_name': '', 'url': '', 'outfile_name': '','outfile_url': ''})
+                return render(request, 'normalization.html', {'uploadfile_name': upload.name, 'url': url, 'outfile_name': outfile_name,'outfile_url': outfile_url, 'alert':alert})
+    return render(request, 'normalization.html', {'uploadfile_name': '', 'url': '', 'outfile_name': '','outfile_url': '', 'alert':''})
 
 
 # @login_required(login_url="/accounts/login/")

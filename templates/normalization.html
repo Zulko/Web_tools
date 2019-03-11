@@ -27,6 +27,22 @@
                 </select>
                 <br><br>
 
+                Backbone fmol:
+                <select name="bb_fmol">
+                <option value="80">80 fmol</option>
+                <option value="40">40 fmol</option>
+                <option value="20">20 fmol</option>
+                </select> &nbsp;
+
+                Part fmol:
+                <select name="part_fmol">
+                <option value="80">80 fmol</option>
+                <option value="40">40 fmol</option>
+                <option value="20">20 fmol</option>
+                </select>
+                <br><br>
+                <br><br>
+
                 <br><br><br>
                 <input type="submit" value="Submit">
               </fieldset>
@@ -50,7 +66,16 @@
 
       <div class="column middle">
         <h2>Normalization Script</h2><br>
-
+        {% if alert %}
+                    <div class="alert">
+                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                        <ol>
+                        {% for num in alert %}
+                            <li>{{ num }} </li>
+                        {% endfor %}
+                        </ol>
+                    </div>
+        {% endif %}
         <p> Example of an input file to be normalized (<a href="{% static 'docs/to_be_normalized.csv' %}" target="_blank" download><strong> Example.csv </strong></a>) </p> <br>
             <table>
                   <tr>

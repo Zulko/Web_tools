@@ -8,24 +8,24 @@ import numpy as np
 import re
 
 
-def final_concentration_fmol(concentration):
-    if concentration < 100:
-        final_concent = 20
+def fmol_by_parttype(type, bb_fmol, part_fmol):
+
+    if '8' in type:
+        return bb_fmol
     else:
-        final_concent = 40
-    return final_concent
+        return part_fmol
 
 
-def fmol(length, concentration):
-    """Return 20fmol or 40fmol of sample based on its length and concentration"""
+def fmol(type, length, concentration, bb_fmol, part_fmol):
+    """Return 20fmol or 40fmol of sample based on type of part"""
     try:
         length = float(length)
         concentration = float(concentration)
     except TypeError:
         print(str(length) + 'is not a number')
     else:
-        '''Choose 20fmol or 40fmol based on sample concentration'''
-        concent_fmol = final_concentration_fmol(concentration)
+        '''Choose 20fmol or 40fmol based on sample type'''
+        concent_fmol = fmol_by_parttype(type, bb_fmol, part_fmol)
 
         fmol = round((float(concent_fmol)/1000) * 660 * 1 / 10 ** 6 * length * 1000, 2)
         return fmol, concent_fmol
@@ -56,7 +56,7 @@ def total_destination_plates(plates_in, in_well, out_well):
     num_dest = len(plates_in) * in_well/out_well
     if num_dest < 1:
         num_dest = 1
-    return num_dest
+    return int(num_dest)
 
 
 def water_volume(total_volume, sample_volume):

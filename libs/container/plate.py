@@ -146,8 +146,9 @@ class Sample:
     MIN_VOL = 4
     AVR_VOL = 10
 
-    def __init__(self, name, length, concentration, volume):
+    def __init__(self, name, type, length, concentration, volume):
         self.name = name
+        self.type = type
         self.length = length
         self.concentration = concentration
         self.volume = volume
