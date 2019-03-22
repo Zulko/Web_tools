@@ -5,7 +5,7 @@
 """
 
 import numpy as np
-import re
+import re, math
 
 
 def fmol_by_parttype(samp_type, bb_fmol, part_fmol):
@@ -16,11 +16,10 @@ def fmol_by_parttype(samp_type, bb_fmol, part_fmol):
         return part_fmol
 
 
-def fmol(samp_type, length, concentration, bb_fmol, part_fmol):
+def fmol(samp_type, length, bb_fmol, part_fmol):
     """Return 20fmol or 40fmol of sample based on type of part"""
     try:
         length = float(length)
-        concentration = float(concentration)
     except TypeError:
         print(str(length) + 'is not a number')
     else:
@@ -51,12 +50,26 @@ def total_volume(sample_volume, dilut_factor):
     return total_volume
 
 
+def round_at(value, rounding):
+    """Round value at the nearest rounding"""
+    if rounding is None:
+        return value
+    else:
+        return np.round(value / rounding) * rounding
+
+
 def total_destination_plates(plates_in, in_well, out_well):
     """Return the number of destination plates"""
     num_dest = len(plates_in) * in_well/out_well
     if num_dest < 1:
         num_dest = 1
     return int(num_dest)
+
+
+def num_destination_plates(num_samples, out_well):
+    """Return the number of destination plates"""
+    num_dest = math.ceil(num_samples / out_well)
+    return num_dest
 
 
 def water_volume(total_volume, sample_volume):
@@ -102,6 +115,15 @@ def coordinates_to_wellname(coords):
     """Convert (0,0)->A1, (4,3)->D5, (12, 12)->M13, etc."""
     row, column = coords
     return number_to_rowname(row)+str(column+1)
+
+
+def num_times_part(my_item, lists_parts):
+    count = 0
+    for list in lists_parts:
+        for part in list:
+            if my_item == part:
+                count +=1
+    return count
 
 
 def num_listsparts(lists_parts):

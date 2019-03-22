@@ -4,6 +4,7 @@ from libs.function.spotting import run_spotting
 from libs.function.normalization import run_normalization
 from libs.function.fasta2primer3 import run_primer
 from libs.function.combinatorial import run_combination
+from libs.function.moclo import run_moclo
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.decorators import login_required
@@ -64,6 +65,7 @@ def normalization(request):
             if outfile is not None:
                 outfile_name = os.path.basename(outfile.name)
                 outfile_url = fs.url(outfile_name)
+                print(alert)
                 return render(request, 'normalization.html', {'uploadfile_name': upload.name, 'url': url, 'outfile_name': outfile_name,'outfile_url': outfile_url, 'alert':alert})
     return render(request, 'normalization.html', {'uploadfile_name': '', 'url': '', 'outfile_name': '','outfile_url': '', 'alert':''})
 
@@ -117,6 +119,59 @@ def combinatorial(request):
     return render(request, 'combinatorial.html',
                   {'uploadfile_name': '', 'url': '', 'outfile_name': '',
                    'outfile_url': '', 'num_parts': '', 'num_combin': ''})
+
+
+# @login_required(login_url="/accounts/login/")
+def moclo(request):
+    context = {}
+    if request.method == "POST":
+        if len(request.FILES) != 0:
+            upload_file = request.FILES['upload_file']
+            upload_db = request.FILES['upload_db']
+            fs = FileSystemStorage()
+            name_file = fs.save(upload_file.name, upload_file)
+            name_db = fs.save(upload_db.name, upload_db)
+            context['url_file'] = fs.url(name_file)
+            context['url_db'] = fs.url(name_db)
+            url_file = fs.url(name_file)
+            url_db = fs.url(name_db)
+
+            """Dispenser parameters"""
+            machine = request.POST['machine']
+            min_vol = request.POST['min_vol']
+            vol_resol = request.POST['vol_resol']
+            dead_vol = request.POST['dead_vol']
+            dispenser_parameters = machine, float(min_vol) * 1e-9, float(vol_resol) * 1e-9, float(dead_vol)
+
+            """Mixer parameters"""
+            part_fmol = request.POST['part_fmol']
+            bb_fmol = request.POST['bb_fmol']
+            total_vol = request.POST['total_vol']
+            per_buffer = request.POST['buffer']
+            per_enz_restric = request.POST['enz_restric']
+            per_enz_ligase = request.POST['enz_ligase']
+            mantis_two_chips = 'mantis_two_chips' in request.POST
+            add_water = 'add_water' in request.POST
+            mix_parameters = int(part_fmol), int(bb_fmol), float(total_vol), float(per_buffer), float(per_enz_restric), float(per_enz_ligase), add_water
+
+            """Destination plate"""
+            num_well_destination = request.POST['num_well_destination']
+            pattern = request.POST['pattern']
+
+            ''' Calling Python Script'''
+            alert, outfile_mantis, outfile_robot = run_moclo(settings.MEDIA_ROOT, name_file, name_db, dispenser_parameters, mix_parameters, int(num_well_destination), int(pattern), mantis_two_chips)
+
+            if outfile_mantis is not None:
+                outfile_mantis_name = os.path.basename(outfile_mantis.name)
+                outfile_robot_name = os.path.basename(outfile_robot.name)
+                outfile_mantis_url = fs.url(outfile_mantis_name)
+                outfile_robot_url = fs.url(outfile_robot_name)
+
+                return render(request, 'moclo.html', {'uploadfile_name': upload_file, 'mydatabase': upload_db, 'url_file': url_file, 'url_db': url_db,
+                                                      'outfile_mantis_name': outfile_mantis_name, 'outfile_robot_name': outfile_robot_name,
+                                                      'outfile_mantis_url': outfile_mantis_url, 'outfile_robot_url': outfile_robot_url, 'alert': alert})
+
+    return render(request, 'moclo.html')
 
 
 # @login_required(login_url="/accounts/login/")

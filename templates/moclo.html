@@ -1,0 +1,174 @@
+{% extends 'base_layout.html' %}
+{% load static from staticfiles %}
+
+{% block content %}
+    <div class="row">
+      <div class="column side">
+        <h2>Options</h2>
+        <div class="options">
+            <form method="post" enctype="multipart/form-data"> {% csrf_token %}
+                <fieldset>
+
+                  <fieldset>
+                    <legend>Assembly file</legend>
+                    Select a file: <input type="file" name="upload_file">
+                    Select a database: <input type="file" name="upload_db">
+                  </fieldset>
+                    <br>
+
+                  <fieldset>
+                    <legend>Dispenser</legend>
+                    <table>
+                    <tr>
+                        <td>
+                        Machine:
+                            <select name="machine">
+                            <option value="echo">Echo</option>
+                            </select>
+                        </td>
+                        <td>
+                        Min Volume(nL):
+                            <input type="number" name="min_vol" min="1" max="5" step="0.5" value="2.5">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                        Volume resolution(nL):
+                            <input type="number" name="vol_resol" min="1" max="10" step="0.5" value="2.5">
+                        </td>
+                        <td>
+                        Dead Volume (µL):
+                            <input type="number" name="dead_vol" min="1" max="15" step="0.5" value="3">
+                        </td>
+                    </tr>
+                    </table>
+                  </fieldset>
+                   <br>
+                  <fieldset>
+
+                    <legend>Mixer</legend>
+                    <table>
+                    <tr>
+                    <td>
+                        Part (fmol):
+                        <select name="part_fmol">
+                        <option value="20">20</option>
+                        <option selected value="40">40</option>
+                        <option value="80">80</option>
+                        </select>
+                    </td>
+                    <td>
+                        Backbone (fmol):
+                        <select name="bb_fmol">
+                        <option value="20">20</option>
+                        <option value="40">40</option>
+                        <option selected value="80">80</option>
+                        </select>
+                    </td>
+                    </tr>
+                    <tr>
+                    <td>
+                        Total Volume (µL):
+                        <input type="number" name="total_vol" min="1" max="15" step="0.5" value="10">
+                    </td>
+                    <td>
+                        Buffer (%):
+                        <input type="number" name="buffer" min="1" max="20" step="0.5" value="10">
+                    </td>
+                    </tr>
+                    <tr>
+                    <td>
+                        Restriction Enz (%):
+                        <input type="number" name="enz_restric" min="1" max="20" step="0.5" value="10">
+                    </td>
+                    <td>
+                        Ligase Enz (%):
+                        <input type="number" name="enz_ligase" min="1" max="20" step="0.5" value="10">
+                    </td>
+                    </tr>
+
+                    <tr>
+                    <td>
+{#                        <input type="hidden" name="add_water" value="False"/>#}
+                        <input type="checkbox" name="add_water" value="True" checked/> Add water in Master Mix
+                    </td>
+                    <td>
+{#                        <input type="hidden" name="mantis_two_chips" value="False"/>#}
+                        <input type="checkbox" name="mantis_two_chips" value="True" checked/> Use Mantis with low/high chips
+
+                    </td>
+                    </tr>
+                    </table>
+                  </fieldset>
+
+                  <br>
+
+                  <fieldset>
+                      <legend>Destination Plate</legend>
+                      <table>
+                          <tr>
+                              <td>
+                                 Num Wells:
+                                <select name="num_well_destination">
+                                <option value="96">96 Wells</option>
+                                <option value="384">384 Wells</option>
+                                </select>
+                            </td>
+                              <td>
+                                Filled by:
+                                <select name="pattern">
+                                <option value="0">by row</option>
+                                <option selected value="1">by column</option>
+                                </select>
+                              </td>
+                          </tr>
+                      </table>
+                  </fieldset>
+
+                <br><br><br>
+                <input type="submit" value="Submit">
+              </fieldset>
+            </form>
+
+
+            <br><br>
+            {% if url_file %}
+            <fieldset>
+                Uploaded file: <a href="{{ url_file }}" target="_blank" ><p>{{ uploadfile_name }}</p></a>
+                Uploaded file: <a href="{{ url_db }}" target="_blank" ><p>{{ upload_db }}</p></a>
+                {% if outfile_mantis_url %}
+                    <br><br>
+                    Output file: <a href="{{ outfile_mantis_url }}" target="_blank" download> <p>{{ outfile_mantis_name }}</p> </a>
+                    Output file: <a href="{{ outfile_robot_url }}" target="_blank" download> <p>{{ outfile_robot_name }}</p> </a>
+                {% endif %}
+            </fieldset>
+            {% endif %}
+
+
+        </div>
+      </div>
+
+      <div class="column middle">
+        <h2>MoClo Script</h2><br>
+        {% if alert %}
+            <div class="alert">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                <ol>
+                {% for num in alert %}
+                    <li>{{ num }} </li>
+                {% endfor %}
+                </ol>
+            </div>
+        {% endif %}
+      <p> Example of a database file (<a href="{% static 'docs/database.csv' %}" target="_blank" download><strong> Database.csv </strong></a>) </p>
+      <p> Example of an input file with parts (<a href="{% static 'docs/combination_parts.txt' %}" target="_blank" download><strong> File.csv </strong></a>) </p> <br>
+      </div>
+
+        {% comment %}
+        <div class="column side">
+        <h2>Side</h2>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit..</p>
+        </div>
+        {% endcomment %}
+    </div>
+{% endblock%}

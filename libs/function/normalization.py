@@ -247,8 +247,6 @@ def run_normalization(path, filename, in_well, out_well, bb_fmol, part_fmol):
                 for sample in plates_in[k].wells[i][j].samples:
                     norm_result.append(calc_normalization_from_plate(sample, plates_in[k], plates_water[k], i, j, bb_fmol, part_fmol))
 
-    # TODO: Modification in Plate Source, Water and Destination for a List of Plates
-
     plates_out_filled, new_result = populate_plates_destination(plates_out, norm_result)
     # """Write the result in a CSV file"""
 
