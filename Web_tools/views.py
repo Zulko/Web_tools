@@ -167,7 +167,7 @@ def moclo(request):
                 outfile_mantis_url = fs.url(outfile_mantis_name)
                 outfile_robot_url = fs.url(outfile_robot_name)
 
-                return render(request, 'moclo.html', {'uploadfile_name': upload_file, 'mydatabase': upload_db, 'url_file': url_file, 'url_db': url_db,
+                return render(request, 'moclo.html', {'uploadfile_name': upload_file, 'upload_db': upload_db, 'url_file': url_file, 'url_db': url_db,
                                                       'outfile_mantis_name': outfile_mantis_name, 'outfile_robot_name': outfile_robot_name,
                                                       'outfile_mantis_url': outfile_mantis_url, 'outfile_robot_url': outfile_robot_url, 'alert': alert})
 
