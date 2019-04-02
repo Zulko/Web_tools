@@ -293,10 +293,9 @@ def verify_samples_volume(vol_for_part, count_unique_list, robot):
                 sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, vol_part_add, plate_in_name, wellD_name = part
                 total_vol_part = times_needed*vol_part_add
                 # print('Not enough volume for sample: ' + str(part_name) + ' available: ' + str(sample_volume) + " need: " + str(total_vol_part))
-                alert.append('Not enough volume for sample: ' + str(part_name) + ' available: ' + str(round(sample_volume,3)) + "ul need: " + str(round(sample_volume,3)) + 'ul + ' + str(robot.dead_vol) + 'ul')
+                alert.append(str(part_name) + ' available: ' + str(round(sample_volume,3)) + "ul need: " + str(round(sample_volume,3)) + 'ul + ' + str(robot.dead_vol) + 'ul')
                 list_part_low_vol.append([sample_name, total_vol_part])
     return list_source_wells, list_part_low_vol, alert
-
 
 
 def find_samples_database(unique_list, database, db_reader):
@@ -319,7 +318,7 @@ def find_samples_database(unique_list, database, db_reader):
                 alert.append('Cant read the database file: ' + str(os.path.basename(database.name)))
                 return found_list, missing_list, alert
         if found is False:
-            # print(part + ' is missing in database.')
+            alert.append(part + ' is missing in database.')
             missing_list.append(part)
     return found_list, missing_list, alert
 
@@ -381,6 +380,7 @@ def run_moclo(path, filename, database, dispenser_parameters, mix_parameters, ou
     found_list, missing_list, alert = find_samples_database(unique_list, database, db_reader)
 
     if len(alert) > 0:
+        print(alert)
         total_alert.append(alert)
         return total_alert, None, None
 

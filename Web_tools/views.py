@@ -152,7 +152,7 @@ def moclo(request):
             per_enz_ligase = request.POST['enz_ligase']
             mantis_two_chips = 'mantis_two_chips' in request.POST
             add_water = 'add_water' in request.POST
-            mix_parameters = int(part_fmol), int(bb_fmol), float(total_vol), float(per_buffer), float(per_enz_restric), float(per_enz_ligase), add_water
+            mix_parameters = float(part_fmol), float(bb_fmol), float(total_vol), float(per_buffer), float(per_enz_restric), float(per_enz_ligase), add_water
 
             """Destination plate"""
             num_well_destination = request.POST['num_well_destination']
