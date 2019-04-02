@@ -65,7 +65,7 @@ def populate_destination_plates(plates_out, list_destination_plate, list_source_
                 plateD.wells[i][j].samples.append(plate.Sample('master_mix', None, None, None, total_vol_buffer))
                 plateD.wells[i][j].samples.append(plate.Sample('water', None, None, None, vol_water))
             else:
-                alert.append('In constructor: ' + str(set) + '. The water volume is negative.')
+                alert.append('In constructor: ' + str(set) + '. The water volume is negative.' + ' [' + str(round(vol_water,2)) +'ul]')
 
     return plates_out, out_dispenser, out_master_mix, out_water, alert
 
@@ -99,7 +99,7 @@ def create_entry_list_for_destination_plate(lists_parts, list_part_low_vol):
                 vol_lvp = round(vol_lvp, 2)
                 if part == name_lvp:
                     # print('For Contructor: ' + str(set) + '\nThere is not enough volume for sample: ' + str(part) + '. Required : ' + str(vol_lvp))
-                    alert.append(['For Contructor: ' + str(set) + ' volume required ' + str(vol_lvp) +  ' for sample: ' + str(part)])
+                    alert.append(['For Contructor: ' + str(set) + ' volume required ' + str(vol_lvp) +  'ul for sample: ' + str(part)])
                     low_vol = True
 
         if low_vol is False:
@@ -293,7 +293,7 @@ def verify_samples_volume(vol_for_part, count_unique_list, robot):
                 sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, vol_part_add, plate_in_name, wellD_name = part
                 total_vol_part = times_needed*vol_part_add
                 # print('Not enough volume for sample: ' + str(part_name) + ' available: ' + str(sample_volume) + " need: " + str(total_vol_part))
-                alert.append('Not enough volume for sample: ' + str(part_name) + ' available: ' + str(round(sample_volume,3)) + " need: " + str(round(sample_volume,3)) + ' + ' + str(robot.dead_vol))
+                alert.append('Not enough volume for sample: ' + str(part_name) + ' available: ' + str(round(sample_volume,3)) + "ul need: " + str(round(sample_volume,3)) + 'ul + ' + str(robot.dead_vol) + 'ul')
                 list_part_low_vol.append([sample_name, total_vol_part])
     return list_source_wells, list_part_low_vol, alert
 
@@ -301,21 +301,27 @@ def verify_samples_volume(vol_for_part, count_unique_list, robot):
 
 def find_samples_database(unique_list, database, db_reader):
     ''' Verify parts in database '''
+    alert = []
     found_list = []
     missing_list = []
     for part in unique_list:
         found = False
         database.seek(0)
         for line in db_reader:
-            part_indb, part_type, part_length, part_conc, part_vol, source_plate, source_well, num_well = line
-            if part == part_indb and float(part_vol) > 0:
-                found = True
-                # print(part_indb, source_plate, source_well)
-                found_list.append(line)
+            try:
+                part_indb, part_type, part_length, part_conc, part_vol, source_plate, source_well, num_well = line
+                if part == part_indb and float(part_vol) > 0:
+                    found = True
+                    # print(part_indb, source_plate, source_well)
+                    found_list.append(line)
+            except ValueError:
+                print('Cant read the database file: ' + str(os.path.basename(database.name)))
+                alert.append('Cant read the database file: ' + str(os.path.basename(database.name)))
+                return found_list, missing_list, alert
         if found is False:
             # print(part + ' is missing in database.')
             missing_list.append(part)
-    return found_list, missing_list
+    return found_list, missing_list, alert
 
 
 def get_sets_in_filepath(reader):
@@ -326,6 +332,7 @@ def get_sets_in_filepath(reader):
         parts = line.strip("\n").split(',')
         '''List of parts'''
         for part in parts:
+            part = part.replace(" ", "")
             set.append(part)
         ''' Create the single list of parts'''
         lists_parts.append(list(set))
@@ -341,8 +348,6 @@ def create_and_populate_sources_plate(db_reader, database):
 
 
 def run_moclo(path, filename, database, dispenser_parameters, mix_parameters, out_num_well, pattern, use_high_low_chip_mantis):
-    print(filename, database)
-
     total_alert = []
     name_machine, min_vol, res_vol, dead_vol = dispenser_parameters
     robot = machine.Machine(name_machine, min_vol, res_vol, dead_vol)
@@ -373,12 +378,16 @@ def run_moclo(path, filename, database, dispenser_parameters, mix_parameters, ou
     # print(count_unique_list)
 
     """Verify the parts on database"""
-    found_list, missing_list = find_samples_database(unique_list, database, db_reader)
-    # print(found_list)
+    found_list, missing_list, alert = find_samples_database(unique_list, database, db_reader)
+
+    if len(alert) > 0:
+        total_alert.append(alert)
+        return total_alert, None, None
 
     if len(missing_list) > 0:
         alert = 'Alert for the missing parts: ' + str(missing_list)
         total_alert.append(alert)
+        return total_alert, None, None
         # print('Alert for the missing parts: ' + str(missing_list))
         # sys.exit(0)
 
