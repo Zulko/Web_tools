@@ -423,17 +423,41 @@ def run_moclo(path, filename, database, dispenser_parameters, mix_parameters, ou
             file.set_mantis_import_header(mantis_csv)
             min_water_vol = get_min_water_vol(out_water)
 
+            # water to add in master mix, enzime
+            mixer_recipe = calc_mixer_volumes(mix_parameters)
+            buffer_vol, rest_enz_vol, lig_enz_vol, total_vol_buffer = mixer_recipe
+
+            chip_mantis = []
+
             if add_water is True:
                 ''' Add water in Master Mix and Remove from Water list'''
                 out_master_mix, out_water = reajust_mixer_water_volumes(out_master_mix, out_water, min_water_vol)
 
-            if use_high_low_chip_mantis is True:
-                file.write_dispenser_mantis_in_low_high_chip(mantis_csv, out_master_mix)
-                file.write_dispenser_mantis_in_low_high_chip(mantis_csv, out_water)
+                '''Master Mix recipe output'''
+                mixer_recipe_title = ["Buffer", "Restriction Enzime", "Ligase Enzime", "Water to Add", "Total Buffer"]
+                min_water_vol = round(min_water_vol,2)
+                total_vol_buffer += min_water_vol
+                mixer_recipe = [round(buffer_vol,2), round(rest_enz_vol,2), round(lig_enz_vol,2), round(min_water_vol,2), round(total_vol_buffer,2)]
 
             else:
-                file.write_dispenser_mantis(mantis_csv, out_master_mix)
-                file.write_dispenser_mantis(mantis_csv, out_water)
+                mixer_recipe_title = ["Buffer", "Restriction Enzime", "Ligase Enzime", "Total Buffer"]
+            mixer_recipe = zip(mixer_recipe, mixer_recipe_title)
+
+            if use_high_low_chip_mantis is True:
+                master_high, master_low = file.write_dispenser_mantis_in_low_high_chip(mantis_csv, out_master_mix)
+                water_high, water_low = file.write_dispenser_mantis_in_low_high_chip(mantis_csv, out_water)
+
+                chip_matis_title = ["Master mix in high chip", "Master mix in low chip", "Water in high chip", "Water in low chip"]
+                chip_matis_vol = [round(master_high,2), round(master_low,2), round(water_high,2), round(water_low,2)]
+                chip_mantis = zip(chip_matis_title, chip_matis_vol)
+
+            else:
+                master_total = file.write_dispenser_mantis(mantis_csv, out_master_mix)
+                water_total = file.write_dispenser_mantis(mantis_csv, out_water)
+
+                chip_matis_title = ["Master mix total volume", "Water total volume"]
+                chip_matis_vol = [round(master_total,2), round(water_total,2)]
+                chip_mantis = zip(chip_matis_title, chip_matis_vol)
 
             ''' Robot Dispenser parts '''
             file.set_echo_header(robot_csv)
@@ -443,4 +467,4 @@ def run_moclo(path, filename, database, dispenser_parameters, mix_parameters, ou
             total_alert.append('Not available samples')
             # sys.exit()
 
-    return total_alert, file_mantis, file_robot
+    return total_alert, file_mantis, file_robot, mixer_recipe, chip_mantis

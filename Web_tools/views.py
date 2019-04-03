@@ -159,7 +159,7 @@ def moclo(request):
             pattern = request.POST['pattern']
 
             ''' Calling Python Script'''
-            alerts, outfile_mantis, outfile_robot = run_moclo(settings.MEDIA_ROOT, name_file, name_db, dispenser_parameters, mix_parameters, int(num_well_destination), int(pattern), mantis_two_chips)
+            alerts, outfile_mantis, outfile_robot, mixer_recipe, chip_mantis = run_moclo(settings.MEDIA_ROOT, name_file, name_db, dispenser_parameters, mix_parameters, int(num_well_destination), int(pattern), mantis_two_chips)
 
             if outfile_mantis is not None:
                 outfile_mantis_name = os.path.basename(outfile_mantis.name)
@@ -169,14 +169,14 @@ def moclo(request):
 
                 return render(request, 'moclo.html', {'uploadfile_name': upload_file, 'upload_db': upload_db, 'url_file': url_file, 'url_db': url_db,
                                                       'outfile_mantis_name': outfile_mantis_name, 'outfile_robot_name': outfile_robot_name,
-                                                      'outfile_mantis_url': outfile_mantis_url, 'outfile_robot_url': outfile_robot_url, 'alerts': alerts})
+                                                      'outfile_mantis_url': outfile_mantis_url, 'outfile_robot_url': outfile_robot_url, 'alerts': alerts, 'mixer_recipe': mixer_recipe, 'chip_mantis': chip_mantis})
             else:
                 return render(request, 'moclo.html',
                               {'uploadfile_name': upload_file, 'upload_db': upload_db, 'url_file': url_file,
                                'url_db': url_db,
                                'outfile_mantis_name': '', 'outfile_robot_name': '',
                                'outfile_mantis_url': '', 'outfile_robot_url': '',
-                               'alerts': alerts})
+                               'alerts': alerts, 'mixer_recipe': '', 'chip_mantis': ''})
 
     return render(request, 'moclo.html')
 

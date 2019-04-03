@@ -254,15 +254,21 @@ def write_dispenser_echo(dispenser_list, fileout):
 
 
 def write_dispenser_mantis(file_mantis, reagents):
+    total_vol = 0
     for part in reagents:
         name = part[0]
         volume = round(float(part[1]), 1)
         well = part[2]
         result = [well,volume,name]
         file_mantis.writerow(result)
+        total_vol += volume
+    return total_vol
 
 
 def write_dispenser_mantis_in_low_high_chip(file_mantis, reagents):
+    total_vol_high = 0
+    total_vol_low = 0
+
     for part in reagents:
         name = part[0]
         volume = round(float(part[1]), 1)
@@ -277,6 +283,10 @@ def write_dispenser_mantis_in_low_high_chip(file_mantis, reagents):
         name_int = name + '_high'
         result1 = [well,vol_dec,name_dec]
         result2 = [well,vol_int,name_int]
+        total_vol_high += vol_int
+        total_vol_low += vol_dec
 
         file_mantis.writerow(result2)
         file_mantis.writerow(result1)
+
+    return total_vol_high, total_vol_low

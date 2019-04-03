@@ -134,6 +134,28 @@
                     Output file: <a href="{{ outfile_robot_url }}" target="_blank" download> <p>{{ outfile_robot_name }}</p> </a>
                 {% endif %}
             </fieldset>
+            <br><br>
+            <fieldset>
+            <legend>Master Mix Recipe </legend>
+                <table>
+                {% for item in mixer_recipe %}
+                    <tr>
+                    <td> {{ item.1 }}: </td><td> {{ item.0 }}ul </td>
+                    </tr>
+                {% endfor %}
+                </table>
+            </fieldset>
+            <br><br>
+            <fieldset>
+            <legend> Mantis Configuration </legend>
+                <table>
+                {% for item in chip_mantis %}
+                    <tr>
+                    <td> {{ item.0 }}: </td><td> {{ item.1 }}ul </td>
+                    </tr>
+                {% endfor %}
+                </table>
+            </fieldset>
             {% endif %}
 
 
