@@ -382,12 +382,12 @@ def run_moclo(path, filename, database, dispenser_parameters, mix_parameters, ou
     if len(alert) > 0:
         print(alert)
         total_alert.append(alert)
-        return total_alert, None, None
+        return total_alert, None, None, None, None
 
     if len(missing_list) > 0:
         alert = 'Alert for the missing parts: ' + str(missing_list)
         total_alert.append(alert)
-        return total_alert, None, None
+        return total_alert, None, None, None, None
         # print('Alert for the missing parts: ' + str(missing_list))
         # sys.exit(0)
 

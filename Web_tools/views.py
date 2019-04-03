@@ -161,7 +161,7 @@ def moclo(request):
             ''' Calling Python Script'''
             alerts, outfile_mantis, outfile_robot, mixer_recipe, chip_mantis = run_moclo(settings.MEDIA_ROOT, name_file, name_db, dispenser_parameters, mix_parameters, int(num_well_destination), int(pattern), mantis_two_chips)
 
-            if outfile_mantis is not None:
+            if mixer_recipe is not None:
                 outfile_mantis_name = os.path.basename(outfile_mantis.name)
                 outfile_robot_name = os.path.basename(outfile_robot.name)
                 outfile_mantis_url = fs.url(outfile_mantis_name)
