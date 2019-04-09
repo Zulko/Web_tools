@@ -19,9 +19,12 @@ def get_localization_vol(part_name, list_source_wells):
     for i in range(0, len(list_source_wells)):
         sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, times_available, vol_part_add, plate_in_name, wellD_name = list_source_wells[i]
         if part_name == sample_name and times_available > 0:
+            # print(list_source_wells[i])
             new_times_available = times_available - 1
             list_source_wells[i] = sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, new_times_available, vol_part_add, plate_in_name, wellD_name
             return list_source_wells, list_source_wells[i]
+        elif part_name == sample_name and times_available == 0:
+            print(part_name, times_available)
 
 
 def populate_destination_plates(plates_out, list_destination_plate, list_source_wells, mix_parameters, pattern):
@@ -38,6 +41,7 @@ def populate_destination_plates(plates_out, list_destination_plate, list_source_
                 i, j = plateD.get_empty_well_by_col()
             total_parts_vol = 0
             for part in set:
+                # print(part, set)
                 list_source_wells, part = get_localization_vol(part, list_source_wells)
                 sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, new_times_available, vol_part_add, source_plate, source_well = part
                 final_conc = calc.fmol_by_parttype(sample_type, bb_fmol, part_fmol)
@@ -253,6 +257,34 @@ def get_count_unique_list(unique_list, lists_parts):
     return count_unique_list
 
 
+def get_total_times_available_part(part_name, vol_for_part, robot):
+    tot_times_available = 0
+    tot_available_vol = 0
+    part_info = []
+    result = []
+    for part in vol_for_part:
+        sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, vol_part_add, plate_in_name, wellD_name = part
+
+        if part_name == sample_name:
+            # Calculate how many 'vol_part_add' have in the total volume in one well
+            available_vol = float(sample_volume) - robot.dead_vol
+
+            tot_available_vol += available_vol
+            # total times per well
+            times_available = int(available_vol / vol_part_add)
+
+            # total times in all database
+            tot_times_available += times_available
+
+            part_info.append([sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, times_available, vol_part_add, plate_in_name, wellD_name])
+
+            if times_needed <= tot_times_available:
+                result = part_info
+                return result, tot_available_vol
+
+    return None, tot_available_vol
+
+
 def verify_samples_volume(vol_for_part, count_unique_list, robot):
     '''Volume needed of parts for the experiment'''
     list_source_wells = []
@@ -260,41 +292,34 @@ def verify_samples_volume(vol_for_part, count_unique_list, robot):
     alert = []
 
     for pair in count_unique_list:
-        found = False
-        tot_times = 0
-        part_info = []
         part_name = pair[0]
         times_needed = pair[1]  # Number of times it appears in experiment
-        for part in vol_for_part:
-            sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, vol_part_add, plate_in_name, wellD_name = part
-            if part_name == sample_name:
-                #Calculate how many 'vol_part_add' have in the total volume in one well
-                available_vol = float(sample_volume) - robot.dead_vol
-                #total times per well
-                times_available = int(available_vol/vol_part_add)
-                #total times in all database
-                tot_times += times_available
-                part_info.append(part)
 
-                if times_needed <= times_available:
-                    list_source_wells.append([sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, times_available, vol_part_add, plate_in_name, wellD_name])
-                    break
+        parts_availables, tot_available_vol = get_total_times_available_part(part_name, vol_for_part, robot)
 
-        if tot_times >= times_needed:
-            for part in part_info:
-                sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, vol_part_add, plate_in_name, wellD_name = part
-                # Calculate how many 'vol_part_add' have in the total volume in one well
-                available_vol = float(sample_volume) - robot.dead_vol
-                # total times per well
-                times_available = int(available_vol / vol_part_add)
-                list_source_wells.append([sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, times_available, vol_part_add, plate_in_name, wellD_name])
+        if parts_availables is not None:
+            for part in parts_availables:
+                list_source_wells.append(part)
         else:
-            for part in part_info:
-                sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, vol_part_add, plate_in_name, wellD_name = part
-                total_vol_part = times_needed*vol_part_add
-                # print('Not enough volume for sample: ' + str(part_name) + ' available: ' + str(sample_volume) + " need: " + str(total_vol_part))
-                alert.append(str(part_name) + ' available: ' + str(round(sample_volume,3)) + "ul need: " + str(round(sample_volume,3)) + 'ul + ' + str(robot.dead_vol) + 'ul')
-                list_part_low_vol.append([sample_name, total_vol_part])
+            list_part_low_vol.append([part_name, tot_available_vol])
+            alert.append(str(part_name) + ' not enough volume available [' + str(tot_available_vol) + 'ul]')
+
+        # if tot_times >= times_needed:
+        #     for part in part_info:
+        #         sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, vol_part_add, plate_in_name, wellD_name = part
+        #         # Calculate how many 'vol_part_add' have in the total volume in one well
+        #         available_vol = float(sample_volume) - robot.dead_vol
+        #         # total times per well
+        #         times_available = int(available_vol / vol_part_add)
+        #         list_source_wells.append([sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, times_available, vol_part_add, plate_in_name, wellD_name])
+        # else:
+        #     for part in part_info:
+        #         sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, vol_part_add, plate_in_name, wellD_name = part
+        #         total_vol_part = times_needed*vol_part_add
+        #         # print('Not enough volume for sample: ' + str(part_name) + ' available: ' + str(sample_volume) + " need: " + str(total_vol_part))
+        #         alert.append(str(part_name) + ' available: ' + str(round(sample_volume,3)) + "ul need: " + str(round(sample_volume,3)) + 'ul + ' + str(robot.dead_vol) + 'ul')
+        #         list_part_low_vol.append([sample_name, total_vol_part])
+        #         print(list_part_low_vol)
     return list_source_wells, list_part_low_vol, alert
 
 
@@ -348,6 +373,8 @@ def create_and_populate_sources_plate(db_reader, database):
 
 def run_moclo(path, filename, database, dispenser_parameters, mix_parameters, out_num_well, pattern, use_high_low_chip_mantis):
     total_alert = []
+    mixer_recipe_zip = 0
+    chip_mantis_zip = 0
     name_machine, min_vol, res_vol, dead_vol = dispenser_parameters
     robot = machine.Machine(name_machine, min_vol, res_vol, dead_vol)
     part_fmol, bb_fmol, total_vol, per_buffer, per_rest_enz, per_lig_enz, add_water = mix_parameters
@@ -438,10 +465,11 @@ def run_moclo(path, filename, database, dispenser_parameters, mix_parameters, ou
                 min_water_vol = round(min_water_vol,2)
                 total_vol_buffer += min_water_vol
                 mixer_recipe = [round(buffer_vol,2), round(rest_enz_vol,2), round(lig_enz_vol,2), round(min_water_vol,2), round(total_vol_buffer,2)]
+                mixer_recipe_zip = zip(mixer_recipe, mixer_recipe_title)
 
             else:
                 mixer_recipe_title = ["Buffer", "Restriction Enzime", "Ligase Enzime", "Total Buffer"]
-            mixer_recipe = zip(mixer_recipe, mixer_recipe_title)
+                mixer_recipe_zip = zip(mixer_recipe, mixer_recipe_title)
 
             if use_high_low_chip_mantis is True:
                 master_high, master_low = file.write_dispenser_mantis_in_low_high_chip(mantis_csv, out_master_mix)
@@ -449,7 +477,7 @@ def run_moclo(path, filename, database, dispenser_parameters, mix_parameters, ou
 
                 chip_matis_title = ["Master mix in high chip", "Master mix in low chip", "Water in high chip", "Water in low chip"]
                 chip_matis_vol = [round(master_high,2), round(master_low,2), round(water_high,2), round(water_low,2)]
-                chip_mantis = zip(chip_matis_title, chip_matis_vol)
+                chip_mantis_zip = zip(chip_matis_title, chip_matis_vol)
 
             else:
                 master_total = file.write_dispenser_mantis(mantis_csv, out_master_mix)
@@ -457,7 +485,7 @@ def run_moclo(path, filename, database, dispenser_parameters, mix_parameters, ou
 
                 chip_matis_title = ["Master mix total volume", "Water total volume"]
                 chip_matis_vol = [round(master_total,2), round(water_total,2)]
-                chip_mantis = zip(chip_matis_title, chip_matis_vol)
+                chip_mantis_zip = zip(chip_matis_title, chip_matis_vol)
 
             ''' Robot Dispenser parts '''
             file.set_echo_header(robot_csv)
@@ -467,4 +495,4 @@ def run_moclo(path, filename, database, dispenser_parameters, mix_parameters, ou
             total_alert.append('Not available samples')
             # sys.exit()
 
-    return total_alert, file_mantis, file_robot, mixer_recipe, chip_mantis
+    return total_alert, file_mantis, file_robot, mixer_recipe_zip, chip_mantis_zip
