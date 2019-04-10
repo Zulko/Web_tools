@@ -304,22 +304,6 @@ def verify_samples_volume(vol_for_part, count_unique_list, robot):
             list_part_low_vol.append([part_name, tot_available_vol])
             alert.append(str(part_name) + ' not enough volume available [' + str(tot_available_vol) + 'ul]')
 
-        # if tot_times >= times_needed:
-        #     for part in part_info:
-        #         sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, vol_part_add, plate_in_name, wellD_name = part
-        #         # Calculate how many 'vol_part_add' have in the total volume in one well
-        #         available_vol = float(sample_volume) - robot.dead_vol
-        #         # total times per well
-        #         times_available = int(available_vol / vol_part_add)
-        #         list_source_wells.append([sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, times_available, vol_part_add, plate_in_name, wellD_name])
-        # else:
-        #     for part in part_info:
-        #         sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, vol_part_add, plate_in_name, wellD_name = part
-        #         total_vol_part = times_needed*vol_part_add
-        #         # print('Not enough volume for sample: ' + str(part_name) + ' available: ' + str(sample_volume) + " need: " + str(total_vol_part))
-        #         alert.append(str(part_name) + ' available: ' + str(round(sample_volume,3)) + "ul need: " + str(round(sample_volume,3)) + 'ul + ' + str(robot.dead_vol) + 'ul')
-        #         list_part_low_vol.append([sample_name, total_vol_part])
-        #         print(list_part_low_vol)
     return list_source_wells, list_part_low_vol, alert
 
 

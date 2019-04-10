@@ -65,8 +65,11 @@ def normalization(request):
             if outfile is not None:
                 outfile_name = os.path.basename(outfile.name)
                 outfile_url = fs.url(outfile_name)
-                print(alert)
                 return render(request, 'normalization.html', {'uploadfile_name': upload.name, 'url': url, 'outfile_name': outfile_name,'outfile_url': outfile_url, 'alert':alert})
+            else:
+                return render(request, 'normalization.html',
+                              {'uploadfile_name': upload.name, 'url': url, 'outfile_name': '',
+                               'outfile_url': '', 'alert': alert})
     return render(request, 'normalization.html', {'uploadfile_name': '', 'url': '', 'outfile_name': '','outfile_url': '', 'alert':''})
 
 

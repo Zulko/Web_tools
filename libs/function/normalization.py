@@ -43,7 +43,7 @@ def calc_normalization_from_plate(sample, plate_in, plate_water, i, j, bb_fmol, 
     :param j: integer
     :return: list r_norm = [part, plate_name, well_name, fmol, vol_sample, vol_water, message]
     """
-    fmol, final_concent = calc.fmol(sample.type, sample.get_length(), sample.get_concentration(), bb_fmol, part_fmol)
+    fmol, final_concent = calc.fmol(sample.type, sample.get_length(), bb_fmol, part_fmol)
     dilut_factor = calc.dilution_factor(fmol, sample.get_concentration())
 
     '''Verify the total sample volume available'''
@@ -102,7 +102,11 @@ def populate_plates_sample(plates_in, filein):
     """
     file.get_header(filein)
     for line in filein:
-        samp_name, samp_type, samp_len, samp_conc, volume, plate_name, plate_well = line
+        if len(line) == 7:
+            samp_name, samp_type, samp_len, samp_conc, volume, plate_name, plate_well = line
+        else:
+            samp_name, samp_type, samp_len, samp_conc, volume, plate_name, plate_well, num_plate_wells = line
+
         for i in range(0, len(plates_in)):
             if plates_in[i].name == plate_name:
                 row, col = calc.wellname_to_coordinates(plate_well)
@@ -174,6 +178,7 @@ def create_source_plates(filein, in_well):
     :param in_well: integer number of wells
     :return: list of Plates
     """
+    alert = ''
     file.get_header(filein)
     plates_in = []
     for line in filein:
@@ -189,9 +194,11 @@ def create_source_plates(filein, in_well):
                             found = True
                     if found is False:
                         plates_in.append(create_plate(in_well, plate_name))
+
         except ValueError:
-            sys.exit(0)
-    return plates_in
+            alert = 'Input file with wrong number of columns'
+            return None, alert
+    return plates_in, alert
 
 
 def create_water_plates(plates_in, in_well):
@@ -222,14 +229,19 @@ def run_normalization(path, filename, in_well, out_well, bb_fmol, part_fmol):
     :param in_well: number of well of input plate
     :param out_well: number of well of output plate
     """
+    alert = []
+
     filein = file.verify(path+"/"+filename)
-    reader_csv = file.create_reader_CSV(filein)
+    reader_csv = file.create_reader_csv(filein)
     fileout = file.create(path+"/"+'dilution_' + str(filename), 'w')
-    writer_csv = file.create_writer_CSV(fileout)
+    writer_csv = file.create_writer_csv(fileout)
     file.set_normal_header(writer_csv)
 
     """Create a platemap"""
-    plates_in = create_source_plates(reader_csv, in_well)
+    plates_in, alert_plate = create_source_plates(reader_csv, in_well)
+    if len(alert_plate) > 0:
+        alert.append(alert_plate)
+        return None, alert
     plates_water = create_water_plates(plates_in, in_well)
     plates_out = create_destination_plates(plates_in, in_well, out_well)
 
