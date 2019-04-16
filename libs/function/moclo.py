@@ -226,7 +226,7 @@ def reajust_mixer_water_volumes(out_master_mix, out_water, min_water_vol):
 
     for item in out_master_mix:
         name, vol, well = item
-        new_name = name+'+water'
+        new_name = 'MocloMM'
         new_vol = vol + min_water_vol
         reaj_out_master_mix.append([new_name,new_vol,well])
 
