@@ -18,8 +18,8 @@ class Machine:
 
     def __init__(self, name, min_vol, res_vol, dead_vol):
         self.name = name
-        self.min_vol = min_vol
-        self.res_vol = res_vol
+        self.min_vol = min_vol*1e-3
+        self.res_vol = res_vol*1e-3
         self.dead_vol = dead_vol
 
     def set_name(self, name):
