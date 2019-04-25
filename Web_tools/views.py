@@ -4,7 +4,7 @@ from libs.function.spotting import run_spotting
 from libs.function.normalization import run_normalization
 from libs.function.fasta2primer3 import run_primer
 from libs.function.combinatorial import run_combination
-from libs.function.moclo2 import run_moclo
+from libs.function.moclo import run_moclo
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.decorators import login_required

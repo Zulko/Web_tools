@@ -11,9 +11,9 @@ import re, math
 def fmol_by_parttype(samp_type, bb_fmol, part_fmol):
 
     if '8' in samp_type or '7' in samp_type:
-        return bb_fmol
+        return float(bb_fmol)
     else:
-        return part_fmol
+        return float(part_fmol)
 
 
 def fmol(samp_type, length, bb_fmol, part_fmol):
