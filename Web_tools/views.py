@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+from django.http import HttpRequest
 from django.shortcuts import render
 from libs.function.spotting import run_spotting
 from libs.function.normalization import run_normalization
@@ -14,7 +15,7 @@ import os
 # TODO: Automatically remove files from media
 # @login_required(login_url="/accounts/login/")
 def home(request):
-    return render(request, 'home.html')
+    return render(request, 'home.html', {'domain': HttpRequest.get_host(request)})
 
 
 # @login_required(login_url="/accounts/login/")
