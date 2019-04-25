@@ -429,7 +429,8 @@ def run_moclo(path, filename, database, dispenser_parameters, mix_parameters, ou
         """Verify parts volume in source plate"""
         # list_source_wells, list_part_low_vol = verify_samples_volume(vol_for_part, found_list, robot)
         list_source_wells, list_part_low_vol, alert = verify_samples_volume_2(vol_for_part, count_unique_list, robot)
-        total_alert.append(alert)
+        if len(alert) > 0:
+            total_alert.append(alert)
 
         """Create entry list for destination plates"""
         list_destination_plate = create_entry_list_for_destination_plate(lists_parts, list_part_low_vol)
