@@ -74,8 +74,8 @@ def populate_destination_plates(plates_out, list_destination_plate, list_source_
             out_water.append(['water', vol_water, plates_out[p].wells[i][j].name])
 
             ''' Add receipts in destination plate '''
-            plates_out[p].wells[i][j].samples.append(plate.Sample('master_mix', None, None, None, total_vol_buffer))
-            plates_out[p].wells[i][j].samples.append(plate.Sample('water', None, None, None, vol_water))
+            plates_out[p].wells[i][j].samples.append(plate.Sample('Mastermix_Moclo', None, None, None, total_vol_buffer))
+            plates_out[p].wells[i][j].samples.append(plate.Sample('Water', None, None, None, vol_water))
         else:
             alert.append('In constructor: ' + str(set) + '. The water volume is negative.')
 
@@ -233,7 +233,8 @@ def reajust_mixer_water_volumes(out_master_mix, out_water, min_water_vol):
 
     for item in out_master_mix:
         name, vol, well = item
-        new_name = name+'+water'
+        # new_name = name+'+water'
+        new_name = 'Mastermix_Moclo'
         new_vol = vol + min_water_vol
         reaj_out_master_mix.append([new_name,new_vol,well])
     return reaj_out_master_mix, reaj_out_water
@@ -427,7 +428,7 @@ def run_moclo(path, filename, database, dispenser_parameters, mix_parameters, ou
                 out_master_mix, out_water = reajust_mixer_water_volumes(out_master_mix, out_water, min_water_vol)
 
                 '''Master Mix recipe output'''
-                mixer_recipe_title = ["Buffer", "Restriction Enzime", "Ligase Enzime", "Water to Add", "Total Buffer"]
+                mixer_recipe_title = ["Buffer", "Restriction Enzyme:", "Ligase Enzyme:", "Water:", "Master Mix:"]
                 min_water_vol = round(min_water_vol, 2)
                 total_vol_buffer += min_water_vol
                 mixer_recipe = [round(buffer_vol, 2), round(rest_enz_vol, 2), round(lig_enz_vol, 2),
