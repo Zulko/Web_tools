@@ -263,37 +263,7 @@ def get_count_unique_list(unique_list, lists_parts):
     return count_unique_list
 
 
-# def verify_samples_volume(vol_for_part, found_list, robot):
-#     '''Volume needed of parts for the experiment'''
-#     list_source_wells = []
-#     list_part_low_vol = []
-#     for part in vol_for_part:
-#         # print(part)
-#         sample_name, sample_type, sample_length, sample_concentration, sample_volume, count, vol_part_add, plate_in_name, wellD_name = part
-#         total_vol_part = count * vol_part_add
-#         '''Volume available of parts in database'''
-#         found = False
-#         available_vol = 0
-#         for part_f in found_list:
-#             # print(found_list)
-#             name_part_f, part_type, part_length, part_conc, part_vol, source_plate, source_well, num_well = part_f
-#             # print(part_f, part_vol, source_well)
-#             if name_part_f == sample_name:
-#                 """ Verifies if the total amount of volume minus the dead volume is enough"""
-#                 available_vol = float(sample_volume) - robot.dead_vol
-#                 # print(name_part_f, available_vol, total_vol_part, vol_part_add, float(sample_volume), robot.dead_vol)
-#                 if available_vol > total_vol_part:
-#                     # print(name_part_f, available_vol, total_vol_part, float(part_vol), robot.dead_vol)
-#                     found = True
-#                     list_source_wells.append(part)
-#                     break
-#         if found is False:
-#             # print('Not enough volume for sample: ' + str(sample_name))
-#             list_part_low_vol.append([sample_name, total_vol_part])
-#     return list_source_wells, list_part_low_vol
-
-
-def verify_samples_volume_2(vol_for_part, count_unique_list, robot):
+def verify_samples_volume(vol_for_part, count_unique_list, robot):
     alert = []
     '''Volume needed of parts for the experiment'''
     list_source_wells = []
@@ -330,8 +300,8 @@ def verify_samples_volume_2(vol_for_part, count_unique_list, robot):
             for part in part_info:
                 sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, vol_part_add, plate_in_name, wellD_name = part
                 total_vol_part = times_needed*vol_part_add
-                print('Not enough volume for sample: ' + str(part_name) + ' available: ' + str(sample_volume) + " need: " + str(total_vol_part))
-                alert.append('Not enough volume for sample: ' + str(part_name) + ' available: ' + str(sample_volume) + " need: " + str(total_vol_part))
+                # print('Not enough volume for sample: ' + str(part_name) + ' available: ' + str(sample_volume) + " need: " + str(round(total_vol_part,2)))
+                alert.append(['Not enough volume for sample: ' + str(part_name) + ' available: ' + str(sample_volume) + " need: " + str(round(total_vol_part,2))])
                 list_part_low_vol.append([sample_name, total_vol_part])
 
     return list_source_wells, list_part_low_vol, alert
@@ -413,9 +383,8 @@ def run_moclo(path, filename, database, dispenser_parameters, mix_parameters, ou
     # print(found_list)
 
     if len(missing_list) > 0:
-        alert = 'Alert for the missing parts: ' + str(missing_list)
-        total_alert.append(alert)
-        # print('Alert for the missing parts: ' + str(missing_list))
+        for item in missing_list:
+            total_alert.append('Alert for the missing parts: ' + str(item))
         return total_alert, None, None, None, None
 
     else:
@@ -427,10 +396,10 @@ def run_moclo(path, filename, database, dispenser_parameters, mix_parameters, ou
         # print(vol_for_part)
 
         """Verify parts volume in source plate"""
-        # list_source_wells, list_part_low_vol = verify_samples_volume(vol_for_part, found_list, robot)
-        list_source_wells, list_part_low_vol, alert = verify_samples_volume_2(vol_for_part, count_unique_list, robot)
+        list_source_wells, list_part_low_vol, alert = verify_samples_volume(vol_for_part, count_unique_list, robot)
         if len(alert) > 0:
-            total_alert.append(alert)
+            for item in alert:
+                total_alert.append(item)
 
         """Create entry list for destination plates"""
         list_destination_plate = create_entry_list_for_destination_plate(lists_parts, list_part_low_vol)
@@ -492,9 +461,7 @@ def run_moclo(path, filename, database, dispenser_parameters, mix_parameters, ou
             file.write_dispenser_echo(out_dispenser, robot_csv)
 
         else:
-            # total_alert.append('Not available samples')
             return total_alert, None, None, None, None
             # sys.exit()
 
-    # print(alert, file_mantis.name, file_robot.name)
     return total_alert, file_mantis, file_robot, mixer_recipe_zip, chip_mantis_zip

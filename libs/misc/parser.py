@@ -55,5 +55,5 @@ def csv_to_source_plates(filein, plates):
             if plates[i].name == plate_name:
                 row, col = calc.wellname_to_coordinates(plate_well)
                 plates[i].wells[row][col].samples.append(
-                    plate.Sample(samp_name, type, samp_len, samp_conc, int(volume)))
+                    plate.Sample(samp_name, type, samp_len, samp_conc, volume))
     return plates

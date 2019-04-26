@@ -145,7 +145,7 @@ def moclo(request):
             min_vol = request.POST['min_vol']
             vol_resol = request.POST['vol_resol']
             dead_vol = request.POST['dead_vol']
-            dispenser_parameters = machine, float(min_vol) * 1e-9, float(vol_resol) * 1e-9, float(dead_vol)
+            dispenser_parameters = machine, float(min_vol) * 1e-3, float(vol_resol) * 1e-3, float(dead_vol)
 
             """Mixer parameters"""
             part_fmol = request.POST['part_fmol']
