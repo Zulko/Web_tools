@@ -1,0 +1,62 @@
+{% extends 'base_layout.html' %}
+
+{% block content %}
+
+
+    <div class="row">
+      <div class="column side">
+          <h2>List of Plates</h2><br>
+            {% if all_plates %}
+            <nav>
+                <ul>
+                    {% for plate in all_plates %}
+                        <h3><a href={{ plate.id }}> {{ plate.id }}: {{ plate.name }}</a></h3><br>
+                    {% endfor %}
+                </ul>
+            </nav>
+            {% else %}
+                <h3> No plates in database </h3>
+            {% endif %}
+
+      </div>
+
+      <div class="column middle">
+        <div class="row">
+            <h2>{{ plate }}</h2> <br>
+            <table>
+                <tr>
+                    <th></th>
+                    {% for colname in colnames %}
+                        <th> {{ colname }}</th>
+                    {% endfor %}
+                </tr>
+                {% for rowname, row in layout %}
+                    <tr>
+                    <th> {{ rowname }}</th>
+                    {% for col in row %}
+                        {% for well in wells %}
+                            {% if col == well.name %}
+                                <td>
+                                    <div class="circle_full"> {{ col }} </div>
+                                </td>
+                            {% else %}
+                                <td>
+                                    <div class="circle_empty"> {{ col }} </div>
+                                </td>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                 </tr>
+                {% endfor %}
+            </table>
+        </div>
+      </div>
+
+      <div class="column side">
+{#        <h2>List of Samples</h2>#}
+      </div>
+    </div>
+
+
+
+{% endblock%}

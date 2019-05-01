@@ -81,6 +81,10 @@ a, a:hover, a:visited{
   background: #ccc;
 }
 
+nav ul{height:500px; width:80%;}
+nav ul{overflow:hidden; overflow-y:scroll;}
+
+
 /* Clear floats after the columns */
 .row:after {
   content: "";
@@ -90,17 +94,17 @@ a, a:hover, a:visited{
 
 .column {
   float: left;
-  padding: 50px 100px 50px 30px;
+  padding: 50px 50px 50px 30px;
 }
 
 /* Left and right column */
 .column.side {
-  width: 25%;
+  width: 20%;
 }
 
 /* Middle column */
 .column.middle {
-  width: 50%;
+  width: 60%;
 }
 
 table {
@@ -273,4 +277,28 @@ input::-moz-focus-inner {
 button::-moz-focus-inner {
     border:0;
     padding:0;
+}
+
+.circle_full {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  border: 1px solid;
+  font-size: 12px;
+  color: white;
+  line-height: 25px;
+  text-align: center;
+  background: #004185;
+}
+
+.circle_empty {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  border: 1px solid;
+  font-size: 12px;
+  color: black;
+  line-height: 25px;
+  text-align: center;
+  background: transparent;
 }

@@ -8,5 +8,6 @@ urlpatterns = [
     path('', views.index, name='index'),
 
     # /db/
-    path('(<int:plate_id>/', views.plate, name='plate'),
+    path('<int:plate_id>', views.plate, name='plate'),
+    # path('<int:album_id>', views.detail)
 ]
