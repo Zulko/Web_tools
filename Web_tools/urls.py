@@ -31,7 +31,8 @@ urlpatterns = [
     path('primer/',views.primer, name='primer'),
     path('combinatorial/',views.combinatorial, name='combinatorial'),
     path('moclo/', views.moclo, name='moclo'),
-    path('accounts/', include('accounts.urls'))
+    path('accounts/', include('accounts.urls')),
+    path('db/', include('db.urls'))
 ]
 
 urlpatterns += staticfiles_urlpatterns()
