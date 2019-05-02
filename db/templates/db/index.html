@@ -10,7 +10,7 @@
             <nav>
                 <ul>
                     {% for plate in all_plates %}
-                        <h3><a href={{ plate.id }}> {{ plate.id }}: {{ plate.name }}</a></h3><br>
+                        <h3><a href="{% url 'db:plate' plate.id %}"> {{ plate.id }}: {{ plate.name }}</a></h3><br>
                     {% endfor %}
                 </ul>
             </nav>
@@ -21,7 +21,7 @@
       </div>
 
       <div class="column middle">
-        <div class="row">
+        {% if plate %}
             <h2>{{ plate }}</h2> <br>
             <table>
                 <tr>
@@ -37,7 +37,7 @@
                         {% for well in wells %}
                             {% if col == well.name %}
                                 <td>
-                                    <div class="circle_full"> {{ col }} </div>
+                                    <div class="circle_full"> <a href="{% url 'db:well' plate.id well.id %}"> {{ well.name }} </a> </div>
                                 </td>
                             {% else %}
                                 <td>
@@ -49,12 +49,27 @@
                  </tr>
                 {% endfor %}
             </table>
-        </div>
+        {% endif %}
       </div>
 
       <div class="column side">
-{#        <h2>List of Samples</h2>#}
+          {% if well %}
+
+            <h2>List of Samples</h2><br>
+            <nav>
+                <ul>
+                    {{ well.name }}
+                    {{ well.concentration}}
+{#                    {{ all_samples }}#}
+{#                    {% for sample in well.samples %}#}
+{#                        <li>{{ sample }}</li>#}
+{#                    {% endfor %}#}
+
+                </ul>
+            </nav>
+            {% endif %}
       </div>
+
     </div>
 
 

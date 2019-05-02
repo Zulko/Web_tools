@@ -14,14 +14,21 @@
 </div>
 
 <div class="topnav">
-  <a href="/">Home</a>
-  <a href="/spotting/">Spotting</a>
-  <a href="/normalization/">Normalization</a>
-  <a href="/combinatorial/">Combinatorial</a>
-  <a href="/primer/">Primer</a>
-  <a href="/moclo/">MoClo</a>
-  <a href="{% url 'db:index' %}">Database</a>
-  <a href="/about/">About</a>
+    <a href="/">Home</a>
+    <div class="dropdown">
+        <button class="dropbtn">Scripts
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-content">
+            <a href="/spotting/">Spotting</a>
+            <a href="/normalization/">Normalization</a>
+            <a href="/combinatorial/">Combinatorial</a>
+            <a href="/primer/">Primer</a>
+            <a href="/moclo/">MoClo</a>
+        </div>
+    </div>
+    <a href="{% url 'db:index' %}">Database</a>
+    <a href="/about/">About</a>
 
   <div class="login-container">
     <form action="{% url 'accounts:logout' %}" method="post">

@@ -14,7 +14,7 @@
 }
 
 .header .text {
-  padding: 50px;
+  padding: 10px;
   text-align: center;
   margin: auto;
   position: absolute;
@@ -34,7 +34,7 @@ body{
 
 h1, h2, h3, h4, h5, th{
     font-weight: normal;
-    margin: 0;
+    padding: 0px;
 }
 
 a, a:hover, a:visited{
@@ -81,6 +81,60 @@ a, a:hover, a:visited{
   background: #ccc;
 }
 
+/* The dropdown container */
+.dropdown {
+  float: left;
+  overflow: hidden;
+}
+
+/* Dropdown button */
+.dropdown .dropbtn {
+  font-size: 16px;
+  border: none;
+  outline: none;
+  color: white;
+  padding: 14px 16px;
+  background-color: inherit;
+  font-family: inherit; /* Important for vertical align on mobile phones */
+  margin: 0; /* Important for vertical align on mobile phones */
+}
+
+.dropdown .dropbtn:hover {
+  background: #ccc;
+  color: black;
+}
+
+/* Dropdown content (hidden by default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #333;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+  float: none;
+  color: white;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+/* Add a grey background color to dropdown links on hover */
+.dropdown-content a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
 nav ul{height:500px; width:80%;}
 nav ul{overflow:hidden; overflow-y:scroll;}
 
@@ -94,17 +148,23 @@ nav ul{overflow:hidden; overflow-y:scroll;}
 
 .column {
   float: left;
-  padding: 50px 50px 50px 30px;
+  padding: 50px 0px 50px 0px;
 }
 
 /* Left and right column */
 .column.side {
-  width: 20%;
+  width: 25%;
 }
+
+.column.side h1, h2, h3, h4, h5, th{
+    font-weight: normal;
+    margin: 0px 30px 00px 30px;
+}
+
 
 /* Middle column */
 .column.middle {
-  width: 60%;
+  width: 50%;
 }
 
 table {
@@ -130,11 +190,15 @@ th, td {
   text-align:center;
   width: 150px;
   height: 150px;
+  padding: 10px 50px 50px 10px;
 }
 
 .card img {
   width: 100%;
   height: auto;
+  margin-left: auto;
+  margin-right: auto;
+
 }
 
 .bigcard {
@@ -201,7 +265,7 @@ img:hover {
 @media screen and (max-width: 400px) {
   .header, .column.side, .column.middle .footer{
     width: 100%;
-    height: 100%;
+    /*height: 100%;*/
   }
 }
 
@@ -285,10 +349,18 @@ button::-moz-focus-inner {
   border-radius: 50%;
   border: 1px solid;
   font-size: 12px;
-  color: white;
+  color: black;
   line-height: 25px;
   text-align: center;
   background: #004185;
+}
+
+.circle_full a{
+  color: white;
+}
+
+.circle_full a:hover{
+  color: yellow;
 }
 
 .circle_empty {

@@ -1,13 +1,11 @@
 from django.urls import path
 from . import views
 
+
 app_name = 'db'
 
 urlpatterns = [
-    # /db/
-    path('', views.index, name='index'),
-
-    # /db/
-    path('<int:plate_id>', views.plate, name='plate'),
-    # path('<int:album_id>', views.detail)
+    path('', views.index, name='index',),
+    path('<int:plate_id>/', views.plate, name='plate'),
+    path('<int:plate_id>/<int:well_id>', views.well, name='well'),
 ]
