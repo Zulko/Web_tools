@@ -6,6 +6,6 @@ app_name = 'db'
 
 urlpatterns = [
     path('', views.index, name='index',),
-    path('<int:plate_id>/', views.plate, name='plate'),
-    path('<int:plate_id>/<int:well_id>', views.well, name='well'),
+    path('plate<int:plate_id>/', views.plate, name='plate'),
+    path('plate<int:plate_id>/<int:well_id>', views.well, name='well'),
 ]

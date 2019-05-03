@@ -55,15 +55,17 @@
       <div class="column side">
           {% if well %}
 
-            <h2>List of Samples</h2><br>
+            <h2>List of Samples in: <bold>{{ well.name }}</bold> </h2><br>
             <nav>
                 <ul>
-                    {{ well.name }}
-                    {{ well.concentration}}
-{#                    {{ all_samples }}#}
-{#                    {% for sample in well.samples %}#}
-{#                        <li>{{ sample }}</li>#}
-{#                    {% endfor %}#}
+
+                    {% for sample in well.samples.all %}
+                        <h3><a href="{% url 'db:well' plate.id well.id %}"> {{ sample.id }}: {{ sample.name }}</a></h3><br>
+{#                        <h3> {{ sample.id }}: {{ sample.name }}</h3><br>#}
+                    {% endfor %}
+                    <h3>Volume: {{ well.volume }}</h3><br>
+                    <h3>Concentration: {{ well.concentration}}</h3><br>
+
 
                 </ul>
             </nav>
