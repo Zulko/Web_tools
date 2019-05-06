@@ -37,10 +37,12 @@
                         {% for well in wells %}
                             {% if col == well.name %}
                                 <td>
+{#                                    <a href="{% url 'db:well' plate.id well.id %}"> {{ well.name }} </a>#}
                                     <div class="circle_full"> <a href="{% url 'db:well' plate.id well.id %}"> {{ well.name }} </a> </div>
                                 </td>
                             {% else %}
                                 <td>
+{#                                    {{ col }}#}
                                     <div class="circle_empty"> {{ col }} </div>
                                 </td>
                             {% endif %}
@@ -49,7 +51,26 @@
                  </tr>
                 {% endfor %}
             </table>
+
+{#            <div class="footer">#}
+{#                <div class="pagination">#}
+{#                  <a href="#">&laquo;</a>#}
+{#                  <a href="#">Well </a>#}
+{#                  <a href="#">Sample</a>#}
+{#                  <a href="#">Volume</a>#}
+{#                  <a href="#">Concentration</a>#}
+{#                  <a href="#">&raquo;</a>#}
+{#                </div>#}
+{#            </div>#}
+
+
+
+
+
+
+
         {% endif %}
+
       </div>
 
       <div class="column side">

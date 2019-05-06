@@ -32,9 +32,21 @@ body{
   font-family: Ubuntu;
 }
 
-h1, h2, h3, h4, h5, th{
+
+h1, h2, h3, h4, h5 {
     font-weight: normal;
     padding: 0px;
+}
+
+.textbreak {
+    word-wrap: break-word;      /* IE 5.5-7 */
+    white-space: -moz-pre-wrap; /* Firefox 1.0-2.0 */
+    white-space: pre-wrap;      /* current browsers */
+}
+
+.textbreak .div{
+    width: 40px;
+    margin-bottom: 16px
 }
 
 a, a:hover, a:visited{
@@ -156,9 +168,9 @@ nav ul{overflow:hidden; overflow-y:scroll;}
   width: 25%;
 }
 
-.column.side h1, h2, h3, h4, h5, th{
+.column.side h1, h2, h3, h4, h5, th, p{
     font-weight: normal;
-    margin: 0px 30px 00px 30px;
+    margin: 5px 30px 00px 30px;
 }
 
 
@@ -170,11 +182,21 @@ nav ul{overflow:hidden; overflow-y:scroll;}
 table {
   border-collapse: collapse;
   width: 100%;
+  margin-left: 30px;
+  alignment: center;
 }
 
-th, td {
+th {
   padding: 8px;
-  text-align: left;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+  font-weight: bold;
+
+}
+
+td {
+  padding: 8px;
+  text-align: center;
   border-bottom: 1px solid #ddd;
 }
 
@@ -373,4 +395,15 @@ button::-moz-focus-inner {
   line-height: 25px;
   text-align: center;
   background: transparent;
+}
+
+.pagination {
+  display: inline-block;
+}
+
+.pagination a {
+  color: black;
+  float: left;
+  padding: 8px 16px;
+  text-decoration: none;
 }

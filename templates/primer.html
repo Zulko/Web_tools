@@ -41,53 +41,38 @@
 
       <div class="column middle">
         <h2>Primer Script</h2>
-        <p> Example of an input fasta file (<a href="{% static 'docs/seq.fasta' %}" target="_blank" download><strong> Example file.fasta </strong></a>)</p>
-        <p> Script uses Primer3 package to create the forward and reverse primers. </p>
-
-        <h4> Input File: </h4>
+        <h4> Example of an input fasta file (<a href="{% static 'docs/seq.fasta' %}" target="_blank" download><strong> Example file.fasta </strong></a>)</h4><br><br>
+        <h3> Script uses Primer3 package to create the forward and reverse primers. </h3>
+        <br><br>
+        <h3> Example of input file: </h3>
           <table>
               <tr>
-                  <td>
-                    HSGLTH1 Human theta 1-globin gene<br>
-                    <strong>CCACTGCACTCACCGCA</strong>CCCGGCCAATTTTTGTGTTTTTAGTAGAGACTAAATACCATATAGTGAACACCTAAGA
-                    CGGGGGGCCTTGGATCCAGGGCGATTCAGAGGGCCCCGGTCGGAGCTGTCGGAGATTGAGCGCGCGCGGTCCCGG
-                    GATCTCCGACGAGGCCCTGGACCCCCGGGCGGCGAAGCTGCGGCGCGGCGCCCCCTGGAGGCCGCGGGACCCCTG
-                    GCCGGTCCGCGCAGGCGCAGCGGGGTCGCAGGGCGCGGCGGGTTCCAGCGCGGGGATGGCGCTGTCCGCGGAGGA
-                    CCGGGCGCTGGTGCGCGCCCTGTGGAAGAAGCTGGGCAGCAACGTCGGCGTCTACACGACAGAGGCCCTGGAAAG
-                    GTGCGGCAGGCTGGGCGCCCCCGCCCCCAGGGGCCCTCCCTCCCCAAGCCCCCCGGACGCGCCTCACCCACGTTC
-                    CTCTCGCAGGACCTTCCTGGCTTTCCCCGCCACGAAGACCTACTTCTCCCACCTGGACCTGAGCCCCGGCTCCTC
-                    ACAAGTCAGAGCCCACGGCCAGAAGGTGGCGGACGCGCTGAGCCTCGCCGTGGAGCGCCTGGACGACCTACCCCA
-                    CGCGCTGTCCGCGCTGAGCCACCTGCACGCGTGCCAGCTGCGAGTGGACCCGGCCAGCTTCCAGGTGAGCGGCTG
-                    CCGTGCTGGGCCCCTGTCCCCGGGAGGGCCCCGGCGGGGTGGGTGCGGGGGGCGTGCGGGGCGGGTGCAGGCGAG
-                    TGAGCCTTGAGCGCTCGCCGCAGCTCCTGGGCCACTGCCTGCTGGTAACCCTCGCCCGGCACTACCCCGGAGACT
-                    TCAGCCCCGCGCTGCAGGCGTCGCTGGACAAGTTCCTGAGCCACGTTATCTCGGCGCTGGTTTCCGAGTACCGCT
-                    GAACTGTGGGTGGGTGGCCGCGGGATCCCCAGGCGACCTTCCCCGTGTTTGAGTAAAGCCTCTCCCAGGAGCAGC<br>
-                    CTTCTTGCCGTGCTCTCTCGAGGTCAGGA<strong>CGCGAGAGGAAGGCGC</strong>
-                </td>
+                  <h3><div class="textbreak">HSGLTH1 Human theta 1-globin gene <strong>CCACTGCACTCACCGCA</strong>CCCGGCCAATTTTTGTGTTTTTAGTAGAGACTAAATACCATATAGTGAACACCTAAGACGGGGGGCCTTGGATCCAGGGCGATTCAGAGGGCCCCGGTCGGAGCTGTCGGAGATTGAGCGCGCGCGGTCCCGGGATCTCCGACGAGGCCCTGGACCCCCGGGCGGCGAAGCTGCGGCGCGGCGCCCCCTGGAGGCCGCGGGACCCCTGGCCGGTCCGCGCAGGCGCAGCGGGGTCGCAGGGCGCGGCGGGTTCCAGCGCGGGGATGGCGCTGTCCGCGGAGGACCGGGCGCTGGTGCGCGCCCTGTGGAAGAAGCTGGGCAGCAACGTCGGCGTCTACACGACAGAGGCCCTGGAAAGGTGCGGCAGGCTGGGCGCCCCCGCCCCCAGGGGCCCTCCCTCCCCAAGCCCCCCGGACGCGCCTCACCCACGTTCCTCTCGCAGGACCTTCCTGGCTTTCCCCGCCACGAAGACCTACTTCTCCCACCTGGACCTGAGCCCCGGCTCCTCACAAGTCAGAGCCCACGGCCAGAAGGTGGCGGACGCGCTGAGCCTCGCCGTGGAGCGCCTGGACGACCTACCCCACGCGCTGTCCGCGCTGAGCCACCTGCACGCGTGCCAGCTGCGAGTGGACCCGGCCAGCTTCCAGGTGAGCGGCTGCCGTGCTGGGCCCCTGTCCCCGGGAGGGCCCCGGCGGGGTGGGTGCGGGGGGCGTGCGGGGCGGGTGCAGGCGAGTGAGCCTTGAGCGCTCGCCGCAGCTCCTGGGCCACTGCCTGCTGGTAACCCTCGCCCGGCACTACCCCGGAGACTTCAGCCCCGCGCTGCAGGCGTCGCTGGACAAGTTCCTGAGCCACGTTATCTCGGCGCTGGTTTCCGAGTACCGCTGAACTGTGGGTGGGTGGCCGCGGGATCCCCAGGCGACCTTCCCCGTGTTTGAGTAAAGCCTCTCCCAGGAGCAGCCTTCTTGCCGTGCTCTCTCGAGGTCAGGA<strong>CGCGAGAGGAAGGCGC</strong>
+                </div></h3>
               </tr>
           </table>
         <br><br><br>
         <h4> Output File: </h4>
-        <h5>
+        <h3>
         <table>
           <tr>
-            <th>GeneID</th>
-            <th>UpstreamPrimerSequence</th>
-            <th>DownstreamPrimerSequence</th>
-            <th>UpstreamPrimerLength</th>
-            <th>DownstreamPrimerLength</th>
-            <th>ProductLength</th>
+            <th><center>Gene ID</center></th>
+            <th><center>Up Primer Sequence</center></th>
+            <th><center>Down Primer Sequence</center></th>
+            <th><center>Up Primer Length</center></th>
+            <th><center>Down Primer Length</center></th>
+            <th><center>Product Length</center></th>
           </tr>
           <tr>
-            <td>HSGLTH1</td>
-            <td>CCACTGCACTCACCGCA</td>
-            <td>GCGCCTTCCTCTCGCG</td>
-            <td>17</td>
-            <td>16</td>
-            <td>1020</td>
+            <td><center>HSGLTH1</td>
+            <td><center>CCACTGCACTCACCGCA</center></td>
+            <td><center>GCGCCTTCCTCTCGCG</center></td>
+            <td><center>17</center></td>
+            <td><center>16</center></td>
+            <td><center>1020</center></td>
           </tr>
         </table>
-        </h5>
+        </h3>
 
       </div>
 

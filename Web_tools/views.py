@@ -189,5 +189,6 @@ def moclo(request):
 def about(request):
     return render(request, 'under_construction.html')
 
-
+def under_construction(request):
+    return render(request, 'under_construction.html')
 
