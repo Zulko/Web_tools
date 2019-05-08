@@ -2,64 +2,90 @@
 
 
 {% block content %}
-    <div class="row">
-      <div class="column side">
-        <h2>Options</h2>
+
+<div class="row">
+    <div class="col-3">
+    <h2>Options</h2>
         <div class="options">
+            <div method="post"> {% csrf_token %}
+              <fieldset><br>
 
-            <form method="post"> {% csrf_token %}
-              <fieldset>
-                <br>
-                Number of Source Plate:
-                <select name="num_sources">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                </select>
+                <div class="form-row align-items-center">
+                    <div class="col">
+                        <label for="num_sources">Number of Source Plate:</label>
+                    </div>
+                    <div class="col">
+                        <select class="form-control" id="num_sources" name="num_sources">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                        </select>
+                    </div>
+                    <br><br>
+                </div>
+
+                <div class="form-row align-items-center">
+                    <div class="col">
+                        <label for="num_well">Source Plate Wells:</label>
+                    </div>
+                    <div class="col">
+                        <select class="form-control" id="num_well" name="num_well">
+                            <option value="96">96 Wells</option>
+                            <option value="384">384 Wells</option>
+                        </select>
+                    </div>
+                    <br><br>
+                </div>
+
+                <div class="form-row align-items-center">
+                    <div class="col">
+                        <label for="num_pattern">Number of spotting:</label>
+                    </div>
+                    <div class="col">
+                        <select class="form-control" id="num_pattern" name="num_pattern">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="6">6</option>
+                            <option value="8">8</option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label for="num_pattern">Mode:</label>
+                    </div>
+                    <div class="col">
+                        <select class="form-control" id="pattern" name="pattern">
+                            <option value="0">by row</option>
+                            <option value="1">by column</option>
+                            <option selected value="2">Biomek</option >
+                        </select>
+                    </div>
+                </div>
                 <br><br>
-                Source Plate Wells:
-                <select name="num_well">
-                <option value="96">96 Wells</option>
-                <option value="384">384 Wells</option>
-                </select>
-                <br><br>
-                Number of spotting:
-                <select name="num_pattern">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="6">6</option>
-                <option value="8">8</option>
-                </select>
-                  &nbsp Mode:
-                <select name="pattern">
-                <option value="0">by row</option>
-                <option value="1">by column</option>
-                <option selected value="2">Biomek</option >
-                </select>
-                <br><br><br>
-                <input type="submit" value="Submit">
+                <input type="submit" class="btn btn-info btn-block" value="Submit">
+
               </fieldset>
-            </form>
-
-            <br><br>
-            {% if worklist_name %}
-            <fieldset>
-                Output file: <a href="{{ outfile_url }}" target="_blank" download> <strong> Download File </strong> </a> <br><br>
-                Output worklist: <a href="{{ outfileworklist_url }}" target="_blank" download> <strong> Download File </strong> </a>
-            </fieldset>
-            {% elif outfile_name %}
-            <fieldset>
-                Output file: <a href="{{ outfile_url }}" target="_blank" download> <p><strong> Download File </strong></p> </a>
-            </fieldset>
-            {% endif %}
-
+            </div>
         </div>
-      </div>
+    </div>
 
-      <div class="column middle">
+    <br><br>
+    {% if worklist_name %}
+    <fieldset>
+        Output file: <a href="{{ outfile_url }}" target="_blank" download> <strong> Download File </strong> </a> <br><br>
+        Output worklist: <a href="{{ outfileworklist_url }}" target="_blank" download> <strong> Download File </strong> </a>
+    </fieldset>
+    {% elif outfile_name %}
+    <fieldset>
+        Output file: <a href="{{ outfile_url }}" target="_blank" download> <p><strong> Download File </strong></p> </a>
+    </fieldset>
+    {% endif %}
+
+
+
+      <div class="col-6">
         <h2>Spoting Script</h2>
         <p> Creates CSV files to be used on biomek</p><br>
             <table>
@@ -96,7 +122,7 @@
       </div>
 
         {% comment %}
-        <div class="column side">
+        <div class="col-3">
         <h2>Side</h2>
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit..</p>
         </div>

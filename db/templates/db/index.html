@@ -2,10 +2,12 @@
 
 {% block content %}
 
+    <br>
 
     <div class="row">
-      <div class="column side">
+      <div class="col-3">
           <h2>List of Plates</h2><br>
+          <div class="search-label-icon"> search </div>
             {% if all_plates %}
             <nav>
                 <ul>
@@ -20,7 +22,7 @@
 
       </div>
 
-      <div class="column middle">
+      <div class="col-6">
         {% if plate %}
             <h2>{{ plate }}</h2> <br>
             <table>
@@ -63,17 +65,11 @@
 {#                </div>#}
 {#            </div>#}
 
-
-
-
-
-
-
         {% endif %}
 
       </div>
 
-      <div class="column side">
+      <div class="col-3">
           {% if well %}
 
             <h2>List of Samples in: <bold>{{ well.name }}</bold> </h2><br>
@@ -81,7 +77,7 @@
                 <ul>
 
                     {% for sample in well.samples.all %}
-                        <h3><a href="{% url 'db:well' plate.id well.id %}"> {{ sample.id }}: {{ sample.name }}</a></h3><br>
+                        <h3><a href="{% url 'db:well' plate.id well.id %}"> {{ sample.id }}: {{ sample.name }}</a></h3{r>
 {#                        <h3> {{ sample.id }}: {{ sample.name }}</h3><br>#}
                     {% endfor %}
                     <h3>Volume: {{ well.volume }}</h3><br>

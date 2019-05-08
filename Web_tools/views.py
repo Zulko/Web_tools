@@ -187,7 +187,7 @@ def moclo(request):
 
 # @login_required(login_url="/accounts/login/")
 def about(request):
-    return render(request, 'under_construction.html')
+    return render(request, 'about.html')
 
 def under_construction(request):
     return render(request, 'under_construction.html')
