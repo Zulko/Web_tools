@@ -7,10 +7,11 @@
     <div class="col-3">
     <h2>Options</h2>
         <div class="options">
-            <div method="post"> {% csrf_token %}
-              <fieldset><br>
-
+            <form method="post"> {% csrf_token %}
+              <fieldset class="form-group">
+                  <br>
                 <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
                     <div class="col">
                         <label for="num_sources">Number of Source Plate:</label>
                     </div>
@@ -22,10 +23,12 @@
                             <option value="4">4</option>
                         </select>
                     </div>
+                    <div class="col-auto"></div>
                     <br><br>
                 </div>
 
                 <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
                     <div class="col">
                         <label for="num_well">Source Plate Wells:</label>
                     </div>
@@ -35,10 +38,12 @@
                             <option value="384">384 Wells</option>
                         </select>
                     </div>
+                    <div class="col-auto"></div>
                     <br><br>
                 </div>
 
                 <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
                     <div class="col">
                         <label for="num_pattern">Number of spotting:</label>
                     </div>
@@ -62,31 +67,28 @@
                             <option selected value="2">Biomek</option >
                         </select>
                     </div>
+                    <div class="col-auto"></div>
                 </div>
                 <br><br>
                 <input type="submit" class="btn btn-info btn-block" value="Submit">
 
               </fieldset>
-            </div>
+            </form>
         </div>
     </div>
 
     <br><br>
-    {% if worklist_name %}
-    <fieldset>
-        Output file: <a href="{{ outfile_url }}" target="_blank" download> <strong> Download File </strong> </a> <br><br>
-        Output worklist: <a href="{{ outfileworklist_url }}" target="_blank" download> <strong> Download File </strong> </a>
-    </fieldset>
-    {% elif outfile_name %}
-    <fieldset>
-        Output file: <a href="{{ outfile_url }}" target="_blank" download> <p><strong> Download File </strong></p> </a>
-    </fieldset>
-    {% endif %}
-
-
 
       <div class="col-6">
-        <h2>Spoting Script</h2>
+        <h2>Spotting Script</h2>
+          {% if alerts %}
+            <div class="alert">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    <li>{{ alert }} </li>
+            </div>
+          {% endif %}
+
+
         <p> Creates CSV files to be used on biomek</p><br>
             <table>
                 <tr>
@@ -118,14 +120,52 @@
                     <td> 4 </td>
                 </tr>
             </table>
-
       </div>
 
-        {% comment %}
+
         <div class="col-3">
-        <h2>Side</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit..</p>
+            {% if worklist_name %}
+                <h2>Output </h2>
+                <br>
+                <fieldset class="form-group">
+                    <div class="form-row align-items-center">
+                        <div class="col-auto"></div>
+                        <div class="col">
+                            <label for="outputfile">File:</label>
+                        </div>
+                         <div class="col">
+                             <label for="outputfile"><a href="{{ outfile_url }}" target="_blank" download> <strong> Download </strong> </a></label>
+                        </div>
+                        <br><br>
+                    </div>
+                    <div class="form-row align-items-center">
+                        <div class="col-auto"></div>
+                        <div class="col">
+                            <label for="worklist">Worklist:</label>
+                        </div>
+                        <div class="col">
+                            <a href="{{ outfileworklist_url }}" target="_blank" download> <strong> Download </strong> </a>
+                        </div>
+                        <div class="col-auto"></div>
+                        <br><br>
+                    </div>
+                </fieldset>
+            {% elif outfile_name %}
+                <h2>Output </h2>
+                <fieldset class="form-group">
+                    <br><br>
+                    <div class="col-auto"></div>
+                    <div class="col">
+                        <label for="outputfile">File:</label>
+                    </div>
+                    <div class="col">
+                        <label for="outputfile"><a href="{{ outfile_url }}" target="_blank" download> <strong> Download </strong> </a></label>
+                    </div>
+                    <div class="col-auto"></div>
+                    <br><br>
+                </fieldset>
+            {% endif %}
         </div>
-        {% endcomment %}
+
     </div>
 {% endblock%}

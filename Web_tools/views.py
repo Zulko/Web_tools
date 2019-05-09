@@ -27,9 +27,14 @@ def spotting(request):
         num_pattern = request.POST['num_pattern']
         pattern = request.POST['pattern']
         ''' Calling Python Script'''
-        outfile_name, worklist_name = run_spotting(int(num_sources), int(num_well), int(num_pattern), int(pattern))
+        outfile_name, worklist_name, alert = run_spotting(int(num_sources), int(num_well), int(num_pattern), int(pattern))
 
-        if worklist_name is not None:
+        if alert is not None:
+            return render(request, 'spotting.html',
+                          {'outfile_name': 'Choose a different parameters combination', 'outfile_url': '',
+                           'worklist_name': '', 'outfileworklist_url': '', 'alert':alert})
+
+        elif worklist_name is not None:
             fs = FileSystemStorage()
             outfile_url = fs.url(os.path.basename(outfile_name))
             context['worklist_name'] = worklist_name

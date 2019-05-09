@@ -40,16 +40,15 @@ td {
 
 
 /* left column with functions*/
-fieldset
-{
+fieldset {
+background-color:#ddd;
   border:1px solid #333;
   -moz-border-radius:8px;
   -webkit-border-radius:8px;
   border-radius:8px;
-  background-color:#ddd;
   max-width:500px;
-  padding:16px ;
 }
+
 
 /*Plates format at Database*/
 .circle_full {

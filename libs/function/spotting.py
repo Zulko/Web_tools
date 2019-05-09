@@ -49,13 +49,14 @@ def run_spotting(num_source_plates, num_wells, num_pattern, pattern):
     total_plates = ver_num_source + total_destination
     if total_plates > MAX_PLATES:
         print('The total plates (%d) exceeds the biomek limit of %d' % (total_plates, MAX_PLATES))
-        return None, None
+        alert = 'The total plates (%d) exceeds the biomek limit of %d' % (total_plates, MAX_PLATES)
+        return None, None, alert
     else:
         # print('The total plates in biomek is %d' % total_plates)
         # print('The total destination plate(s) is %d and total source plate(s) is %d' % (total_destination, ver_num_source))
-        outfile_name = create_output_file(ver_num_source, num_wells, total_destination, pattern)
+        outfile_name, worklist_name = create_output_file(ver_num_source, num_wells, total_destination, pattern)
 
-    return outfile_name
+    return outfile_name, worklist_name, None
 
 
 def generate_random_names(name, init, end):
@@ -97,9 +98,9 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
     '''Add the header'''
     if pattern == BY_ROW:
         file_path_out = 'media/source_' + str(total_source) + '_' + str(num_pattern) + 'spot_byrow.csv'
-        file.verify_path(file_path_out)
         outfile = file.create(file_path_out, 'w')
-        outcsv = file.create_writer_CSV(outfile)
+        outcsv = file.create_writer_csv(outfile)
+        file.verify(file_path_out)
         file.set_header(outcsv)
         ''' Create the source plates'''
         for i in range(0, total_source):
@@ -118,9 +119,9 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
 
     elif pattern == BY_COL:
         file_path_out = 'media/source_' + str(total_source) + '_' + str(num_pattern) + 'spot_bycol.csv'
-        file.verify_path(file_path_out)
         outfile = file.create(file_path_out, 'w')
-        outcsv = file.create_writer_CSV(outfile)
+        outcsv = file.create_writer_csv(outfile)
+        file.verify(file_path_out)
         file.set_header(outcsv)
         ''' Create the source plates'''
         for i in range(0, total_source):
@@ -140,12 +141,12 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
     else:
         file_path_out = 'media/source_' + str(total_source) + '_' + str(num_pattern) + 'spot_biomek.csv'
         file_worklist_path_out = 'media/source_' + str(total_source) + '_' + str(num_pattern) + 'spot_worklist.csv'
-        file.verify_path(file_path_out)
-        file.verify_path(file_worklist_path_out)
         outfile = file.create(file_path_out, 'w')
         out_worklist = file.create(file_worklist_path_out, 'w')
-        outcsv = file.create_writer_CSV(outfile)
-        outcsv_worklist = file.create_writer_CSV(out_worklist)
+        file.verify(file_path_out)
+        file.verify(file_worklist_path_out)
+        outcsv = file.create_writer_csv(outfile)
+        outcsv_worklist = file.create_writer_csv(out_worklist)
         file.set_biomek_header(outcsv)
         file.set_worklist_header(outcsv_worklist)
         ''' Create the source plates'''
