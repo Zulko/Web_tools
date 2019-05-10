@@ -64,14 +64,14 @@ td {
 
 /* left column with functions*/
 fieldset {
-background-color:#ddd;
-  border:1px solid #333;
-  -moz-border-radius:8px;
-  -webkit-border-radius:8px;
-  border-radius:8px;
-  max-width:500px;
+    background-color:#ddd;
+    -moz-border-radius:8px;
+    -webkit-border-radius:8px;
+    border:1px solid #333;
+    border-radius:8px;
+    /*max-width:550px;*/
+    box-shadow:0 0 10px #666;
 }
-
 
 /*Plates format at Database*/
 .circle_full {

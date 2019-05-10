@@ -2,197 +2,298 @@
 {% load static from staticfiles %}
 
 {% block content %}
-    <div class="row">
-      <div class="col-3">
-        <h2>Options</h2>
+
+<div class="row">
+    <div class="col-3">
+    <h2>Options</h2>
         <div class="options">
             <form method="post" enctype="multipart/form-data"> {% csrf_token %}
-                <fieldset>
-
-                  <fieldset>
+{#            <fieldset class="form-group">#}
+                <fieldset class="form-group">
                     <legend>Assembly file</legend>
-                    Select a file: <input type="file" name="upload_file">
-                    Select a database: <input type="file" name="upload_db">
-                  </fieldset>
-                    <br>
+                    <div class="form-row align-items-center">
+                        <div class="col-auto"></div>
+                        <div class="col">
+                            <label for="file">Select a file: </label>
+                        </div>
+                        <div class="col-left">
+                            <input type="file" class="form-control-file border" name="upload_file">
+                        </div>
+                        <div class="col-auto"></div>
+                    </div><br>
+                    <div class="form-row align-items-center">
+                        <div class="col-auto"></div>
+                        <div class="col">
+                            <label for="database">Select database: </label>
+                        </div>
+                        <div class="col-left">
+                            <input type="file" class="form-control-file border" name="upload_db">
+                        </div>
+                        <div class="col-auto"></div>
+                    </div><br>
+                </fieldset>
 
-                  <fieldset>
+                <fieldset class="form-group">
                     <legend>Dispenser</legend>
-                    <table>
-                    <tr>
-                        <td>
-                        Machine:
-                            <select name="machine">
-                            <option value="echo">Echo</option>
+                    <div class="form-row align-items-center">
+                        <div class="col-auto"></div>
+                        <div class="col">
+                            <label for="machine">Machine: </label>
+                        </div>
+                        <div class="col">
+                            <select class="form-control" id="machine" name="machine">
+                                <option value="echo">Echo</option>
                             </select>
-                        </td>
-                        <td>
-                        Min Volume(nL):
-                            <input type="number" name="min_vol" min="1" max="5" step="0.5" value="2.5">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                        Volume resolution(nL):
-                            <input type="number" name="vol_resol" min="1" max="10" step="0.5" value="2.5">
-                        </td>
-                        <td>
-                        Dead Volume (µL):
-                            <input type="number" name="dead_vol" min="1" max="15" step="0.5" value="13">
-                        </td>
-                    </tr>
-                    </table>
-                  </fieldset>
-                   <br>
-                  <fieldset>
+                        </div>
+                        <div class="col">
+                            <label for="min_vol">Min Volume(nL): </label>
+                        </div>
+                        <div class="col">
+                            <input type="number" class="form-control" name="min_vol" min="1" max="5" step="0.5" value="2.5">
+                        </div>
+                        <div class="col-auto"></div>
+                    </div><br>
 
+                    <div class="form-row align-items-center">
+                        <div class="col-auto"></div>
+                        <div class="col">
+                            <label for="vol_res">Volume resolution(nL): </label>
+                        </div>
+                        <div class="col">
+                            <input type="number" class="form-control" name="vol_resol" min="1" max="10" step="0.5" value="2.5">
+                        </div>
+                        <div class="col">
+                            <label for="vol_res">Dead Volume (µL): </label>
+                        </div>
+                        <div class="col">
+                            <input type="number" class="form-control" name="dead_vol" min="1" max="15" step="0.5" value="13">
+                        </div>
+                        <div class="col-auto"></div>
+                    </div><br>
+                </fieldset>
+
+                <fieldset class="form-group">
                     <legend>Mixer</legend>
-                    <table>
-                    <tr>
-                    <td>
-                        Part (fmol):
-                        <input type="number" name="part_fmol" min="0.5" max="80" step="0.5" value="40">
-                    </td>
-                    <td>
-                        Backbone (fmol):
-                        <input type="number" name="bb_fmol" min="0.5" max="80" step="0.5" value="20">
-                    </td>
-                    </tr>
-                    <tr>
-                    <td>
-                        Total Volume (µL):
-                        <input type="number" name="total_vol" min="1" max="15" step="0.5" value="10">
-                    </td>
-                    <td>
-                        Buffer (%):
-                        <input type="number" name="buffer" min="1" max="20" step="0.5" value="10">
-                    </td>
-                    </tr>
-                    <tr>
-                    <td>
-                        Restriction Enz (%):
-                        <input type="number" name="enz_restric" min="1" max="20" step="0.5" value="10">
-                    </td>
-                    <td>
-                        Ligase Enz (%):
-                        <input type="number" name="enz_ligase" min="1" max="20" step="0.5" value="10">
-                    </td>
-                    </tr>
+                    <div class="form-row align-items-center">
+                        <div class="col-auto"></div>
+                        <div class="col">
+                            <label for="part">Part (fmol): </label>
+                        </div>
+                        <div class="col">
+                            <input type="number" class="form-control" name="part_fmol" min="0.5" max="80" step="0.5" value="40">
+                        </div>
+                        <div class="col">
+                            <label for="backbone">Backbone (fmol): </label>
+                        </div>
+                        <div class="col">
+                            <input type="number" class="form-control" name="bb_fmol" min="0.5" max="80" step="0.5" value="20">
+                        </div>
+                        <div class="col-auto"></div>
+                    </div>
+                    <div class="form-row align-items-center">
+                        <div class="col-auto"></div>
+                        <div class="col">
+                            <label for="tot_vol">Total Volume (µL): </label>
+                        </div>
+                        <div class="col">
+                            <input type="number" class="form-control" name="total_vol" min="1" max="15" step="0.5" value="10">
+                        </div>
+                        <div class="col">
+                            <label for="buffer">Buffer (%): </label>
+                        </div>
+                        <div class="col">
+                            <input type="number" class="form-control" name="buffer" min="1" max="20" step="0.5" value="10">
+                        </div>
+                        <div class="col-auto"></div>
+                    </div>
 
-                    <tr>
-                    <td>
-{#                        <input type="hidden" name="add_water" value="False"/>#}
-                        <input type="checkbox" name="add_water" value="True" checked/> Add water in Master Mix
-                    </td>
-                    <td>
-{#                        <input type="hidden" name="mantis_two_chips" value="False"/>#}
-                        <input type="checkbox" name="mantis_two_chips" value="True"/> Use Mantis with low/high chips
+                    <div class="form-row align-items-center">
+                        <div class="col-auto"></div>
+                        <div class="col">
+                            <label for="rest_enz">Restriction Enz (%): </label>
+                        </div>
+                        <div class="col">
+                            <input type="number" class="form-control" name="enz_restric" min="1" max="20" step="0.5" value="10">
+                        </div>
+                        <div class="col">
+                            <label for="lig_enz">Ligase Enz (%): </label>
+                        </div>
+                        <div class="col">
+                            <input type="number" class="form-control" name="enz_ligase" min="1" max="20" step="0.5" value="10">
+                        </div>
+                        <div class="col-auto"></div>
+                    </div>
 
-                    </td>
-                    </tr>
-                    </table>
-                  </fieldset>
+                    <div class="form-row align-items-center">
+                        <div class="col-auto"></div>
+                        <div class="col">
+                            <div class="form-check">
+                                <label class="form-check-label">
+                                    <input type="checkbox" class="form-check-input" name="add_water" value="True" checked/> Add water in Master Mix
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-check">
+                                <label class="form-check-label">
+                                    <input type="checkbox" class="form-check-input" name="mantis_two_chips" value="True"/> Use Mantis with low/high chips
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-auto"></div>
+                    </div><br>
+                </fieldset>
 
-                  <br>
-
-                  <fieldset>
-                      <legend>Destination Plate</legend>
-                      <table>
-                          <tr>
-                              <td>
-                                 Num Wells:
-                                <select name="num_well_destination">
+                <fieldset class="form-group">
+                    <legend>Destination Plate</legend>
+                    <div class="form-row align-items-center">
+                        <div class="col-auto"></div>
+                        <div class="col">
+                            <label for="num_well">Num Wells: </label>
+                        </div>
+                        <div class="col">
+                            <select class="form-control" id="num_well_destination" name="num_well_destination">
                                 <option value="96">96 Wells</option>
                                 <option value="384">384 Wells</option>
-                                </select>
-                            </td>
-                              <td>
-                                Filled by:
-                                <select name="pattern">
+                            </select>
+                        </div>
+
+                        <div class="col">
+                            <label for="filled_by">Filled by: </label>
+                        </div>
+                        <div class="col">
+                            <select class="form-control" id="pattern" name="pattern">
                                 <option value="0">by row</option>
                                 <option selected value="1">by column</option>
-                                </select>
-                              </td>
-                          </tr>
-                      </table>
-                  </fieldset>
+                            </select>
+                        </div>
+                        <div class="col-auto"></div>
+                    </div><br>
+                </fieldset>
 
-                <br><br><br>
-                <input type="submit" class="btn btn-info btn-block" value="Submit">
-              </fieldset>
+            <input type="submit" class="btn btn-info btn-block btn-lg" value="Submit">
+{#          </fieldset>#}
             </form>
-
-
-            <br><br>
-            {% if url_file %}
-            <fieldset>
-                Uploaded file: <a href="{{ url_file }}" target="_blank" ><p>{{ uploadfile_name }}</p></a>
-                Uploaded file: <a href="{{ url_db }}" target="_blank" ><p>{{ upload_db }}</p></a>
-                {% if outfile_mantis_url %}
-                    <br><br>
-                    Output file: <a href="{{ outfile_mantis_url }}" target="_blank" download> <p>{{ outfile_mantis_name }}</p> </a>
-                    Output file: <a href="{{ outfile_robot_url }}" target="_blank" download> <p>{{ outfile_robot_name }}</p> </a>
-                {% endif %}
-            </fieldset>
-            <br><br>
-            {% endif %}
-
-            {%  if mixer_recipe %}
-            <fieldset>
-            <legend>Master Mix Recipe </legend>
-                <table>
-                {% for item in mixer_recipe %}
-                    <tr>
-                    <td> {{ item.1 }}: </td><td> {{ item.0 }}ul </td>
-                    </tr>
-                {% endfor %}
-                </table>
-            </fieldset>
-            <br><br>
-            <fieldset>
-            <legend> Mantis Configuration </legend>
-                <table>
-                {% for item in chip_mantis %}
-                    <tr>
-                    <td> {{ item.0 }}: </td><td> {{ item.1 }}ul </td>
-                    </tr>
-                {% endfor %}
-                </table>
-            </fieldset>
-            {% endif %}
-
-
-        </div>
-      </div>
-
-      <div class="col-6">
-        <h2>MoClo Script</h2><br>
-        {% if alerts %}
-            <div class="alert">
-            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                <ol>
-                {% for alert in alerts %}
-                    {% for num in alert %}
-                        {% if num.count > 1 %}
-                            <li>{{ num }} </li>
-                        {% else %}
-                            <li>{{ alert }} </li>
-                        {% endif %}
-                    {% endfor %}
-                    <br>
-                {% endfor %}
-                </ol>
-            </div>
-        {% endif %}
-      <p> Example of a database file (<a href="{% static 'docs/database.csv' %}" target="_blank" download><strong> Database.csv </strong></a>) </p>
-      <p> Example of an input file with parts (<a href="{% static 'docs/combination_parts.txt' %}" target="_blank" download><strong> File.csv </strong></a>) </p> <br>
-      </div>
-
-        {% comment %}
-        <div class="column side">
-        <h2>Side</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit..</p>
-        </div>
-        {% endcomment %}
     </div>
+  </div>
+
+  <div class="col-6">
+    <h2>MoClo Script</h2><br>
+    {% if alerts %}
+        <div class="alert">
+        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            <ol>
+            {% for alert in alerts %}
+                {% for num in alert %}
+                    {% if num.count > 1 %}
+                        <li>{{ num }} </li>
+                    {% else %}
+                        <li>{{ alert }} </li>
+                    {% endif %}
+                {% endfor %}
+                <br>
+            {% endfor %}
+            </ol>
+        </div>
+    {% endif %}
+  <p> Example of a database file (<a href="{% static 'docs/database.csv' %}" target="_blank" download><strong> Database.csv </strong></a>) </p>
+  <p> Example of an input file with parts (<a href="{% static 'docs/combination_parts.txt' %}" target="_blank" download><strong> File.csv </strong></a>) </p> <br>
+  </div>
+
+
+    <div class="col-3">
+        {% if url_file %}
+            <h2>Output </h2>
+            <fieldset class="form-group">
+                <legend>Files</legend>
+                <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col-right" >
+                        <label for="inputfile">Input file:</label>
+                    </div>
+                    <div class="col" >
+                        <label for="inputfile_url"><a href="{{ url_file }}" target="_blank" >{{ uploadfile_name }}</a></label>
+                    </div>
+                    <div class="col-auto"></div>
+                </div>
+
+                <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col-right" >
+                        <label for="inputfile">Input file:</label>
+                    </div>
+                    <div class="col" >
+                        <label for="inputfile_url"><a href="{{ url_db }}" target="_blank" >{{ upload_db }}</a></label>
+                    </div>
+                    <div class="col-auto"></div>
+                </div>
+
+            {% if outfile_mantis_url %}<br>
+                <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col-right" >
+                        <label for="outputfile">Output file:</label>
+                    </div>
+                    <div class="col" >
+                        <label for="outputfile_url"><a href="{{ outfile_mantis_url }}" target="_blank" download> {{ outfile_mantis_name }} </a></label>
+                    </div>
+                    <div class="col-auto"></div>
+                </div>
+
+                <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col-right" >
+                        <label for="inputfile">Output file:</label>
+                    </div>
+                    <div class="col" >
+                        <label for="inputfile_url"><a href="{{ outfile_robot_url }}" target="_blank" download>{{ outfile_robot_name }}</a></label>
+                    </div>
+                    <div class="col-auto"></div>
+                </div>
+            {% endif %}
+            </fieldset><br>
+        {% endif %}
+
+        {%  if mixer_recipe %}
+        <fieldset class="form-group">
+            <legend>Master Mix Recipe </legend>
+            <table class="table">
+                <thead>
+{#                    <tr>#}
+{#                        <th>Items</th>#}
+{#                        <th>Volume</th>#}
+{#                    </tr>#}
+                </thead>
+                <tbody>
+                    {% for item in mixer_recipe %}
+                        <tr>
+                            <td> {{ item.1 }}: </td><td> {{ item.0 }}ul </td>
+                        </tr>
+                        {% endfor %}
+                </tbody>
+            </table>
+        </fieldset>
+        <br>
+        <fieldset class="form-group">
+            <legend> Mantis Configuration </legend>
+            <table class="table">
+                <thead>
+{#                    <tr>#}
+{#                        <th>Items</th>#}
+{#                        <th>Volume</th>#}
+{#                    </tr>#}
+                </thead>
+                <tbody>
+                    {% for item in chip_mantis %}
+                        <tr>
+                            <td> {{ item.0 }}: </td><td> {{ item.1 }}ul </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </fieldset>
+        {% endif %}
+    </div>
+
+</div>
 {% endblock%}

@@ -428,7 +428,7 @@ def run_moclo(path, filename, database, dispenser_parameters, mix_parameters, ou
                 out_master_mix, out_water = reajust_mixer_water_volumes(out_master_mix, out_water, min_water_vol)
 
                 '''Master Mix recipe output'''
-                mixer_recipe_title = ["Buffer", "Restriction Enzyme:", "Ligase Enzyme:", "Water:", "Master Mix:"]
+                mixer_recipe_title = ["Buffer", "Restriction Enzyme", "Ligase Enzyme", "Water", "Master Mix"]
                 min_water_vol = round(min_water_vol, 2)
                 total_vol_buffer += min_water_vol
                 mixer_recipe = [round(buffer_vol, 2), round(rest_enz_vol, 2), round(lig_enz_vol, 2),
