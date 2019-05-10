@@ -31,7 +31,7 @@ def spotting(request):
 
         if alert is not None:
             return render(request, 'spotting.html',
-                          {'outfile_name': 'Choose a different parameters combination', 'outfile_url': '',
+                          {'outfile_name': '', 'outfile_url': '',
                            'worklist_name': '', 'outfileworklist_url': '', 'alert':alert})
 
         elif worklist_name is not None:

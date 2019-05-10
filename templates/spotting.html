@@ -81,10 +81,10 @@
 
       <div class="col-6">
         <h2>Spotting Script</h2>
-          {% if alerts %}
-            <div class="alert">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                    <li>{{ alert }} </li>
+          {% if alert %}
+              <div class="alert alert-warning alert-dismissible">
+              <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {{ alert }}
             </div>
           {% endif %}
 
@@ -130,26 +130,27 @@
                 <fieldset class="form-group">
                     <div class="form-row align-items-center">
                         <div class="col-auto"></div>
-                        <div class="col">
+                        <div class="col" >
                             <label for="outputfile">File:</label>
                         </div>
-                         <div class="col">
-                             <label for="outputfile"><a href="{{ outfile_url }}" target="_blank" download> <strong> Download </strong> </a></label>
+                         <div class="col" align="left">
+                             <label for="outputfile"><a href="{{ outfile_url }}" target="_blank" download> <strong> {{ outfile_name }} </strong> </a></label>
                         </div>
                         <br><br>
                     </div>
                     <div class="form-row align-items-center">
                         <div class="col-auto"></div>
-                        <div class="col">
+                        <div class="col" >
                             <label for="worklist">Worklist:</label>
                         </div>
-                        <div class="col">
-                            <a href="{{ outfileworklist_url }}" target="_blank" download> <strong> Download </strong> </a>
+                        <div class="col" align="left">
+                            <a href="{{ outfileworklist_url }}" target="_blank" download> <strong> {{ worklist_name }} </strong> </a>
                         </div>
                         <div class="col-auto"></div>
                         <br><br>
                     </div>
                 </fieldset>
+
             {% elif outfile_name %}
                 <h2>Output </h2>
                 <fieldset class="form-group">

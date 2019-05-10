@@ -49,7 +49,7 @@ def run_spotting(num_source_plates, num_wells, num_pattern, pattern):
     total_plates = ver_num_source + total_destination
     if total_plates > MAX_PLATES:
         print('The total plates (%d) exceeds the biomek limit of %d' % (total_plates, MAX_PLATES))
-        alert = 'The total plates (%d) exceeds the biomek limit of %d' % (total_plates, MAX_PLATES)
+        alert = 'The total number of plates is %d and exceeds the maximum number of plates (%d) in Biomek' % (total_plates, MAX_PLATES)
         return None, None, alert
     else:
         # print('The total plates in biomek is %d' % total_plates)
