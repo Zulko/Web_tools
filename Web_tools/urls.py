@@ -32,6 +32,7 @@ urlpatterns = [
     path('primer/',views.primer, name='primer'),
     path('combinatorial/',views.combinatorial, name='combinatorial'),
     path('moclo/', views.moclo, name='moclo'),
+    path('moclo_db/', views.moclo_db, name='moclodb'),
     path('accounts/', include('accounts.urls')),
     path('db/', include('db.urls'))
 ]

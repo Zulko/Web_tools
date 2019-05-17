@@ -21,16 +21,16 @@
                         </div>
                         <div class="col-auto"></div>
                     </div><br>
-                    <div class="form-row align-items-center">
-                        <div class="col-auto"></div>
-                        <div class="col">
-                            <label for="database">Select database: </label>
-                        </div>
-                        <div class="col-left">
-                            <input type="file" class="form-control-file border" name="upload_db">
-                        </div>
-                        <div class="col-auto"></div>
-                    </div><br>
+{#                    <div class="form-row align-items-center">#}
+{#                        <div class="col-auto"></div>#}
+{#                        <div class="col">#}
+{#                            <label for="database">Select database: </label>#}
+{#                        </div>#}
+{#                        <div class="col-left">#}
+{#                            <input type="file" class="form-control-file border" name="upload_db">#}
+{#                        </div>#}
+{#                        <div class="col-auto"></div>#}
+{#                    </div><br>#}
                 </fieldset>
 
                 <fieldset class="form-group">
@@ -122,7 +122,7 @@
                             <input type="number" class="form-control" name="enz_ligase" min="1" max="20" step="0.5" value="10">
                         </div>
                         <div class="col-auto"></div>
-                    </div>
+                    </div><br>
 
                     <div class="form-row align-items-center">
                         <div class="col-auto"></div>
@@ -176,25 +176,18 @@
   </div>
 
   <div class="col-6">
-    <h2>MoClo Script</h2><br>
+    <h2>MoClo Script connected with Database</h2><br>
     {% if alerts %}
         <div class="alert">
         <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
             <ol>
             {% for alert in alerts %}
-                {% for num in alert %}
-                    {% if num.count > 1 %}
-                        <li>{{ num }} </li>
-                    {% else %}
-                        <li>{{ alert }} </li>
-                    {% endif %}
-                {% endfor %}
-                <br>
+                <li>{{ alert }} </li>
             {% endfor %}
             </ol>
         </div>
     {% endif %}
-  <p> Example of a database file (<a href="{% static 'docs/database.csv' %}" target="_blank" download><strong> Database.csv </strong></a>) </p>
+{#  <p> Example of a database file (<a href="{% static 'docs/database.csv' %}" target="_blank" download><strong> Database.csv </strong></a>) </p>#}
   <p> Example of an input file with parts (<a href="{% static 'docs/combination_parts.txt' %}" target="_blank" download><strong> File.csv </strong></a>) </p> <br>
 
   <div class="card-0">
@@ -225,16 +218,16 @@
                     <div class="col-auto"></div>
                 </div>
 
-                <div class="form-row align-items-center">
-                    <div class="col-auto"></div>
-                    <div class="col-right" >
-                        <label for="inputfile">Input file:</label>
-                    </div>
-                    <div class="col" >
-                        <label for="inputfile_url"><a href="{{ url_db }}" target="_blank" >{{ upload_db }}</a></label>
-                    </div>
-                    <div class="col-auto"></div>
-                </div>
+{#                <div class="form-row align-items-center">#}
+{#                    <div class="col-auto"></div>#}
+{#                    <div class="col-right" >#}
+{#                        <label for="inputfile">Input file:</label>#}
+{#                    </div>#}
+{#                    <div class="col" >#}
+{#                        <label for="inputfile_url"><a href="{{ url_db }}" target="_blank" >{{ upload_db }}</a></label>#}
+{#                    </div>#}
+{#                    <div class="col-auto"></div>#}
+{#                </div>#}
 
             {% if outfile_mantis_url %}<br>
                 <div class="form-row align-items-center">

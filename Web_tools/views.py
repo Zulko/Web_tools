@@ -6,6 +6,7 @@ from libs.function.normalization import run_normalization
 from libs.function.fasta2primer3 import run_primer
 from libs.function.combinatorial import run_combination
 from libs.function.moclo import run_moclo
+from libs.function.moclo_db import run_moclo_db
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.decorators import login_required
@@ -190,9 +191,64 @@ def moclo(request):
     return render(request, 'moclo.html')
 
 
+def moclo_db(request):
+    context = {}
+    if request.method == "POST":
+        if len(request.FILES) != 0:
+            upload_file = request.FILES['upload_file']
+            fs = FileSystemStorage()
+            name_file = fs.save(upload_file.name, upload_file)
+            context['url_file'] = fs.url(name_file)
+            url_file = fs.url(name_file)
+
+            """Dispenser parameters"""
+            machine = request.POST['machine']
+            min_vol = request.POST['min_vol']
+            vol_resol = request.POST['vol_resol']
+            dead_vol = request.POST['dead_vol']
+            dispenser_parameters = machine, float(min_vol) * 1e-3, float(vol_resol) * 1e-3, float(dead_vol)
+
+            """Mixer parameters"""
+            part_fmol = request.POST['part_fmol']
+            bb_fmol = request.POST['bb_fmol']
+            total_vol = request.POST['total_vol']
+            per_buffer = request.POST['buffer']
+            per_enz_restric = request.POST['enz_restric']
+            per_enz_ligase = request.POST['enz_ligase']
+            mantis_two_chips = 'mantis_two_chips' in request.POST
+            add_water = 'add_water' in request.POST
+            mix_parameters = float(part_fmol), float(bb_fmol), float(total_vol), float(per_buffer), float(per_enz_restric), float(per_enz_ligase), add_water
+
+            """Destination plate"""
+            num_well_destination = request.POST['num_well_destination']
+            pattern = request.POST['pattern']
+
+            ''' Calling Python Script'''
+            alerts, outfile_mantis, outfile_robot, mixer_recipe, chip_mantis = run_moclo_db(settings.MEDIA_ROOT, name_file, dispenser_parameters, mix_parameters, int(num_well_destination), int(pattern), mantis_two_chips)
+
+            if mixer_recipe is not None:
+                outfile_mantis_name = os.path.basename(outfile_mantis.name)
+                outfile_robot_name = os.path.basename(outfile_robot.name)
+                outfile_mantis_url = fs.url(outfile_mantis_name)
+                outfile_robot_url = fs.url(outfile_robot_name)
+
+                return render(request, 'moclo_db.html', {'uploadfile_name': upload_file, 'url_file': url_file,
+                                                      'outfile_mantis_name': outfile_mantis_name, 'outfile_robot_name': outfile_robot_name,
+                                                      'outfile_mantis_url': outfile_mantis_url, 'outfile_robot_url': outfile_robot_url, 'alerts': alerts, 'mixer_recipe': mixer_recipe, 'chip_mantis': chip_mantis})
+            else:
+                return render(request, 'moclo_db.html',
+                              {'uploadfile_name': upload_file, 'url_file': url_file,
+                               'outfile_mantis_name': '', 'outfile_robot_name': '',
+                               'outfile_mantis_url': '', 'outfile_robot_url': '',
+                               'alerts': alerts, 'mixer_recipe': '', 'chip_mantis': ''})
+
+    return render(request, 'moclo_db.html')
+
+
 # @login_required(login_url="/accounts/login/")
 def about(request):
     return render(request, 'about.html')
+
 
 def under_construction(request):
     return render(request, 'under_construction.html')

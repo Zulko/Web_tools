@@ -2,68 +2,138 @@
 {% load static from staticfiles %}
 
 {% block content %}
-    <div class="row">
-      <div class="col-3">
-        <h2>Options</h2>
+
+<div class="row">
+    <div class="col-3">
+    <h2>Options</h2>
         <div class="options">
 
             <form method="post" enctype="multipart/form-data"> {% csrf_token %}
-              <fieldset>
-
-                Select a file with DNA parts to combine: <br><br>
-                <input type="file" name="myFile"><br><br>
-
-                <br><br>
-                <input type="submit" class="btn btn-info btn-block" value="Submit">
+              <fieldset class="form-group"><br>
+                  <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col">
+                        <label for="file">Select a file with DNA parts: </label>
+                    </div>
+                    <div class="col-left">
+                        <input type="file" class="form-control-file border" name="myFile">
+                    </div>
+                    <div class="col-auto"></div>
+                </div><br><br>
+                <input type="submit" class="btn btn-info btn-block btn-lg" value="Submit">
               </fieldset>
             </form>
-
             <br><br>
-            {% if url %}
-            <fieldset>
-                Uploaded file: <a href="{{ url }}" target="_blank" ><p>{{ uploadfile_name }}</p></a>
-                <ol>
-                {% for set in num_parts %}
-                    <li>
-                    {% for num in set %}
-                        [ {{ num }} ]
-                    {% endfor %}
-                    </li>
-                {% endfor %}
-                </ol>
-
-                {% if outfile_name %}
-                    <br><br>
-                    Output file: <a href="{{ outfile_url }}" target="_blank" download> <p>{{ outfile_name }}</p> </a>
-                    <ol>
-                    {% for num in num_combin %}
-                        <li>{{ num }} Combinations</li>
-                    {% endfor %}
-                    </ol>
-
-
-
-                {% endif %}
-            </fieldset>
-            {% endif %}
         </div>
       </div>
 
       <div class="col-6">
         <h2>Combinatorial Script</h2>
-             </table>
-             <br><p> Example of an input file to be normalized (<a href="{% static 'docs/parts.txt' %}" target="_blank" download><strong> Example.txt </strong></a>)</p>
-             <p> Same type separate by: ','  and different type separate by: ';'. Don't use space between types.</p>
-             <br>
-                <h3><div class="textbreak">Type1_A, Type1_B; Type2_A, Type2_B, Type2_C; Type8_A</div></h3>
-                <h3><div class="textbreak">Type1_C, Type1_D, Type1_E; Type2_A, Type2_B, Type2_C; Type8</div></h3>
-                <h3><div class="textbreak">Type1_A, Type1_B; Type2_F, Type2_G, Type2_H, Type2_I; Type678</div></h3>
-
+            <br><p> Example of an input file to be normalized (<a href="{% static 'docs/parts.txt' %}" target="_blank" download><strong> Example.txt </strong></a>)</p><br>
+          <table class="table table table-hover">
+              <thead>
+                <tr class="table-dark text-dark">
+                <th>Experiment</th>
+                <th>Type A</th>
+                <th>Type B</th>
+                <th>Type C</th>
+                <th>Type D</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>TypeA_1</td>
+                    <td>TypeB_1</td>
+                    <td>TypeC_1</td>
+                    <td>TypeD</td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>TypeA_2</td>
+                    <td>TypeB_2</td>
+                    <td>TypeC_2</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>TypeA_3</td>
+                    <td>TypeB_2</td>
+                    <td>TypeC_1</td>
+                    <td>TypeD</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>TypeA_4</td>
+                    <td>TypeB_3</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+              </tbody>
+          </table>
       </div>
 
       <div class="col-3">
-        <h2></h2>
-        <p></p>
+          {% if url %}
+            <h2>Output </h2>
+            <fieldset class="form-group"><br>
+                <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col">
+                        <center><label for="inputfile"><strong>Input File:</strong></label></center>
+                    </div>
+                    <div class="col"><center><label for="num_parts"><strong> Number of Parts/Experiment </strong></label></center></div>
+                    <div class="col-auto"></div>
+                </div>
+
+                <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                     <div class="col">
+                        <center>
+                            <label for="inputfile"><a href="{{ url }}" target="_blank" download> <strong> {{ uploadfile_name }} </strong> </a></label>
+                        </center>
+                     </div>
+                     <div class="col">
+                        {% for set in num_parts %}
+                            <center>
+                            {% for num in set %}
+                                <span class="badge badge-info">{{ num }}</span>
+                            {% endfor %}<br>
+                            </center>
+                        {% endfor %}
+                     </div>
+                    <div class="col-auto"></div>
+                </div><br>
+            </fieldset><br>
+
+            <fieldset class="form-group"><br>
+                {% if outfile_name %}
+                <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col">
+                        <center><label for="outputfile"><strong>Output File:</strong></label></center>
+                    </div>
+                    <div class="col"><center><label for="num_parts"><strong> Combinations </strong></label></center></div>
+                    <div class="col-auto"></div>
+                </div>
+
+                <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col">
+                        <center>
+                            <label for="outputfile"><a href="{{ outfile_url }}" target="_blank" download> <strong> {{ outfile_name }} </strong> </a></label>
+                        </center>
+                    </div>
+                    <div class="col">
+                        {% for num in num_combin %}
+                            <center><span class="badge badge-info">{{ num }}</span><br></center>
+                        {% endfor %}
+                    </div>
+                    <div class="col-auto"></div>
+                </div>
+                {% endif %}<br>
+            </fieldset>
+            {% endif %}
       </div>
     </div>
 {% endblock%}

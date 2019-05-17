@@ -3,85 +3,121 @@
 
 
 {% block content %}
-    <div class="row">
-      <div class="col-3">
 
-        <h2>Options</h2>
-
+<div class="row">
+    <div class="col-3">
+    <h2>Options</h2>
         <div class="options">
+
             <form method="post" enctype="multipart/form-data"> {% csrf_token %}
-              <fieldset>
-                Select a file: <br><br>
-                <input type="file" name="myFile"><br><br><br>
-                Start position:<br>
-                Foward Primer: <input type="text" name="start_prime" value="0" style="width:80px"><br>
-                Reverse Primer: <input type="text" name="end_prime" value="length" style="width:80px"><br>
-                <input type="submit" class="btn btn-info btn-block" value="Submit">
+              <fieldset class="form-group"><br>
+                <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col">
+                        <label for="file">Select a file: </label>
+                    </div>
+                    <div class="col-left">
+                        <input type="file" class="form-control-file border" name="myFile">
+                    </div>
+                    <div class="col-auto"></div>
+                </div><br><br>
+                <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col">
+                        <label for="startPos"><h5>Primers start positions: </h5></label>
+                    </div>
+                    <div class="col-auto"></div>
+                </div>
+                <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col">
+                        <label for="fow_primer">Foward Primer: </label>
+                    </div>
+                    <div class="col">
+                        <input class="form-control" type="text" name="start_prime" value="0" ><br>
+                    </div>
+                    <div class="col">
+                        <label for="rev_primer">Reverse Primer: </label>
+                    </div>
+                    <div class="col">
+                        <input class="form-control" type="text" name="end_prime"  value="length"><br>
+                    </div>
+                    <div class="col-auto"></div>
+                </div>
+                <input type="submit" class="btn btn-info btn-block btn-lg" value="Submit">
               </fieldset>
             </form>
-
-
-            <br><br>
-
-            {% if url %}
-            <fieldset>
-                Uploaded file: <a href="{{ url }}" target="_blank" ><p>{{ uploadfile_name }}</p></a>
-
-                {% if outfile_name %}
-                    <br><br>
-                    Output file: <a href="{{ outfile_url }}" target="_blank" download> <p>{{ outfile_name }}</p> </a>
-                {% endif %}
-
-            </fieldset>
-            {% endif %}
-
-
         </div>
-      </div>
-
-      <div class="col-6">
-        <h2>Primer Script</h2>
-        <h4> Example of an input fasta file (<a href="{% static 'docs/seq.fasta' %}" target="_blank" download><strong> Example file.fasta </strong></a>)</h4><br><br>
-        <h3> Script uses Primer3 package to create the forward and reverse primers. </h3>
-        <br><br>
-        <h3> Example of input file: </h3>
-          <table>
-              <tr>
-                  <h3><div class="textbreak">HSGLTH1 Human theta 1-globin gene <strong>CCACTGCACTCACCGCA</strong>CCCGGCCAATTTTTGTGTTTTTAGTAGAGACTAAATACCATATAGTGAACACCTAAGACGGGGGGCCTTGGATCCAGGGCGATTCAGAGGGCCCCGGTCGGAGCTGTCGGAGATTGAGCGCGCGCGGTCCCGGGATCTCCGACGAGGCCCTGGACCCCCGGGCGGCGAAGCTGCGGCGCGGCGCCCCCTGGAGGCCGCGGGACCCCTGGCCGGTCCGCGCAGGCGCAGCGGGGTCGCAGGGCGCGGCGGGTTCCAGCGCGGGGATGGCGCTGTCCGCGGAGGACCGGGCGCTGGTGCGCGCCCTGTGGAAGAAGCTGGGCAGCAACGTCGGCGTCTACACGACAGAGGCCCTGGAAAGGTGCGGCAGGCTGGGCGCCCCCGCCCCCAGGGGCCCTCCCTCCCCAAGCCCCCCGGACGCGCCTCACCCACGTTCCTCTCGCAGGACCTTCCTGGCTTTCCCCGCCACGAAGACCTACTTCTCCCACCTGGACCTGAGCCCCGGCTCCTCACAAGTCAGAGCCCACGGCCAGAAGGTGGCGGACGCGCTGAGCCTCGCCGTGGAGCGCCTGGACGACCTACCCCACGCGCTGTCCGCGCTGAGCCACCTGCACGCGTGCCAGCTGCGAGTGGACCCGGCCAGCTTCCAGGTGAGCGGCTGCCGTGCTGGGCCCCTGTCCCCGGGAGGGCCCCGGCGGGGTGGGTGCGGGGGGCGTGCGGGGCGGGTGCAGGCGAGTGAGCCTTGAGCGCTCGCCGCAGCTCCTGGGCCACTGCCTGCTGGTAACCCTCGCCCGGCACTACCCCGGAGACTTCAGCCCCGCGCTGCAGGCGTCGCTGGACAAGTTCCTGAGCCACGTTATCTCGGCGCTGGTTTCCGAGTACCGCTGAACTGTGGGTGGGTGGCCGCGGGATCCCCAGGCGACCTTCCCCGTGTTTGAGTAAAGCCTCTCCCAGGAGCAGCCTTCTTGCCGTGCTCTCTCGAGGTCAGGA<strong>CGCGAGAGGAAGGCGC</strong>
-                </div></h3>
-              </tr>
-          </table>
-        <br><br><br>
-        <h4> Output File: </h4>
-        <h3>
-        <table>
-          <tr>
-            <th><center>Gene ID</center></th>
-            <th><center>Up Primer Sequence</center></th>
-            <th><center>Down Primer Sequence</center></th>
-            <th><center>Up Primer Length</center></th>
-            <th><center>Down Primer Length</center></th>
-            <th><center>Product Length</center></th>
-          </tr>
-          <tr>
-            <td><center>HSGLTH1</td>
-            <td><center>CCACTGCACTCACCGCA</center></td>
-            <td><center>GCGCCTTCCTCTCGCG</center></td>
-            <td><center>17</center></td>
-            <td><center>16</center></td>
-            <td><center>1020</center></td>
-          </tr>
-        </table>
-        </h3>
-
-      </div>
-
-        {% comment %}
-        <div class="col-3">
-        <h2>Side</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit..</p>
-        </div>
-        {% endcomment %}
     </div>
+
+    <div class="col-6">
+        <h2>Primer Script</h2>
+        <p> Example of an input fasta file (<a href="{% static 'docs/seq.fasta' %}" target="_blank" download><strong> Example file.fasta </strong></a>)</p><br>
+        <h4> Primer Script uses <a href="https://pypi.org/project/primer3-py/" target="_blank">Primer3 package</a> to create the forward and reverse primers. </h4>
+        <br>
+
+        <div class="form-group">
+            <label for="fasta"><h6> Example of input file: </h6></label>
+            <textarea class="form-control" id="fasta" rows="10">HSGLTH1 Human theta 1-globin gene
+CCACTGCACTCACCGCACCCGGCCAATTTTTGTGTTTTTAGTAGAGACTAAATACCATATAGTGAACACCTAAGACGGGGGGCCTTGGATCCAGGGCGATTCAGAGGGCCCCGGTCGGAGCTGTCGGAGATTGAGCGCGCGCGGTCCCGGGATCTCCGACGAGGCCCTGGACCCCCGGGCGGCGAAGCTGCGGCGCGGCGCCCCCTGGAGGCCGCGGGACCCCTGGCCGGTCCGCGCAGGCGCAGCGGGGTCGCAGGGCGCGGCGGGTTCCAGCGCGGGGATGGCGCTGTCCGCGGAGGACCGGGCGCTGGTGCGCGCCCTGTGGAAGAAGCTGGGCAGCAACGTCGGCGTCTACACGACAGAGGCCCTGGAAAGGTGCGGCAGGCTGGGCGCCCCCGCCCCCAGGGGCCCTCCCTCCCCAAGCCCCCCGGACGCGCCTCACCCACGTTCCTCTCGCAGGACCTTCCTGGCTTTCCCCGCCACGAAGACCTACTTCTCCCACCTGGACCTGAGCCCCGGCTCCTCACAAGTCAGAGCCCACGGCCAGAAGGTGGCGGACGCGCTGAGCCTCGCCGTGGAGCGCCTGGACGACCTACCCCACGCGCTGTCCGCGCTGAGCCACCTGCACGCGTGCCAGCTGCGAGTGGACCCGGCCAGCTTCCAGGTGAGCGGCTGCCGTGCTGGGCCCCTGTCCCCGGGAGGGCCCCGGCGGGGTGGGTGCGGGGGGCGTGCGGGGCGGGTGCAGGCGAGTGAGCCTTGAGCGCTCGCCGCAGCTCCTGGGCCACTGCCTGCTGGTAACCCTCGCCCGGCACTACCCCGGAGACTTCAGCCCCGCGCTGCAGGCGTCGCTGGACAAGTTCCTGAGCCACGTTATCTCGGCGCTGGTTTCCGAGTACCGCTGAACTGTGGGTGGGTGGCCGCGGGATCCCCAGGCGACCTTCCCCGTGTTTGAGTAAAGCCTCTCCCAGGAGCAGCCTTCTTGCCGTGCTCTCTCGAGGTCAGGACGCGAGAGGAAGGCGC</textarea>
+        </div>
+
+        <br><br>
+        <p> Example of output file: </p>
+        <table class="table table table-hover">
+           <thead>
+              <tr>
+                <th>Gene ID</th>
+                <th>Up Primer Sequence</th>
+                <th>Down Primer Sequence</th>
+                <th>Up Primer Length</th>
+                <th>Down Primer Length</th>
+                <th>Product Length</th>
+              </tr>
+           <tbody>
+              <tr>
+                <td>HSGLTH1</td>
+                <td>CCACTGCACTCACCGCA</td>
+                <td>GCGCCTTCCTCTCGCG</td>
+                <td>17</td>
+                <td>16</td>
+                <td>1020</td>
+              </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="col-3">
+        {% if url %}
+            <h2>Output </h2>
+            <br>
+            <fieldset class="form-group"><br>
+                <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col" >
+                        <label for="inputfile">Input File:</label>
+                    </div>
+                     <div class="col" align="left">
+                         <label for="inputfile"><a href="{{ url }}" target="_blank" download> <strong> {{ uploadfile_name }} </strong> </a></label>
+                     </div>
+                    <div class="col-auto"></div>
+                </div><br>
+                {% if outfile_name %}
+                <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col" >
+                        <label for="outputfile">Output File:</label>
+                    </div>
+                    <div class="col" align="left">
+                        <label for="outputfile"><a href="{{ outfile_url }}" target="_blank" download> <strong> {{ outfile_name }} </strong> </a></label>
+                    </div>
+                    <div class="col-auto"></div>
+                </div><br>
+                {% endif %}
+            </fieldset>
+        {% endif %}
+    </div>
+</div>
+
 {% endblock%}
 

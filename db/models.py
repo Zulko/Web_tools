@@ -57,8 +57,6 @@ class Sample(models.Model):
 
 class Well(models.Model):
     name = models.CharField(max_length=5)
-    pos_i = models.IntegerField()
-    pos_j = models.IntegerField()
     volume = models.DecimalField(max_digits=10, decimal_places=2)
     concentration = models.DecimalField(max_digits=10, decimal_places=2)
     plate = models.ForeignKey(Plate, on_delete=models.CASCADE)

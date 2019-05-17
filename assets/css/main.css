@@ -75,13 +75,13 @@ fieldset {
 
 /*Plates format at Database*/
 .circle_full {
-  width: 25px;
-  height: 25px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   border: 1px solid;
   font-size: 12px;
   color: black;
-  line-height: 25px;
+  line-height: 30px;
   text-align: center;
   background: #004185;
 }
@@ -95,13 +95,13 @@ fieldset {
 }
 
 .circle_empty {
-  width: 25px;
-  height: 25px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   border: 1px solid;
   font-size: 12px;
   color: black;
-  line-height: 25px;
+  line-height: 30px;
   text-align: center;
   background: transparent;
 }

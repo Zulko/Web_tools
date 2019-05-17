@@ -1,21 +1,22 @@
 {% extends 'base_layout.html' %}
 
-{% block content %}
 
-    <br>
+{% block content %}
 
     <div class="row">
       <div class="col-3">
           <h2>List of Plates</h2><br>
-          <div class="search-label-icon"> search </div>
             {% if all_plates %}
-            <nav>
-                <ul>
-                    {% for plate in all_plates %}
-                        <h3><a href="{% url 'db:plate' plate.id %}"> {{ plate.id }}: {{ plate.name }}</a></h3><br>
-                    {% endfor %}
-                </ul>
-            </nav>
+              <fieldset class="form-group overflow-auto">
+                {% for plate in all_plates %}
+                  <div class="form-row align-items-center">
+                      <div class="col">
+{#                        <a class="nav-link" href="{% url 'db:plate' plate.id %}"> {{ plate.id }}: {{ plate.name }}</a>#}
+                        <a class="btn btn-info btn-block" href="{% url 'db:plate' plate.id %}"> {{ plate.id }}: {{ plate.name }}</a>
+                      </div><br>
+                {% endfor %}
+                </div>
+              </fieldset>
             {% else %}
                 <h3> No plates in database </h3>
             {% endif %}
@@ -32,64 +33,70 @@
                         <th> {{ colname }}</th>
                     {% endfor %}
                 </tr>
-                {% for rowname, row in layout %}
+
+                {% for rowname, fill in layout %}
                     <tr>
                     <th> {{ rowname }}</th>
-                    {% for col in row %}
-                        {% for well in wells %}
-                            {% if col == well.name %}
-                                <td>
-{#                                    <a href="{% url 'db:well' plate.id well.id %}"> {{ well.name }} </a>#}
-                                    <div class="circle_full"> <a href="{% url 'db:well' plate.id well.id %}"> {{ well.name }} </a> </div>
-                                </td>
-                            {% else %}
-                                <td>
-{#                                    {{ col }}#}
-                                    <div class="circle_empty"> {{ col }} </div>
-                                </td>
-                            {% endif %}
-                        {% endfor %}
+                    {% for col in fill %}
+                        {% if col.1 == '' %}
+                            <td>
+                                 <div class="circle_empty"> {{ col.0 }} </div>
+                            </td>
+
+                        {% else %}
+                            <td>
+                                <div class="circle_full"> <a href="{% url 'db:well' col.1 col.2 %}"> {{ col.0 }} </a> </div>
+{#                                <div class="circle_empty"> {{ col.1 }} </div>#}
+                            </td>
+                        {% endif %}
                     {% endfor %}
                  </tr>
                 {% endfor %}
             </table>
-
-{#            <div class="footer">#}
-{#                <div class="pagination">#}
-{#                  <a href="#">&laquo;</a>#}
-{#                  <a href="#">Well </a>#}
-{#                  <a href="#">Sample</a>#}
-{#                  <a href="#">Volume</a>#}
-{#                  <a href="#">Concentration</a>#}
-{#                  <a href="#">&raquo;</a>#}
-{#                </div>#}
-{#            </div>#}
-
         {% endif %}
 
       </div>
 
       <div class="col-3">
           {% if well %}
-
-            <h2>List of Samples in: <bold>{{ well.name }}</bold> </h2><br>
-            <nav>
-                <ul>
-
+            <h2>List of Samples in: <span class="badge badge-pill badge-info">{{ well.name }}</span> </h2><br>
+             <ul class="nav flex-column">
+                  <fieldset class="form-group overflow-auto">
                     {% for sample in well.samples.all %}
-                        <h3><a href="{% url 'db:well' plate.id well.id %}"> {{ sample.id }}: {{ sample.name }}</a></h3{r>
-{#                        <h3> {{ sample.id }}: {{ sample.name }}</h3><br>#}
+                        <a class="btn btn-info btn-block"
+                        data-toggle="collapse" href="#collapse" >{{ sample.id }}: {{ sample.name }}</a>
+                        <div class="collapse" id="collapse">
+                            <table class="table table-hover ">
+                                <tr>
+                                    <th>Lenght</th>
+                                    <td>{{ sample.length }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Type</th>
+                                    <td>{{ sample.type }}</td>
+                                </tr>
+                            </table>
+                        </div>
                     {% endfor %}
-                    <h3>Volume: {{ well.volume }}</h3><br>
-                    <h3>Concentration: {{ well.concentration}}</h3><br>
-
-
-                </ul>
-            </nav>
-            {% endif %}
+                  </fieldset>
+                  <fieldset class="form-group overflow-auto">
+                    <table class="table table-hover">
+                        <tr>
+                            <th>Volume</th>
+                            <td>{{ well.volume }}</td>
+                        </tr>
+                        <tr>
+                            <th>Concentration</th>
+                            <td> {{ well.concentration }}</td>
+                        </tr>
+                    </table>
+                  </fieldset>
+             </ul>
+          {% endif %}
       </div>
-
     </div>
+
+
 
 
 
