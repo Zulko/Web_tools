@@ -1,0 +1,9 @@
+Experiment;Type 1;Type 2;Type 3;Type 4
+1;TU1-5';PSMB gblock;pYTK001;
+1;TU1-3';;pYTK002;
+1;TU1-5' gblock;;pYTK003;
+1;;;pYTK004;
+2;pYTK022;PSMB gblock;pYTK001;
+2;pYTK023;;pYTK002;
+2;pYTK024;;pYTK003;
+2;pYTK025;;pYTK004;

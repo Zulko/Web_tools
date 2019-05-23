@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
-@login_required(login_url="/accounts/login/")
+# @login_required(login_url="/accounts/login/")
 def index(request):
     all_plates = Plate.objects.all()
     context = {"all_plates": all_plates,}
@@ -30,7 +30,6 @@ def plate_layout(plate_id, all_wells):
 
     colnames, rownames = Plate.create_headnames(plate)
     layout = zip(rownames, layout_fill)
-
     return layout, colnames, plate
 
 

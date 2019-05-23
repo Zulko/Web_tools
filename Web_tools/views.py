@@ -5,6 +5,7 @@ from libs.function.spotting import run_spotting
 from libs.function.normalization import run_normalization
 from libs.function.fasta2primer3 import run_primer
 from libs.function.combinatorial import run_combination
+from libs.misc.genbank import generate_from_csv
 from libs.function.moclo import run_moclo
 from libs.function.moclo_db import run_moclo_db
 from django.conf import settings
@@ -129,6 +130,53 @@ def combinatorial(request):
     return render(request, 'combinatorial.html',
                   {'uploadfile_name': '', 'url': '', 'outfile_name': '',
                    'outfile_url': '', 'num_parts': '', 'num_combin': ''})
+
+
+# @login_required(login_url="/accounts/login/")
+def assembly(request):
+    # context = {}
+    # if request.method == "POST":
+    #     if len(request.FILES) != 0:
+    #         upload = request.FILES['myFile']
+    #         fs = FileSystemStorage()
+    #         name = fs.save(upload.name, upload)
+    #         context['url'] = fs.url(name)
+    #         url = fs.url(name)
+    #         ''' Calling Python Script'''
+    #         outfile, list_num_parts, list_num_combinations = run_combination(settings.MEDIA_ROOT, name)
+    #         if outfile is not None:
+    #             outfile_name = os.path.basename(outfile.name)
+    #             outfile_url = fs.url(outfile_name)
+    #             return render(request, 'combinatorial.html',
+    #                           {'uploadfile_name': upload.name, 'url': url, 'outfile_name': outfile_name,
+    #                            'outfile_url': outfile_url, 'num_parts': list_num_parts, 'num_combin': list_num_combinations})
+    #         else:
+    #             return render(request, 'combinatorial.html',
+    #                           {'uploadfile_name': '', 'url': '', 'outfile_name': '',
+    #                            'outfile_url': '', 'num_parts': '', 'num_combin': ''})
+
+    return render(request, 'assembly.html',
+                  {'uploadfile_name': '', 'url': '', 'outfile_name': '', 'outfile_url': '', 'num_parts': '', 'num_combin': ''})
+
+
+def genbank(request):
+    if request.method == "POST":
+        if len(request.FILES) != 0:
+            upload = request.FILES['myFile']
+            fs = FileSystemStorage()
+            name = fs.save(upload.name, upload)
+            url = fs.url(name)
+            ''' Calling Python Script'''
+            outfile = generate_from_csv(settings.MEDIA_ROOT, name)
+            if outfile is not None:
+                outfile_name = os.path.basename(outfile.filename)
+                outfile_url = fs.url(outfile_name)
+                return render(request, 'assembly.html',
+                              {'uploadfile_name': upload.name, 'url': url, 'outfile_name': outfile_name,
+                               'outfile_url': outfile_url})
+
+    return render(request, 'assembly.html',
+                  {'uploadfile_name': '', 'url': '', 'outfile_name': '', 'outfile_url': ''})
 
 
 # @login_required(login_url="/accounts/login/")

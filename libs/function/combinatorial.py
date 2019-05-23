@@ -51,7 +51,7 @@ def run_combination(path, filename):
         l_combination_parts, l_parts = get_combinations(parts)
         lists_combination_parts.append(list(l_combination_parts))
         lists_parts.append(list(l_parts))
-    
+
     """Calculate the num of parts in input file"""
     list_set_num_parts = calc.num_listsparts(lists_parts)
 

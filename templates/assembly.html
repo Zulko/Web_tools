@@ -10,10 +10,11 @@
 
             <form method="post" enctype="multipart/form-data"> {% csrf_token %}
               <fieldset class="form-group"><br>
+                  <legend>Generate gb files</legend>
                   <div class="form-row align-items-center">
                     <div class="col-auto"></div>
                     <div class="col">
-                        <label for="file">Select a file with DNA parts: </label>
+                        <label for="file">Select a csv with DNA sequence: </label>
                     </div>
                     <div class="col-left">
                         <input type="file" class="form-control-file border" name="myFile">
@@ -28,49 +29,8 @@
       </div>
 
       <div class="col-6">
-        <h2>Combinatorial Script</h2>
-            <br><p> Example of an input file to be normalized (<a href="{% static 'docs/parts.csv' %}" target="_blank" download><strong> Example.txt </strong></a>)</p><br>
-          <table class="table table table-hover">
-              <thead>
-                <tr class="table-dark text-dark">
-                <th>Experiment</th>
-                <th>Type A</th>
-                <th>Type B</th>
-                <th>Type C</th>
-                <th>Type D</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>TypeA_1</td>
-                    <td>TypeB_1</td>
-                    <td>TypeC_1</td>
-                    <td>TypeD</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>TypeA_2</td>
-                    <td>TypeB_2</td>
-                    <td>TypeC_2</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>TypeA_3</td>
-                    <td>TypeB_2</td>
-                    <td>TypeC_1</td>
-                    <td>TypeD</td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>TypeA_4</td>
-                    <td>TypeB_3</td>
-                    <td></td>
-                    <td></td>
-                </tr>
-              </tbody>
-          </table>
+        <h2>Assembly Script</h2>
+
       </div>
 
       <div class="col-3">
