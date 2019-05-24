@@ -5,7 +5,6 @@ import itertools, csv
 def get_combinations(parts):
     ''' Create the single list of parts'''
     lists_parts = list(parts)
-
     ''' Create the combinations from the list'''
     lists_combination_parts = list(itertools.product(*parts))
     return lists_combination_parts, lists_parts

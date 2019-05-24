@@ -27,16 +27,10 @@ urlpatterns = [
     path('',views.home, name='home'),
     path('about/',views.about, name='about'),
     path('under_construction/',views.under_construction, name='under'),
-    path('spotting/', views.spotting, name='spotting'),
-    path('normalization/',views.normalization, name='normalization'),
-    path('primer/',views.primer, name='primer'),
-    path('combinatorial/',views.combinatorial, name='combinatorial'),
-    # path('assembly/',views.assembly, name='assembly'),
-    path('assembly/',views.genbank, name='assembly'),
-    path('moclo/', views.moclo, name='moclo'),
-    path('moclo_db/', views.moclo_db, name='moclodb'),
     path('accounts/', include('accounts.urls')),
-    path('db/', include('db.urls'))
+    path('db/', include('db.urls')),
+    path('misc/', include('misc.urls')),
+    path('scripts/', include('scripts.urls')),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'accounts',
     'db.apps.DbConfig',
+    'misc',
+    'scripts',
 ]
 
 MIDDLEWARE = [
@@ -81,15 +83,16 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         },
-    # 'aquarium': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': 'production',
-    #     'USER': 'aquarium',
-    #     'PASSWORD': 'aSecretAquarium',
-    #     'HOST': '172.19.0.2',
-    #     'PORT': '3306',
-    # }
+    'aquarium': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'production',
+        'USER': 'aquarium',
+        'PASSWORD': 'aSecretAquarium',
+        'HOST': '172.19.0.2',
+        'PORT': '3306',
+    }
 }
+
 
 
 # Password validation

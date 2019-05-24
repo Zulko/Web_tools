@@ -29,7 +29,6 @@ def load_seqs(path, fastafile):
 
 
 def make_boulderio(seqid, seq, start, end):
-    print(end)
     if end.find('length') == -1:
         length = int(end)
     else:
