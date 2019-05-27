@@ -16,7 +16,13 @@ def connect_db():
 
 
 def get_sample(conn, sample):
-    sample = conn.Sample.find(sample)
+    # sample = conn.Sample.find(1)
+    sample = conn.Sample.find_by_name('primer_connector_1')
+    plasmid = conn.SampleType.find(5)
+    plates = conn.Collection.find(1)
+    # sample = conn.Sample.find('1')
+    # print(plasmid)
+    print(plates)
     print(sample)
     return sample
 

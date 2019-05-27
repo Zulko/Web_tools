@@ -6,6 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/png" href="{% static "images/favicon.ico" %}"/>
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
@@ -26,7 +27,7 @@
 
 <nav class="navbar navbar-expand-sm bg-dark navbar-dark sticky-top">
 
-    <a class="navbar-brand" href="{% url 'home' %}"> <i class="fas fa-home" style="font-size:35px; color:white;" &nbsp;&nbsp;></i></a>
+    <a class="navbar-brand" href="{% url 'home' %}"> <i class="fas fa-home" style="font-size:25px; color:white;" &nbsp;&nbsp;></i></a>
 
      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
         <span class="navbar-toggler-icon"></span>
@@ -37,7 +38,7 @@
 
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-                    &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-vial" style="font-size:20px; color:white;"></i> &nbsp;Scripts</a>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-vial" style="font-size:15px; color:white;"></i> &nbsp;Scripts</a>
                 <div class="dropdown-menu">
                     <a class="dropdown-item" href="{% url 'scripts:spotting' %}">Spotting</a>
                     <a class="dropdown-item" href="{% url 'scripts:moclo' %}">Moclo</a>
@@ -48,7 +49,7 @@
 
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-                    &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-vial" style="font-size:20px; color:white;"></i> &nbsp;Scripts_DB</a>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-vial" style="font-size:15px; color:white;"></i> &nbsp;Scripts_DB</a>
                 <div class="dropdown-menu">
                     <a class="dropdown-item" href="{% url 'scripts:moclodb' %}">Moclo</a>
 
@@ -57,7 +58,7 @@
 
             <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-                &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-tools" style="font-size:20px; color:white;"></i>&nbsp; Misc</a>
+                &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-tools" style="font-size:15px; color:white;"></i>&nbsp; Misc</a>
                 <div class="dropdown-menu">
                     <a class="dropdown-item" href="{% url 'misc:genbank' %}">GB Files</a>
                     <a class="dropdown-item" href="{% url 'misc:primer' %}">Primer</a>
@@ -66,7 +67,7 @@
 
             <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-                &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-database" style="font-size:20px; color:white;"></i>&nbsp; Database</a>
+                &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-database" style="font-size:15px; color:white;"></i>&nbsp; Database</a>
                 <div class="dropdown-menu">
                     <a class="dropdown-item" href="{% url 'db:index' %}">View Data</a>
                 </div>
@@ -76,12 +77,12 @@
 
             <li class="navbar-nav">
                 <a class="nav-link" href= "http://{{ domain }}:8080/" target="_blank">
-                &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-server" style="font-size:20px; color:white;"></i> &nbsp;LIMS</a> </li>
+                &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-server" style="font-size:15px; color:white;"></i> &nbsp;LIMS</a> </li>
             </li>
 
             <li class="navbar-nav">
                 <a class="nav-link" href="{% url 'about' %}">
-                    &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-info-circle" style="font-size:20px; color:white;"></i>&nbsp; About</a> </li>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-info-circle" style="font-size:15px; color:white;"></i>&nbsp; About</a> </li>
             </li>
 
 
@@ -95,8 +96,8 @@
 {% endblock %}
 </div>
 
-<div class="jumbotron text-center" style="margin-bottom: 0">
-    <h4><a href="https://www.concordia.ca/research/genome-foundry.html" target="_blank">Concordia Genome Foundry</a></h4>
+<div class="footer">
+    <h6><a href="https://www.concordia.ca/research/genome-foundry.html" target="_blank">Concordia Genome Foundry</a></h6>
 </div>
 
 
