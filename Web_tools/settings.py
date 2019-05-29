@@ -78,21 +78,39 @@ WSGI_APPLICATION = 'Web_tools.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'biofoundry',
+#         'USER': 'admin',
+#         'PASSWORD': 'genomefoundry',
+#         'HOST': 'localhost',
+#         'PORT': '',
+#     }
+#     # 'default': {
+#     #     'ENGINE': 'django.db.backends.sqlite3',
+#     #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     #     },
+#     # 'aquarium': {
+#     #     'ENGINE': 'django.db.backends.mysql',
+#     #     'NAME': 'production',
+#     #     'USER': 'aquarium',
+#     #     'PASSWORD': 'aSecretAquarium',
+#     #     'HOST': '172.19.0.2',
+#     #     'PORT': '3306',
+#     # }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        },
-    'aquarium': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'production',
-        'USER': 'aquarium',
-        'PASSWORD': 'aSecretAquarium',
-        'HOST': '172.19.0.2',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'biofoundry',
+        'USER': 'admin',
+        'PASSWORD': 'genomefoundry',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
-
 
 
 # Password validation
