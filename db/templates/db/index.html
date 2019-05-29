@@ -14,8 +14,9 @@
 {#                        <a class="nav-link" href="{% url 'db:plate' plate.id %}"> {{ plate.id }}: {{ plate.name }}</a>#}
                         <a class="btn btn-info btn-block" href="{% url 'db:plate' plate.id %}"> {{ plate.id }}: {{ plate.name }}</a>
                       </div><br>
+                  </div>
                 {% endfor %}
-                </div>
+
               </fieldset>
             {% else %}
                 <h4> No plates in database </h4>
