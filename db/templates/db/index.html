@@ -5,7 +5,7 @@
 
     <div class="row">
       <div class="col-3">
-          <h2>List of Plates</h2><br>
+          <h3>List of Plates</h3><br>
             {% if all_plates %}
               <fieldset class="form-group overflow-auto">
                 {% for plate in all_plates %}
@@ -18,17 +18,16 @@
                 </div>
               </fieldset>
             {% else %}
-                <h3> No plates in database </h3>
+                <h4> No plates in database </h4>
             {% endif %}
-
       </div>
 
       <div class="col-6">
         {% if plate %}
-            <h2>{{ plate }}</h2> <br>
-            <table>
+            <h3>{{ plate }}</h3> <br>
+            <table style="border-spacing: 0; border-width: 0; padding: 0; border-width: 0;">
                 <tr>
-                    <th></th>
+                    <th style="padding-right: 0px;"></th>
                     {% for colname in colnames %}
                         <th> {{ colname }}</th>
                     {% endfor %}
@@ -36,15 +35,15 @@
 
                 {% for rowname, fill in layout %}
                     <tr>
-                    <th> {{ rowname }}</th>
+                    <th style="padding-right: 0px;"> {{ rowname }}</th>
                     {% for col in fill %}
                         {% if col.1 == '' %}
-                            <td>
+                            <td style="padding-right: 0px;">
                                  <div class="circle_empty"> {{ col.0 }} </div>
                             </td>
 
                         {% else %}
-                            <td>
+                            <td style="padding-right: 0px;">
                                 <div class="circle_full"> <a href="{% url 'db:well' col.1 col.2 %}"> {{ col.0 }} </a> </div>
 {#                                <div class="circle_empty"> {{ col.1 }} </div>#}
                             </td>
@@ -59,7 +58,7 @@
 
       <div class="col-3">
           {% if well %}
-            <h2>List of Samples in: <span class="badge badge-pill badge-info">{{ well.name }}</span> </h2><br>
+            <h3>List of Samples in: <span class="badge badge-pill badge-info">{{ well.name }}</span> </h3><br>
              <ul class="nav flex-column">
                   <fieldset class="form-group overflow-auto">
                     {% for sample in well.samples.all %}
