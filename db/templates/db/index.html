@@ -5,7 +5,7 @@
 
     <div class="row">
       <div class="col-3">
-          <h3>List of Plates</h3><br>
+          <h4>List of Plates</h4><br>
             {% if all_plates %}
               <fieldset class="form-group overflow-auto">
                 {% for plate in all_plates %}
@@ -19,18 +19,18 @@
 
               </fieldset>
             {% else %}
-                <h4> No plates in database </h4>
+                <h6> No plates in database </h6>
             {% endif %}
       </div>
 
       <div class="col-6">
         {% if plate %}
-            <h3>{{ plate }}</h3> <br>
+            <h4>{{ plate }}</h4> <br>
             <table style="border-spacing: 0; border-width: 0; padding: 0; border-width: 0;">
                 <tr>
-                    <th style="padding-right: 0px;"></th>
+                    <th style="padding-right: 0px;">  </th>
                     {% for colname in colnames %}
-                        <th> {{ colname }}</th>
+                        <th style="padding-right: 0px;" > {{ colname }} </th>
                     {% endfor %}
                 </tr>
 
@@ -59,7 +59,7 @@
 
       <div class="col-3">
           {% if well %}
-            <h3>List of Samples in: <span class="badge badge-pill badge-info">{{ well.name }}</span> </h3><br>
+            <h4>List of Samples in: <span class="badge badge-pill badge-info">{{ well.name }}</span> </h4><br>
              <ul class="nav flex-column">
                   <fieldset class="form-group overflow-auto">
                     {% for sample in well.samples.all %}

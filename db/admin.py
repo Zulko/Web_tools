@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Plate, Sample, Well
+from .models import Plate, Sample, Well, File
 
 
 # Register your models here.
@@ -7,3 +7,4 @@ from .models import Plate, Sample, Well
 admin.site.register(Plate)
 admin.site.register(Sample)
 admin.site.register(Well)
+admin.site.register(File)

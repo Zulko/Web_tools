@@ -1,0 +1,63 @@
+{% extends 'base_layout.html' %}
+
+{% block content %}
+
+    <div class="row">
+    <div class="col-3">
+    <h4>Options</h4>
+        <div class="options">
+            <form method="post"> {% csrf_token %}
+              <fieldset class="form-group">
+
+                <div class="form-row align-items-center">
+                    <a class="btn btn-info btn-block" data-toggle="collapse" href="#collapse" >Add Samples</a>
+                    <div class="collapse" id="collapse">
+                        <div class="form-row align-items-center"><br><br>
+                            <div class="col-auto"></div>
+                            <div class="col">
+                                <label for="file">From a file: </label>
+                            </div>
+                            <div class="col-left">
+                                <input type="file" class="form-control-file border" name="upload_file_samples">
+                            </div>
+                            <div class="col-auto"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row align-items-center">
+                    <a class="btn btn-info btn-block" data-toggle="collapse" href="#collapse_plates" >Add Plates</a>
+                    <div class="collapse" id="collapse_plates">
+                        <div class="form-row align-items-center"><br><br>
+                            <div class="col-auto"></div>
+                            <div class="col">
+                                <label for="file">From a file: </label>
+                            </div>
+                            <div class="col-left">
+                                <input type="file" class="form-control-file border" name="upload_file_samples">
+                            </div>
+                            <div class="col-auto"></div>
+                        </div>
+                    </div>
+                </div>
+
+              </fieldset>
+            </form>
+        </div>
+    </div>
+
+    <br><br>
+      <div class="col-6">
+
+
+
+      </div>
+      <div class="col-3">
+
+
+      </div>
+    </div>
+
+
+
+{% endblock%}

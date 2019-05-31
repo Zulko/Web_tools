@@ -6,7 +6,7 @@
 
 <div class="row">
     <div class="col-3">
-    <h2>Options</h2>
+    <h4>Options</h4>
         <div class="options">
 
             <form method="post" enctype="multipart/form-data"> {% csrf_token %}
@@ -24,7 +24,7 @@
                 <div class="form-row align-items-center">
                     <div class="col-auto"></div>
                     <div class="col">
-                        <label for="startPos"><h5>Primers start positions: </h5></label>
+                        <label for="startPos"><h6>Primers start positions: </h6></label>
                     </div>
                     <div class="col-auto"></div>
                 </div>
@@ -51,9 +51,9 @@
     </div>
 
     <div class="col-6">
-        <h2>Primer Script</h2>
+        <h4>Primer Script</h4>
         <p> Example of an input fasta file (<a href="{% static 'docs/seq.fasta' %}" target="_blank" download><strong> Example file.fasta </strong></a>)</p><br>
-        <h4> Primer Script uses <a href="https://pypi.org/project/primer3-py/" target="_blank">Primer3 package</a> to create the forward and reverse primers. </h4>
+        <h5> Primer Script uses <a href="https://pypi.org/project/primer3-py/" target="_blank">Primer3 package</a> to create the forward and reverse primers. </h5>
         <br>
 
         <div class="form-group">
@@ -89,7 +89,7 @@ CCACTGCACTCACCGCACCCGGCCAATTTTTGTGTTTTTAGTAGAGACTAAATACCATATAGTGAACACCTAAGACGGGG
 
     <div class="col-3">
         {% if url %}
-            <h2>Output </h2>
+            <h4>Output </h4>
             <br>
             <fieldset class="form-group"><br>
                 <div class="form-row align-items-center">

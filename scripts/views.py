@@ -4,12 +4,19 @@ from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.decorators import login_required
 
 from libs.function.spotting import run_spotting
-from libs.function.normalization import run_normalization
 from libs.function.combinatorial import run_combination
 from libs.function.moclo import run_moclo
 from libs.function.moclo_db import run_moclo_db
 
 import os
+
+
+def upload_file(request, filename):
+    upload = request.FILES[filename]
+    fs = FileSystemStorage()
+    name = fs.save(upload.name, upload)
+    url = fs.url(name)
+    return upload, fs, name, url
 
 
 def spotting(request):
@@ -32,7 +39,7 @@ def spotting(request):
             outfile_url = fs.url(os.path.basename(outfile_name))
             context['worklist_name'] = worklist_name
             outfileworklist_url = fs.url(os.path.basename(worklist_name))
-            print(outfile_url, outfileworklist_url)
+
             return render(request, 'scripts/spotting.html', {'outfile_name': outfile_name, 'outfile_url': outfile_url, 'worklist_name': worklist_name, 'outfileworklist_url': outfileworklist_url})
 
         elif outfile_name is not None:
@@ -46,43 +53,11 @@ def spotting(request):
 
 
 # @login_required(login_url="/accounts/login/")
-def normalization(request):
-    context = {}
-    if request.method == "POST":
-        if len(request.FILES) != 0:
-            upload = request.FILES['myFile']
-            fs = FileSystemStorage()
-            name = fs.save(upload.name, upload)
-            context['url'] = fs.url(name)
-            url = fs.url(name)
-            in_well = request.POST['num_well_source']
-            out_well = request.POST['num_well_destination']
-            bb_fmol = request.POST['bb_fmol']
-            part_fmol = request.POST['part_fmol']
-            ''' Calling Python Script'''
-            outfile, alert = run_normalization(settings.MEDIA_ROOT, name, int(in_well), int(out_well), int(bb_fmol), int(part_fmol))
-            if outfile is not None:
-                outfile_name = os.path.basename(outfile.name)
-                outfile_url = fs.url(outfile_name)
-                return render(request, 'scripts/normalization.html', {'uploadfile_name': upload.name, 'url': url, 'outfile_name': outfile_name,'outfile_url': outfile_url, 'alert':alert})
-            else:
-                return render(request, 'scripts/normalization.html',
-                              {'uploadfile_name': upload.name, 'url': url, 'outfile_name': '',
-                               'outfile_url': '', 'alert': alert})
-    return render(request, 'scripts/normalization.html', {'uploadfile_name': '', 'url': '', 'outfile_name': '','outfile_url': '', 'alert':''})
-
-
-
-# @login_required(login_url="/accounts/login/")
 def combinatorial(request):
-    context = {}
     if request.method == "POST":
         if len(request.FILES) != 0:
-            upload = request.FILES['myFile']
-            fs = FileSystemStorage()
-            name = fs.save(upload.name, upload)
-            context['url'] = fs.url(name)
-            url = fs.url(name)
+            upload, fs, name, url = upload_file(request, 'myFile')
+
             ''' Calling Python Script'''
             outfile, list_num_parts, list_num_combinations = run_combination(settings.MEDIA_ROOT, name)
             if outfile is not None:
@@ -103,45 +78,18 @@ def combinatorial(request):
 
 # @login_required(login_url="/accounts/login/")
 def assembly(request):
-    # context = {}
-    # if request.method == "POST":
-    #     if len(request.FILES) != 0:
-    #         upload = request.FILES['myFile']
-    #         fs = FileSystemStorage()
-    #         name = fs.save(upload.name, upload)
-    #         context['url'] = fs.url(name)
-    #         url = fs.url(name)
-    #         ''' Calling Python Script'''
-    #         outfile, list_num_parts, list_num_combinations = run_combination(settings.MEDIA_ROOT, name)
-    #         if outfile is not None:
-    #             outfile_name = os.path.basename(outfile.name)
-    #             outfile_url = fs.url(outfile_name)
-    #             return render(request, 'scripts/combinatorial.html',
-    #                           {'uploadfile_name': upload.name, 'url': url, 'outfile_name': outfile_name,
-    #                            'outfile_url': outfile_url, 'num_parts': list_num_parts, 'num_combin': list_num_combinations})
-    #         else:
-    #             return render(request, 'scripts/combinatorial.html',
-    #                           {'uploadfile_name': '', 'url': '', 'outfile_name': '',
-    #                            'outfile_url': '', 'num_parts': '', 'num_combin': ''})
-
+    # if len(request.FILES) != 0:
+    #     upload, fs, name, url = upload_file(request, 'myFile')
     return render(request, 'scripts/assembly.html',
                   {'uploadfile_name': '', 'url': '', 'outfile_name': '', 'outfile_url': '', 'num_parts': '', 'num_combin': ''})
 
 
 # @login_required(login_url="/accounts/login/")
 def moclo(request):
-    context = {}
     if request.method == "POST":
         if len(request.FILES) != 0:
-            upload_file = request.FILES['upload_file']
-            upload_db = request.FILES['upload_db']
-            fs = FileSystemStorage()
-            name_file = fs.save(upload_file.name, upload_file)
-            name_db = fs.save(upload_db.name, upload_db)
-            context['url_file'] = fs.url(name_file)
-            context['url_db'] = fs.url(name_db)
-            url_file = fs.url(name_file)
-            url_db = fs.url(name_db)
+            upload_f, fs, name_file, url_file = upload_file(request, 'upload_file')
+            upload_db, fs, name_db, url_db = upload_file(request, 'upload_db')
 
             """Dispenser parameters"""
             machine = request.POST['machine']
@@ -173,12 +121,12 @@ def moclo(request):
                 outfile_robot_name = os.path.basename(outfile_robot.name)
                 outfile_mantis_url = fs.url(outfile_mantis_name)
                 outfile_robot_url = fs.url(outfile_robot_name)
-                return render(request, 'scripts/moclo.html', {'uploadfile_name': upload_file, 'upload_db': upload_db, 'url_file': url_file, 'url_db': url_db,
+                return render(request, 'scripts/moclo.html', {'uploadfile_name': upload_f, 'upload_db': upload_db, 'url_file': url_file, 'url_db': url_db,
                                                       'outfile_mantis_name': outfile_mantis_name, 'outfile_robot_name': outfile_robot_name,
                                                       'outfile_mantis_url': outfile_mantis_url, 'outfile_robot_url': outfile_robot_url, 'alerts': alerts, 'mixer_recipe': mixer_recipe, 'chip_mantis': chip_mantis})
             else:
                 return render(request, 'scripts/moclo.html',
-                              {'uploadfile_name': upload_file, 'upload_db': upload_db, 'url_file': url_file,
+                              {'uploadfile_name': upload_f, 'upload_db': upload_db, 'url_file': url_file,
                                'url_db': url_db, 'outfile_mantis_name': '', 'outfile_robot_name': '',
                                'outfile_mantis_url': '', 'outfile_robot_url': '',
                                'alerts': alerts, 'mixer_recipe': '', 'chip_mantis': ''})
@@ -186,14 +134,9 @@ def moclo(request):
 
 
 def moclo_db(request):
-    context = {}
     if request.method == "POST":
         if len(request.FILES) != 0:
-            upload_file = request.FILES['upload_file']
-            fs = FileSystemStorage()
-            name_file = fs.save(upload_file.name, upload_file)
-            context['url_file'] = fs.url(name_file)
-            url_file = fs.url(name_file)
+            upload, fs, name_file, url_file = upload_file(request, 'upload_file')
 
             """Dispenser parameters"""
             machine = request.POST['machine']
@@ -225,13 +168,17 @@ def moclo_db(request):
                 outfile_robot_name = os.path.basename(outfile_robot.name)
                 outfile_mantis_url = fs.url(outfile_mantis_name)
                 outfile_robot_url = fs.url(outfile_robot_name)
-                return render(request, 'scripts/moclo_db.html', {'uploadfile_name': upload_file, 'url_file': url_file,
+                return render(request, 'scripts/moclo_db.html', {'uploadfile_name': upload, 'url_file': url_file,
                                                       'outfile_mantis_name': outfile_mantis_name, 'outfile_robot_name': outfile_robot_name,
                                                       'outfile_mantis_url': outfile_mantis_url, 'outfile_robot_url': outfile_robot_url, 'alerts': alerts, 'mixer_recipe': mixer_recipe, 'chip_mantis': chip_mantis})
             else:
                 return render(request, 'scripts/moclo_db.html',
-                              {'uploadfile_name': upload_file, 'url_file': url_file,
+                              {'uploadfile_name': upload, 'url_file': url_file,
                                'outfile_mantis_name': '', 'outfile_robot_name': '',
                                'outfile_mantis_url': '', 'outfile_robot_url': '',
                                'alerts': alerts, 'mixer_recipe': '', 'chip_mantis': ''})
     return render(request, 'scripts/moclo_db.html')
+
+
+
+

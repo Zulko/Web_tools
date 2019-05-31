@@ -5,7 +5,7 @@
 
 <div class="row">
     <div class="col-3">
-    <h2>Options</h2>
+    <h4>Options</h4>
         <div class="options">
             <form method="post" enctype="multipart/form-data"> {% csrf_token %}
 {#            <fieldset class="form-group">#}
@@ -176,7 +176,7 @@
   </div>
 
   <div class="col-6">
-    <h2>MoClo Script</h2><br>
+    <h4>MoClo Script</h4><br>
     {% if alerts %}
         <div class="alert">
         <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
@@ -211,7 +211,7 @@
 
     <div class="col-3">
         {% if url_file %}
-            <h2>Output </h2>
+            <h4>Output </h4>
             <fieldset class="form-group">
                 <legend>Files</legend>
                 <div class="form-row align-items-center">

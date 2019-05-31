@@ -7,7 +7,7 @@ PlateS1,A1,PlateD1,B1,4
 PlateS1,A2,PlateD1,C1,4
 PlateS1,A2,PlateD1,D1,4
 """
-
+from db.models import File
 from ..misc import calc, file
 from ..container import plate
 import sys, os
@@ -35,6 +35,13 @@ def verify_entry(type, num):
         return num
 
 
+def save_file_on_database(name_file, file_path):
+    if name_file is not None:
+        file_to_save = open(file_path, 'r').read()
+        new_file = File(file=file_to_save)
+        new_file.save()
+
+
 def run_spotting(num_source_plates, num_wells, num_pattern, pattern):
     """
     Calls a function to create a output file
@@ -54,7 +61,9 @@ def run_spotting(num_source_plates, num_wells, num_pattern, pattern):
     else:
         # print('The total plates in biomek is %d' % total_plates)
         # print('The total destination plate(s) is %d and total source plate(s) is %d' % (total_destination, ver_num_source))
-        outfile_name, worklist_name = create_output_file(ver_num_source, num_wells, total_destination, pattern)
+        outfile_name, outfile, worklist_name, worklist = create_output_file(ver_num_source, num_wells, total_destination, pattern)
+        # save_file_on_database(outfile_name, outfile)
+        # save_file_on_database(worklist_name, worklist)
 
     return outfile_name, worklist_name, None
 
@@ -115,7 +124,7 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
             file.write_by_row(source_plate, destination_plates, num_pattern, outcsv, VOLUME)
         outfile_name = os.path.basename(file_path_out)
         print(file.colours.BOLD + 'Output File: ' + outfile_name + file.colours.BOLD)
-        return outfile_name, None
+        return outfile_name, file_path_out, None, None
 
     elif pattern == BY_COL:
         file_path_out = 'media/source_' + str(total_source) + '_' + str(num_pattern) + 'spot_bycol.csv'
@@ -136,7 +145,7 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
             file.write_by_col(source_plate, destination_plates, num_pattern, outcsv, VOLUME)
         outfile_name = os.path.basename(file_path_out)
         print(file.colours.BOLD + 'Output File: ' + outfile_name + file.colours.BOLD)
-        return outfile_name, None
+        return outfile_name, file_path_out, None, None
 
     else:
         file_path_out = 'media/source_' + str(total_source) + '_' + str(num_pattern) + 'spot_biomek.csv'
@@ -163,4 +172,4 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
         outfile_name = os.path.basename(file_path_out)
         outfile_worlistname = os.path.basename(file_worklist_path_out)
         print(file.colours.BOLD + 'Output File: ' + outfile_name + '\tWorklist: ' + outfile_worlistname + file.colours.BOLD)
-        return outfile_name, outfile_worlistname
+        return outfile_name, file_path_out, outfile_worlistname, file_worklist_path_out

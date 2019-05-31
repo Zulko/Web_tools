@@ -1,6 +1,8 @@
 import sys
 import pydent as pd
 
+from db.models import Plate
+
 
 def connect_db():
     try:
@@ -27,6 +29,9 @@ def get_sample(conn, sample):
     return sample
 
 
-conn = connect_db()
-get_sample(conn, 'pYTK096')
+# conn = connect_db()
+# get_sample(conn, 'pYTK096')
+all_plates = Plate.objects.all()
 
+for plate in all_plates:
+    print(plate.name)

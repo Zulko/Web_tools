@@ -5,7 +5,7 @@
 
 <div class="row">
     <div class="col-3">
-    <h2>Options</h2>
+    <h4>Options</h4>
         <div class="options">
             <form id='genbank' method="post" enctype="multipart/form-data"> {% csrf_token %}
               <fieldset class="form-group"><br>
@@ -28,13 +28,13 @@
       </div>
 
       <div class="col-6">
-        <h2>Assembly Script</h2>
+        <h4>Assembly Script</h4>
 
       </div>
 
       <div class="col-3">
           {% if url %}
-            <h2>Output </h2>
+            <h4>Output </h4>
             <fieldset class="form-group"><br>
                 <div class="form-row align-items-center">
                     <div class="col-auto"></div>

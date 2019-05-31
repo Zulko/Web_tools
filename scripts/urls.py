@@ -6,7 +6,6 @@ app_name = 'scripts'
 
 urlpatterns = [
     path('spotting/', views.spotting, name='spotting'),
-    path('normalization/', views.normalization, name='normalization'),
     path('combinatorial/', views.combinatorial, name='combinatorial'),
     path('assembly/', views.assembly, name='assembly'),
     path('moclo/', views.moclo, name='moclo'),

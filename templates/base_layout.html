@@ -62,6 +62,7 @@
                 <div class="dropdown-menu">
                     <a class="dropdown-item" href="{% url 'misc:genbank' %}">GB Files</a>
                     <a class="dropdown-item" href="{% url 'misc:primer' %}">Primer</a>
+                    <a class="dropdown-item" href="{% url 'misc:normalization' %}">Normalization</a>
                 </div>
             </li>
 
@@ -70,6 +71,8 @@
                 &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-database" style="font-size:15px; color:white;"></i>&nbsp; Database</a>
                 <div class="dropdown-menu">
                     <a class="dropdown-item" href="{% url 'db:index' %}">View Data</a>
+                    <a class="dropdown-item" href="{% url 'db:add_data' %}">Add Data</a>
+                    <a class="dropdown-item" href="{% url 'db:file_sharing' %}">File sharing</a>
                 </div>
             </li>
 

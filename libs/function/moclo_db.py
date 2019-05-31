@@ -10,12 +10,6 @@ BY_COL = 1
 MAX_VALUE = 999999
 
 
-# def get_plate_with_empty_well(destination_plates):
-#     for i in range(0, len(destination_plates)):
-#         if destination_plates[i].get_empty_well_coord() is not None:
-#             return i
-
-
 def get_localization_vol(part_name, list_source_wells):
     for i, item in enumerate(list_source_wells):
         sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, times_available, vol_part_add, plate_in_name, wellD_name = list_source_wells[i]

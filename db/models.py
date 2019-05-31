@@ -1,10 +1,15 @@
+# Create sql to do migration -> python manage.py makemigrations db
+# Then, make the migrate -> python manage.py migrate
 from django.db import models
+from django.urls import reverse
 import libs.misc.calc as calc
 
 
-# Create your models here.
-# Create sql to do migration -> python manage.py makemigrations db
-# Then, make the migrate -> python manage.py migrate
+class CommomInfo(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+
+    class Meta:
+        abstract = True
 
 
 class Plate(models.Model):
@@ -17,11 +22,11 @@ class Plate(models.Model):
     class Meta:
         ordering = ('id',)
 
+    def get_absolute_url(self):
+        return reverse('db:index',kwargs={'pk': self.pk})
+
     def __str__(self):
         return self.name
-
-    # def __init__(self, name, barcode, num_cols, num_rows, num_well):
-    #     num_well = num_rows*num_cols
 
     def create_layout(self):
         layout = []
@@ -44,9 +49,9 @@ class Plate(models.Model):
 
 class Sample(models.Model):
     name = models.CharField(max_length=50, unique=True)
-    type = models.IntegerField()
-    length = models.IntegerField()
-    sequence = models.CharField(max_length=10000, blank=True)
+    description = models.CharField(max_length=50)
+    project = models.CharField(max_length=30)
+    created_at = models.DateTimeField(auto_created=True)
 
     class Meta:
         ordering = ('name',)
@@ -55,12 +60,21 @@ class Sample(models.Model):
         return self.name
 
 
+class Part(Sample):
+    type = models.IntegerField()
+    length = models.IntegerField()
+    sequence = models.CharField(max_length=10000, blank=True)
+    specie = models.CharField(max_length=30,)
+    parent = models.CharField(max_length=30,)
+
+
 class Well(models.Model):
     name = models.CharField(max_length=5)
     volume = models.DecimalField(max_digits=10, decimal_places=2)
     concentration = models.DecimalField(max_digits=10, decimal_places=2)
     plate = models.ForeignKey(Plate, on_delete=models.CASCADE)
     samples = models.ManyToManyField(Sample)
+    # parent_well = models.ForeignKey()
 
     class Meta:
         ordering = ('name', 'plate',)
@@ -70,7 +84,14 @@ class Well(models.Model):
         return well_plate
 
 
+class File(models.Model):
+    name = models.CharField(max_length=100)
+    script = models.CharField(max_length=100, blank=True)
+    author = models.CharField(max_length=100, blank=True)
+    file = models.FileField(upload_to='docs/', blank=True)
 
+    def __str__(self):
+        return self.name
 
 
 

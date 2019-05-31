@@ -4,46 +4,83 @@
 {% block content %}
     <div class="row">
       <div class="col-3">
-        <h2>Options</h2>
+        <h4>Options</h4>
         <div class="options">
 
             <form method="post" enctype="multipart/form-data"> {% csrf_token %}
-              <fieldset>
+              <fieldset class="form-group"><br>
+                  <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col">
+                        <label for="file">Select a file: </label>
+                    </div>
+                    <div class="col-left">
+                        <input type="file" class="form-control-file border" name="upload_file">
+                    </div>
+                    <div class="col-auto"></div>
+                  </div><br><br>
 
-                Select a file: <br><br>
-                <input type="file" name="myFile"><br><br>
+                  <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col">
+                        <label for="source-plate">Source Plate Wells:</label>
+                    </div>
+                    <div class="col">
+                        <select class="form-control" id="num_well_source" name="num_well_source">
+                            <option value="96">96 Wells</option>
+                            <option value="384">384 Wells</option>
+                        </select>
+                    </div>
+                    <div class="col-auto"></div>
+                    <br><br>
+                  </div>
 
-                Source Plate Wells:
-                <select name="num_well_source">
-                <option value="96">96 Wells</option>
-                <option value="384">384 Wells</option>
-                </select>
-                <br><br>
+                  <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col">
+                        <label for="destination-plate">Destination Plate Wells:</label>
+                    </div>
+                    <div class="col">
+                        <select class="form-control" id="num_well_destination" name="num_well_destination">
+                            <option value="96">96 Wells</option>
+                            <option value="384">384 Wells</option>
+                        </select>
+                    </div>
+                    <div class="col-auto"></div>
+                    <br><br>
+                  </div>
 
-                Destination Plate Wells:
-                <select name="num_well_destination">
-                <option value="96">96 Wells</option>
-                <option value="384">384 Wells</option>
-                </select>
-                <br><br>
+                  <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col">
+                        <label for="backbone">Backbone fmol:</label>
+                    </div>
+                    <div class="col">
+                        <select class="form-control" id="bb_fmol" name="bb_fmol">
+                            <option value="80">80 fmol</option>
+                            <option value="40">40 fmol</option>
+                            <option value="20">20 fmol</option>
+                        </select>
+                    </div>
+                    <div class="col-auto"></div>
+                    <br><br>
+                  </div>
 
-                Backbone fmol:
-                <select name="bb_fmol">
-                <option selected value="80">80 fmol</option>
-                <option value="40">40 fmol</option>
-                <option value="20">20 fmol</option>
-                </select> &nbsp;
-
-                Part fmol:
-                <select name="part_fmol">
-                <option value="80">80 fmol</option>
-                <option selected value="40">40 fmol</option>
-                <option value="20">20 fmol</option>
-                </select>
-                <br><br>
-                <br><br>
-
-                <br><br><br>
+                  <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col">
+                        <label for="part">Part fmol:</label>
+                    </div>
+                    <div class="col">
+                        <select class="form-control" id="part_fmol" name="part_fmol">
+                            <option value="80">80 fmol</option>
+                            <option value="40">40 fmol</option>
+                            <option value="20">20 fmol</option>
+                        </select>
+                    </div>
+                    <div class="col-auto"></div>
+                    <br><br><br>
+                  </div>
                 <input type="submit" class="btn btn-info btn-block" value="Submit">
               </fieldset>
             </form>
@@ -65,7 +102,7 @@
       </div>
 
       <div class="col-6">
-        <h2>Normalization Script</h2><br>
+        <h4>Normalization Script</h4><br>
         {% if alert %}
                     <div class="alert">
                     <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
@@ -77,8 +114,9 @@
                     </div>
         {% endif %}
         <p> Example of an input file to be normalized (<a href="{% static 'docs/to_be_normalized.csv' %}" target="_blank" download><strong> Example.csv </strong></a>) </p> <br>
-            <table>
-                  <tr>
+            <table class="table table table-hover ">
+                <thead>
+                  <tr class="table-dark text-dark">
                     <th>Part</th>
                     <th>Type</th>
                     <th>Length</th>
@@ -87,6 +125,8 @@
                     <th>Source plate</th>
                     <th>Source well</th>
                   </tr>
+                </thead>
+                <tbody>
                   <tr>
                     <td>TU1-5'</td>
                     <td>1</td>
@@ -170,13 +210,13 @@
                     <td>A10</td>
                     </center>
                   </tr>
-
+                </tbody>
             </table>
       </div>
 
         {% comment %}
         <div class="col-3">
-        <h2>Side</h2>
+        <h4>Side</h4>
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit..</p>
         </div>
         {% endcomment %}
