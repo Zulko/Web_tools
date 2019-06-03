@@ -10,7 +10,10 @@ urlpatterns = [
     path('plate<int:plate_id>/', views.plate, name='plate'),
     path('plate<int:plate_id>/<int:well_id>', views.well, name='well'),
     # path('plate<int:plate_id>/<int:well_id/<int:sample_id>', views.sample, name='sample'),
+
     path('add_data', views.add_data, name='add_data',),
-    path('file_sharing', views.file_sharing, name='file_sharing',),
+
+    path('file_sharing/', views.file_sharing, name='file_sharing'),
+    path('file_sharing/<int:file_id>', views.delete_file, name='delete_file'),
 
 ]

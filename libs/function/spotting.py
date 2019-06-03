@@ -7,7 +7,7 @@ PlateS1,A1,PlateD1,B1,4
 PlateS1,A2,PlateD1,C1,4
 PlateS1,A2,PlateD1,D1,4
 """
-from db.models import File
+from ..biofoundry import db
 from ..misc import calc, file
 from ..container import plate
 import sys, os
@@ -35,12 +35,6 @@ def verify_entry(type, num):
         return num
 
 
-def save_file_on_database(name_file, file_path):
-    if name_file is not None:
-        file_to_save = open(file_path, 'r').read()
-        new_file = File(file=file_to_save)
-        new_file.save()
-
 
 def run_spotting(num_source_plates, num_wells, num_pattern, pattern):
     """
@@ -61,9 +55,10 @@ def run_spotting(num_source_plates, num_wells, num_pattern, pattern):
     else:
         # print('The total plates in biomek is %d' % total_plates)
         # print('The total destination plate(s) is %d and total source plate(s) is %d' % (total_destination, ver_num_source))
-        outfile_name, outfile, worklist_name, worklist = create_output_file(ver_num_source, num_wells, total_destination, pattern)
-        # save_file_on_database(outfile_name, outfile)
-        # save_file_on_database(worklist_name, worklist)
+        outfile_name, outfilepath, worklist_name, worklistpath = \
+            create_output_file(ver_num_source, num_wells, total_destination, pattern)
+        db.save_file(outfile_name, 'Spotting')
+        db.save_file(worklist_name, 'Spotting')
 
     return outfile_name, worklist_name, None
 
@@ -106,7 +101,7 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
     num_pattern = int(total_destination/total_source)
     '''Add the header'''
     if pattern == BY_ROW:
-        file_path_out = 'media/source_' + str(total_source) + '_' + str(num_pattern) + 'spot_byrow.csv'
+        file_path_out = 'media/docs/source_' + str(total_source) + '_' + str(num_pattern) + 'spot_byrow.csv'
         outfile = file.create(file_path_out, 'w')
         outcsv = file.create_writer_csv(outfile)
         file.verify(file_path_out)
@@ -127,7 +122,7 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
         return outfile_name, file_path_out, None, None
 
     elif pattern == BY_COL:
-        file_path_out = 'media/source_' + str(total_source) + '_' + str(num_pattern) + 'spot_bycol.csv'
+        file_path_out = 'media/docs/source_' + str(total_source) + '_' + str(num_pattern) + 'spot_bycol.csv'
         outfile = file.create(file_path_out, 'w')
         outcsv = file.create_writer_csv(outfile)
         file.verify(file_path_out)
@@ -148,8 +143,8 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
         return outfile_name, file_path_out, None, None
 
     else:
-        file_path_out = 'media/source_' + str(total_source) + '_' + str(num_pattern) + 'spot_biomek.csv'
-        file_worklist_path_out = 'media/source_' + str(total_source) + '_' + str(num_pattern) + 'spot_worklist.csv'
+        file_path_out = 'media/docs/source_' + str(total_source) + '_' + str(num_pattern) + 'spot_biomek.csv'
+        file_worklist_path_out = 'media/docs/source_' + str(total_source) + '_' + str(num_pattern) + 'spot_worklist.csv'
         outfile = file.create(file_path_out, 'w')
         out_worklist = file.create(file_worklist_path_out, 'w')
         file.verify(file_path_out)

@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
-from django.contrib.auth.decorators import login_required
 
 from libs.function.spotting import run_spotting
 from libs.function.combinatorial import run_combination

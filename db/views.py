@@ -1,6 +1,6 @@
 from django.views import generic
 from django.http import Http404
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect, reverse
 from .models import Plate, Well, Sample, File
 from django.contrib.auth.decorators import login_required
 
@@ -63,3 +63,10 @@ def add_data(request):
 def file_sharing(request):
     files = File.objects.all()
     return render(request, 'db/file_sharing.html', {'files': files})
+
+
+def delete_file(request, file_id):
+    if request.method == 'POST':
+        file = File.objects.get(id=file_id)
+        file.delete()
+    return redirect('db:file_sharing')

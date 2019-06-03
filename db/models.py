@@ -88,10 +88,15 @@ class File(models.Model):
     name = models.CharField(max_length=100)
     script = models.CharField(max_length=100, blank=True)
     author = models.CharField(max_length=100, blank=True)
-    file = models.FileField(upload_to='docs/', blank=True)
+    file = models.FileField(upload_to='docs/', max_length=10000, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
+
+    def delete(self, *args, **kwargs):
+        self.file.delete()
+        super().delete(*args, **kwargs)
 
 
 
