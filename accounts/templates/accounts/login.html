@@ -1,31 +1,28 @@
 {% extends 'base_layout.html' %}
 {% load static from staticfiles %}
+{% load crispy_forms_tags %}
 
 {% block content %}
 
-
 <div class="row">
-    <div class="col-3">
-        <a href="{% url 'accounts:signup' %}">Sign Up</a> </li>
+    <div class="col-4">
+        <h4></h4>
     </div>
-
-    <div class="col-6">
-        <form action= {% url 'accounts:login' %} method="post">
-        {% csrf_token %}
-            <div class="form-group">
-                Username: {{ form.username }}
+    <div class="col-4">
+        <div class="card" style="padding: 20px 20px 20px 20px">
+                <form action= {% url 'accounts:login' %} method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <input type="submit" value="Login">
+                </form>
             </div>
-
-            <div class="form-group">
-                Password: {{ form.password }}
-            </div>
-
-            <input type="submit" value="Login">
-        </form>
+        </div>
     </div>
 
-    <div class="col-3">
+    <div class="col-4">
+        <h4></h4>
     </div>
+
 </div>
 
 

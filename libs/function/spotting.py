@@ -57,6 +57,7 @@ def run_spotting(num_source_plates, num_wells, num_pattern, pattern):
         # print('The total destination plate(s) is %d and total source plate(s) is %d' % (total_destination, ver_num_source))
         outfile_name, outfilepath, worklist_name, worklistpath = \
             create_output_file(ver_num_source, num_wells, total_destination, pattern)
+
         db.save_file(outfile_name, 'Spotting')
         db.save_file(worklist_name, 'Spotting')
 

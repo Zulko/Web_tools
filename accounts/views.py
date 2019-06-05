@@ -9,9 +9,9 @@ def signup_view(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            # log the user in
-            return redirect('home')
+            return redirect('accounts:login')
     else:
+        #Create a empty form and return the page
         form = UserCreationForm()
     return render(request, 'accounts/signup.html', {'form': form})
 
@@ -31,4 +31,5 @@ def login_view(request):
 def logout_view(request):
     if request.method == "POST":
         logout(request)
-        return redirect('accounts:login')
+        # return redirect('accounts:login')
+        return redirect('home')

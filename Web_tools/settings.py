@@ -42,7 +42,11 @@ INSTALLED_APPS = [
     'db.apps.DbConfig',
     'misc',
     'scripts',
+    'crispy_forms',
+
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -52,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'Web_tools.middleware.LoginRequiredMiddleware',
 ]
 
 ROOT_URLCONF = 'Web_tools.urls'
@@ -127,6 +132,19 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+
+
+# Login Pages
+
+# LOGIN_REDIRECT_URL = 'account/'
+LOGIN_URL = "accounts:login"
+LOGIN_EXEMPT_URLS = {
+    "accounts:login",
+    "accounts:logout",
+    "accounts:signup"
+
+}
+
 
 # Media Files
 MEDIA_URL = '/media/'

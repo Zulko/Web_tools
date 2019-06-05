@@ -3,6 +3,7 @@
 from django.db import models
 from django.urls import reverse
 import libs.misc.calc as calc
+from django.contrib.auth import user_logged_in
 
 
 class CommomInfo(models.Model):
@@ -98,5 +99,8 @@ class File(models.Model):
         self.file.delete()
         super().delete(*args, **kwargs)
 
+    # def __init__(self):
+        # self.author = user_logged_in
+        # self.author = 'flavia'
 
 
