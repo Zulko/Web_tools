@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'db.apps.DbConfig',
     'misc',
     'scripts',
-
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'

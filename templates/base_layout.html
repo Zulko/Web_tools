@@ -91,60 +91,66 @@
 
             <li class="navbar-nav">
                 <a class="nav-link" href= "#">
-                <i class="fas fa-user" style="font-size:15px; color:white;"></i>&nbsp;&nbsp;{{request.user.username}}&nbsp;&nbsp;&nbsp;</a> </li>
+                <i class="fas fa-user" style="font-size:15px; color:white;"></i>&nbsp;&nbsp;{{request.user.username}}</a> </li>
             </li>
 
+            <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+                <i class="fa fa-cog fa-fw fa-lg" style="font-size:15px; color:white;"></i> </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{% url 'accounts:signup' %}">Create new user</a>
+                    <a class="dropdown-item" href="{% url 'accounts:password' %}">Change Password</a>
+                </div>
+            </li>
+
+
             <li class="navbar-nav">
-                <form class="form" action="{% url 'accounts:logout' %}" method="post">
+                &nbsp;&nbsp;&nbsp;&nbsp;<form class="form" action="{% url 'accounts:logout' %}" method="post">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-secondary">Logout</button>
                 </form>
             </li>
 
-            <li class="navbar-nav ml-auto">
-                <a href="{% url 'accounts:signup' %}" class="nav-link" title="settings">
-                    <i class="fa fa-cog fa-fw fa-lg"></i>
-                </a>
-            </li>
+{#            <li class="navbar-nav ml-auto">#}
+
+{#                <a href="{% url 'accounts:signup' %}" class="nav-link" title="settings">#}
+{#                    <i class="fa fa-cog fa-fw fa-lg"></i>#}
+{#                </a>#}
+{#            </li>#}
         </ul>
     </div>
 </nav>
         {% else %}
         <nav class="navbar navbar-expand-sm bg-dark navbar-dark sticky-top">
-        <a class="navbar-brand" href="{% url 'home' %}"> <i class="fas fa-home" style="font-size:25px; color:white;" &nbsp;&nbsp;></i></a>
+            <a class="navbar-brand" href="{% url 'home' %}"> <i class="fas fa-home" style="font-size:25px; color:white;" &nbsp;&nbsp;></i></a>
 
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+                <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                    <ul class="nav navbar-nav flex-row justify-content-between ml-auto">
+                        <li class="dropdown order-1">
+                            <button type="button" id="dropdownMenu1" data-toggle="dropdown" class="btn btn-outline-secondary dropdown-toggle">Login <span class="caret"></span></button>
+                            <ul class="dropdown-menu dropdown-menu-right mt-2">
+                               <li><form class="form" action= {% url 'accounts:login' %} method="post"> {% csrf_token %}
+                                   <div class="container">
+                                    <form class="form-group">
+                                        <div class="form-group">
+                                            <input class="form-control" name="username" id="username" type="text" placeholder="Username">
+                                        </div>
+                                        <div class="form-group">
+                                            <input class="form-control" name="password" id="password" type="password" placeholder="Password">
+                                        </div>
 
-        <div class="collapse navbar-collapse" id="collapsibleNavbar">
-
-        <ul class="nav navbar-nav flex-row justify-content-between ml-auto">
-
-            <li class="dropdown order-1">
-                <button type="button" id="dropdownMenu1" data-toggle="dropdown" class="btn btn-outline-secondary dropdown-toggle">Login <span class="caret"></span></button>
-                <ul class="dropdown-menu dropdown-menu-right mt-2">
-                   <li>
-                       <form class="form" action= {% url 'accounts:login' %} method="post"> {% csrf_token %}
-                           <div class="container">
-                            <form class="form-group">
-                                <div class="form-group">
-                                    <input class="form-control" name="username" id="username" type="text" placeholder="Username">
-                                </div>
-                                <div class="form-group">
-                                    <input class="form-control" name="password" id="password" type="password" placeholder="Password">
-                                </div>
-
-                                <button type="submit" id="btnLogin" class="btn btn-success btn-block">Login</button>
-                            </form>
-                           </div>
-                        </form>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-        </div>
-</nav>
+                                        <button type="submit" id="btnLogin" class="btn btn-success btn-block">Login</button>
+                                    </form>
+                                   </div>
+                               </form></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+        </nav>
 
         {% endif %}
 

@@ -1,16 +1,11 @@
 # Create sql to do migration -> python manage.py makemigrations db
 # Then, make the migrate -> python manage.py migrate
+from django.contrib.auth.models import User
+
+import libs.misc.calc as calc
+
 from django.db import models
 from django.urls import reverse
-import libs.misc.calc as calc
-from django.contrib.auth import user_logged_in
-
-
-class CommomInfo(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-
-    class Meta:
-        abstract = True
 
 
 class Plate(models.Model):
@@ -53,20 +48,17 @@ class Sample(models.Model):
     description = models.CharField(max_length=50)
     project = models.CharField(max_length=30)
     created_at = models.DateTimeField(auto_created=True)
+    type = models.IntegerField()
+    length = models.IntegerField()
+    sequence = models.CharField(max_length=10000, blank=True)
+    specie = models.CharField(max_length=30)
+    parent = models.CharField(max_length=30)
 
     class Meta:
         ordering = ('name',)
 
     def __str__(self):
         return self.name
-
-
-class Part(Sample):
-    type = models.IntegerField()
-    length = models.IntegerField()
-    sequence = models.CharField(max_length=10000, blank=True)
-    specie = models.CharField(max_length=30,)
-    parent = models.CharField(max_length=30,)
 
 
 class Well(models.Model):
@@ -88,7 +80,7 @@ class Well(models.Model):
 class File(models.Model):
     name = models.CharField(max_length=100)
     script = models.CharField(max_length=100, blank=True)
-    author = models.CharField(max_length=100, blank=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     file = models.FileField(upload_to='docs/', max_length=10000, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -98,9 +90,5 @@ class File(models.Model):
     def delete(self, *args, **kwargs):
         self.file.delete()
         super().delete(*args, **kwargs)
-
-    # def __init__(self):
-        # self.author = user_logged_in
-        # self.author = 'flavia'
 
 
