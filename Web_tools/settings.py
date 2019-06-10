@@ -57,7 +57,7 @@ MIDDLEWARE = [
     # 'Web_tools.middleware.LoginRequiredMiddleware',
 ]
 
-ROOT_URLCONF = 'Web_tools.urls'
+# ROOT_URLCONF = 'Web_tools.urls'
 
 TEMPLATES = [
     {
@@ -135,12 +135,12 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 # Login Pages
 
 # LOGIN_REDIRECT_URL = 'account/'
-LOGIN_URL = "accounts:login"
-LOGIN_EXEMPT_URLS = {
-    "accounts:login",
-    "accounts:logout",
-    "accounts:signup"
-}
+# LOGIN_URL = "accounts:login"
+# LOGIN_EXEMPT_URLS = {
+#     "accounts:login",
+#     "accounts:logout",
+#     "accounts:signup"
+# }
 
 
 # Media Files
