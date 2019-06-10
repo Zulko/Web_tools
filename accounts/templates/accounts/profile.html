@@ -1,0 +1,30 @@
+{% extends 'base_layout.html' %}
+{% load static from staticfiles %}
+
+
+{% block content %}
+
+<div class="row">
+    <div class="col-4">
+        <h4></h4>
+    </div>
+
+    <div class="col-4">
+        <h4>User Profile</h4>
+        <div class="card" style="padding: 20px 20px 20px 20px">
+            <p>Username: {{ user }}</p>
+            <p>First Name: {{ user.first_name }}</p>
+            <p>Last Name:  {{ user.last_name }}</p>
+            <p>E-mail: {{ user.email }}</p>
+
+        </div>
+    </div>
+
+    <div class="col-4">
+        <h4></h4>
+    </div>
+
+</div>
+
+
+{% endblock%}

@@ -1,19 +1,21 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.contrib.auth import login, logout, update_session_auth_hash
+
+from accounts.forms import RegistrationForm, EditProfileForm
 from django.contrib.auth.decorators import login_required
 
 
 def signup_view(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = RegistrationForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('accounts:login')
     else:
         #Create a empty form and return the page
-        form = UserCreationForm()
+        form = RegistrationForm()
     return render(request, 'accounts/signup.html', {'form': form})
 
 
@@ -36,18 +38,39 @@ def logout_view(request):
         return redirect('home')
 
 
+def profile_view(request):
+    args = {'user': request.user}
+    return render(request, 'accounts/profile.html')
+
+
+def edit_profile(request):
+    if request.method == "POST":
+        form = EditProfileForm(request.POST, instance=request.user)
+
+        if form.is_valid():
+            form.save()
+            return redirect('accounts:profile')
+    else:
+        form = EditProfileForm(instance=request.user)
+        args = {'form':form}
+        return render(request, 'accounts/edit_profile.html', args)
+
+
 def password_view(request):
     if request.method == 'POST':
-        form = PasswordChangeForm(request.user, request.POST)
+        form = PasswordChangeForm(data=request.POST, user=request.user)
         if form.is_valid():
             user = form.save()
-            update_session_auth_hash(request, user)  # Important!
+            update_session_auth_hash(request, user=request.user)  # Important!
             messages.success(request, 'Your password was successfully updated!')
-            return redirect('accounts:login')
+            return redirect('accounts:profile')
         else:
             messages.error(request, 'Please correct the error below.')
     else:
-        form = PasswordChangeForm(request.user)
-    return render(request, 'accounts/password.html', {
-        'form': form
-    })
+        form = PasswordChangeForm(user=request.user)
+        args = {'form': form}
+    return render(request, 'accounts/password.html', args)
+
+
+
+

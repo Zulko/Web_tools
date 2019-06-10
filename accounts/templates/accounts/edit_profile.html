@@ -1,0 +1,28 @@
+{% extends 'base_layout.html' %}
+{% load static from staticfiles %}
+
+
+{% block content %}
+
+<div class="row">
+    <div class="col-4">
+        <h4></h4>
+    </div>
+
+    <div class="col-4">
+        <div class="card" style="padding: 20px 20px 20px 20px">
+            <form method="post"> {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-4">
+        <h4></h4>
+    </div>
+
+</div>
+
+
+{% endblock%}
