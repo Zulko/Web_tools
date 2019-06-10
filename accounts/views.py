@@ -3,7 +3,6 @@ from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.contrib.auth import login, logout, update_session_auth_hash
 
-
 from accounts.forms import RegistrationForm, EditProfileForm
 from django.contrib.auth.decorators import login_required
 
