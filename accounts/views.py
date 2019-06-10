@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.contrib.auth import login, logout, update_session_auth_hash
 
+
 from accounts.forms import RegistrationForm, EditProfileForm
 from django.contrib.auth.decorators import login_required
 
@@ -40,7 +41,7 @@ def logout_view(request):
 
 def profile_view(request):
     args = {'user': request.user}
-    return render(request, 'accounts/profile.html')
+    return render(request, 'accounts/profile.html', args)
 
 
 def edit_profile(request):
