@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'scripts',
 ]
 
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -140,7 +140,6 @@ LOGIN_EXEMPT_URLS = {
     "accounts:login",
     "accounts:logout",
     "accounts:signup"
-
 }
 
 

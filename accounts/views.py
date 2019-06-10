@@ -36,14 +36,14 @@ def logout_view(request):
         return redirect('home')
 
 
-def password_change_view(request):
+def password_view(request):
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)  # Important!
             messages.success(request, 'Your password was successfully updated!')
-            return redirect('home')
+            return redirect('accounts:login')
         else:
             messages.error(request, 'Please correct the error below.')
     else:
