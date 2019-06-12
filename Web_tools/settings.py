@@ -8,6 +8,8 @@ https://docs.djangoproject.com/en/2.1/topics/settings/
 
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
+
+
 """
 
 import os
@@ -57,7 +59,7 @@ MIDDLEWARE = [
     # 'Web_tools.middleware.LoginRequiredMiddleware',
 ]
 
-# ROOT_URLCONF = 'Web_tools.urls'
+ROOT_URLCONF = 'Web_tools.urls'
 
 TEMPLATES = [
     {

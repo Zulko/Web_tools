@@ -69,7 +69,7 @@ def password_view(request):
     else:
         form = PasswordChangeForm(user=request.user)
         args = {'form': form}
-    return render(request, 'accounts/password.html', args)
+    return render(request, 'accounts/change_password.html', args)
 
 
 
