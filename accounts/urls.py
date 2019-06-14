@@ -24,21 +24,18 @@ urlpatterns = [
          PasswordResetView.as_view(template_name='accounts/password_reset.html',
                                    email_template_name="accounts/password_reset_email.html",
                                    success_url=reverse_lazy('accounts:password_reset_done'),
-                                   ), name='reset_password'
+                                   ), name='password_reset'
          ),
 
     path('password-reset/done/',
          PasswordResetDoneView.as_view(template_name='accounts/password_reset_done.html'),
          name='password_reset_done'),
 
-    path('password-reset/confirm/<uidb64>/<token>/',
+    path('password-reset-confirm/<uidb64>/<token>/',
          PasswordResetConfirmView.as_view(template_name='accounts/password_reset_confirm.html'),
          name='password_reset_confirm'),
 
     path('password-reset/complete/',
          PasswordResetCompleteView.as_view(), name='password_reset_complete'),
-
-
-
 
 ]
