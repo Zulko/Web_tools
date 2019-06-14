@@ -11,13 +11,15 @@
 
     <div class="col-4">
         <h4>User Profile</h4>
-        <div class="card" style="padding: 20px 20px 20px 20px">
-            <p>Username: {{ user }}</p>
-            <p>First Name: {{ user.first_name }}</p>
-            <p>Last Name:  {{ user.last_name }}</p>
-            <p>E-mail: {{ user.email }}</p>
-
-        </div>
+        <fieldset class="form-group">
+            <div class="card" style="padding: 20px 20px 20px 20px">
+                <p>Username: {{ user }}</p>
+                <p>First Name: {{ user.first_name }}</p>
+                <p>Last Name:  {{ user.last_name }}</p>
+                <p>E-mail: {{ user.email }}</p>
+                <a class="btn btn-secondary" role="button" href="{% url 'accounts:edit_profile' %}">Edit Profile</a>
+            </div>
+        </fieldset>
     </div>
 
     <div class="col-4">

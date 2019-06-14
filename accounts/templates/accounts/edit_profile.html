@@ -12,31 +12,16 @@
     <div class="col-4">
 
         <form method="post"> {% csrf_token %}
-            <fieldset class="form-group"><br>
-                <div class="form-row align-items-center">
-                    <div class="col-auto"></div>
-                    <div class="col"><label for="first_name">First name:</label></div>
-                    <div class="col">{{ form.first_name }}</div>
-                    <div class="col"><label for="last_name">Last name:</label></div>
-                    <div class="col">{{ form.last_name }}</div>
-                    <div class="col-auto"></div>
-                </div><br>
-                <div class="form-row align-items-center">
-                    <div class="col-auto"></div>
-                    <div class="col"><label for="email">E-mail:</label></div>
-                    <div class="col">{{ form.email }}</div>
-                    <div class="col"><label> </label> </div>
-                    <div class="col"><label> </label> </div>
-                    <div class="col-auto"></div>
-                </div><br>
-
-                <div class="span" style="alignment: center">
-                    <button class="btn btn-info" type="submit">Submit</button>
-                    <a class="btn btn-light" role="button" href="{% url 'accounts:change_password' %}">Change password</a>
-                </div><br>
-
-
-            </fieldset>
+            <h4>Edit Profile</h4>
+                <fieldset class="form-group">
+                    <div class="card" style="padding: 20px 20px 20px 20px">
+                        {{ form }}
+                        <div class="span" style="alignment: center">
+                            <button class="btn btn-info" type="submit">Submit</button>
+                            <a class="btn btn-secondary" role="button" href="{% url 'accounts:change_password' %}">Change password</a>
+                        </div>
+                    </div>
+                </fieldset>
         </form>
 
     </div>

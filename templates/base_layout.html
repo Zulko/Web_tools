@@ -25,18 +25,19 @@
 </div>
 
 {% if user.is_authenticated  %}
-<nav class="navbar navbar-expand-sm bg-dark navbar-dark sticky-top">
 
+<nav class="navbar navbar-expand-md bg-dark navbar-dark">
+    <!-- Brand -->
     <a class="navbar-brand" href="{% url 'home' %}"> <i class="fas fa-home" style="font-size:25px; color:white;" &nbsp;&nbsp;></i></a>
 
+    <!-- Toggler/collapsibe Button -->
      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
         <span class="navbar-toggler-icon"></span>
     </button>
 
+    <!-- Navbar links -->
     <div class="collapse navbar-collapse" id="collapsibleNavbar">
-
         <ul class="navbar-nav ">
-
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
                     &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-vial" style="font-size:15px; color:white;"></i> &nbsp;Scripts</a>
@@ -110,18 +111,11 @@
                     <button type="submit" class="btn btn-secondary">Logout</button>
                 </form>
             </li>
-
-{#            <li class="navbar-nav ml-auto">#}
-
-{#                <a href="{% url 'accounts:signup' %}" class="nav-link" title="settings">#}
-{#                    <i class="fa fa-cog fa-fw fa-lg"></i>#}
-{#                </a>#}
-{#            </li>#}
         </ul>
     </div>
 </nav>
         {% else %}
-        <nav class="navbar navbar-expand-sm bg-dark navbar-dark sticky-top">
+        <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
             <a class="navbar-brand" href="{% url 'home' %}"> <i class="fas fa-home" style="font-size:25px; color:white;" &nbsp;&nbsp;></i></a>
 
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
@@ -143,6 +137,7 @@
                                         </div>
 
                                         <button type="submit" id="btnLogin" class="btn btn-success btn-block">Login</button>
+                                        <br><a class="dropdown-item" href="{% url 'accounts:password_reset' %}">Reset password</a>
                                     </form>
                                    </div>
                                </form></li>
