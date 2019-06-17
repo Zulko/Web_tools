@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from accounts.forms import RegistrationForm, EditProfileForm
 
 
-
+@login_required
 def signup_view(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
@@ -38,12 +38,12 @@ def logout_view(request):
         # return redirect('accounts:login')
         return redirect('home')
 
-
+@login_required
 def profile_view(request):
     args = {'user': request.user}
     return render(request, 'accounts/profile.html', args)
 
-
+@login_required
 def edit_profile(request):
     if request.method == "POST":
         form = EditProfileForm(request.POST, instance=request.user)
@@ -56,7 +56,7 @@ def edit_profile(request):
         args = {'form':form}
         return render(request, 'accounts/edit_profile.html', args)
 
-
+@login_required
 def password_view(request):
     if request.method == 'POST':
         form = PasswordChangeForm(data=request.POST, user=request.user)

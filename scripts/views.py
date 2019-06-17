@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
+from django.contrib.auth.decorators import login_required
 
 from libs.function.spotting import run_spotting
 from libs.function.combinatorial import run_combination
@@ -132,6 +133,7 @@ def moclo(request):
     return render(request, 'scripts/moclo.html')
 
 
+@login_required(login_url="/accounts/login/")
 def moclo_db(request):
     if request.method == "POST":
         if len(request.FILES) != 0:

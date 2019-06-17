@@ -23,10 +23,10 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/', include('accounts.urls', namespace='accounts')),
     path('',views.home, name='home'),
     path('about/',views.about, name='about'),
     path('under_construction/',views.under_construction, name='under'),
-    path('accounts/', include('accounts.urls', namespace='accounts')),
     path('db/', include('db.urls')),
     path('misc/', include('misc.urls')),
     path('scripts/', include('scripts.urls')),
