@@ -10,7 +10,7 @@
     </div>
     <div class="col-4">
         <div class="card" style="padding: 20px 20px 20px 20px">
-                <form action= {% url 'login' %} method="post">
+                <form action= {% url 'accounts:login' %} method="post">
                     {% csrf_token %}
                     {{ form }}
                     <input type="submit" value="Login">
