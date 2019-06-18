@@ -1,8 +1,13 @@
 from django.shortcuts import render, redirect
+
+from django.urls import reverse_lazy
+
 from django.contrib import messages
-from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, SetPasswordForm, PasswordChangeForm
 from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import views as auth_views
+
 
 from accounts.forms import RegistrationForm, EditProfileForm
 
@@ -15,7 +20,7 @@ def signup_view(request):
             form.save()
             return redirect('accounts:login')
     else:
-        #Create a empty form and return the page
+        # Create a empty form and return the page
         form = RegistrationForm()
     return render(request, 'accounts/signup.html', {'form': form})
 
@@ -35,13 +40,14 @@ def login_view(request):
 def logout_view(request):
     if request.method == "POST":
         logout(request)
-        # return redirect('accounts:login')
         return redirect('home')
+
 
 @login_required
 def profile_view(request):
     args = {'user': request.user}
     return render(request, 'accounts/profile.html', args)
+
 
 @login_required
 def edit_profile(request):
@@ -55,6 +61,7 @@ def edit_profile(request):
         form = EditProfileForm(instance=request.user)
         args = {'form':form}
         return render(request, 'accounts/edit_profile.html', args)
+
 
 @login_required
 def password_view(request):
@@ -73,5 +80,26 @@ def password_view(request):
     return render(request, 'accounts/change_password.html', args)
 
 
+class PasswordResetView(auth_views.PasswordResetView):
+    form_class = PasswordResetForm
+    template_name = 'accounts/password_reset_form.html'
+    success_url = reverse_lazy('accounts:password_reset_done')
+    # subject_template_name = 'accounts/emails/password-reset-subject.txt'
+    email_template_name = 'accounts/password_reset_email.html'
+
+
+class PasswordResetDoneView(auth_views.PasswordResetDoneView):
+    template_name = 'accounts/password_reset_done.html'
+
+
+class PasswordResetConfirmView(auth_views.PasswordResetConfirmView):
+    template_name = 'accounts/password_reset_confirm.html'
+    form_class = SetPasswordForm
+    success_url = reverse_lazy('accounts:password_reset_complete')
+    form_valid_message = "Your password was changed!"
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
 
 
