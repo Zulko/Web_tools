@@ -28,8 +28,8 @@ urlpatterns = [
     path('profile/password/',
          views.password_view, name='change_password'),
 
-    path('reset_password/',
-         views.PasswordResetView.as_view(), name='reset_password'),
+    path('password_reset/',
+         views.PasswordResetView.as_view(), name='password_reset'),
 
     path('password_reset_done/',
          views.PasswordResetDoneView.as_view(), name='password_reset_done'),
