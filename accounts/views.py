@@ -88,14 +88,14 @@ def password_view(request):
 
 class PasswordResetView(auth_views.PasswordResetView):
     form_class = PasswordResetForm
-    template_name = 'registration/password_reset_form.html'
+    template_name = '../templates/registration/password_reset_form.html'
     success_url = reverse_lazy('accounts:password_reset_done')
     # subject_template_name = 'accounts/emails/password-reset-subject.txt'
-    email_template_name = 'accounts/password_reset_email.html'
+    email_template_name = '../templates/registration/password_reset_email.html'
 
 
 class PasswordResetDoneView(auth_views.PasswordResetDoneView):
-    template_name = 'registration/password_reset_done.html'
+    template_name = '../templates/registration/password_reset_done.html'
 
 
 class PasswordResetConfirmView(auth_views.PasswordResetConfirmView):
