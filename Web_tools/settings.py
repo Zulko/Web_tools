@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'accounts.apps.AccountsConfig',
     'django_unused_media',
     'db.apps.DbConfig',
@@ -136,7 +137,8 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 
 # Login Pages
 
-# LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'home'
 # LOGIN_URL = "accounts:login"
 # LOGIN_EXEMPT_URLS = {
 #     "accounts:login",
