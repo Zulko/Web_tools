@@ -19,6 +19,8 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.static import static
 from django.conf import settings
 from django.views.generic.base import TemplateView
+from django.urls import reverse_lazy
+from django.contrib.auth import views as auth_views
 
 from . import views
 
@@ -32,6 +34,16 @@ urlpatterns = [
     path('db/', include('db.urls')),
     path('misc/', include('misc.urls')),
     path('scripts/', include('scripts.urls')),
+
+    path('password_reset/',
+         views.PasswordResetView.as_view(success_url=reverse_lazy('password_reset_done')), name='password_reset'),
+    path('password_reset_done/',
+         views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/',
+         views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('reset/done/',
+         auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+
 ]
 
 urlpatterns += staticfiles_urlpatterns()
