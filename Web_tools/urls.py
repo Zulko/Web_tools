@@ -28,7 +28,7 @@ urlpatterns = [
     path('about/',views.about, name='about'),
     path('under_construction/',views.under_construction, name='under'),
     path('accounts/', include('accounts.urls')),
-    path('accounts/', include('django.contrib.auth.urls')),
+    path('registration/', include('django.contrib.auth.urls')),
     path('db/', include('db.urls')),
     path('misc/', include('misc.urls')),
     path('scripts/', include('scripts.urls')),
