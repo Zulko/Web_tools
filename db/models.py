@@ -19,7 +19,7 @@ class Plate(models.Model):
         ordering = ('id',)
 
     def get_absolute_url(self):
-        return reverse('db:index',kwargs={'pk': self.pk})
+        return reverse('db:index', kwargs={'pk': self.pk})
 
     def __str__(self):
         return self.name
@@ -29,7 +29,7 @@ class Plate(models.Model):
         for row in range(0, self.num_rows):
             line = []
             for col in range(0, self.num_cols):
-                line.append(calc.coordinates_to_wellname(coords=[row,col]))
+                line.append(calc.coordinates_to_wellname(coords=[row, col]))
             layout.append(line)
         return layout
 
@@ -80,7 +80,7 @@ class Well(models.Model):
 class File(models.Model):
     name = models.CharField(max_length=100)
     script = models.CharField(max_length=100, blank=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.OneToOneField(User, on_delete=models.CASCADE)
     file = models.FileField(upload_to='docs/', max_length=10000, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

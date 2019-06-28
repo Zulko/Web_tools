@@ -47,7 +47,6 @@ INSTALLED_APPS = [
 ]
 
 
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -80,6 +79,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'Web_tools.wsgi.application'
 
 #Password on .bash_profile
+#Restart: /etc/init.d/postgresql restart
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -129,29 +129,22 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
-
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 
 
 # Login Pages
-
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
-# LOGIN_URL = "accounts:login"
-# LOGIN_EXEMPT_URLS = {
-#     "accounts:login",
-#     "accounts:logout",
-#     "accounts:signup"
-# }
 
 
 # Media Files
-MEDIA_URL = '/media/'
 
+MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# Email Info
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
