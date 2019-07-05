@@ -44,16 +44,97 @@ class Plate(models.Model):
 
 
 class Sample(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-    description = models.CharField(max_length=50)
-    project = models.CharField(max_length=30)
-    created_at = models.DateTimeField(auto_created=True)
-    type = models.IntegerField()
-    length = models.IntegerField()
-    sequence = models.CharField(max_length=10000, blank=True)
-    specie = models.CharField(max_length=30)
-    parent = models.CharField(max_length=30)
+    # Choices
+    SAMPLE_TYPES = (
+        ('Pr', 'Primer'),
+        ('Pd', 'Plasmid'),
+        ('Pt', 'Part'),
+        ('Lr', 'Linker'),
+        ('Ot', 'Other'),
+    )
+    END_TYPES = (
+        ('R', 'Right'),
+        ('L', 'Left'),
+    )
+    PROJECT = (
+        ('GF', 'GF_general'),
+        ('SA', 'Sanguinarine'),
+    )
+    PART_TYPE = (
+        ('P', 'Promoter'),
+        ('T', 'Terminator'),
+        ('CDS', 'CDS'),
+        ('CR', 'Connector_Right'),
+        ('CL', 'Connector_Left'),
+        ('B', 'Backbone'),
+        ('CS', 'Counter_Screen'),
+        ('Ma', 'Marker'),
+        ('Mi', 'Miscellaneous'),
+    )
+    STATUS = (
+        ('G', 'On going'),
+        ('C', 'Completed'),
+        ('A', 'Aborted'),
+        ('H', 'On hold'),
+    )
+    ORGANISM = (
+        ('H', 'Human'),
+        ('Y', 'Yeast'),
+    )
+    DIRECTION = (
+        ('F', 'Forward'),
+        ('R', 'Reverse'),
+    )
+    STRAND = (
+        ('+', 'Positive'),
+        ('-', 'Negative'),
+    )
 
+    # Database Fields
+    name = models.CharField(max_length=50, unique=True)
+    alias = models.CharField(max_length=50, default=' ')
+    sample_type = models.CharField(max_length=2, choices=SAMPLE_TYPES, default=SAMPLE_TYPES[4][0])
+    description = models.CharField(max_length=100, blank=True)
+    project = models.CharField(max_length=2, choices=PROJECT)  # Multi select option
+    author = models.CharField(max_length=30, blank=True)
+    active = models.BooleanField(default=True)
+    status = models.CharField(max_length=1, choices=STATUS, blank=True)
+    sequence = models.CharField(max_length=10000, blank=True)
+    length = models.IntegerField(blank=True, null=True)
+    genbank = models.FileField(upload_to='gb_files/', max_length=10000, blank=True)
+    source_reference = models.CharField(max_length=30, blank=True)
+    comments = models.CharField(max_length=100, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    parent_id = models.IntegerField(blank=True, null=True)  # ID of a sample that was used to originated other
+    organism = models.CharField(max_length=1, choices=ORGANISM, blank=True)
+    genus_specie = models.CharField(max_length=50, blank=True)
+    marker = models.CharField(max_length=50, blank=True)
+    application = models.CharField(max_length=50, blank=True)
+    strategy = models.CharField(max_length=50, blank=True)
+    seq_verified = models.FileField(upload_to='seq/', max_length=10000, blank=True)
+    origin_rep = models.CharField(max_length=50, blank=True)
+    cloning_system = models.CharField(max_length=50, blank=True)
+    strand = models.CharField(max_length=1, choices=STRAND, blank=True)
+    order_number = models.CharField(max_length=50, blank=True)
+
+    # Part options
+    part_type = models.CharField(max_length=3, choices=PART_TYPE, blank=True)
+    moclo_type = models.CharField(max_length=5, blank=True)
+
+    # Plasmid or Primer options
+    # Plasmid has parts
+    # Primer has linkers
+    sub_sample_id = models.IntegerField(null=True, blank=True)  # Multi select option
+
+    # Linker options
+    end = models.CharField(max_length=1, choices=END_TYPES, blank=True)
+
+    # Primer option
+    direction = models.CharField(max_length=1, choices=DIRECTION, blank=True)
+    tm = models.IntegerField(null=True, blank=True)
+
+    # Meta Class
     class Meta:
         ordering = ('name',)
 
