@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 
 from .models import Plate, Well, Sample, File
 from .forms import SamplePrimerForm
+from .filters import SampleFilter
 
 
 class IndexView(generic.ListView):
@@ -79,6 +80,14 @@ def sample_list(request):
 
 
 @login_required(login_url="/accounts/login/")
+def sample(request, sample_id):
+    all_samples = Sample.objects.all()
+    sample_filter = SampleFilter(request.GET, queryset=all_samples)
+    sample = Sample.objects.get(id=sample_id)
+    return render(request, 'db/sample_list.html', {"all_samples": all_samples, "filter": sample_filter, "sample": sample})
+
+
+@login_required(login_url="/accounts/login/")
 def add_data(request):
     return render(request, 'db/add_data.html')
 
@@ -95,3 +104,10 @@ def create_sample(request):
     return render(request, 'db/add_data.html', {
         'form': form
     })
+
+
+@login_required(login_url="/accounts/login/")
+def search_sample(request):
+    all_samples = Sample.objects.all()
+    sample_filter = SampleFilter(request.GET, queryset=all_samples)
+    return render(request, 'db/sample_list.html', {"filter": sample_filter})

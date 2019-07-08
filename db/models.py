@@ -92,7 +92,7 @@ class Sample(models.Model):
 
     # Database Fields
     name = models.CharField(max_length=50, unique=True)
-    alias = models.CharField(max_length=50, default=' ')
+    alias = models.CharField(max_length=50)
     sample_type = models.CharField(max_length=2, choices=SAMPLE_TYPES, default=SAMPLE_TYPES[4][0])
     description = models.CharField(max_length=100, blank=True)
     project = models.CharField(max_length=2, choices=PROJECT)  # Multi select option

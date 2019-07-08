@@ -44,6 +44,9 @@ INSTALLED_APPS = [
     'db.apps.DbConfig',
     'misc',
     'scripts',
+    'django_filters',
+    'bootstrapform',
+
 ]
 
 

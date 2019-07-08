@@ -13,9 +13,9 @@ urlpatterns = [
 
     # path('add_data', views.add_data, name='add_data',),
     path('add_data', views.create_sample, name='add_data',),
-    path('view_sample', views.sample_list, name='view_sample',),
-    path('view_sample/sample<int:sample_id>', views.sample_list, name='sample'),
 
+    path('view_sample/', views.search_sample, name='view_sample',),
+    path('view_sample/<int:sample_id>', views.sample, name='sample'),
 
     path('file_sharing/', views.file_sharing, name='file_sharing'),
     path('file_sharing/<int:file_id>', views.delete_file, name='delete_file'),

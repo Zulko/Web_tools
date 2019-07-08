@@ -1,98 +1,99 @@
 {% extends 'base_layout.html' %}
+{% load bootstrap %}
 
 
 {% block content %}
 
     <div class="row">
       <div class="col-3">
-
-          <h4>List of Samples</h4><br>
-            {% if all_samples %}
-              <fieldset class="form-group overflow-auto">
-                {% for sample in all_samples %}
-                  <div class="form-row align-items-center">
-                      <div class="col">
-                        {{ sample.id }} {{ sample.name }}
-                      </div><br>
-                  </div>
-                {% endfor %}
-
+          <h4>Search Samples</h4>
+              <fieldset class="form-group" style="padding: 20px 20px 20px 20px">
+                <form method="GET">
+                    {{ filter.form | bootstrap}}
+                    <button class="btn btn-info btn-block" type="submit">
+                        <i class="fas fa-search" ></i> Search
+                    </button>
+                </form>
               </fieldset>
-            {% else %}
-                <h6> No samples in database </h6>
-            {% endif %}
       </div>
 
       <div class="col-6">
-        {% if plate %}
-            <h4>{{ plate }}</h4> <br>
-            <table style="border-spacing: 0; border-width: 0; padding: 0; border-width: 0;">
-                <tr>
-                    <th style="padding-right: 0px;">  </th>
-                    {% for colname in colnames %}
-                        <th style="padding-right: 0px;" > {{ colname }} </th>
-                    {% endfor %}
+        <font size="2">
+         <table class="table table table-hover">
+              <thead>
+                <tr class="table-dark text-dark">
+                <th>Name</th>
+                <th>Alias</th>
+                <th>Type</th>
+                <th>Description</th>
+                <th>Project</th>
+                <th>Author</th>
+                <th>Length</th>
+                <th>Genbank</th>
+                <th>Reference</th>
+                <th>Comments</th>
+{#                <th>Parent</th>#}
+                <th>Organism</th>
+                <th>Specie</th>
+{#                <th>Marker</th>#}
+{#                <th>Application</th>#}
+{#                <th>Strategy</th>#}
+{#                <th>Seq verified</th>#}
+{#                <th>Origin</th>#}
+{#                <th>Cloning System</th>#}
+{#                <th>Strand</th>#}
+{#                <th>Order_number</th>#}
+{#                <th>Part Type</th>#}
+{#                <th>Moclo Type</th>#}
+{#                <th>Samples</th>#}
+{#                <th>End</th>#}
+{#                <th>Direction</th>#}
+{#                <th>TM</th>#}
+                <th>Active</th>
+                <th>Status</th>
+                <th>Created at</th>
+
+
                 </tr>
-
-                {% for rowname, fill in layout %}
+              </thead>
+              <tbody>
+                  {% for sample in filter.qs %}
                     <tr>
-                    <th style="padding-right: 0px;"> {{ rowname }}</th>
-                    {% for col in fill %}
-                        {% if col.1 == '' %}
-                            <td style="padding-right: 0px;">
-                                 <div class="circle_empty"> {{ col.0 }} </div>
-                            </td>
-
-                        {% else %}
-                            <td style="padding-right: 0px;">
-                                <div class="circle_full"> <a href="{% url 'db:well' col.1 col.2 %}"> {{ col.0 }} </a> </div>
-{#                                <div class="circle_empty"> {{ col.1 }} </div>#}
-                            </td>
+                        <td><a href="{% url 'db:sample' sample.id %}"> {{ sample.name }}</a></td>
+                        <td>{{ sample.alias }}</td>
+                        <td>{{ sample.sample_type }}</td>
+                        <td>{{ sample.description }}</td>
+                        <td>{{ sample.project }}</td>
+                        <td>{{ sample.author }}</td>
+                        <td>{{ sample.length }}</td>
+                        {% if sample.genbank %}
+                            <td><a href="{{ sample.genbank.url }}" class="btn btn-info btn-sm" target="_blank">File</a></td>
+                            {% else %} <td> {{ sample.genbank }} </td>
                         {% endif %}
-                    {% endfor %}
-                 </tr>
-                {% endfor %}
-            </table>
-        {% endif %}
+                        <td>{{ sample.reference }}</td>
+                        <td>{{ sample.comments }}</td>
+                        <td>{{ sample.organism }}</td>
+                        <td>{{ sample.genus_specie }}</td>
+                        <td>{{ sample.active }}</td>
+                        <td>{{ sample.status }}</td>
+                        <td>{{ sample.created_at }}</td>
+                    </tr>
+                  {% endfor %}
+              </tbody>
+         </table>
+        </font>
+{#        {% if sample %}#}
+{#            <h4>{{ sample.name }}</h4> <br>#}
+{#            <table style="border-spacing: 0; border-width: 0; padding: 0; border-width: 0;">#}
+{#                {{ sample.sample_type }}#}
+{##}
+{#            </table>#}
+{#        {% endif %}#}
 
       </div>
 
       <div class="col-3">
-          {% if well %}
-            <h4>List of Samples in: <span class="badge badge-pill badge-info">{{ well.name }}</span> </h4><br>
-             <ul class="nav flex-column">
-                  <fieldset class="form-group overflow-auto">
-                    {% for sample in well.samples.all %}
-                        <a class="btn btn-info btn-block"
-                        data-toggle="collapse" href="#collapse" >{{ sample.id }}: {{ sample.name }}</a>
-                        <div class="collapse" id="collapse">
-                            <table class="table table-hover ">
-                                <tr>
-                                    <th>Lenght</th>
-                                    <td>{{ sample.length }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Type</th>
-                                    <td>{{ sample.type }}</td>
-                                </tr>
-                            </table>
-                        </div>
-                    {% endfor %}
-                  </fieldset>
-                  <fieldset class="form-group overflow-auto">
-                    <table class="table table-hover">
-                        <tr>
-                            <th>Volume</th>
-                            <td>{{ well.volume }}</td>
-                        </tr>
-                        <tr>
-                            <th>Concentration</th>
-                            <td> {{ well.concentration }}</td>
-                        </tr>
-                    </table>
-                  </fieldset>
-             </ul>
-          {% endif %}
+
       </div>
     </div>
 
