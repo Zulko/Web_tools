@@ -36,7 +36,7 @@ def verify_entry(type, num):
 
 
 
-def run_spotting(num_source_plates, num_wells, num_pattern, pattern):
+def run_spotting(num_source_plates, num_wells, num_pattern, pattern, user):
     """
     Calls a function to create a output file
     The output file has the source plate and the distribution of the samples according to the num_pattern and pattern
@@ -58,8 +58,8 @@ def run_spotting(num_source_plates, num_wells, num_pattern, pattern):
         outfile_name, outfilepath, worklist_name, worklistpath = \
             create_output_file(ver_num_source, num_wells, total_destination, pattern)
 
-        db.save_file(outfile_name, 'Spotting')
-        db.save_file(worklist_name, 'Spotting')
+        db.save_file(outfile_name, 'Spotting', user)
+        db.save_file(worklist_name, 'Spotting', user)
 
     return outfile_name, worklist_name, None
 

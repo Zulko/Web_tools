@@ -93,9 +93,9 @@ class Sample(models.Model):
     # Database Fields
     name = models.CharField(max_length=50, unique=True)
     alias = models.CharField(max_length=50)
-    sample_type = models.CharField(max_length=2, choices=SAMPLE_TYPES, default=SAMPLE_TYPES[4][0])
+    sample_type = models.CharField(max_length=50, choices=SAMPLE_TYPES, default=SAMPLE_TYPES[4][0])
     description = models.CharField(max_length=100, blank=True)
-    project = models.CharField(max_length=2, choices=PROJECT)  # Multi select option
+    project = models.CharField(max_length=30, choices=PROJECT, blank=True)  # Multi select option
     author = models.CharField(max_length=30, blank=True)
     active = models.BooleanField(default=True)
     status = models.CharField(max_length=1, choices=STATUS, blank=True)
@@ -104,8 +104,8 @@ class Sample(models.Model):
     genbank = models.FileField(upload_to='gb_files/', max_length=10000, blank=True)
     source_reference = models.CharField(max_length=30, blank=True)
     comments = models.CharField(max_length=100, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
     parent_id = models.IntegerField(blank=True, null=True)  # ID of a sample that was used to originated other
     organism = models.CharField(max_length=1, choices=ORGANISM, blank=True)
     genus_specie = models.CharField(max_length=50, blank=True)
@@ -161,9 +161,9 @@ class Well(models.Model):
 class File(models.Model):
     name = models.CharField(max_length=100)
     script = models.CharField(max_length=100, blank=True)
-    author = models.OneToOneField(User, on_delete=models.CASCADE)
+    author = models.CharField(max_length=30)
     file = models.FileField(upload_to='docs/', max_length=10000, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return self.name

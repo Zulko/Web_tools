@@ -39,13 +39,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'accounts.apps.AccountsConfig',
+    'django_filters',
+    'bootstrapform',
+    'import_export',
     'django_unused_media',
+    'accounts.apps.AccountsConfig',
     'db.apps.DbConfig',
     'misc',
     'scripts',
-    'django_filters',
-    'bootstrapform',
 
 ]
 
@@ -93,6 +94,10 @@ DATABASES = {
         'PORT': '',
     }
 }
+
+
+# Configuration for App import_export
+IMPORT_EXPORT_USE_TRANSACTIONS = True
 
 
 # Password validation

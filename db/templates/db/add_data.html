@@ -12,18 +12,24 @@
 
                 <div class="form-row align-items-center">
                     <a class="btn btn-info btn-block" data-toggle="collapse" href="#collapse" >Add Samples</a>
-                    <div class="collapse" id="collapse">
+{#                    <div class="collapse" id="collapse">#}
                         <div class="form-row align-items-center"><br><br>
                             <div class="col-auto"></div>
+{#                            <div class="col">#}
+{#                                <label for="file">From a file: </label>#}
+{#                            </div>#}
                             <div class="col">
-                                <label for="file">From a file: </label>
-                            </div>
-                            <div class="col-left">
                                 <input type="file" class="form-control-file border" name="upload_file_samples">
                             </div>
-                            <div class="col-auto"></div>
+                            <div class="col-right">
+                                <button class="btn btn-secondary" type="submit">
+                                    <i class="fas fa-file-import"></i> Update
+                                </button>
+
+
+                            </div>
                         </div>
-                    </div>
+{#                    </div>#}
                 </div>
 
                 <div class="form-row align-items-center">
@@ -35,7 +41,7 @@
                                 <label for="file">From a file: </label>
                             </div>
                             <div class="col-left">
-                                <input type="file" class="form-control-file border" name="upload_file_samples">
+                                <input type="file" class="form-control-file border" name="upload_file_plates">
                             </div>
                             <div class="col-auto"></div>
                         </div>
@@ -53,7 +59,6 @@
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form | bootstrap}}
-    {#            {{ form.as_p}}#}
                 <button type="submit" class="btn btn-info">Add sample</button>
             </form>
         </fieldset>

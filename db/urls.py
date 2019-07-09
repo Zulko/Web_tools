@@ -11,8 +11,8 @@ urlpatterns = [
     path('plate<int:plate_id>/<int:well_id>', views.well, name='well'),
     # path('plate<int:plate_id>/<int:well_id/<int:sample_id>', views.sample, name='sample'),
 
-    # path('add_data', views.add_data, name='add_data',),
-    path('add_data', views.create_sample, name='add_data',),
+    path('add_data/', views.create_sample, name='add_data',),
+    # path('add_data/file', views.upload_sample, name='add_file_data',),
 
     path('view_sample/', views.search_sample, name='view_sample',),
     path('view_sample/<int:sample_id>', views.sample, name='sample'),

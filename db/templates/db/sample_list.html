@@ -3,21 +3,24 @@
 
 
 {% block content %}
-
     <div class="row">
+
       <div class="col-3">
-          <h4>Search Samples</h4>
-              <fieldset class="form-group" style="padding: 20px 20px 20px 20px">
-                <form method="GET">
-                    {{ filter.form | bootstrap}}
-                    <button class="btn btn-info btn-block" type="submit">
-                        <i class="fas fa-search" ></i> Search
-                    </button>
-                </form>
-              </fieldset>
+      <h4>Search Samples</h4>
+          <fieldset class="form-group" style="padding: 20px 20px 20px 20px">
+            <form method="GET">
+                {{ filter.form | bootstrap }}
+                <button class="btn btn-info btn-block" type="submit">
+                    <i class="fas fa-search" ></i> Search
+                </button>
+            </form>
+          </fieldset>
       </div>
 
       <div class="col-6">
+
+{#      <a href="{{ dataset.url }}" class="btn btn-info" target="_blank"> <i class="fas fa-file-export"></i> Export data </a>#}
+
         <font size="2">
          <table class="table table table-hover">
               <thead>
@@ -52,6 +55,7 @@
                 <th>Active</th>
                 <th>Status</th>
                 <th>Created at</th>
+                <th>Edit/Del</th>
 
 
                 </tr>
@@ -77,6 +81,8 @@
                         <td>{{ sample.active }}</td>
                         <td>{{ sample.status }}</td>
                         <td>{{ sample.created_at }}</td>
+                        <td> <button type="submit" class="btn btn-danger">X</button>
+                             <button type="submit" class="btn btn-danger">X</button></td>
                     </tr>
                   {% endfor %}
               </tbody>

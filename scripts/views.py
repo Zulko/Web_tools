@@ -22,12 +22,13 @@ def upload_file(request, filename):
 def spotting(request):
     context = {}
     if request.method == "POST":
+        user = request.user
         num_sources = request.POST['num_sources']
         num_well = request.POST['num_well']
         num_pattern = request.POST['num_pattern']
         pattern = request.POST['pattern']
         ''' Calling Python Script'''
-        outfile_name, worklist_name, alert = run_spotting(int(num_sources), int(num_well), int(num_pattern), int(pattern))
+        outfile_name, worklist_name, alert = run_spotting(int(num_sources), int(num_well), int(num_pattern), int(pattern), user)
 
         if alert is not None:
             return render(request, 'scripts/spotting.html',

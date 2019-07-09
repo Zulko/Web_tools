@@ -1,11 +1,14 @@
 from django.views import generic
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.contrib.auth.decorators import login_required
 
 from .models import Plate, Well, Sample, File
-from .forms import SamplePrimerForm
+from .forms import SampleForm
 from .filters import SampleFilter
+from .resources import SampleResource
+
+from tablib import Dataset
 
 
 class IndexView(generic.ListView):
@@ -14,6 +17,15 @@ class IndexView(generic.ListView):
 
     def get_queryset(self):
         return Plate.objects.all()
+
+
+@login_required(login_url="/accounts/login/")
+def export(request):
+    sample_resource = SampleResource()
+    dataset = sample_resource.export()
+
+    return render(request, 'db/sample_list.html', {'dataset': dataset.csv})
+
 
 
 @login_required(login_url="/accounts/login/")
@@ -88,26 +100,38 @@ def sample(request, sample_id):
 
 
 @login_required(login_url="/accounts/login/")
-def add_data(request):
-    return render(request, 'db/add_data.html')
-
-
-@login_required(login_url="/accounts/login/")
 def create_sample(request):
     if request.method == 'POST':
-        form = SamplePrimerForm(request.POST, request.FILES)
+        form = SampleForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return redirect('db:view_sample')
+        else:
+            samples_resources = SampleResource()
+            new_samples = request.FILES['upload_file_samples']
+            dataset = Dataset()
+            imported_data = dataset.load(new_samples.read())
+            result = samples_resources.import_data(dataset, dry_run=True)
+            if not result.has_errors():
+                samples_resources.import_data(dataset, dry_run=False)
+            return redirect('db:view_sample')
     else:
-        form = SamplePrimerForm()
+        form = SampleForm()
     return render(request, 'db/add_data.html', {
         'form': form
     })
+
+
+# @login_required(login_url="/accounts/login/")
+# def upload_sample(request):
+#     if request.method == 'POST':
+#
+#     return render(request, 'db/add_data.html')
 
 
 @login_required(login_url="/accounts/login/")
 def search_sample(request):
     all_samples = Sample.objects.all()
     sample_filter = SampleFilter(request.GET, queryset=all_samples)
+
     return render(request, 'db/sample_list.html', {"filter": sample_filter})
