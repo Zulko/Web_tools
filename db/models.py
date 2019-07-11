@@ -9,8 +9,16 @@ from django.urls import reverse
 
 
 class Plate(models.Model):
+
+    def get_barcode():
+        num = Plate.objects.count()
+        if num is None:
+            return 1
+        else:
+            return num + 1
+
     name = models.CharField(max_length=50, unique=True)
-    barcode = models.CharField(max_length=50, unique=True)
+    barcode = models.IntegerField(unique=True, default=get_barcode)
     num_cols = models.IntegerField()
     num_rows = models.IntegerField()
     num_well = models.IntegerField()
@@ -41,6 +49,7 @@ class Plate(models.Model):
         for row in range(0, self.num_rows):
             rownames.append(calc.number_to_rowname(row))
         return colnames, rownames
+
 
 
 class Sample(models.Model):

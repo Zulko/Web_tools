@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 
 from .models import Plate, Well, Sample, File
 from .forms import SampleForm
-from .filters import SampleFilter
+from .filters import SampleFilter, PlateFilter
 from .resources import SampleResource
 
 from tablib import Dataset
@@ -19,7 +19,21 @@ class IndexView(generic.ListView):
         return Plate.objects.all()
 
 
-@login_required(login_url="/accounts/login/")
+@login_required()
+def plate_list(request):
+    all_plates = Plate.objects.all()
+    plate_filter = PlateFilter(request.GET, queryset=all_plates)
+    return render(request, 'db/index.html', {"all_plates": all_plates, 'filter': plate_filter})
+
+
+@login_required()
+def search_plate(request):
+    all_plates = Plate.objects.all()
+    plate_filter = PlateFilter(request.GET, queryset=all_plates)
+    return render(request, 'db/index.html', {"all_plates": all_plates, 'filter': plate_filter})
+
+
+@login_required()
 def export(request):
     sample_resource = SampleResource()
     dataset = sample_resource.export()
@@ -27,8 +41,6 @@ def export(request):
     return render(request, 'db/sample_list.html', {'dataset': dataset.csv})
 
 
-
-@login_required(login_url="/accounts/login/")
 def plate_layout(plate_id, all_wells):
     plate = get_object_or_404(Plate, id=plate_id)
     well_list = Plate.create_layout(plate)
@@ -50,34 +62,39 @@ def plate_layout(plate_id, all_wells):
     return layout, colnames, plate
 
 
-@login_required(login_url="/accounts/login/")
+@login_required()
 def plate(request, plate_id):
     all_plates = Plate.objects.all()
+    plate_filter = PlateFilter(request.GET, queryset=all_plates)
+
     try:
         all_wells = Well.objects.filter(plate_id=plate_id)
         layout, colnames, plate = plate_layout(plate_id, all_wells)
 
     except Plate.DoesNotExist:
         raise Http404("Plate does not exist")
-    return render(request, 'db/index.html', {"all_plates": all_plates,'plate': plate, 'wells': all_wells, 'layout': layout, 'colnames':colnames})
+    return render(request, 'db/index.html',
+                  {"all_plates": all_plates, 'plate': plate, 'wells': all_wells, 'layout': layout, 'colnames': colnames, 'filter': plate_filter})
 
 
-@login_required(login_url="/accounts/login/")
+
+@login_required()
 def well(request, plate_id, well_id):
     all_plates = Plate.objects.all()
+    plate_filter = PlateFilter(request.GET, queryset=all_plates)
     all_wells = Well.objects.filter(plate_id=plate_id)
     well = get_object_or_404(Well, id=well_id)
     layout, colnames, plate = plate_layout(plate_id, all_wells)
-    return render(request, 'db/index.html', {"all_plates": all_plates,'plate': plate, 'wells': all_wells, 'layout': layout, 'colnames':colnames, 'well': well})
+    return render(request, 'db/index.html', {"all_plates": all_plates,'plate': plate, 'wells': all_wells, 'layout': layout, 'colnames':colnames, 'well': well, 'filter': plate_filter})
 
 
-@login_required(login_url="/accounts/login/")
+@login_required()
 def file_sharing(request):
     files = File.objects.all()
     return render(request, 'db/file_sharing.html', {'files': files})
 
 
-@login_required(login_url="/accounts/login/")
+@login_required()
 def delete_file(request, file_id):
     if request.method == 'POST':
         file = File.objects.get(id=file_id)
@@ -85,21 +102,23 @@ def delete_file(request, file_id):
     return redirect('db:file_sharing')
 
 
-@login_required(login_url="/accounts/login/")
+@login_required()
 def sample_list(request):
     all_samples = Sample.objects.all()
     return render(request, 'db/sample_list.html', {"all_samples": all_samples})
 
 
-@login_required(login_url="/accounts/login/")
+@login_required()
 def sample(request, sample_id):
     all_samples = Sample.objects.all()
     sample_filter = SampleFilter(request.GET, queryset=all_samples)
     sample = Sample.objects.get(id=sample_id)
-    return render(request, 'db/sample_list.html', {"all_samples": all_samples, "filter": sample_filter, "sample": sample})
+    all_wells = Well.objects.filter(samples=sample_id)
+
+    return render(request, 'db/sample_list.html', {"all_samples": all_samples, "filter": sample_filter, "sample": sample, "wells": all_wells})
 
 
-@login_required(login_url="/accounts/login/")
+@login_required()
 def create_sample(request):
     if request.method == 'POST':
         form = SampleForm(request.POST, request.FILES)
@@ -122,14 +141,7 @@ def create_sample(request):
     })
 
 
-# @login_required(login_url="/accounts/login/")
-# def upload_sample(request):
-#     if request.method == 'POST':
-#
-#     return render(request, 'db/add_data.html')
-
-
-@login_required(login_url="/accounts/login/")
+@login_required()
 def search_sample(request):
     all_samples = Sample.objects.all()
     sample_filter = SampleFilter(request.GET, queryset=all_samples)

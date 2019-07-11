@@ -3,9 +3,6 @@ from .models import Plate, Well, Sample, File
 
 
 class SampleFilter(django_filters.FilterSet):
-    # name = django_filters.CharFilter(lookup_expr='icontains')
-    # alias = django_filters.CharFilter(lookup_expr='icontains')
-    # author = django_filters.CharFilter(lookup_expr='icontains')
 
     class Meta:
         model = Sample
@@ -14,4 +11,14 @@ class SampleFilter(django_filters.FilterSet):
             'alias': ['icontains', ],
             'author': ['icontains', ],
             'sample_type': ['exact', ],
+        }
+
+
+class PlateFilter(django_filters.FilterSet):
+
+    class Meta:
+        model = Plate
+        fields = {
+            'name': ['icontains', ],
+            'barcode': ['exact', ],
         }

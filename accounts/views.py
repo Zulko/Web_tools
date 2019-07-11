@@ -15,13 +15,13 @@ class SignUp(generic.CreateView):
     template_name = 'accounts/signup.html'
 
 
-@login_required
+@login_required()
 def profile_view(request):
     args = {'user': request.user}
     return render(request, 'accounts/profile.html', args)
 
 
-@login_required
+@login_required()
 def edit_profile(request):
     if request.method == "POST":
         form = EditProfileForm(request.POST, instance=request.user)
@@ -35,7 +35,7 @@ def edit_profile(request):
         return render(request, 'accounts/edit_profile.html', args)
 
 
-@login_required
+@login_required()
 def password_view(request):
     if request.method == 'POST':
         form = PasswordChangeForm(data=request.POST, user=request.user)

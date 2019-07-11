@@ -1,17 +1,25 @@
 {% extends 'base_layout.html' %}
-
+{% load bootstrap %}
 
 {% block content %}
 
     <div class="row">
       <div class="col-3">
-          <h4>List of Plates</h4><br>
+          <fieldset class="form-group" style="padding: 20px 20px 20px 20px">
+            <form method="GET">
+                {{ filter.form | bootstrap }}
+                <button class="btn btn-info btn-block" type="submit">
+                    <i class="fas fa-search" ></i> Search
+                </button>
+            </form>
+          </fieldset>
+            <!-- List of plates on inventory -->
+            <h4>List of Plates</h4><br>
             {% if all_plates %}
               <fieldset class="form-group overflow-auto">
-                {% for plate in all_plates %}
+                {% for plate in filter.qs %}
                   <div class="form-row align-items-center">
                       <div class="col">
-{#                        <a class="nav-link" href="{% url 'db:plate' plate.id %}"> {{ plate.id }}: {{ plate.name }}</a>#}
                         <a class="btn btn-info btn-block" href="{% url 'db:plate' plate.id %}"> {{ plate.id }}: {{ plate.name }}</a>
                       </div><br>
                   </div>
@@ -21,78 +29,83 @@
             {% else %}
                 <h6> No plates in database </h6>
             {% endif %}
+
       </div>
 
+
       <div class="col-6">
-        {% if plate %}
-            <h4>{{ plate }}</h4> <br>
-            <table style="border-spacing: 0; border-width: 0; padding: 0; border-width: 0;">
-                <tr>
-                    <th style="padding-right: 0px;">  </th>
-                    {% for colname in colnames %}
-                        <th style="padding-right: 0px;" > {{ colname }} </th>
-                    {% endfor %}
-                </tr>
 
-                {% for rowname, fill in layout %}
+            <!-- Selected Plate layout from Plate list -->
+            {% if plate %}
+                <h4>{{ plate.name }}: {{ plate.barcode }}</h4> <br>
+                <table style="border-spacing: 0; border-width: 0; padding: 0; border-collapse:collapse;">
                     <tr>
-                    <th style="padding-right: 0px;"> {{ rowname }}</th>
-                    {% for col in fill %}
-                        {% if col.1 == '' %}
-                            <td style="padding-right: 0px;">
-                                 <div class="circle_empty"> {{ col.0 }} </div>
-                            </td>
+                        <th style="padding-right: 0px;">  </th>
+                        {% for colname in colnames %}
+                            <th style="padding-right: 0px;" > {{ colname }} </th>
+                        {% endfor %}
+                    </tr>
 
-                        {% else %}
-                            <td style="padding-right: 0px;">
-                                <div class="circle_full"> <a href="{% url 'db:well' col.1 col.2 %}"> {{ col.0 }} </a> </div>
-{#                                <div class="circle_empty"> {{ col.1 }} </div>#}
-                            </td>
-                        {% endif %}
+                    {% for rowname, fill in layout %}
+                        <tr>
+                        <th style="padding-right: 0px;"> {{ rowname }}</th>
+                        {% for col in fill %}
+                            {% if col.1 == '' %}
+                                <td style="padding-right: 0px;">
+                                     <div class="circle_empty"> {{ col.0 }} </div>
+                                </td>
+
+                            {% else %}
+                                <td style="padding-right: 0px;">
+                                    <div class="circle_full"> <a href="{% url 'db:well' col.1 col.2 %}"> {{ col.0 }} </a> </div>
+                                </td>
+                            {% endif %}
+                        {% endfor %}
+                     </tr>
                     {% endfor %}
-                 </tr>
-                {% endfor %}
-            </table>
-        {% endif %}
+                </table>
+            {% endif %}
 
       </div>
 
       <div class="col-3">
-          {% if well %}
-            <h4>List of Samples in: <span class="badge badge-pill badge-info">{{ well.name }}</span> </h4><br>
-             <ul class="nav flex-column">
-                  <fieldset class="form-group overflow-auto">
-                    {% for sample in well.samples.all %}
-                        <a class="btn btn-info btn-block"
-                        data-toggle="collapse" href="#collapse" >{{ sample.id }}: {{ sample.name }}</a>
-                        <div class="collapse" id="collapse">
-                            <table class="table table-hover ">
-                                <tr>
-                                    <th>Lenght</th>
-                                    <td>{{ sample.length }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Type</th>
-                                    <td>{{ sample.type }}</td>
-                                </tr>
-                            </table>
-                        </div>
-                    {% endfor %}
-                  </fieldset>
-                  <fieldset class="form-group overflow-auto">
-                    <table class="table table-hover">
-                        <tr>
-                            <th>Volume</th>
-                            <td>{{ well.volume }}</td>
-                        </tr>
-                        <tr>
-                            <th>Concentration</th>
-                            <td> {{ well.concentration }}</td>
-                        </tr>
-                    </table>
-                  </fieldset>
-             </ul>
-          {% endif %}
+
+            <!-- Selected Well Content from Plate layout -->
+              {% if well %}
+                <h4>List of Samples in: <span class="badge badge-pill badge-info">{{ well.name }}</span> </h4><br>
+                 <ul class="nav flex-column">
+                      <fieldset class="form-group overflow-auto">
+                        {% for sample in well.samples.all %}
+                            <a class="btn btn-info btn-block"
+                            data-toggle="collapse" href="#collapse" >{{ sample.id }}: {{ sample.name }}</a>
+                            <div class="collapse" id="collapse">
+                                <table class="table table-hover ">
+                                    <tr>
+                                        <th>Lenght</th>
+                                        <td>{{ sample.length }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Type</th>
+                                        <td>{{ sample.sample_type }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        {% endfor %}
+                      </fieldset>
+                      <fieldset class="form-group overflow-auto">
+                        <table class="table table-hover">
+                            <tr>
+                                <th>Volume</th>
+                                <td>{{ well.volume }}</td>
+                            </tr>
+                            <tr>
+                                <th>Concentration</th>
+                                <td> {{ well.concentration }}</td>
+                            </tr>
+                        </table>
+                      </fieldset>
+                 </ul>
+              {% endif %}
       </div>
     </div>
 

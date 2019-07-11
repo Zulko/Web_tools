@@ -1,6 +1,5 @@
 from django import forms
-from .models import File
-from .models import Sample
+from .models import File, Sample
 
 
 class FileForm(forms.ModelForm):

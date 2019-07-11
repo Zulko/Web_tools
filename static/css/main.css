@@ -17,6 +17,12 @@
   color: white;
 }
 
+.info {
+  padding: 20px;
+  background-color: #17a2b8;
+  color: white;
+}
+
 .closebtn {
   margin-left: 15px;
   color: white;

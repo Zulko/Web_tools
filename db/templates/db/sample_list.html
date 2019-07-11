@@ -15,13 +15,30 @@
                 </button>
             </form>
           </fieldset>
+
+        <div align="right">
+            <a href="{{ dataset.url }}" class="btn btn-info" target="_blank"> <i class="fas fa-file-export"></i> Export data </a>
+        </div>
       </div>
 
-      <div class="col-6">
+      <div class="col">
+          <font size="2">
+          {% if sample %}
+            <div class="info">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    {{ sample.name }}
+                    {% if wells %}
+                        <p>
+                        {% for well in wells %}
+                            <a class="btn btn-info btn-sm" href="{% url 'db:well' well.plate.id well.id %}"> {{ well.plate.name }}: {{ well.name }}</a>
+                        {% endfor %}
+                        </p>
+                    {% else %}
+                        <p>no inventory</p>
+                    {% endif %}
+            </div>
+          {% endif %}
 
-{#      <a href="{{ dataset.url }}" class="btn btn-info" target="_blank"> <i class="fas fa-file-export"></i> Export data </a>#}
-
-        <font size="2">
          <table class="table table table-hover">
               <thead>
                 <tr class="table-dark text-dark">
@@ -54,8 +71,8 @@
 {#                <th>TM</th>#}
                 <th>Active</th>
                 <th>Status</th>
-                <th>Created at</th>
-                <th>Edit/Del</th>
+                <th>Created</th>
+{#                <th></th>#}
 
 
                 </tr>
@@ -81,30 +98,18 @@
                         <td>{{ sample.active }}</td>
                         <td>{{ sample.status }}</td>
                         <td>{{ sample.created_at }}</td>
-                        <td> <button type="submit" class="btn btn-danger">X</button>
-                             <button type="submit" class="btn btn-danger">X</button></td>
+{#                        <td> <button type="submit" class="btn btn-outline-danger btn-sm">#}
+{#                                <i class="fas fa-trash-alt" style="font-size:15px;"></i>#}
+{#                             </button>#}
+{#                            <button type="submit" class="btn btn-outline-warning btn-sm">#}
+{#                                <i class="far fa-edit" style="font-size:10px;"></i>#}
+{#                            </button></td>#}
                     </tr>
                   {% endfor %}
               </tbody>
          </table>
         </font>
-{#        {% if sample %}#}
-{#            <h4>{{ sample.name }}</h4> <br>#}
-{#            <table style="border-spacing: 0; border-width: 0; padding: 0; border-width: 0;">#}
-{#                {{ sample.sample_type }}#}
-{##}
-{#            </table>#}
-{#        {% endif %}#}
-
-      </div>
-
-      <div class="col-3">
-
       </div>
     </div>
-
-
-
-
 
 {% endblock%}
