@@ -5,6 +5,7 @@
 
     <div class="row">
       <div class="col-3">
+      <h4>Search Samples</h4>
           <fieldset class="form-group" style="padding: 20px 20px 20px 20px">
             <form method="GET">
                 {{ filter.form | bootstrap }}
@@ -14,7 +15,7 @@
             </form>
           </fieldset>
             <!-- List of plates on inventory -->
-            <h4>List of Plates</h4><br>
+            <br><h4>List of Plates</h4><br>
             {% if all_plates %}
               <fieldset class="form-group overflow-auto">
                 {% for plate in filter.qs %}

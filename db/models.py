@@ -99,6 +99,14 @@ class Sample(models.Model):
         ('-', 'Negative'),
     )
 
+    def get_name():
+
+        num = Sample.objects.count()
+        if num is None:
+            return 1
+        else:
+            return num + 1
+
     # Database Fields
     name = models.CharField(max_length=50, unique=True)
     alias = models.CharField(max_length=50)
