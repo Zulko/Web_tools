@@ -8,3 +8,12 @@ class SampleResource(resources.ModelResource):
 
     class Meta:
         model = Sample
+
+
+class PlateResource(resources.ModelResource):
+    def for_delete(self, row, instance):
+        return self.fields['delete'].clean(row)
+
+    class Meta:
+        model = Plate
+

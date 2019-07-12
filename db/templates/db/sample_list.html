@@ -17,7 +17,7 @@
           </fieldset>
 
         <div align="right">
-            <a href="{{ dataset.url }}" class="btn btn-info" target="_blank"> <i class="fas fa-file-export"></i> Export data </a>
+            <a href="{% url 'db:export_sample' %}" class="btn btn-info"> <i class="fas fa-file-export"></i> Export data </a>
         </div>
       </div>
 
@@ -89,7 +89,8 @@
                         <td>{{ sample.length }}</td>
                         {% if sample.genbank %}
                             <td><a href="{{ sample.genbank.url }}" class="btn btn-info btn-sm" target="_blank">File</a></td>
-                            {% else %} <td> {{ sample.genbank }} </td>
+                            {% else %}
+                                <td> {{ sample.genbank }} </td>
                         {% endif %}
                         <td>{{ sample.reference }}</td>
                         <td>{{ sample.comments }}</td>

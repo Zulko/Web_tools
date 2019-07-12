@@ -6,17 +6,9 @@ from django.contrib.auth.decorators import login_required
 from .models import Plate, Well, Sample, File
 from .forms import SampleForm
 from .filters import SampleFilter, PlateFilter
-from .resources import SampleResource
+from .resources import SampleResource, PlateResource
 
 from tablib import Dataset
-
-
-class IndexView(generic.ListView):
-    template_name = 'db/index.html'
-    context_object_name = 'all_plates'
-
-    def get_queryset(self):
-        return Plate.objects.all()
 
 
 @login_required()
@@ -24,21 +16,6 @@ def plate_list(request):
     all_plates = Plate.objects.all()
     plate_filter = PlateFilter(request.GET, queryset=all_plates)
     return render(request, 'db/index.html', {"all_plates": all_plates, 'filter': plate_filter})
-
-
-@login_required()
-def search_plate(request):
-    all_plates = Plate.objects.all()
-    plate_filter = PlateFilter(request.GET, queryset=all_plates)
-    return render(request, 'db/index.html', {"all_plates": all_plates, 'filter': plate_filter})
-
-
-@login_required()
-def export(request):
-    sample_resource = SampleResource()
-    dataset = sample_resource.export()
-
-    return render(request, 'db/sample_list.html', {'dataset': dataset.csv})
 
 
 def plate_layout(plate_id, all_wells):
@@ -63,7 +40,7 @@ def plate_layout(plate_id, all_wells):
 
 
 @login_required()
-def plate(request, plate_id):
+def plate_view(request, plate_id):
     all_plates = Plate.objects.all()
     plate_filter = PlateFilter(request.GET, queryset=all_plates)
 
@@ -75,6 +52,19 @@ def plate(request, plate_id):
         raise Http404("Plate does not exist")
     return render(request, 'db/index.html',
                   {"all_plates": all_plates, 'plate': plate, 'wells': all_wells, 'layout': layout, 'colnames': colnames, 'filter': plate_filter})
+
+
+@login_required()
+def plate_export(request, plate_id):
+    plate_resource = PlateResource()
+    plate_filter = Plate.objects.filter(id=plate_id)
+
+    dataset = plate_resource.export(plate_filter)
+
+    response = HttpResponse(dataset.csv, content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="samples.csv"'
+
+    return response
 
 
 
@@ -103,9 +93,25 @@ def delete_file(request, file_id):
 
 
 @login_required()
+def export_sample(request):
+    sample_resource = SampleResource()
+    sample_filter = Sample.objects.filter(sample_type='Pr')
+    # queryset = Sample.objects.filter(sample_filter)
+
+    dataset = sample_resource.export(sample_filter)
+
+    response = HttpResponse(dataset.csv, content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="samples.csv"'
+
+    return response
+
+
+@login_required()
 def sample_list(request):
     all_samples = Sample.objects.all()
-    return render(request, 'db/sample_list.html', {"all_samples": all_samples})
+    sample_filter = SampleFilter(request.GET, queryset=all_samples)
+
+    return render(request, 'db/sample_list.html', {"all_samples": all_samples, "filter": sample_filter})
 
 
 @login_required()
@@ -141,9 +147,9 @@ def create_sample(request):
     })
 
 
-@login_required()
-def search_sample(request):
-    all_samples = Sample.objects.all()
-    sample_filter = SampleFilter(request.GET, queryset=all_samples)
-
-    return render(request, 'db/sample_list.html', {"filter": sample_filter})
+# @login_required()
+# def search_sample(request):
+#     all_samples = Sample.objects.all()
+#     sample_filter = SampleFilter(request.GET, queryset=all_samples)
+#
+#     return render(request, 'db/sample_list.html', {"filter": sample_filter})
