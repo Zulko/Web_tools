@@ -1,5 +1,5 @@
-from import_export import resources
-from .models import Sample, Plate
+from import_export import resources, fields
+from .models import Sample, Plate, Well
 
 
 class SampleResource(resources.ModelResource):
@@ -11,9 +11,15 @@ class SampleResource(resources.ModelResource):
 
 
 class PlateResource(resources.ModelResource):
+    name = fields.Field(attribute='name', column_name='well')
+
     def for_delete(self, row, instance):
         return self.fields['delete'].clean(row)
 
+    #TODO: change samples id for samples name
     class Meta:
-        model = Plate
+        model = Well
+        fields = ('name', 'samples', 'volume', 'concentration')
+        export_order = ('name', 'samples', 'volume', 'concentration')
+
 

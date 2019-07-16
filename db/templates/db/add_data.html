@@ -7,9 +7,10 @@
     <div class="col-3">
     <h4>Options</h4>
         <div class="options">
-            <form method="post"> {% csrf_token %}
-              <fieldset class="form-group">
+            <fieldset class="form-group">
 
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
                 <div class="form-row align-items-center">
                     <a class="btn btn-info btn-block" data-toggle="collapse" href="#collapse" >Add Samples</a>
 {#                    <div class="collapse" id="collapse">#}
@@ -25,13 +26,14 @@
                                 <button class="btn btn-secondary" type="submit">
                                     <i class="fas fa-file-import"></i> Update
                                 </button>
-
-
                             </div>
                         </div>
 {#                    </div>#}
                 </div>
+              </form>
 
+              <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
                 <div class="form-row align-items-center">
                     <a class="btn btn-info btn-block" data-toggle="collapse" href="#collapse_plates" >Add Plates</a>
                     <div class="collapse" id="collapse_plates">
@@ -47,9 +49,8 @@
                         </div>
                     </div>
                 </div>
-
-              </fieldset>
             </form>
+            </fieldset>
         </div>
     </div>
 

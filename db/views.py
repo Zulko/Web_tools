@@ -59,13 +59,17 @@ def plate_export(request, plate_id):
     plate_resource = PlateResource()
     plate_filter = Plate.objects.filter(id=plate_id)
 
-    dataset = plate_resource.export(plate_filter)
+    try:
+        all_wells = Well.objects.filter(plate_id=plate_id)
+        dataset = plate_resource.export(all_wells)
 
-    response = HttpResponse(dataset.csv, content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="samples.csv"'
+        response = HttpResponse(dataset.csv, content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="plate.csv"'
 
-    return response
+        return response
 
+    except:
+        return None
 
 
 @login_required()
@@ -92,6 +96,7 @@ def delete_file(request, file_id):
     return redirect('db:file_sharing')
 
 
+#TODO: Use the filter configuration to create an output file
 @login_required()
 def export_sample(request):
     sample_resource = SampleResource()
@@ -133,18 +138,45 @@ def create_sample(request):
             return redirect('db:view_sample')
         else:
             samples_resources = SampleResource()
-            new_samples = request.FILES['upload_file_samples']
             dataset = Dataset()
+            new_samples = request.FILES['upload_file_samples']
+
+            # for sample in new_samples:
+            #     print(sample.name)
             imported_data = dataset.load(new_samples.read())
+
             result = samples_resources.import_data(dataset, dry_run=True)
             if not result.has_errors():
                 samples_resources.import_data(dataset, dry_run=False)
-            return redirect('db:view_sample')
+            return render(request, 'db/sample_list.html')
     else:
         form = SampleForm()
     return render(request, 'db/add_data.html', {
         'form': form
     })
+
+
+# @login_required()
+# def create_samples(request):
+#     if request.method == 'POST' and request.FILES['upload_file_samples']:
+#         samples_resources = SampleResource()
+#         dataset = Dataset()
+#
+#         new_samples = request.FILES['upload_file_samples']
+#         for sample in new_samples:
+#             print(sample.name)
+#
+#         imported_data = dataset.load(new_samples.read())
+#
+#         result = samples_resources.imported_data(dataset, dry_run=True)
+#             if not result.has_errors():
+#                 samples_resources.import_data(dataset, dry_run=False)
+#             return redirect('db:view_sample')
+#     else:
+#         form = SampleForm()
+#     return render(request, 'db/add_data.html', {
+#         'form': form
+#     })
 
 
 # @login_required()
