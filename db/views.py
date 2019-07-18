@@ -121,11 +121,11 @@ def export_sample(request):
 
 
 @login_required()
-def sample_list(request):
+def samples_list(request):
     all_samples = Sample.objects.all()
     sample_filter = SampleFilter(request.GET, queryset=all_samples)
 
-    return render(request, 'db/sample_list.html', {"all_samples": all_samples, "filter": sample_filter})
+    return render(request, 'db/samples_list.html', {"all_samples": all_samples, "filter": sample_filter})
 
 
 @login_required()
@@ -135,7 +135,7 @@ def sample(request, sample_id):
     sample = Sample.objects.get(id=sample_id)
     all_wells = Well.objects.filter(samples=sample_id)
 
-    return render(request, 'db/sample_list.html', {"all_samples": all_samples, "filter": sample_filter, "sample": sample, "wells": all_wells})
+    return render(request, 'db/samples_list.html', {"all_samples": all_samples, "filter": sample_filter, "sample": sample, "wells": all_wells})
 
 
 @login_required()
@@ -144,7 +144,7 @@ def create_sample(request):
         form = SampleForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('db:view_sample')
+            return redirect('db:samples_list')
         else:
             samples_resources = SampleResource()
             dataset = Dataset()
@@ -158,7 +158,7 @@ def create_sample(request):
                 samples_resources.import_data(imported_data, dry_run=False)
             else:
                 print(result.invalid_rows)
-            return redirect('db:view_sample')
+            return redirect('db:samples_list')
     else:
         form = SampleForm()
     return render(request, 'db/add_data.html', {'form': form})
