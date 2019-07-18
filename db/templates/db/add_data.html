@@ -16,9 +16,6 @@
 {#                    <div class="collapse" id="collapse">#}
                         <div class="form-row align-items-center"><br><br>
                             <div class="col-auto"></div>
-{#                            <div class="col">#}
-{#                                <label for="file">From a file: </label>#}
-{#                            </div>#}
                             <div class="col">
                                 <input type="file" class="form-control-file border" name="upload_file_samples">
                             </div>
@@ -36,18 +33,19 @@
                 {% csrf_token %}
                 <div class="form-row align-items-center">
                     <a class="btn btn-info btn-block" data-toggle="collapse" href="#collapse_plates" >Add Plates</a>
-                    <div class="collapse" id="collapse_plates">
+{#                    <div class="collapse" id="collapse_plates">#}
                         <div class="form-row align-items-center"><br><br>
                             <div class="col-auto"></div>
                             <div class="col">
-                                <label for="file">From a file: </label>
-                            </div>
-                            <div class="col-left">
                                 <input type="file" class="form-control-file border" name="upload_file_plates">
                             </div>
-                            <div class="col-auto"></div>
+                            <div class="col-right">
+                                <button class="btn btn-secondary" type="submit">
+                                    <i class="fas fa-file-import"></i> Update
+                                </button>
+                            </div>
                         </div>
-                    </div>
+{#                    </div>#}
                 </div>
             </form>
             </fieldset>

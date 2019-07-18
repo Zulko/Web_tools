@@ -1,4 +1,4 @@
-from django.views import generic
+from django.core.files.storage import FileSystemStorage
 from django.http import Http404, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.contrib.auth.decorators import login_required
@@ -9,6 +9,29 @@ from .filters import SampleFilter, PlateFilter
 from .resources import SampleResource, PlateResource
 
 from tablib import Dataset
+
+
+@login_required()
+def file_sharing(request):
+    files = File.objects.all()
+    return render(request, 'db/file_sharing.html', {'files': files})
+
+
+@login_required()
+def delete_file(request, file_id):
+    if request.method == 'POST':
+        file = File.objects.get(id=file_id)
+        file.delete()
+    return redirect('db:file_sharing')
+
+
+@login_required()
+def upload_file(request, filename):
+    upload = request.FILES[filename]
+    fs = FileSystemStorage()
+    name = fs.save(upload.name, upload)
+    url = fs.url(name)
+    return upload, fs, name, url
 
 
 @login_required()
@@ -82,20 +105,6 @@ def well(request, plate_id, well_id):
     return render(request, 'db/index.html', {"all_plates": all_plates,'plate': plate, 'wells': all_wells, 'layout': layout, 'colnames':colnames, 'well': well, 'filter': plate_filter})
 
 
-@login_required()
-def file_sharing(request):
-    files = File.objects.all()
-    return render(request, 'db/file_sharing.html', {'files': files})
-
-
-@login_required()
-def delete_file(request, file_id):
-    if request.method == 'POST':
-        file = File.objects.get(id=file_id)
-        file.delete()
-    return redirect('db:file_sharing')
-
-
 #TODO: Use the filter configuration to create an output file
 @login_required()
 def export_sample(request):
@@ -140,20 +149,19 @@ def create_sample(request):
             samples_resources = SampleResource()
             dataset = Dataset()
             new_samples = request.FILES['upload_file_samples']
+            imported_data = dataset.load(new_samples.read().decode('utf-8'), format='csv')
 
-            # for sample in new_samples:
-            #     print(sample.name)
-            imported_data = dataset.load(new_samples.read())
+            result = samples_resources.import_data(imported_data, dry_run=True, raise_errors=True, collect_failed_rows=True)
 
-            result = samples_resources.import_data(dataset, dry_run=True)
             if not result.has_errors():
-                samples_resources.import_data(dataset, dry_run=False)
-            return render(request, 'db/sample_list.html')
+
+                samples_resources.import_data(imported_data, dry_run=False)
+            else:
+                print(result.invalid_rows)
+            return redirect('db:view_sample')
     else:
         form = SampleForm()
-    return render(request, 'db/add_data.html', {
-        'form': form
-    })
+    return render(request, 'db/add_data.html', {'form': form})
 
 
 # @login_required()

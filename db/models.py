@@ -13,9 +13,11 @@ class Plate(models.Model):
     def get_barcode():
         num = Plate.objects.count()
         if num is None:
-            return 1
+            num = 1
+            return '{0:07}'.format(num)
         else:
-            return num + 1
+            num +=1
+            return '{0:07}'.format(num)
 
     name = models.CharField(max_length=50, unique=True)
     barcode = models.IntegerField(unique=True, default=get_barcode)
@@ -149,16 +151,6 @@ class Sample(models.Model):
 
     def __str__(self):
         return self.name
-
-
-    def get_name(self):
-
-        name = Sample.objects.filter(self.SAMPLE_TYPES)
-        # if num is None:
-        #     return 1
-        # else:
-        #     return num + 1
-
 
 
 class Well(models.Model):
