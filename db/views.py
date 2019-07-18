@@ -96,6 +96,14 @@ def plate_export(request, plate_id):
 
 
 @login_required()
+def plate_delete(request, plate_id):
+    if request.method == 'POST':
+        plate = Plate.objects.get(id=plate_id)
+        plate.delete()
+    return redirect('db:index')
+
+
+@login_required()
 def well(request, plate_id, well_id):
     all_plates = Plate.objects.all()
     plate_filter = PlateFilter(request.GET, queryset=all_plates)
@@ -143,8 +151,8 @@ def create_sample(request):
     if request.method == 'POST':
         form = SampleForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            return redirect('db:samples_list')
+            new_sample = form.save()
+            return redirect('db:sample', new_sample.id)
         else:
             samples_resources = SampleResource()
             dataset = Dataset()

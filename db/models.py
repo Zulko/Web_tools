@@ -53,7 +53,6 @@ class Plate(models.Model):
         return colnames, rownames
 
 
-
 class Sample(models.Model):
     # Choices
     SAMPLE_TYPES = (
@@ -101,9 +100,11 @@ class Sample(models.Model):
         ('-', 'Negative'),
     )
 
+    #TODO: Remove active and status from sample and move to well and plate
+
     # Database Fields
     name = models.CharField(max_length=50, unique=True)
-    alias = models.CharField(max_length=50, default=name)
+    alias = models.CharField(max_length=50)
     sample_type = models.CharField(max_length=50, choices=SAMPLE_TYPES, default=SAMPLE_TYPES[4][0])
     description = models.CharField(max_length=100, blank=True)
     project = models.CharField(max_length=30, choices=PROJECT, blank=True)  # Multi select option

@@ -51,20 +51,16 @@
 
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-                    &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-vial" style="font-size:15px; color:white;"></i> &nbsp;Scripts_DB</a>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-laptop-code" style="font-size:15px; color:white;"></i> &nbsp;Automatization</a>
                 <div class="dropdown-menu">
                     <a class="dropdown-item" href="{% url 'scripts:moclodb' %}">Moclo</a>
-
                 </div>
             </li>
-
             <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-                &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-tools" style="font-size:15px; color:white;"></i>&nbsp; Misc</a>
+                <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+                    &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-dna" style="font-size:15px; color:white;"></i> &nbsp;Design</a>
                 <div class="dropdown-menu">
-                    <a class="dropdown-item" href="{% url 'misc:genbank' %}">GB Files</a>
-                    <a class="dropdown-item" href="{% url 'misc:primer' %}">Primer</a>
-                    <a class="dropdown-item" href="{% url 'misc:normalization' %}">Normalization</a>
+                    <a class="dropdown-item" href="{% url 'under' %}">Moclo</a>
                 </div>
             </li>
 
@@ -79,10 +75,15 @@
                 </div>
             </li>
 
-{#            <li class="navbar-nav">#}
-{#                <a class="nav-link" href= "http://{{ domain }}:8080/" target="_blank">#}
-{#                &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-server" style="font-size:15px; color:white;"></i> &nbsp;LIMS</a> </li>#}
-{#            </li>#}
+            <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+                &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-tools" style="font-size:15px; color:white;"></i>&nbsp; Extras</a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{% url 'misc:genbank' %}">GB Files</a>
+                    <a class="dropdown-item" href="{% url 'misc:primer' %}">Primer</a>
+                    <a class="dropdown-item" href="{% url 'misc:normalization' %}">Normalization</a>
+                </div>
+            </li>
 
             <li class="navbar-nav">
                 <a class="nav-link" href="{% url 'about' %}">
@@ -138,7 +139,7 @@
 
                         <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-                            &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-tools" style="font-size:15px; color:white;"></i>&nbsp; Misc</a>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-tools" style="font-size:15px; color:white;"></i>&nbsp; Extras</a>
                             <div class="dropdown-menu">
                                 <a class="dropdown-item" href="{% url 'misc:genbank' %}">GB Files</a>
                                 <a class="dropdown-item" href="{% url 'misc:primer' %}">Primer</a>

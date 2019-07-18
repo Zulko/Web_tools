@@ -11,6 +11,7 @@ urlpatterns = [
 
     path('plate<int:plate_id>/', views.plate_view, name='plate'),
     path('export/plate<int:plate_id>/', views.plate_export, name='plate_export'),
+    path('delete/plate<int:plate_id>/', views.plate_delete, name='plate_delete'),
 
     path('plate<int:plate_id>/<int:well_id>', views.well, name='well'),
     # path('plate<int:plate_id>/<int:well_id/<int:sample_id>', views.sample, name='sample'),
