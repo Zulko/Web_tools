@@ -44,15 +44,15 @@
 
                 <div align="right">
                     <a href="{% url 'db:plate_export' plate.id %}" class="btn btn-info"> <i class="fas fa-file-export"></i> Export data </a>
-                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal"> <i class="fas fa-trash-alt"></i> Delete Plate </button>
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete_plate"> <i class="fas fa-trash-alt"></i> Delete Plate </button>
 {#                    <a href="{% url 'db:plate_delete' plate.id %}"  </a>#}
                 </div>
 
-                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal fade" id="delete_plate" tabindex="-1" role="dialog" aria-labelledby="delete_plateLabel" aria-hidden="true">
                   <div class="modal-dialog" role="document">
                     <div class="modal-content">
                       <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Delete Plate</h5>
+                        <h5 class="modal-title" id="delete_plateLabel">Delete Plate</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                           <span aria-hidden="true">&times;</span>
                         </button>
