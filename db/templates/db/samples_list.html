@@ -22,7 +22,7 @@
 
       </div>
 
-      <div class="col">
+      <div class="col-6">
           <font size="2">
           {% if sample %}
             <div class="info">
@@ -40,78 +40,138 @@
             </div>
           {% endif %}
 
-         <table class="table table table-hover">
-              <thead>
-                <tr class="table-dark text-dark">
-                <th>Name</th>
-                <th>Alias</th>
-                <th>Type</th>
-                <th>Description</th>
-                <th>Project</th>
-                <th>Author</th>
-                <th>Length</th>
-                <th>Genbank</th>
-                <th>Reference</th>
-                <th>Comments</th>
-{#                <th>Parent</th>#}
-                <th>Organism</th>
-                <th>Specie</th>
-{#                <th>Marker</th>#}
-{#                <th>Application</th>#}
-{#                <th>Strategy</th>#}
-{#                <th>Seq verified</th>#}
-{#                <th>Origin</th>#}
-{#                <th>Cloning System</th>#}
-{#                <th>Strand</th>#}
-{#                <th>Order_number</th>#}
-{#                <th>Part Type</th>#}
-{#                <th>Moclo Type</th>#}
-{#                <th>Samples</th>#}
-{#                <th>End</th>#}
-{#                <th>Direction</th>#}
-{#                <th>TM</th>#}
-                <th>Active</th>
-                <th>Status</th>
-                <th>Created</th>
-{#                <th></th>#}
+
+         <div class="wrapper-editor">
+
+              <div class="d-flex justify-content-center buttons-wrapper">
+                <button id="" class="btn btn-sm btn-teal btn-rounded addNewColumn">Activate edits</button>
+                <button id="" class="btn btn-sm btn-mdb-color btn-rounded removeColumns" disabled>Deactivate edits</button>
+                <button id="" class="btn btn-sm btn-info btn-rounded addNewRows">Add new rows</button>
+              </div>
+
+              <div class="closeByClick d-none"></div>
+
+              <div class="showForm d-none" style="position: fixed; top: 20%; left:50%; transform: translate(-50%, -50%); z-index: 1100;">
+
+                <form class="text-center border border-light p-5" style="background: white;">
+
+                  <button type="button" class="close position-relative button-x" style="top:-12%; right: -5%">
+                    <span aria-hidden="true" class="text-danger">×</span>
+                  </button>
+
+                  <h3 class="h3 my-3 text-danger font-weight-bold">Delete</h3>
+
+                  <hr class="mt-2 mb-3">
+
+                  <p class="text-center h5 py-2 pb-3">Are you sure to delete selected rows?</p>
+
+                  <hr class="mt-2 mb-3">
+
+                  <div class="d-flex justify-content-center buttonYesNoWrapper">
+                    <button type="button" class="btn btn-danger btnYes btn-sm">Yes</button>
+                    <button type="button" class="btn btn-primary btnNo btn-sm">No</button>
+                  </div>
+                </form>
+
+              </div>
+
+                 <table id="dtBasicExample-1" class="table table-hover table-striped table-sm" cellspacing="0" width="100%">
+                      <thead>
+                        <tr class="table-dark text-dark">
+                        <th class="th-sm">Name</th>
+                        <th class="th-sm">Alias</th>
+                        <th class="th-sm">Type</th>
+                        <th class="th-sm">Description</th>
+                        <th class="th-sm">Project</th>
+                        <th class="th-sm">Author</th>
+                        <th class="th-sm">Length</th>
+                        <th class="th-sm">Genbank</th>
+                        <th class="th-sm">Reference</th>
+                        <th class="th-sm">Comments</th>
+        {#                <th>Parent</th>#}
+                        <th>Organism</th>
+                        <th>Specie</th>
+        {#                <th>Marker</th>#}
+        {#                <th>Application</th>#}
+        {#                <th>Strategy</th>#}
+        {#                <th>Seq verified</th>#}
+        {#                <th>Origin</th>#}
+        {#                <th>Cloning System</th>#}
+        {#                <th>Strand</th>#}
+        {#                <th>Order_number</th>#}
+        {#                <th>Part Type</th>#}
+        {#                <th>Moclo Type</th>#}
+        {#                <th>Samples</th>#}
+        {#                <th>End</th>#}
+        {#                <th>Direction</th>#}
+        {#                <th>TM</th>#}
+                        <th>Active</th>
+                        <th>Status</th>
+                        <th>Created</th>
+        {#                <th></th>#}
 
 
-                </tr>
-              </thead>
-              <tbody>
-                  {% for sample in filter.qs %}
-                    <tr>
-                        <td><a href="{% url 'db:sample' sample.id %}"> {{ sample.name }}</a></td>
-                        <td>{{ sample.alias }}</td>
-                        <td>{{ sample.sample_type }}</td>
-                        <td>{{ sample.description }}</td>
-                        <td>{{ sample.project }}</td>
-                        <td>{{ sample.author }}</td>
-                        <td>{{ sample.length }}</td>
-                        {% if sample.genbank %}
-                            <td><a href="{{ sample.genbank.url }}" class="btn btn-info btn-sm" target="_blank">File</a></td>
-                            {% else %}
-                                <td> {{ sample.genbank }} </td>
-                        {% endif %}
-                        <td>{{ sample.reference }}</td>
-                        <td>{{ sample.comments }}</td>
-                        <td>{{ sample.organism }}</td>
-                        <td>{{ sample.genus_specie }}</td>
-                        <td>{{ sample.active }}</td>
-                        <td>{{ sample.status }}</td>
-                        <td>{{ sample.created_at }}</td>
-{#                        <td> <button type="submit" class="btn btn-outline-danger btn-sm">#}
-{#                                <i class="fas fa-trash-alt" style="font-size:15px;"></i>#}
-{#                             </button>#}
-{#                            <button type="submit" class="btn btn-outline-warning btn-sm">#}
-{#                                <i class="far fa-edit" style="font-size:10px;"></i>#}
-{#                            </button></td>#}
-                    </tr>
-                  {% endfor %}
-              </tbody>
-         </table>
+                        </tr>
+                      </thead>
+                      <tbody>
+                          {% for sample in filter.qs %}
+                            <tr>
+                                <td><a href="{% url 'db:sample' sample.id %}"> {{ sample.name }}</a></td>
+                                <td>{{ sample.alias }}</td>
+                                <td>{{ sample.sample_type }}</td>
+                                <td>{{ sample.description }}</td>
+                                <td>{{ sample.project }}</td>
+                                <td>{{ sample.author }}</td>
+                                <td>{{ sample.length }}</td>
+                                {% if sample.genbank %}
+                                    <td><a href="{{ sample.genbank.url }}" class="btn btn-info btn-sm m-0" target="_blank">File</a></td>
+                                    {% else %}
+                                        <td> {{ sample.genbank }} </td>
+                                {% endif %}
+                                <td>{{ sample.reference }}</td>
+                                <td>{{ sample.comments }}</td>
+                                <td>{{ sample.organism }}</td>
+                                <td>{{ sample.genus_specie }}</td>
+                                <td>{{ sample.active }}</td>
+                                <td>{{ sample.status }}</td>
+                                <td>{{ sample.created_at }}</td>
+        {#                        <td> <button type="submit" class="btn btn-outline-danger btn-sm">#}
+        {#                                <i class="fas fa-trash-alt" style="font-size:15px;"></i>#}
+        {#                             </button>#}
+        {#                            <button type="submit" class="btn btn-outline-warning btn-sm">#}
+        {#                                <i class="far fa-edit" style="font-size:10px;"></i>#}
+        {#                            </button></td>#}
+                            </tr>
+                          {% endfor %}
+                      </tbody>
+                 </table>
+         </div>
         </font>
       </div>
     </div>
 
+
+      <script type="text/javascript">
+        $('#dtBasicExample-1').DataTable({
+            searching: false,
+        });
+        $('#dtBasicExample-1').mdbEditor({
+            headerLength: 6,
+            evenTextColor: '#000',
+            oddTextColor: '#000',
+            bgEvenColor: '',
+            bgOddColor: '',
+            thText: '',
+            thBg: '',
+            modalEditor: false,
+            bubbleEditor: false,
+            contentEditor: false,
+            rowEditor: true,
+            });
+        $('.dataTables_length').addClass('bs-select');
+      </script>
+
+
+
 {% endblock%}
+

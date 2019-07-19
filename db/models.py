@@ -9,7 +9,6 @@ from django.urls import reverse
 
 
 class Plate(models.Model):
-
     def get_barcode():
         num = Plate.objects.count()
         if num is None:
@@ -56,11 +55,11 @@ class Plate(models.Model):
 class Sample(models.Model):
     # Choices
     SAMPLE_TYPES = (
-        ('Pr', 'Primer'),
-        ('Pd', 'Plasmid'),
-        ('Pt', 'Part'),
-        ('Lr', 'Linker'),
-        ('Ot', 'Other'),
+        ('Primer', 'Pr'),
+        ('Plasmid', 'Pd'),
+        ('Part', 'Pt'),
+        ('Linker', 'Lr'),
+        ('Other', 'Ot'),
     )
     END_TYPES = (
         ('R', 'Right'),
