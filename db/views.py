@@ -113,6 +113,15 @@ def well(request, plate_id, well_id):
     return render(request, 'db/index.html', {"all_plates": all_plates,'plate': plate, 'wells': all_wells, 'layout': layout, 'colnames':colnames, 'well': well, 'filter': plate_filter})
 
 
+@login_required()
+def well_delete(request, plate_id, well_id):
+    if request.method == 'POST':
+        well = Well.objects.get(id=well_id)
+
+        well.delete()
+    return redirect('db:plate', plate_id=plate_id)
+
+
 #TODO: Use the filter configuration to create an output file
 @login_required()
 def export_sample(request):
@@ -126,6 +135,18 @@ def export_sample(request):
     response['Content-Disposition'] = 'attachment; filename="samples.csv"'
 
     return response
+
+
+@login_required()
+def sample_delete(request, sample_id):
+    if request.method == 'POST':
+        sample = Sample.objects.get(id=sample_id)
+        all_wells = Well.objects.filter(sample_id=sample_id)
+
+        sample.delete()
+        all_wells.delete()
+
+    return redirect('db:samples_list')
 
 
 @login_required()
@@ -146,6 +167,7 @@ def sample(request, sample_id):
     return render(request, 'db/samples_list.html', {"all_samples": all_samples, "filter": sample_filter, "sample": sample, "wells": all_wells})
 
 
+
 @login_required()
 def create_sample(request):
     if request.method == 'POST':
@@ -162,7 +184,6 @@ def create_sample(request):
             result = samples_resources.import_data(imported_data, dry_run=True, raise_errors=True, collect_failed_rows=True)
 
             if not result.has_errors():
-
                 samples_resources.import_data(imported_data, dry_run=False)
             else:
                 print(result.invalid_rows)
@@ -171,6 +192,16 @@ def create_sample(request):
         form = SampleForm()
     return render(request, 'db/add_data.html', {'form': form})
 
+
+@login_required()
+def edit_sample(request, sample_id):
+    sample = get_object_or_404(Sample, id=sample_id)
+    form = SampleForm(request.POST or None, request.FILES, instance=sample)
+    if form.is_valid():
+        form.save()
+        return redirect('db:samples_list')
+
+    return render(request, 'db/add_data.html', {'form': form})
 
 # @login_required()
 # def create_samples(request):

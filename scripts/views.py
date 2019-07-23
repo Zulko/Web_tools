@@ -28,29 +28,21 @@ def spotting(request):
         num_pattern = request.POST['num_pattern']
         pattern = request.POST['pattern']
         ''' Calling Python Script'''
-        outfile_name, worklist_name, alert = run_spotting(int(num_sources), int(num_well), int(num_pattern), int(pattern), user)
+        outfile, worklist, alert = run_spotting(int(num_sources), int(num_well), int(num_pattern), int(pattern), user)
 
         if alert is not None:
             return render(request, 'scripts/spotting.html',
                           {'outfile_name': '', 'outfile_url': '',
-                           'worklist_name': '', 'outfileworklist_url': '', 'alert':alert})
+                           'worklist_name': '', 'outfileworklist_url': '', 'alert': alert})
 
-        elif worklist_name is not None:
-            fs = FileSystemStorage()
-            outfile_url = fs.url(os.path.basename(outfile_name))
-            context['worklist_name'] = worklist_name
-            outfileworklist_url = fs.url(os.path.basename(worklist_name))
-
-            return render(request, 'scripts/spotting.html', {'outfile_name': outfile_name, 'outfile_url': outfile_url, 'worklist_name': worklist_name, 'outfileworklist_url': outfileworklist_url})
-
-        elif outfile_name is not None:
-            fs = FileSystemStorage()
-            context['outfile_name'] = outfile_name
-            outfile_url = fs.url(os.path.basename(outfile_name))
-            return render(request, 'scripts/spotting.html', {'outfile_name': outfile_name, 'outfile_url': outfile_url, 'worklist_name': '', 'outfileworklist_url': ''})
         else:
-            return render(request, 'scripts/spotting.html', {'outfile_name': 'Choose a different parameters combination', 'outfile_url': '','worklist_name': '', 'outfileworklist_url': ''})
-    return render(request, 'scripts/spotting.html', {'outfile_name': '', 'outfile_url': '', 'worklist_name': '', 'outfileworklist_url':''})
+            return render(request, 'scripts/spotting.html', {'outfile': outfile, 'worklist': worklist})
+
+        # elif outfile is not None:
+        #     return render(request, 'scripts/spotting.html', {'outfile': outfile, 'worklist': worklist})
+        # else:
+        #     return render(request, 'scripts/spotting.html', {'outfile': 'Choose a different parameters combination', 'worklist': ''})
+    return render(request, 'scripts/spotting.html', {'outfile': '', 'worklist': ''})
 
 
 # @login_required(login_url="/accounts/login/")

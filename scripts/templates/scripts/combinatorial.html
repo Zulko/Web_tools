@@ -5,7 +5,7 @@
 
 <div class="row">
     <div class="col-3">
-    <h4>Options</h4>
+    <h5>Options</h5>
         <div class="options">
 
             <form method="post" enctype="multipart/form-data"> {% csrf_token %}
@@ -28,7 +28,7 @@
       </div>
 
       <div class="col-6">
-        <h4>Combinatorial Script</h4>
+        <h5>Combinatorial Script</h5>
             <br><p> Example of an input file to be normalized (<a href="{% static 'docs/parts.csv' %}" target="_blank" download><strong> Example.txt </strong></a>)</p><br>
           <table class="table table table-hover">
               <thead>
@@ -75,7 +75,7 @@
 
       <div class="col-3">
           {% if url %}
-            <h4>Output </h4>
+            <h5>Output </h5>
             <fieldset class="form-group"><br>
                 <div class="form-row align-items-center">
                     <div class="col-auto"></div>

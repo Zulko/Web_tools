@@ -5,12 +5,12 @@
 
 <div class="row">
     <div class="col-3">
-    <h4>Options</h4>
+    <h5>Options</h5>
         <div class="options">
             <form method="post" enctype="multipart/form-data"> {% csrf_token %}
 {#            <fieldset class="form-group">#}
                 <fieldset class="form-group">
-                    <legend>Assembly file</legend>
+                    <legend><h5>Assembly file</h5></legend>
                     <div class="form-row align-items-center">
                         <div class="col-auto"></div>
                         <div class="col">
@@ -34,7 +34,7 @@
                 </fieldset>
 
                 <fieldset class="form-group">
-                    <legend>Dispenser</legend>
+                    <legend><h5>Dispenser</h5></legend>
                     <div class="form-row align-items-center">
                         <div class="col-auto"></div>
                         <div class="col">
@@ -73,7 +73,7 @@
                 </fieldset>
 
                 <fieldset class="form-group">
-                    <legend>Mixer</legend>
+                    <legend><h5>Mixer</h5></legend>
                     <div class="form-row align-items-center">
                         <div class="col-auto"></div>
                         <div class="col">
@@ -143,7 +143,7 @@
                 </fieldset>
 
                 <fieldset class="form-group">
-                    <legend>Destination Plate</legend>
+                    <legend><h5>Destination Plate</h5></legend>
                     <div class="form-row align-items-center">
                         <div class="col-auto"></div>
                         <div class="col">
@@ -176,7 +176,7 @@
   </div>
 
   <div class="col-6">
-    <h4>MoClo Script connected with Database</h4><br>
+    <h5>MoClo Script connected with Database</h5><br>
     {% if alerts %}
         <div class="alert">
         <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
@@ -204,7 +204,7 @@
 
     <div class="col-3">
         {% if url_file %}
-            <h4>Output </h4>
+            <h5>Output </h5>
             <fieldset class="form-group">
                 <legend>Files</legend>
                 <div class="form-row align-items-center">

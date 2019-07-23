@@ -4,10 +4,10 @@
 {% block content %}
 
     <div class="row">
-      <div class="col-3">
+      <div class="col-2">
 
       <!-- Form for search samples in database -->
-      <h4>Search Plates</h4>
+      <h5>Search Plates</h5>
           <fieldset class="form-group" style="padding: 20px 20px 20px 20px">
             <form method="GET">
                 {{ filter.form | bootstrap }}
@@ -17,7 +17,7 @@
             </form>
           </fieldset>
             <!-- List of plates on inventory -->
-            <br><h4>List of Plates</h4><br>
+            <br><h5>List of Plates</h5><br>
             {% if all_plates %}
               <fieldset class="form-group overflow-auto">
                 {% for plate in filter.qs %}
@@ -36,11 +36,11 @@
       </div>
 
 
-      <div class="col-6">
+      <div class="col-8">
 
             <!-- Selected Plate layout from Plate list -->
             {% if plate %}
-                <h4>{{ plate.name }}: {{ plate.barcode }}
+                <h5>{{ plate.name }}: {{ plate.barcode }}
 
                 <div align="right">
                     <a href="{% url 'db:plate_export' plate.id %}" class="btn btn-info"> <i class="fas fa-file-export"></i> Export data </a>
@@ -71,7 +71,7 @@
                 </div>
 
 
-                </h4>
+                </h5>
                 <br>
                 <table style="border-spacing: 0; border-width: 0; padding: 0; border-collapse:collapse;">
                     <tr>
@@ -103,11 +103,37 @@
 
       </div>
 
-      <div class="col-3">
+      <div class="col-2">
 
             <!-- Selected Well Content from Plate layout -->
               {% if well %}
-                <h4>List of Samples in: <span class="badge badge-pill badge-info">{{ well.name }}</span> </h4><br>
+                <h5>List of Samples in: <span class="badge badge-pill badge-info">{{ well.name }}</span></h5>
+                    <div align="right">
+                        <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete_well"> <i class="fas fa-trash-alt"></i></button>
+                    </div>
+                          <div class="modal fade" id="delete_well" tabindex="-1" role="dialog" aria-labelledby="delete_wellLabel" aria-hidden="true">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="delete_wellLabel">Delete Well</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                  <h6>Are you sure to delete <a href="{% url 'db:well' well.plate.id well.id %}"> {{ well.name }}</a> ?</h6>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                              <form method="POST" action="{% url 'db:well_delete' well.plate.id well.id %}">{% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                              </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                  <br>
                  <ul class="nav flex-column">
                       <fieldset class="form-group overflow-auto">
                         {% for sample in well.samples.all %}

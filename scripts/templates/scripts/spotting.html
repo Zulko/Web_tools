@@ -5,11 +5,11 @@
 
 <div class="row">
     <div class="col-3">
-    <h4>Options</h4>
+    <h5>Options</h5>
         <div class="options">
             <form method="post"> {% csrf_token %}
               <fieldset class="form-group">
-                  <br>
+                  <legend> </legend><br>
                 <div class="form-row align-items-center">
                     <div class="col-auto"></div>
                     <div class="col">
@@ -24,8 +24,8 @@
                         </select>
                     </div>
                     <div class="col-auto"></div>
-                    <br><br>
-                </div>
+                </div><br>
+
 
                 <div class="form-row align-items-center">
                     <div class="col-auto"></div>
@@ -39,8 +39,7 @@
                         </select>
                     </div>
                     <div class="col-auto"></div>
-                    <br><br>
-                </div>
+                </div><br>
 
                 <div class="form-row align-items-center">
                     <div class="col-auto"></div>
@@ -57,6 +56,10 @@
                             <option value="8">8</option>
                         </select>
                     </div>
+                    <div class="col-auto"></div>
+                </div><br>
+                <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
                     <div class="col">
                         <label for="num_pattern">Mode:</label>
                     </div>
@@ -69,7 +72,7 @@
                     </div>
                     <div class="col-auto"></div>
                 </div>
-                <br><br>
+                <br>
                 <input type="submit" class="btn btn-info btn-block btn-lg" value="Submit">
 
               </fieldset>
@@ -80,7 +83,7 @@
     <br><br>
 
       <div class="col-6">
-        <h4>Spotting Script</h4>
+        <h5>Spotting Script</h5>
           {% if alert %}
               <div class="alert alert-warning alert-dismissible">
               <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -128,46 +131,45 @@
 
 
         <div class="col-3">
-            {% if worklist_name %}
-                <h4>Output </h4>
-                <br>
-                <fieldset class="form-group">
+            {% if worklist %}
+                <h5>Output </h5>
+                <fieldset class="form-group"><br>
                     <div class="form-row align-items-center">
                         <div class="col-auto"></div>
                         <div class="col" >
                             <label for="outputfile">File:</label>
                         </div>
                          <div class="col" align="left">
-                             <label for="outputfile"><a href="{{ outfile_url }}" target="_blank" download> <strong> {{ outfile_name }} </strong> </a></label>
+                             <a href="{{ outfile.file.url }}" class="btn btn-info btn-block" target="_blank" download> <strong> {{ outfile.name }} </strong> </a></label>
                         </div>
-                        <br><br>
-                    </div>
+                        <div class="col-auto"></div>
+                    </div><br>
                     <div class="form-row align-items-center">
                         <div class="col-auto"></div>
                         <div class="col" >
                             <label for="worklist">Worklist:</label>
                         </div>
                         <div class="col" align="left">
-                            <a href="{{ outfileworklist_url }}" target="_blank" download> <strong> {{ worklist_name }} </strong> </a>
+                            <a href="{{ worklist.file.url }}" class="btn btn-info btn-block" target="_blank" download> <strong> {{ worklist.name }} </strong> </a>
                         </div>
                         <div class="col-auto"></div>
-                        <br><br>
                     </div>
+                    <br>
                 </fieldset>
 
-            {% elif outfile_name %}
-                <h4>Output </h4>
-                <fieldset class="form-group">
-                    <br><br>
-                    <div class="col-auto"></div>
-                    <div class="col">
-                        <label for="outputfile">File:</label>
-                    </div>
-                    <div class="col">
-                        <label for="outputfile"><a href="{{ outfile_url }}" target="_blank" download> <strong> Download </strong> </a></label>
-                    </div>
-                    <div class="col-auto"></div>
-                    <br><br>
+            {% else %}
+                <h5>Output </h5>
+                <fieldset class="form-group"><br>
+                    <div class="form-row align-items-center">
+                        <div class="col-auto"></div>
+                        <div class="col" >
+                            <label for="outputfile">File:</label>
+                        </div>
+                         <div class="col" align="left">
+                             <a href="{{ outfile.file.url }}" class="btn btn-info btn-block" target="_blank" download> <strong> {{ outfile.name }} </strong> </a></label>
+                        </div>
+                        <div class="col-auto"></div>
+                    </div><br>
                 </fieldset>
             {% endif %}
         </div>

@@ -5,8 +5,8 @@
 {% block content %}
     <div class="row">
 
-      <div class="col-3">
-      <h4>Search Samples</h4>
+      <div class="col-2">
+      <h5>Search Samples</h5>
           <fieldset class="form-group" style="padding: 20px 20px 20px 20px">
             <form method="GET">
                 {{ filter.form | bootstrap }}
@@ -22,25 +22,95 @@
 
       </div>
 
-      <div class="col-6">
+      <div class="col-10">
           <font size="2">
-{#          {% if sample %}#}
-{#            <div class="info">#}
-{#                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>#}
-{#                    {{ sample.name }}#}
-{#                    {% if wells %}#}
-{#                        <p>#}
-{#                        {% for well in wells %}#}
-{#                            <a class="btn btn-info btn-sm" href="{% url 'db:well' well.plate.id well.id %}"> {{ well.plate.name }}: {{ well.name }}</a>#}
-{#                        {% endfor %}#}
-{#                        </p>#}
-{#                    {% else %}#}
-{#                        <p>no inventory</p>#}
-{#                    {% endif %}#}
-{#            </div>#}
-{#          {% endif %}#}
+          {% if sample %}
+            <div class="info">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    {{ sample.name }}
+                    {% if wells %}
+                        <p> Location:
+                        {% for well in wells %}
+                            <a class="btn btn-info-out btn-sm" href="{% url 'db:well' well.plate.id well.id %}"> {{ well.plate.name }}: {{ well.name }}</a>
+                        {% endfor %}
+                        </p>
+                    {% else %}
+                        <p>no inventory</p>
+                    {% endif %}
+                <div class="btn-group" align="left">
+                    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deletesample"> <i class="fas fa-trash-alt"></i> Delete </button>
+                </div>
+                <div class="btn-group" align="left">
+                    <a href="{% url 'db:edit_sample' sample.id %}" class="btn btn-warning btn-sm"> <i class="fas fa-edit"></i> Edit </a>
+
+{#                    <form method="POST" action="{% url 'db:samples_list' %}">{% csrf_token %}#}
+{#                        <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editsample"> <i class="fas fa-edit"></i> Edit </button>#}
+{#                    </form>#}
+
+                </div>
+            </div>
+
+                    <div class="modal fade" id="deletesample" tabindex="-1" role="dialog" aria-labelledby="delete_sampleLabel" aria-hidden="true">
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="delete_sampleLabel">Delete Sample</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                              <h6>Are you sure to delete {{ sample.name }} ?</h6>
+                              {% if wells %}
+                                  <h6>
+                                  {{ wells.count }} well(s) will be delete
+{#                                  {% for well in wells %}#}
+{#                                      <a class="btn btn-info-out btn-sm" href="{% url 'db:well' well.plate.id well.id %}"> {{ well.name }}</a>#}
+{#                                  {% endfor %}#}
+                                  </h6>
+                              {% endif %}
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                              <form method="POST" action="{% url 'db:sample_delete' sample.id %}">{% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                              </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
 
 
+{#                    <div class="modal fade" id="editsample" tabindex="-1" role="dialog" aria-labelledby="edit_sampleLabel" aria-hidden="true">#}
+{#                      <div class="modal-dialog" role="document">#}
+{#                        <div class="modal-content">#}
+{#                          <div class="modal-header">#}
+{#                            <h5 class="modal-title" id="edit_sampleLabel">Edit Sample: {{ sample.name }}</h5>#}
+{#                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">#}
+{#                              <span aria-hidden="true">&times;</span>#}
+{#                            </button>#}
+{#                          </div>#}
+{#                          <div class="modal-body">#}
+{##}
+{#                              <form method="post" enctype="multipart/form-data">#}
+{#                                {% csrf_token %}#}
+{#                                {{ form }}#}
+{##}
+{#                              </form>#}
+{##}
+{#                          </div>#}
+{#                          <div class="modal-footer">#}
+{#                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>#}
+{#                              <form method="POST" action="{% url 'db:edit_sample' sample.id %}">{% csrf_token %}#}
+{#                                <button type="submit" class="btn btn-warning">Update</button>#}
+{#                              </form>#}
+{#                          </div>#}
+{#                        </div>#}
+{#                      </div>#}
+{#                    </div>#}
+          {% endif %}
+
+          <br>
          <table id="dtBasicExample-1" class="table table-hover table-striped table-sm" cellspacing="0" width="100%">
               <thead>
                 <tr class="table-dark text-dark">
@@ -83,27 +153,7 @@
                   {% for sample in filter.qs %}
                     <tr>
                         <td>
-                           <button type="button" data-toggle="modal" data-target="#viewsample">{{ sample.name }} </button>
-{#                            href="{% url 'db:sample' sample.id %}"> {{ sample.name }}#}
-                            <div class="modal fade" id="viewsample" tabindex="-1" role="dialog" aria-labelledby="delete_plateLabel" aria-hidden="true">
-                              <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                  <div class="modal-header">
-                                    <h5 class="modal-title" id="delete_plateLabel">Delete Sample</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                      <span aria-hidden="true">&times;</span>
-                                    </button>
-                                  </div>
-                                  <div class="modal-body">
-                                      <h6>Are you sure to delete  ?</h6>
-                                  </div>
-                                  <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
+                            <a href="{% url 'db:sample' sample.id %}" style="font-size: 12px;" class="btn btn-outline-secondary btn-sm m-0;"> {{ sample.name }} </a>
                         </td>
                         <td>{{ sample.alias }}</td>
                         <td>{{ sample.sample_type }}</td>
@@ -112,7 +162,7 @@
                         <td>{{ sample.author }}</td>
                         <td>{{ sample.length }}</td>
                         {% if sample.genbank %}
-                            <td><a href="{{ sample.genbank.url }}" class="btn btn-info btn-sm m-0" target="_blank">File</a></td>
+                            <td><a href="{{ sample.genbank.url }}" style="font-size: 12px;" class="btn btn-outline-secondary btn-sm m-0;" target="_blank">File</a></td>
                             {% else %}
                                 <td> {{ sample.genbank }} </td>
                         {% endif %}

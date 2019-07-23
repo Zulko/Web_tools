@@ -18,7 +18,7 @@
 }
 
 .info {
-  padding: 20px;
+  padding: 10px;
   background-color: #17a2b8;
   color: white;
 }
@@ -49,10 +49,18 @@
     margin: 10px 30px 10px 30px;
 }
 
+.bigcard img{
+  background-color: white;
+  text-align:center;
+  width: 100%;
+
+}
+
 table{
     /*text-align: center;*/
     border-collapse: collapse;
     width: 100%;
+    /*table-layout: fixed;*/
 }
 
 th {

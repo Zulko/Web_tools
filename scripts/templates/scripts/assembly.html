@@ -5,11 +5,11 @@
 
 <div class="row">
     <div class="col-3">
-    <h4>Options</h4>
+    <h5>Options</h5>
         <div class="options">
             <form id='genbank' method="post" enctype="multipart/form-data"> {% csrf_token %}
               <fieldset class="form-group"><br>
-                  <legend>Generate gb files</legend>
+                  <legend><h5>Generate gb files</h5></legend>
                   <div class="form-row align-items-center">
                     <div class="col-auto"></div>
                     <div class="col">
@@ -28,13 +28,13 @@
       </div>
 
       <div class="col-6">
-        <h4>Assembly Script</h4>
+        <h5>Assembly Script</h5>
 
       </div>
 
       <div class="col-3">
           {% if url %}
-            <h4>Output </h4>
+            <h5>Output </h5>
             <fieldset class="form-group"><br>
                 <div class="form-row align-items-center">
                     <div class="col-auto"></div>

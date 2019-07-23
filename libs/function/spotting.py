@@ -58,10 +58,12 @@ def run_spotting(num_source_plates, num_wells, num_pattern, pattern, user):
         outfile_name, outfilepath, worklist_name, worklistpath = \
             create_output_file(ver_num_source, num_wells, total_destination, pattern)
 
-        db.save_file(outfile_name, 'Spotting', user)
-        db.save_file(worklist_name, 'Spotting', user)
+        db_outfile = db.save_file(outfile_name, 'Spotting', user)
+        db_worklist = db.save_file(worklist_name, 'Spotting', user)
+        print(db_worklist, db_outfile.file.url)
 
-    return outfile_name, worklist_name, None
+    # return outfile_name, worklist_name, None
+    return db_outfile, db_worklist, None
 
 
 def generate_random_names(name, init, end):
@@ -119,7 +121,7 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
             '''Call Function to write the CSV by rows'''
             file.write_by_row(source_plate, destination_plates, num_pattern, outcsv, VOLUME)
         outfile_name = os.path.basename(file_path_out)
-        print(file.colours.BOLD + 'Output File: ' + outfile_name + file.colours.BOLD)
+        # print(file.colours.BOLD + 'Output File: ' + outfile_name + file.colours.BOLD)
         return outfile_name, file_path_out, None, None
 
     elif pattern == BY_COL:
@@ -140,7 +142,7 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
             '''Call Function to write the CSV by rows'''
             file.write_by_col(source_plate, destination_plates, num_pattern, outcsv, VOLUME)
         outfile_name = os.path.basename(file_path_out)
-        print(file.colours.BOLD + 'Output File: ' + outfile_name + file.colours.BOLD)
+        # print(file.colours.BOLD + 'Output File: ' + outfile_name + file.colours.BOLD)
         return outfile_name, file_path_out, None, None
 
     else:
@@ -167,5 +169,5 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
             file.write_scol_dcol_by_spot(source_plate, destination_plates, num_pattern, outcsv, VOLUME, outcsv_worklist)
         outfile_name = os.path.basename(file_path_out)
         outfile_worlistname = os.path.basename(file_worklist_path_out)
-        print(file.colours.BOLD + 'Output File: ' + outfile_name + '\tWorklist: ' + outfile_worlistname + file.colours.BOLD)
+        # print(file.colours.BOLD + 'Output File: ' + outfile_name + '\tWorklist: ' + outfile_worlistname + file.colours.BOLD)
         return outfile_name, file_path_out, outfile_worlistname, file_worklist_path_out
