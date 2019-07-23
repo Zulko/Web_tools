@@ -34,14 +34,8 @@ def spotting(request):
             return render(request, 'scripts/spotting.html',
                           {'outfile_name': '', 'outfile_url': '',
                            'worklist_name': '', 'outfileworklist_url': '', 'alert': alert})
-
         else:
             return render(request, 'scripts/spotting.html', {'outfile': outfile, 'worklist': worklist})
-
-        # elif outfile is not None:
-        #     return render(request, 'scripts/spotting.html', {'outfile': outfile, 'worklist': worklist})
-        # else:
-        #     return render(request, 'scripts/spotting.html', {'outfile': 'Choose a different parameters combination', 'worklist': ''})
     return render(request, 'scripts/spotting.html', {'outfile': '', 'worklist': ''})
 
 
