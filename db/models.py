@@ -9,6 +9,13 @@ from django.urls import reverse
 
 
 class Plate(models.Model):
+    STATUS = (
+        ('G', 'On going'),
+        ('C', 'Completed'),
+        ('A', 'Aborted'),
+        ('H', 'On hold'),
+    )
+
     def get_barcode():
         num = Plate.objects.count()
         if num is None:
@@ -23,6 +30,8 @@ class Plate(models.Model):
     num_cols = models.IntegerField()
     num_rows = models.IntegerField()
     num_well = models.IntegerField()
+    active = models.BooleanField(default=True)
+    status = models.CharField(max_length=1, choices=STATUS, blank=True)
 
     class Meta:
         ordering = ('id',)
@@ -80,12 +89,7 @@ class Sample(models.Model):
         ('Ma', 'Marker'),
         ('Mi', 'Miscellaneous'),
     )
-    STATUS = (
-        ('G', 'On going'),
-        ('C', 'Completed'),
-        ('A', 'Aborted'),
-        ('H', 'On hold'),
-    )
+
     ORGANISM = (
         ('H', 'Human'),
         ('Y', 'Yeast'),
@@ -99,8 +103,6 @@ class Sample(models.Model):
         ('-', 'Negative'),
     )
 
-    #TODO: Remove active and status from sample and move to well and plate
-
     # Database Fields
     name = models.CharField(max_length=50, unique=True)
     alias = models.CharField(max_length=50)
@@ -108,8 +110,6 @@ class Sample(models.Model):
     description = models.CharField(max_length=100, blank=True)
     project = models.CharField(max_length=30, choices=PROJECT, blank=True)  # Multi select option
     author = models.CharField(max_length=30, blank=True)
-    active = models.BooleanField(default=True)
-    status = models.CharField(max_length=1, choices=STATUS, blank=True)
     sequence = models.CharField(max_length=10000, blank=True)
     length = models.IntegerField(blank=True, null=True)
     genbank = models.FileField(upload_to='gb_files/', max_length=10000, blank=True)
@@ -154,11 +154,20 @@ class Sample(models.Model):
 
 
 class Well(models.Model):
+    STATUS = (
+        ('G', 'On going'),
+        ('C', 'Completed'),
+        ('A', 'Aborted'),
+        ('H', 'On hold'),
+    )
+
     name = models.CharField(max_length=5)
     volume = models.DecimalField(max_digits=10, decimal_places=2)
     concentration = models.DecimalField(max_digits=10, decimal_places=2)
     plate = models.ForeignKey(Plate, on_delete=models.CASCADE)
     samples = models.ManyToManyField(Sample)
+    active = models.BooleanField(default=True)
+    status = models.CharField(max_length=1, choices=STATUS, blank=True)
     # parent_well = models.ForeignKey()
 
     class Meta:

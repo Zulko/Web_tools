@@ -8,10 +8,10 @@
       </div>
 
       <div class="col-6">
-        <div class="row">
             <div class="column">
-                <h4> Temporary created files </h4><br>
-                <table class="table table table-hover">
+                <h5> Temporary files </h5><br>
+
+                <table id="file_list_table" class="table table-hover table-striped table-sm" cellspacing="0" width="100%">
                       <thead align="center">
                         <tr class="table-dark text-dark">
                         <th>Name</th>
@@ -45,11 +45,20 @@
                       </tbody>
                 </table>
             </div>
-        </div>
       </div>
 
       <div class="col-3">
         <h2></h2>
       </div>
+
     </div>
+          <script type="text/javascript">
+        $('#file_list_table').DataTable({
+            searching: false,
+        });
+
+        $('.dataTables_length').addClass('bs-select');
+      </script>
+
+
 {% endblock%}
