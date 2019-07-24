@@ -11,9 +11,11 @@
 
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
+
                 <div class="form-row align-items-center">
-                    <a class="btn btn-info btn-block" data-toggle="collapse" href="#collapse" >Add Samples</a>
-{#                    <div class="collapse" id="collapse">#}
+
+                    <a class="btn btn-info btn-block" data-toggle="collapse" href="#collapse_sample">Add Samples</a>
+                    <div class="collapse" id="collapse_sample">
                         <div class="form-row align-items-center"><br><br>
                             <div class="col-auto"></div>
                             <div class="col">
@@ -25,15 +27,16 @@
                                 </button>
                             </div>
                         </div>
-{#                    </div>#}
+                    </div>
+
                 </div>
               </form>
 
               <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="form-row align-items-center">
-                    <a class="btn btn-info btn-block" data-toggle="collapse" href="#collapse_plates" >Add Plates</a>
-{#                    <div class="collapse" id="collapse_plates">#}
+                    <a class="btn btn-info btn-block" data-toggle="collapse" href="#collapse_plate" >Add Plates</a>
+                    <div class="collapse" id="collapse_plate">
                         <div class="form-row align-items-center"><br><br>
                             <div class="col-auto"></div>
                             <div class="col">
@@ -45,7 +48,7 @@
                                 </button>
                             </div>
                         </div>
-{#                    </div>#}
+                    </div>
                 </div>
             </form>
             </fieldset>
@@ -54,13 +57,26 @@
 
     <br><br>
       <div class="col-6">
-        <fieldset class="form-group" style="padding: 20px 20px 20px 20px">
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                {{ form | bootstrap}}
-                <button type="submit" class="btn btn-info">Add sample</button>
-            </form>
-        </fieldset>
+
+        <div class="collapse" id="collapse_sample">
+            <fieldset class="form-group" style="padding: 20px 20px 20px 20px">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form_sample | bootstrap }}
+                    <button type="submit" class="btn btn-info">Add sample</button>
+                </form>
+            </fieldset>
+        </div>
+
+        <div class="collapse" id="collapse_plate">
+            <fieldset class="form-group" style="padding: 20px 20px 20px 20px">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form_plate | bootstrap }}
+                    <button type="submit" class="btn btn-info">Add sample</button>
+                </form>
+            </fieldset>
+        </div>
 
 
       </div>

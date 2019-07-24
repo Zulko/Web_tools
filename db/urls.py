@@ -13,11 +13,13 @@ urlpatterns = [
     path('plate<int:plate_id>/', views.plate_view, name='plate'),
     path('export/plate<int:plate_id>/', views.plate_export, name='plate_export'),
     path('delete/plate<int:plate_id>/', views.plate_delete, name='plate_delete'),
+    path('add/', views.plate_add, name='plate_add'),
 
     path('plate<int:plate_id>/<int:well_id>', views.well, name='well'),
     # path('plate<int:plate_id>/<int:well_id/<int:sample_id>', views.sample, name='sample'),
 
     path('add_data/', views.create_sample, name='add_data'),
+    path('add_data/', views.create_plate, name='add_plate'),
     path('add_data/<int:sample_id>', views.edit_sample, name='edit_sample'),
     # path('add_data/file', views.upload_sample, name='add_file_data'),
 

@@ -4,7 +4,7 @@ from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.contrib.auth.decorators import login_required
 
 from .models import Plate, Well, Sample, File
-from .forms import SampleForm
+from .forms import SampleForm, PlateForm
 from .filters import SampleFilter, PlateFilter
 from .resources import SampleResource, PlateResource
 
@@ -38,7 +38,16 @@ def upload_file(request, filename):
 def plate_list(request):
     all_plates = Plate.objects.all()
     plate_filter = PlateFilter(request.GET, queryset=all_plates)
-    return render(request, 'db/index.html', {"all_plates": all_plates, 'filter': plate_filter})
+
+    if request.method == 'POST':
+        formPlate = PlateForm(request.POST, request.FILES)
+        if formPlate.is_valid():
+            new_plate = formPlate.save()
+            return redirect('db:index', new_plate)
+    else:
+        formPlate = PlateForm()
+
+    return render(request, 'db/index.html', {'form_plate': formPlate, "all_plates": all_plates, 'filter': plate_filter})
 
 
 def plate_layout(plate_id, all_wells):
@@ -66,6 +75,13 @@ def plate_layout(plate_id, all_wells):
 def plate_view(request, plate_id):
     all_plates = Plate.objects.all()
     plate_filter = PlateFilter(request.GET, queryset=all_plates)
+    formPlate = PlateForm()
+
+    if request.method == 'POST':
+        formPlate = PlateForm(request.POST, request.FILES)
+        if formPlate.is_valid():
+            new_plate = formPlate.save()
+            return redirect('db:index', new_plate)
 
     try:
         all_wells = Well.objects.filter(plate_id=plate_id)
@@ -74,7 +90,7 @@ def plate_view(request, plate_id):
     except Plate.DoesNotExist:
         raise Http404("Plate does not exist")
     return render(request, 'db/index.html',
-                  {"all_plates": all_plates, 'plate': plate, 'wells': all_wells, 'layout': layout, 'colnames': colnames, 'filter': plate_filter})
+                  {'form_plate': formPlate, "all_plates": all_plates, 'plate': plate, 'wells': all_wells, 'layout': layout, 'colnames': colnames, 'filter': plate_filter})
 
 
 @login_required()
@@ -104,13 +120,26 @@ def plate_delete(request, plate_id):
 
 
 @login_required()
+def plate_add(request):
+    if request.method == 'POST':
+        formPlate = PlateForm(request.POST, request.FILES)
+        if formPlate.is_valid():
+            new_plate = formPlate.save()
+            return redirect('db:plate', new_plate)
+    else:
+        formPlate = PlateForm()
+
+    return render(request, 'db/index.html', {'form_plate': formPlate})
+
+
+@login_required()
 def well(request, plate_id, well_id):
     all_plates = Plate.objects.all()
     plate_filter = PlateFilter(request.GET, queryset=all_plates)
     all_wells = Well.objects.filter(plate_id=plate_id)
     well = get_object_or_404(Well, id=well_id)
     layout, colnames, plate = plate_layout(plate_id, all_wells)
-    return render(request, 'db/index.html', {"all_plates": all_plates,'plate': plate, 'wells': all_wells, 'layout': layout, 'colnames':colnames, 'well': well, 'filter': plate_filter})
+    return render(request, 'db/index.html', {"all_plates": all_plates,'plate': plate, 'wells': all_wells, 'layout': layout, 'colnames': colnames, 'well': well, 'filter': plate_filter})
 
 
 @login_required()
@@ -171,10 +200,14 @@ def sample(request, sample_id):
 @login_required()
 def create_sample(request):
     if request.method == 'POST':
-        form = SampleForm(request.POST, request.FILES)
-        if form.is_valid():
-            new_sample = form.save()
+        formSample = SampleForm(request.POST, request.FILES)
+        formPlate = PlateForm(request.POST, request.FILES)
+        if formSample.is_valid():
+            new_sample = formSample.save()
             return redirect('db:sample', new_sample.id)
+        elif formPlate.is_valid():
+            new_plate = formPlate.save()
+            return redirect('db:index', new_plate)
         else:
             samples_resources = SampleResource()
             dataset = Dataset()
@@ -189,9 +222,35 @@ def create_sample(request):
                 print(result.invalid_rows)
             return redirect('db:samples_list')
     else:
-        form = SampleForm()
-    return render(request, 'db/add_data.html', {'form': form})
+        formSample = SampleForm()
+        formPlate = PlateForm()
 
+    return render(request, 'db/add_data.html', {'form_sample': formSample, 'form_plate': formPlate})
+
+
+@login_required()
+def create_plate(request):
+    if request.method == 'POST':
+        form = PlateForm(request.POST, request.FILES)
+        if form.is_valid():
+            new_plate = form.save()
+            return redirect('db:index', new_plate.id)
+        # else:
+        #     samples_resources = SampleResource()
+        #     dataset = Dataset()
+        #     new_samples = request.FILES['upload_file_samples']
+        #     imported_data = dataset.load(new_samples.read().decode('utf-8'), format='csv')
+        #
+        #     result = samples_resources.import_data(imported_data, dry_run=True, raise_errors=True, collect_failed_rows=True)
+        #
+        #     if not result.has_errors():
+        #         samples_resources.import_data(imported_data, dry_run=False)
+        #     else:
+        #         print(result.invalid_rows)
+        #     return redirect('db:samples_list')
+    else:
+        form = PlateForm()
+    return render(request, 'db/add_data.html', {'form_plate': form})
 
 @login_required()
 def edit_sample(request, sample_id):

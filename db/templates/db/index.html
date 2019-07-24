@@ -5,7 +5,6 @@
 
     <div class="row">
       <div class="col-2">
-
       <!-- Form for search samples in database -->
       <h5>Search Plates</h5>
           <fieldset class="form-group" style="padding: 20px 20px 20px 20px">
@@ -17,8 +16,38 @@
             </form>
           </fieldset>
             <!-- List of plates on inventory -->
-            <br><h5>List of Plates</h5><br>
-            {% if all_plates %}
+            <br><h5>List of Plates
+
+                <!-- Modal button to add plate on inventory -->
+                <button type="button" class="btn btn-info" style="float:right" data-toggle="modal" data-target="#add_plate"> <i class="fas fa-plus-circle"></i> Add plate </button>
+
+                <div class="modal fade" id="add_plate" tabindex="-1" role="dialog" aria-labelledby="add_plateLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="add_plateLabel">Add Plate</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+
+                      <form id="form_plate" method="post" enctype="multipart/form-data">{% csrf_token %}
+                        <div class="modal-body">
+                            {% csrf_token %}
+                            {{ form_plate | bootstrap }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" action="{% url 'db:add_plate' %}" class="btn btn-info">Add</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+
+{#            <a href="{% url 'db:plate_add' %}" class="btn btn-info" style="float:right"> <i class="fas fa-plus-circle"></i> Add plate </a>#}
+            </h5><br>
+          {% if all_plates %}
               <fieldset class="form-group overflow-auto">
                 {% for plate in filter.qs %}
                   <div class="form-row align-items-center">
@@ -43,8 +72,9 @@
                 <h5>{{ plate.name }}: {{ plate.barcode }}
 
                 <div align="right">
-                    <a href="{% url 'db:plate_export' plate.id %}" class="btn btn-info"> <i class="fas fa-file-export"></i> Export data </a>
-                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete_plate"> <i class="fas fa-trash-alt"></i> Delete Plate </button>
+                    <a href="{% url 'db:plate_export' plate.id %}" class="btn btn-warning"> <i class="fas fa-edit"></i> Update </a>
+                    <a href="{% url 'db:plate_export' plate.id %}" class="btn btn-info"> <i class="fas fa-file-export"></i> Export </a>
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete_plate"> <i class="fas fa-trash-alt"></i> Delete </button>
 {#                    <a href="{% url 'db:plate_delete' plate.id %}"  </a>#}
                 </div>
 
