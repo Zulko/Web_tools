@@ -32,6 +32,8 @@ class Plate(models.Model):
     num_well = models.IntegerField()
     active = models.BooleanField(default=True)
     status = models.CharField(max_length=1, choices=STATUS, blank=True)
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
 
     class Meta:
         ordering = ('id',)
