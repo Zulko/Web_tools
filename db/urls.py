@@ -7,15 +7,15 @@ app_name = 'db'
 urlpatterns = [
     # path('', views.IndexView.as_view(), name='index'),
     path('', views.plate_list, name='index'),
-    path('delete/plate<int:plate_id>/<int:well_id>', views.well_delete, name='well_delete'),
-    # path('', views.search_plate, name='index'),
 
     path('plate<int:plate_id>/', views.plate_view, name='plate'),
+    path('add/', views.plate_add, name='plate_add'),
     path('export/plate<int:plate_id>/', views.plate_export, name='plate_export'),
     path('delete/plate<int:plate_id>/', views.plate_delete, name='plate_delete'),
-    path('add/', views.plate_add, name='plate_add'),
+    path('delete/plate<int:plate_id>/<int:well_id>', views.well_delete, name='well_delete'),
 
     path('plate<int:plate_id>/<int:well_id>', views.well, name='well'),
+    path('add_well/<int:plate_id>/', views.well_add, name='add_well'),
     # path('plate<int:plate_id>/<int:well_id/<int:sample_id>', views.sample, name='sample'),
 
     path('add_data/', views.create_sample, name='add_data'),

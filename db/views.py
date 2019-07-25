@@ -4,7 +4,7 @@ from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.contrib.auth.decorators import login_required
 
 from .models import Plate, Well, Sample, File
-from .forms import SampleForm, PlateForm
+from .forms import SampleForm, PlateForm, WellForm
 from .filters import SampleFilter, PlateFilter
 from .resources import SampleResource, PlateResource
 
@@ -40,14 +40,19 @@ def plate_list(request):
     plate_filter = PlateFilter(request.GET, queryset=all_plates)
 
     if request.method == 'POST':
-        formPlate = PlateForm(request.POST, request.FILES)
-        if formPlate.is_valid():
-            new_plate = formPlate.save()
-            return redirect('db:index', new_plate)
+        formPlateAdd = PlateForm(request.POST, request.FILES)
+        formWellAdd = WellForm(request.POST, request.FILES)
+        if formPlateAdd.is_valid():
+            new_plate = formPlateAdd.save()
+            return redirect('db:plate', new_plate.id)
+        elif formWellAdd.is_valid():
+            new_plate = formWellAdd.save()
+            return redirect('db:plate', new_plate.id)
     else:
-        formPlate = PlateForm()
+        formPlateAdd = PlateForm()
+        formWellAdd = WellForm()
 
-    return render(request, 'db/index.html', {'form_plate': formPlate, "all_plates": all_plates, 'filter': plate_filter})
+    return render(request, 'db/index.html', {'form_plate_add': formPlateAdd, 'form_add_well': formWellAdd, "all_plates": all_plates, 'filter': plate_filter})
 
 
 def plate_layout(plate_id, all_wells):
@@ -75,13 +80,14 @@ def plate_layout(plate_id, all_wells):
 def plate_view(request, plate_id):
     all_plates = Plate.objects.all()
     plate_filter = PlateFilter(request.GET, queryset=all_plates)
-    formPlate = PlateForm()
+    formPlateAdd = PlateForm()
+    formWellAdd = WellForm()
 
     if request.method == 'POST':
         formPlate = PlateForm(request.POST, request.FILES)
         if formPlate.is_valid():
             new_plate = formPlate.save()
-            return redirect('db:index', new_plate)
+            return redirect('db:plate', new_plate.id)
 
     try:
         all_wells = Well.objects.filter(plate_id=plate_id)
@@ -90,7 +96,7 @@ def plate_view(request, plate_id):
     except Plate.DoesNotExist:
         raise Http404("Plate does not exist")
     return render(request, 'db/index.html',
-                  {'form_plate': formPlate, "all_plates": all_plates, 'plate': plate, 'wells': all_wells, 'layout': layout, 'colnames': colnames, 'filter': plate_filter})
+                  {'form_plate_add': formPlateAdd, 'form_add_well': formWellAdd, "all_plates": all_plates, 'plate': plate, 'wells': all_wells, 'layout': layout, 'colnames': colnames, 'filter': plate_filter})
 
 
 @login_required()
@@ -120,26 +126,41 @@ def plate_delete(request, plate_id):
 
 
 @login_required()
+def well_add(request, plate_id):
+    if request.method == 'POST':
+        formWellAdd = WellForm(request.POST)
+        if formWellAdd.is_valid():
+            new_well = formWellAdd.save()
+            return redirect('db:well', plate_id, new_well.id)
+    else:
+        formWellAdd = WellForm()
+
+    return render(request, 'db/index.html', {'form_add_well': formWellAdd})
+
+
+@login_required()
 def plate_add(request):
     if request.method == 'POST':
         formPlate = PlateForm(request.POST, request.FILES)
         if formPlate.is_valid():
             new_plate = formPlate.save()
-            return redirect('db:plate', new_plate)
+            return redirect('db:plate', new_plate.id)
     else:
         formPlate = PlateForm()
 
-    return render(request, 'db/index.html', {'form_plate': formPlate})
+    return render(request, 'db/index.html', {'form_plate_add': formPlate})
 
 
 @login_required()
 def well(request, plate_id, well_id):
+    formPlateAdd = PlateForm()
+    formWellAdd = WellForm()
     all_plates = Plate.objects.all()
     plate_filter = PlateFilter(request.GET, queryset=all_plates)
     all_wells = Well.objects.filter(plate_id=plate_id)
     well = get_object_or_404(Well, id=well_id)
     layout, colnames, plate = plate_layout(plate_id, all_wells)
-    return render(request, 'db/index.html', {"all_plates": all_plates,'plate': plate, 'wells': all_wells, 'layout': layout, 'colnames': colnames, 'well': well, 'filter': plate_filter})
+    return render(request, 'db/index.html', {'form_plate_add': formPlateAdd, 'form_add_well': formWellAdd, "all_plates": all_plates,'plate': plate, 'wells': all_wells, 'layout': layout, 'colnames': colnames, 'well': well, 'filter': plate_filter})
 
 
 @login_required()

@@ -20,8 +20,7 @@
 
                 <!-- Modal button to add plate on inventory -->
                 <button type="button" class="btn btn-info" style="float:right" data-toggle="modal" data-target="#add_plate"> <i class="fas fa-plus-circle"></i> Add plate </button>
-
-                <div class="modal fade" id="add_plate" tabindex="-1" role="dialog" aria-labelledby="add_plateLabel" aria-hidden="true">
+                    <div class="modal fade" id="add_plate" tabindex="-1" role="dialog" aria-labelledby="add_plateLabel" aria-hidden="true">
                   <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                       <div class="modal-header">
@@ -34,7 +33,7 @@
                       <form id="form_plate" method="post" enctype="multipart/form-data">{% csrf_token %}
                         <div class="modal-body">
                             {% csrf_token %}
-                            {{ form_plate | bootstrap }}
+                            {{ form_plate_add | bootstrap }}
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -45,60 +44,80 @@
                   </div>
                 </div>
 
-{#            <a href="{% url 'db:plate_add' %}" class="btn btn-info" style="float:right"> <i class="fas fa-plus-circle"></i> Add plate </a>#}
             </h5><br>
           {% if all_plates %}
-              <fieldset class="form-group overflow-auto">
-                {% for plate in filter.qs %}
                   <div class="form-row align-items-center">
                       <div class="col">
-                        <a class="btn btn-info btn-block" href="{% url 'db:plate' plate.id %}"> {{ plate.id }}: {{ plate.name }}</a>
+                           <table id="plate_list_table" class="table table-hover table-striped table-sm" cellspacing="0" width="100%">
+                               <thead>
+                                <tr class="table-dark text-dark">
+                                    <th class="th-sm">id</th>
+                                    <th class="th-sm">name</th>
+                                </tr>
+                               </thead>
+
+                               <tbody>
+                               {% for plate in filter.qs %}
+                               <tr>
+                                <td> {{ plate.id }}</td>
+                                   <td> <a href="{% url 'db:plate' plate.id %}"> {{ plate.name }}</a></td>
+                               </tr>
+                               {% endfor %}
+                               </tbody>
+                          </table>
+
                       </div><br>
                   </div>
-                {% endfor %}
-
-              </fieldset>
             {% else %}
                 <h6> No plates in database </h6>
             {% endif %}
 
       </div>
+        <script type="text/javascript">
+        $('#plate_list_table').DataTable({
+            searching: false,
+        });
+
+        $('.dataTables_length').addClass('bs-select');
+      </script>
 
 
       <div class="col-8">
 
             <!-- Selected Plate layout from Plate list -->
             {% if plate %}
-                <h5>{{ plate.name }}: {{ plate.barcode }}
+                <h5>{{ plate.name }} <i style="color:#c69500" class="fas fa-info-circle"></i>
 
                 <div align="right">
-                    <a href="{% url 'db:plate_export' plate.id %}" class="btn btn-warning"> <i class="fas fa-edit"></i> Update </a>
+
                     <a href="{% url 'db:plate_export' plate.id %}" class="btn btn-info"> <i class="fas fa-file-export"></i> Export </a>
                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete_plate"> <i class="fas fa-trash-alt"></i> Delete </button>
-{#                    <a href="{% url 'db:plate_delete' plate.id %}"  </a>#}
-                </div>
 
-                <div class="modal fade" id="delete_plate" tabindex="-1" role="dialog" aria-labelledby="delete_plateLabel" aria-hidden="true">
-                  <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h5 class="modal-title" id="delete_plateLabel">Delete Plate</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                          <span aria-hidden="true">&times;</span>
-                        </button>
-                      </div>
-                      <div class="modal-body">
-                          <h6>Are you sure to delete <a href="{% url 'db:plate' plate.id %}"> {{ plate.name }}</a> ?</h6>
-                      </div>
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                      <form method="POST" action="{% url 'db:plate_delete' plate.id %}">{% csrf_token %}
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                      </form>
+                </div>
+{#                <a href="{% url 'db:plate_update' plate.id %}" class="btn btn-warning"> <i class="fas fa-edit"></i> Update </a>#}
+
+                    <!-- Modal toggle to delete -->
+                    <div class="modal fade" id="delete_plate" tabindex="-1" role="dialog" aria-labelledby="delete_plateLabel" aria-hidden="true">
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="delete_plateLabel">Delete Plate</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                              <h6>Are you sure to delete <a href="{% url 'db:plate' plate.id %}"> {{ plate.name }}</a> ?</h6>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                          <form method="POST" action="{% url 'db:plate_delete' plate.id %}">{% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                          </form>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>
 
 
                 </h5>
@@ -117,7 +136,31 @@
                         {% for col in fill %}
                             {% if col.1 == '' %}
                                 <td style="padding-right: 0px;">
-                                     <div class="circle_empty"> {{ col.0 }} </div>
+                                     <button class="circle_empty" data-toggle="modal" data-target="#add_well"> {{ col.0 }} </button>
+                                        <!-- Modal toggle to Update -->
+                                        <div class="modal fade" id="add_well" tabindex="-1" role="dialog" aria-labelledby="add_wellLabel" aria-hidden="true">
+                                          <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                              <div class="modal-header">
+                                                <h5 class="modal-title" id="add_wellLabel">Add well</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                  <span aria-hidden="true">&times;</span>
+                                                </button>
+                                              </div>
+                                              <form id="form_plate" method="post" enctype="multipart/form-data">{% csrf_token %}
+                                            <div class="modal-body">
+                                                {% csrf_token %}
+                                                {{ form_add_well | bootstrap }}
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                <button type="submit" action="{% url 'db:add_well' plate.id %}" class="btn btn-info">Add</button>
+                                            </div>
+                                                </form>
+                                            </div>
+                                          </div>
+                                        </div>
+
                                 </td>
 
                             {% else %}
@@ -131,11 +174,13 @@
                 </table>
             {% endif %}
 
+      {% if plate %}
       <div><br>
+
           <p>Created at: {{ plate.created_at }}  *  Updated at: {{ plate.updated_at }}</p>
 
       </div>
-
+      {% endif %}
       </div>
 
       <div class="col-2">

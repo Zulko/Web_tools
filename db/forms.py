@@ -1,5 +1,5 @@
 from django import forms
-from .models import File, Sample, Plate
+from .models import File, Sample, Plate, Well
 
 
 class FileForm(forms.ModelForm):
@@ -22,5 +22,9 @@ class PlateForm(forms.ModelForm):
     class Meta:
         model = Plate
         fields = ['name', 'barcode', 'num_cols', 'num_rows', 'num_well', 'active', 'status']
-        # fields = ['name']
 
+
+class WellForm(forms.ModelForm):
+    class Meta:
+        model = Well
+        fields = ['name', 'volume', 'concentration', 'plate', 'samples', 'status']
