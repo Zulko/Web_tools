@@ -27,4 +27,4 @@ class PlateForm(forms.ModelForm):
 class WellForm(forms.ModelForm):
     class Meta:
         model = Well
-        fields = ['name', 'volume', 'concentration', 'plate', 'samples', 'status']
+        fields = ['name', 'volume', 'concentration', 'plate', 'samples', 'active', 'status']

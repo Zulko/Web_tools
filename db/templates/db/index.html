@@ -23,7 +23,7 @@
         <!-- Modal button to add plate on inventory -->
         <button type="button" class="btn btn-info" style="float:right" data-toggle="modal" data-target="#add_plate"> <i class="fas fa-plus-circle"></i> Add plate </button>
             <div class="modal fade" id="add_plate" tabindex="-1" role="dialog" aria-labelledby="add_plateLabel" aria-hidden="true">
-                  <div class="modal-dialog modal-lg" role="document">
+                  <div class="modal-dialog" role="document">
                     <div class="modal-content">
                       <div class="modal-header">
                         <h5 class="modal-title" id="add_plateLabel">Add Plate</h5>
@@ -34,12 +34,11 @@
 
                       <form id="form_plate" method="post" enctype="multipart/form-data">{% csrf_token %}
                         <div class="modal-body">
-                            {% csrf_token %}
                             {{ form_plate_add | bootstrap }}
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" action="{% url 'db:add_plate' %}" class="btn btn-info">Add</button>
+                            <button type="submit" action="{% url 'db:plate_add' %}" class="btn btn-info">Add</button>
                         </div>
                       </form>
                     </div>
@@ -150,12 +149,11 @@
                                       </div>
                                       <form id="form_plate" method="post" enctype="multipart/form-data">{% csrf_token %}
                                         <div class="modal-body">
-                                            {% csrf_token %}
                                             {{ form_add_well | bootstrap }}
                                         </div>
                                       <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="submit" action="{% url 'db:add_well' plate.id col.0 %}" class="btn btn-info">Add</button>
+                                        <button type="submit" action="{% url 'db:well_add' plate.id %}" class="btn btn-info">Add</button>
                                       </div>
                                       </form>
                                     </div>
@@ -183,7 +181,7 @@
       <div class="col-2">
 
             <!-- Selected Well Content from Plate layout -->
-              {% if well %}
+              {% if well.active %}
                 <h5>List of Samples in: <span class="badge badge-pill badge-info">{{ well.name }}</span></h5>
 
                     <!-- Button for Well: Delete, Update -->
@@ -191,44 +189,36 @@
                         <button type="button" class="btn btn-warning btn-sm disabled" data-toggle="modal" data-target="#update_well"> <i class="fas fa-edit"></i></button>
                         <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete_well"> <i class="fas fa-trash-alt"></i></button>
                     </div>
-                          <div class="modal fade" id="delete_well" tabindex="-1" role="dialog" aria-labelledby="delete_wellLabel" aria-hidden="true">
-                          <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                              <div class="modal-header">
-                                <h5 class="modal-title" id="delete_wellLabel">Delete Well</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                  <span aria-hidden="true">&times;</span>
-                                </button>
-                              </div>
-                              <div class="modal-body">
-                                  <h6>Are you sure to delete <a href="{% url 'db:well' well.plate.id well.id %}"> {{ well.name }}</a> ?</h6>
-                              </div>
-                              <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                              <form method="POST" action="{% url 'db:well_delete' well.plate.id well.id %}">{% csrf_token %}
-                                <button type="submit" class="btn btn-danger">Delete</button>
-                              </form>
-                              </div>
-                            </div>
+
+                    <!-- Modal for Well Delete Button -->
+                    <div class="modal fade" id="delete_well" tabindex="-1" role="dialog" aria-labelledby="delete_wellLabel" aria-hidden="true">
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="delete_wellLabel">Delete Well</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                              <h6>Are you sure to delete <a href="{% url 'db:well' well.plate.id well.id %}"> {{ well.name }}</a> ?</h6>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                          <form method="POST" action="{% url 'db:well_delete' well.plate.id well.id %}">{% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                          </form>
                           </div>
                         </div>
+                      </div>
+                    </div><br>
 
-                  <br>
-                 <ul class="nav flex-column">
-                      <fieldset class="form-group overflow-auto">
-                        {% for sample in well.samples.all %}
-                            <a class="btn btn-info btn-block"
+                <!-- Field with a list of sample in the well -->
+                <ul class="nav flex-column">
+                    <fieldset class="form-group overflow-auto">
+                    {% for sample in well.samples.all %}
+                        <a class="btn btn-info btn-block"
                             data-toggle="collapse" href="#collapse" > {{ sample.name }} [{{ sample.alias }}]
-
-{#                            <span style="float:right;">#}
-{#                            {% if sample.active %}#}
-{#                                <i class="far fa-check-circle" style="color: green" ></i>#}
-{#                            {% else %}#}
-{#                                <i class="fas fa-ban" style="color: red" ></i>#}
-{#                            {% endif %}#}
-{#                            </span>#}
-
-
                             </a>
                             <div class="collapse" id="collapse">
                                 <table class="table table-hover ">
@@ -266,6 +256,9 @@
                         </table>
                       </fieldset>
                  </ul>
+              {% endif %}
+              {% if well.active == False %}
+                  <h5><span class="badge badge-pill badge-secondary">{{ well.name }}: Inactive </span></h5>
               {% endif %}
       </div>
     </div>

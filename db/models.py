@@ -176,8 +176,8 @@ class Well(models.Model):
         ordering = ('name', 'plate',)
 
     def __str__(self):
-        well_plate = str(self.name) + ' ' + self.plate.name
-        return well_plate
+        # well_plate = str(self.name) + ' ' + self.plate.name
+        return self.name
 
 
 class File(models.Model):
