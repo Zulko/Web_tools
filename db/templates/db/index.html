@@ -5,7 +5,7 @@
 
     <div class="row">
       <div class="col-2">
-      <!-- Form for search samples in database -->
+      <!-- Form for search plates in database -->
       <h5>Search Plates</h5>
           <fieldset class="form-group" style="padding: 20px 20px 20px 20px">
             <form method="GET">
@@ -14,13 +14,15 @@
                     <i class="fas fa-search" ></i> Search
                 </button>
             </form>
-          </fieldset>
-            <!-- List of plates on inventory -->
-            <br><h5>List of Plates
+          </fieldset><br>
 
-                <!-- Modal button to add plate on inventory -->
-                <button type="button" class="btn btn-info" style="float:right" data-toggle="modal" data-target="#add_plate"> <i class="fas fa-plus-circle"></i> Add plate </button>
-                    <div class="modal fade" id="add_plate" tabindex="-1" role="dialog" aria-labelledby="add_plateLabel" aria-hidden="true">
+
+      <!-- List of plates on inventory -->
+      <h5>List of Plates
+
+        <!-- Modal button to add plate on inventory -->
+        <button type="button" class="btn btn-info" style="float:right" data-toggle="modal" data-target="#add_plate"> <i class="fas fa-plus-circle"></i> Add plate </button>
+            <div class="modal fade" id="add_plate" tabindex="-1" role="dialog" aria-labelledby="add_plateLabel" aria-hidden="true">
                   <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                       <div class="modal-header">
@@ -43,36 +45,38 @@
                     </div>
                   </div>
                 </div>
+      </h5><br>
 
-            </h5><br>
-          {% if all_plates %}
-                  <div class="form-row align-items-center">
-                      <div class="col">
-                           <table id="plate_list_table" class="table table-hover table-striped table-sm" cellspacing="0" width="100%">
-                               <thead>
-                                <tr class="table-dark text-dark">
-                                    <th class="th-sm">id</th>
-                                    <th class="th-sm">name</th>
-                                </tr>
-                               </thead>
-
-                               <tbody>
-                               {% for plate in filter.qs %}
-                               <tr>
-                                <td> {{ plate.id }}</td>
-                                   <td> <a href="{% url 'db:plate' plate.id %}"> {{ plate.name }}</a></td>
-                               </tr>
-                               {% endfor %}
-                               </tbody>
-                          </table>
-
-                      </div><br>
-                  </div>
-            {% else %}
-                <h6> No plates in database </h6>
-            {% endif %}
+        <!-- Table with list of plates on inventory -->
+        {% if all_plates %}
+          <div class="form-row align-items-center">
+            <div class="col">
+              <table id="plate_list_table" class="table table-hover table-striped table-sm" cellspacing="0" width="100%">
+               <thead>
+                <tr class="table-dark text-dark">
+                  <th class="th-sm">id</th>
+                  <th class="th-sm">name</th>
+                  <th class="th-sm">wells</th>
+                </tr>
+               </thead>
+               <tbody>
+               {% for plate in filter.qs %}
+                <tr>
+                  <td> {{ plate.id }} </td>
+                  <td> <a href="{% url 'db:plate' plate.id %}"> {{ plate.name }} </a></td>
+                  <td> {{ plate.num_well }} </td>
+                </tr>
+               {% endfor %}
+               </tbody>
+              </table>
+            </div><br>
+          </div>
+        {% else %}
+          <h6> No plates in database </h6>
+        {% endif %}
 
       </div>
+        <!-- Script to use datatables -->
         <script type="text/javascript">
         $('#plate_list_table').DataTable({
             searching: false,
@@ -82,21 +86,18 @@
       </script>
 
 
+      <!-- Main page -->
       <div class="col-8">
-
             <!-- Selected Plate layout from Plate list -->
             {% if plate %}
-                <h5>{{ plate.name }} <i style="color:#c69500" class="fas fa-info-circle"></i>
-
+                <h5>{{ plate.name }} <a href="#" class="btn btn-warning btn-sm disabled"> <i class="fas fa-info-circle"></i></a>
                 <div align="right">
-
+                    <a href="#" class="btn btn-warning disabled"> <i class="fas fa-edit"></i> Update </a>
                     <a href="{% url 'db:plate_export' plate.id %}" class="btn btn-info"> <i class="fas fa-file-export"></i> Export </a>
                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete_plate"> <i class="fas fa-trash-alt"></i> Delete </button>
-
                 </div>
-{#                <a href="{% url 'db:plate_update' plate.id %}" class="btn btn-warning"> <i class="fas fa-edit"></i> Update </a>#}
-
-                    <!-- Modal toggle to delete -->
+                </h5>
+                <!-- Modal toggle to delete plate -->
                     <div class="modal fade" id="delete_plate" tabindex="-1" role="dialog" aria-labelledby="delete_plateLabel" aria-hidden="true">
                       <div class="modal-dialog" role="document">
                         <div class="modal-content">
@@ -117,70 +118,66 @@
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </div><br>
 
-
-                </h5>
-                <br>
+                <!-- Table to create the plate layout -->
                 <table style="border-spacing: 0; border-width: 0; padding: 0; border-collapse:collapse;">
+                 <thead>
                     <tr>
-                        <th style="padding-right: 0px;">  </th>
-                        {% for colname in colnames %}
-                            <th style="padding-right: 0px;" > {{ colname }} </th>
-                        {% endfor %}
-                    </tr>
-
-                    {% for rowname, fill in layout %}
-                        <tr>
-                        <th style="padding-right: 0px;"> {{ rowname }}</th>
-                        {% for col in fill %}
-                            {% if col.1 == '' %}
-                                <td style="padding-right: 0px;">
-                                     <button class="circle_empty" data-toggle="modal" data-target="#add_well"> {{ col.0 }} </button>
-                                        <!-- Modal toggle to Update -->
-                                        <div class="modal fade" id="add_well" tabindex="-1" role="dialog" aria-labelledby="add_wellLabel" aria-hidden="true">
-                                          <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                              <div class="modal-header">
-                                                <h5 class="modal-title" id="add_wellLabel">Add well</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                  <span aria-hidden="true">&times;</span>
-                                                </button>
-                                              </div>
-                                              <form id="form_plate" method="post" enctype="multipart/form-data">{% csrf_token %}
-                                            <div class="modal-body">
-                                                {% csrf_token %}
-                                                {{ form_add_well | bootstrap }}
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                <button type="submit" action="{% url 'db:add_well' plate.id %}" class="btn btn-info">Add</button>
-                                            </div>
-                                                </form>
-                                            </div>
-                                          </div>
-                                        </div>
-
-                                </td>
-
-                            {% else %}
-                                <td style="padding-right: 0px;">
-                                    <div class="circle_full"> <a href="{% url 'db:well' col.1 col.2 %}"> {{ col.0 }} </a> </div>
-                                </td>
-                            {% endif %}
-                        {% endfor %}
-                     </tr>
+                    <th style="padding-right: 0px;">  </th>
+                    {% for colname in colnames %}
+                        <th style="padding-right: 0px;" > {{ colname }} </th>
                     {% endfor %}
-                </table>
+                    </tr>
+                 </thead>
+                 <tbody>
+                    {% for rowname, fill in layout %}
+                    <tr>
+                    <th style="padding-right: 0px;"> {{ rowname }}</th>
+                    {% for col in fill %}
+                        {% if col.1 == '' %}
+                            <td style="padding-right: 0px;">
+                                 <button class="circle_empty" data-toggle="modal" data-target="#add_well"> {{ col.0 }} </button>
+                                <!-- Modal toggle to Add Well -->
+                                <div class="modal fade" id="add_well" tabindex="-1" role="dialog" aria-labelledby="add_wellLabel" aria-hidden="true">
+                                  <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h5 class="modal-title" id="add_wellLabel">Add well </h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                          <span aria-hidden="true">&times;</span>
+                                        </button>
+                                      </div>
+                                      <form id="form_plate" method="post" enctype="multipart/form-data">{% csrf_token %}
+                                        <div class="modal-body">
+                                            {% csrf_token %}
+                                            {{ form_add_well | bootstrap }}
+                                        </div>
+                                      <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="submit" action="{% url 'db:add_well' plate.id col.0 %}" class="btn btn-info">Add</button>
+                                      </div>
+                                      </form>
+                                    </div>
+                                  </div>
+                                </div>
+                            </td>
+                        {% else %}
+                            <td style="padding-right: 0px;">
+                                <div class="circle_full"> <a href="{% url 'db:well' col.1 col.2 %}"> {{ col.0 }} </a> </div>
+                            </td>
+                        {% endif %}
+                    {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+               </table>
+
+                <!-- Foot table with extra plate info -->
+               <div><br>
+                <p>Created at: {{ plate.created_at }}  *  Updated at: {{ plate.updated_at }} </p>
+               </div>
             {% endif %}
-
-      {% if plate %}
-      <div><br>
-
-          <p>Created at: {{ plate.created_at }}  *  Updated at: {{ plate.updated_at }}</p>
-
-      </div>
-      {% endif %}
       </div>
 
       <div class="col-2">
@@ -188,7 +185,10 @@
             <!-- Selected Well Content from Plate layout -->
               {% if well %}
                 <h5>List of Samples in: <span class="badge badge-pill badge-info">{{ well.name }}</span></h5>
+
+                    <!-- Button for Well: Delete, Update -->
                     <div align="right">
+                        <button type="button" class="btn btn-warning btn-sm disabled" data-toggle="modal" data-target="#update_well"> <i class="fas fa-edit"></i></button>
                         <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete_well"> <i class="fas fa-trash-alt"></i></button>
                     </div>
                           <div class="modal fade" id="delete_well" tabindex="-1" role="dialog" aria-labelledby="delete_wellLabel" aria-hidden="true">

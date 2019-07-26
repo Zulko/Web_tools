@@ -15,10 +15,12 @@ urlpatterns = [
     path('delete/plate<int:plate_id>/<int:well_id>', views.well_delete, name='well_delete'),
 
     path('plate<int:plate_id>/<int:well_id>', views.well, name='well'),
-    path('add_well/<int:plate_id>/', views.well_add, name='add_well'),
+    path('add_well/<int:plate_id>/<slug:well>', views.well_add, name='add_well'),
     # path('plate<int:plate_id>/<int:well_id/<int:sample_id>', views.sample, name='sample'),
 
     path('add_data/', views.create_sample, name='add_data'),
+
+
     path('add_data/', views.create_plate, name='add_plate'),
     path('add_data/<int:sample_id>', views.edit_sample, name='edit_sample'),
     # path('add_data/file', views.upload_sample, name='add_file_data'),

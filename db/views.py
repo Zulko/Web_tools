@@ -126,22 +126,22 @@ def plate_delete(request, plate_id):
 
 
 @login_required()
-def well_add(request, plate_id):
+def well_add(request, plate_id, well_name):
     if request.method == 'POST':
-        formWellAdd = WellForm(request.POST)
+        formWellAdd = WellForm(request.POST, initial={'plate': plate_id})
         if formWellAdd.is_valid():
             new_well = formWellAdd.save()
             return redirect('db:well', plate_id, new_well.id)
     else:
-        formWellAdd = WellForm()
+        formWellAdd = WellForm(initial=[{'plate': plate_id}])
 
-    return render(request, 'db/index.html', {'form_add_well': formWellAdd})
+    return render(request, 'db/index.html', {'form_add_well': formWellAdd, 'well_name': well_name})
 
 
 @login_required()
 def plate_add(request):
     if request.method == 'POST':
-        formPlate = PlateForm(request.POST, request.FILES)
+        formPlate = PlateForm(request.POST)
         if formPlate.is_valid():
             new_plate = formPlate.save()
             return redirect('db:plate', new_plate.id)
@@ -153,12 +153,14 @@ def plate_add(request):
 
 @login_required()
 def well(request, plate_id, well_id):
-    formPlateAdd = PlateForm()
-    formWellAdd = WellForm()
     all_plates = Plate.objects.all()
     plate_filter = PlateFilter(request.GET, queryset=all_plates)
     all_wells = Well.objects.filter(plate_id=plate_id)
     well = get_object_or_404(Well, id=well_id)
+
+    formPlateAdd = PlateForm()
+    formWellAdd = WellForm(initial={'plate': plate_id})
+
     layout, colnames, plate = plate_layout(plate_id, all_wells)
     return render(request, 'db/index.html', {'form_plate_add': formPlateAdd, 'form_add_well': formWellAdd, "all_plates": all_plates,'plate': plate, 'wells': all_wells, 'layout': layout, 'colnames': colnames, 'well': well, 'filter': plate_filter})
 
