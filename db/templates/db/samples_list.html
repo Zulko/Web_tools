@@ -16,13 +16,61 @@
             </form>
           </fieldset>
 
-        <div align="right">
-            <a href="{% url 'db:export_sample' %}" class="btn btn-info"> <i class="fas fa-file-export"></i> Export data </a>
-        </div>
+            <div align="right">
+            <!-- Modal button to add sample on inventory -->
+            <button type="button" class="btn btn-info" style="float:right" data-toggle="modal" data-target="#add_sample"> <i class="fas fa-plus-circle"></i> Add sample </button>
+            </div>
+            <div class="modal fade" id="add_sample" tabindex="-1" role="dialog" aria-labelledby="add_sampleLabel" aria-hidden="true">
+              <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="add_sampleLabel">Add Sample</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+
+                  <form id="form_plate" method="post" enctype="multipart/form-data">{% csrf_token %}
+                    <div class="modal-body">
+                        <div role="tabpanel">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item" role="presentation" ><a class="nav-link active" href="#add_sampleTab" aria-controls="add_sampleTab" role="tab" data-toggle="tab">Add Sample Form</a></li>
+                            <li class="nav-item" role="presentation"><a class="nav-link" href="#file_sampleTab" aria-controls="file_sampleTab" role="tab" data-toggle="tab">Add Sample File</a></li>
+                        </ul><br>
+                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane active" id="add_sampleTab">{{ form_sample | bootstrap }}</div>
+                            <div role="tabpanel" class="tab-pane" id="file_sampleTab">
+                                <div class="form-row align-items-center"><br><br>
+                                    <div class="col-auto"></div>
+                                    <div class="col">
+                                        <input type="file" class="form-control-file border" name="upload_file_samples">
+                                    </div>
+                                    <div class="col-right">
+                                        <button class="btn btn-secondary" type="submit">
+                                            <i class="fas fa-file-import"></i> Update
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" action="{% url 'db:sample_add' %}" class="btn btn-info">Add</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
 
       </div>
 
       <div class="col-10">
+        <div align="right">
+          <a href="{% url 'db:export_sample' %}" class="btn btn-info"> <i class="fas fa-file-export"></i> Export data </a>
+        </div><br>
+
           <font size="2">
           {% if sample %}
             <div class="info">
@@ -41,7 +89,8 @@
                     <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deletesample"> <i class="fas fa-trash-alt"></i> Delete </button>
                 </div>
                 <div class="btn-group" align="left">
-                    <a href="{% url 'db:edit_sample' sample.id %}" class="btn btn-warning btn-sm"> <i class="fas fa-edit"></i> Edit </a>
+                    <button type="button" class="btn btn-warning btn-sm" style="float:right" data-toggle="modal" data-target="#update_sample"> <i class="fas fa-edit"></i> Edit </button>
+{#                    <a href="{% url 'db:edit_sample' sample.id %}" class="btn btn-warning btn-sm"> <i class="fas fa-edit"></i> Edit </a>#}
 
 {#                    <form method="POST" action="{% url 'db:samples_list' %}">{% csrf_token %}#}
 {#                        <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editsample"> <i class="fas fa-edit"></i> Edit </button>#}
@@ -49,7 +98,7 @@
 
                 </div>
             </div>
-
+                    <!-- Modal button to delete sample on inventory -->
                     <div class="modal fade" id="deletesample" tabindex="-1" role="dialog" aria-labelledby="delete_sampleLabel" aria-hidden="true">
                       <div class="modal-dialog" role="document">
                         <div class="modal-content">
@@ -64,9 +113,6 @@
                               {% if wells %}
                                   <h6>
                                   {{ wells.count }} well(s) will be delete
-{#                                  {% for well in wells %}#}
-{#                                      <a class="btn btn-info-out btn-sm" href="{% url 'db:well' well.plate.id well.id %}"> {{ well.name }}</a>#}
-{#                                  {% endfor %}#}
                                   </h6>
                               {% endif %}
                           </div>
@@ -192,6 +238,7 @@
       <script type="text/javascript">
         $('#sample_list_table').DataTable({
             searching: false,
+            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]]
         });
 
         $('.dataTables_length').addClass('bs-select');

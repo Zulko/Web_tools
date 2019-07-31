@@ -1,25 +1,33 @@
-from import_export import resources, fields
+from import_export import resources, fields, widgets
 from .models import Sample, Plate, Well
 
 
 class SampleResource(resources.ModelResource):
     # def for_delete(self, row, instance):
     #     return self.fields['delete'].clean(row)
-
     class Meta:
+        model = Sample
         skip_unchanged = True
         report_skipped = False
-        model = Sample
 
 
 class PlateResource(resources.ModelResource):
-    name = fields.Field(attribute='name', column_name='well')
+    plate = fields.Field(
+        column_name='plate',
+        attribute='plate',
+        widget=widgets.ForeignKeyWidget(Well, field='name')
+    )
+    samples = fields.Field(
+        column_name='samples',
+        attribute='samples',
+        widget=widgets.ManyToManyWidget(Sample, field='name')
+    )
 
-    #TODO: change samples id for samples name
     class Meta:
-        skip_unchanged = True
         model = Well
-        fields = ('name', 'samples', 'volume', 'concentration')
-        export_order = ('name', 'samples', 'volume', 'concentration')
+        skip_unchanged = True
+        fields = ('name', 'plate', 'samples', 'volume', 'concentration', 'active', 'status')
+        export_order = ('plate', 'name', 'samples', 'volume', 'concentration', 'active', 'status')
+
 
 

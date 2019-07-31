@@ -15,17 +15,34 @@ class Plate(models.Model):
         ('A', 'Aborted'),
         ('H', 'On hold'),
     )
+    # Choices
+    CONTAINER_TYPES = (
+        ('Plate', 'Plate'),
+        ('Box', 'Box'),
+    )
 
     def get_barcode():
-        num = Plate.objects.count()
+        num = Plate.objects.latest('id').id
         if num is None:
             num = 1
             return '{0:07}'.format(num)
         else:
-            num +=1
+            num += 1
             return '{0:07}'.format(num)
 
-    name = models.CharField(max_length=50, unique=True)
+    def get_name():
+        num = Plate.objects.latest('id').id
+        if num is None:
+            num = 1
+            name = 'Plate_' + '{0:07}'.format(1)
+            return name
+        else:
+            num += 1
+            name = 'Plate_' + '{0:07}'.format(num)
+            return name
+
+    name = models.CharField(max_length=50, unique=True, default=get_name)
+    type = models.CharField(max_length=50, choices=CONTAINER_TYPES, default=CONTAINER_TYPES[0][0])
     barcode = models.IntegerField(unique=True, default=get_barcode)
     num_cols = models.IntegerField()
     num_rows = models.IntegerField()
@@ -40,6 +57,9 @@ class Plate(models.Model):
 
     def get_absolute_url(self):
         return reverse('db:index', kwargs={'pk': self.pk})
+
+    def get_num_wells(self):
+        return self.num_cols * self.num_rows
 
     def __str__(self):
         return self.name
@@ -66,11 +86,11 @@ class Plate(models.Model):
 class Sample(models.Model):
     # Choices
     SAMPLE_TYPES = (
-        ('Primer', 'Pr'),
-        ('Plasmid', 'Pd'),
-        ('Part', 'Pt'),
-        ('Linker', 'Lr'),
-        ('Other', 'Ot'),
+        ('Pr', 'Primer'),
+        ('Pd', 'Plasmid'),
+        ('Pt', 'Part'),
+        ('Lr', 'Linker'),
+        ('Ot', 'Other'),
     )
     END_TYPES = (
         ('R', 'Right'),
@@ -79,6 +99,8 @@ class Sample(models.Model):
     PROJECT = (
         ('GF', 'GF_general'),
         ('SA', 'Sanguinarine'),
+        ('MK', 'MoClo kit'),
+        ('YK', 'Yeast CRISPR kit'),
     )
     PART_TYPE = (
         ('P', 'Promoter'),
@@ -106,12 +128,12 @@ class Sample(models.Model):
     )
 
     # Database Fields
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField('Name', max_length=50, unique=True)
     alias = models.CharField(max_length=50)
     sample_type = models.CharField(max_length=50, choices=SAMPLE_TYPES, default=SAMPLE_TYPES[4][0])
     description = models.CharField(max_length=100, blank=True)
     project = models.CharField(max_length=30, choices=PROJECT, blank=True)  # Multi select option
-    author = models.CharField(max_length=30, blank=True)
+    author = models.CharField(max_length=50, blank=True)
     sequence = models.CharField(max_length=10000, blank=True)
     length = models.IntegerField(blank=True, null=True)
     genbank = models.FileField(upload_to='gb_files/', max_length=10000, blank=True)
@@ -154,6 +176,18 @@ class Sample(models.Model):
     def __str__(self):
         return self.name
 
+    def get_name(self):
+        ":returns a name for the sample"
+        num = Sample.objects.filter(self.sample_type).latest('id').id
+        if num is None:
+            num = 1
+            name = self.sample_type + '{0:07}'.format(1)
+            return name
+        else:
+            num += 1
+            name = self.sample_type + '{0:07}'.format(num)
+            return name
+
 
 class Well(models.Model):
     STATUS = (
@@ -170,13 +204,12 @@ class Well(models.Model):
     samples = models.ManyToManyField(Sample)
     active = models.BooleanField(default=True)
     status = models.CharField(max_length=1, choices=STATUS, blank=True)
-    # parent_well = models.ForeignKey()
+    # parent_well = models.ForeignKey(Well, )
 
     class Meta:
         ordering = ('name', 'plate',)
 
     def __str__(self):
-        # well_plate = str(self.name) + ' ' + self.plate.name
         return self.name
 
 

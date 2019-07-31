@@ -22,28 +22,29 @@
 
         <!-- Modal button to add plate on inventory -->
         <button type="button" class="btn btn-info" style="float:right" data-toggle="modal" data-target="#add_plate"> <i class="fas fa-plus-circle"></i> Add plate </button>
-            <div class="modal fade" id="add_plate" tabindex="-1" role="dialog" aria-labelledby="add_plateLabel" aria-hidden="true">
-                  <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h5 class="modal-title" id="add_plateLabel">Add Plate</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                          <span aria-hidden="true">&times;</span>
-                        </button>
-                      </div>
 
-                      <form id="form_plate" method="post" enctype="multipart/form-data">{% csrf_token %}
-                        <div class="modal-body">
-                            {{ form_plate_add | bootstrap }}
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" action="{% url 'db:plate_add' %}" class="btn btn-info">Add</button>
-                        </div>
-                      </form>
-                    </div>
+        <div class="modal fade" id="add_plate" tabindex="-1" role="dialog" aria-labelledby="add_plateLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="add_plateLabel">Add Plate</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
                   </div>
+
+                  <form id="form_plate" method="post" enctype="multipart/form-data">{% csrf_token %}
+                    <div class="modal-body">
+                        {{ form_plate_add | bootstrap }}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" action="{% url 'db:plate_add' %}" class="btn btn-info">Add</button>
+                    </div>
+                  </form>
                 </div>
+              </div>
+            </div>
       </h5><br>
 
         <!-- Table with list of plates on inventory -->

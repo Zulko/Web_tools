@@ -18,13 +18,14 @@ urlpatterns = [
     path('add_well/<int:plate_id>', views.well_add, name='well_add'),
     # path('plate<int:plate_id>/<int:well_id/<int:sample_id>', views.sample, name='sample'),
 
-    path('add_data/', views.create_sample, name='add_data'),
-
-    path('add_data/<int:sample_id>', views.edit_sample, name='edit_sample'),
+    # path('add_data/', views.create_sample, name='add_data'),
+    #
+    # path('add_data/<int:sample_id>', views.edit_sample, name='edit_sample'),
     # path('add_data/file', views.upload_sample, name='add_file_data'),
 
     path('view_sample/', views.samples_list, name='samples_list'),
     path('view_sample/<int:sample_id>', views.sample, name='sample'),
+    path('view_sample/add', views.add_sample, name='sample_add'),
     path('view_sample/export', views.export_sample, name='export_sample'),
 
     path('delete/sample<int:sample_id>/', views.sample_delete, name='sample_delete'),
