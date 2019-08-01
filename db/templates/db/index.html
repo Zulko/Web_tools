@@ -187,8 +187,31 @@
 
                     <!-- Button for Well: Delete, Update -->
                     <div align="right">
-                        <button type="button" class="btn btn-warning btn-sm disabled" data-toggle="modal" data-target="#update_well"> <i class="fas fa-edit"></i></button>
+                        <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#update_well"> <i class="fas fa-edit"></i></button>
                         <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete_well"> <i class="fas fa-trash-alt"></i></button>
+                    </div>
+
+                    <!-- Modal for Well Update Button -->
+                    <div class="modal fade" id="update_well" tabindex="-1" role="dialog" aria-labelledby="update_wellLabel" aria-hidden="true">
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="update_wellLabel">Update well {{ well.name }}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <form id="form_plate" method="post" enctype="multipart/form-data">{% csrf_token %}
+                            <div class="modal-body">
+                                {{ form_update_well | bootstrap }}
+                            </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" action="{% url 'db:well_update' plate.id well.id %}" class="btn btn-warning">Update</button>
+                          </div>
+                          </form>
+                        </div>
+                      </div>
                     </div>
 
                     <!-- Modal for Well Delete Button -->

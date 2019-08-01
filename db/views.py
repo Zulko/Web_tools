@@ -129,7 +129,6 @@ def plate_export(request, plate_id):
         all_wells = Well.objects.filter(plate_id=plate_id)
         dataset = plate_resource.export(all_wells)
         response = HttpResponse(dataset.csv, content_type='text/csv')
-        # filename = str("'" + 'attachment; filename="') + str(plate_filter.name) + str('"') + str("'")
         response['Content-Disposition'] = 'attachment; filename="plate.csv"'
         return response
     except:
@@ -170,11 +169,28 @@ def well(request, plate_id, well_id):
 
     formPlateAdd = PlateForm()
     formWellAdd = WellForm(initial={'plate': plate_id})
+    formWellUpdate = WellForm(instance=well)
 
     layout, colnames, plate = plate_layout(plate_id, all_wells)
 
+    if request.method == 'POST':
+        plate = get_object_or_404(Plate, id=plate_id)
+        formWellAdd = WellForm(request.POST, request.FILES)
+        formWellUpdate = WellForm(request.POST, request.FILES, instance=well)
+
+        if formWellAdd.is_valid():
+            new_well = formWellAdd.save()
+            well = get_object_or_404(Well, id=new_well.id)
+            return redirect('db:well', plate.id, well.id)
+
+        elif formWellUpdate.is_valid():
+            edit_well = formWellUpdate.save()
+            well = get_object_or_404(Well, id=edit_well.id)
+            return redirect('db:well', plate.id, well.id)
+
     context = {
         'form_plate_add': formPlateAdd,
+        'form_update_well': formWellUpdate,
         'form_add_well': formWellAdd,
         "all_plates": all_plates,
         'plate': plate,
@@ -206,23 +222,36 @@ def well_add(request, plate_id):
 
 
 @login_required()
+def well_update(request, plate_id, well_id):
+    well = get_object_or_404(Well, id=well_id)
+    if request.method == 'POST':
+        plate = get_object_or_404(Plate, id=plate_id)
+        form = WellForm(request.POST, request.FILES, instance=well)
+        if form.is_valid():
+            edit_well = form.save()
+            well = get_object_or_404(Well, id=edit_well.id)
+            return redirect('db:well', plate.id, well.id)
+    else:
+        form = WellForm()
+
+    return render(request, 'db/index.html', {'form_update_well': form})
+
+
+@login_required()
 def well_delete(request, plate_id, well_id):
     if request.method == 'POST':
         well = Well.objects.get(id=well_id)
-
         well.delete()
     return redirect('db:plate', plate_id=plate_id)
 
 
 #TODO: Use the filter configuration to create an output file
 @login_required()
-def export_sample(request):
+def sample_export(request):
     sample_resource = SampleResource()
-    sample_filter = Sample.objects.filter(sample_type='Pr')
-    # queryset = Sample.objects.filter(sample_filter)
-
+    # sample_filter = Sample.objects.filter(sample_type='Pr')
+    sample_filter = Sample.objects.all()
     dataset = sample_resource.export(sample_filter)
-
     response = HttpResponse(dataset.csv, content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="samples.csv"'
 
@@ -244,16 +273,24 @@ def sample_delete(request, sample_id):
 def samples_list(request):
     all_samples = Sample.objects.all()
     sample_filter = SampleFilter(request.GET, queryset=all_samples)
-    formSample = SampleForm(request.POST, request.FILES)
+    formSample = SampleForm()
+    formSampleEdit = SampleForm()
 
     if request.method == 'POST':
-        formSample = SampleForm(request.POST, request.FILES)
+        formSample = SampleForm(request.POST or None, request.FILES or None)
         if formSample.is_valid():
             new_sample = formSample.save()
-            return redirect('db:sample', new_sample.id)
+            sample = get_object_or_404(Sample, id=new_sample.id)
+            return redirect('db:sample', sample.id)
+        elif formSampleEdit.is_valid():
+            edit_sample = formSampleEdit.save()
+            sample = get_object_or_404(Sample, id=edit_sample.id)
+            return redirect('db:sample', sample.id)
+
 
     context = {
         'form_sample': formSample,
+        'form_sample_edit': formSampleEdit,
         "all_samples": all_samples,
         "filter": sample_filter
     }
@@ -267,16 +304,25 @@ def sample(request, sample_id):
     sample_filter = SampleFilter(request.GET, queryset=all_samples)
     sample = Sample.objects.get(id=sample_id)
     all_wells = Well.objects.filter(samples=sample_id)
-    formSample = SampleForm(request.POST, request.FILES)
+    formSample = SampleForm()
+    formSampleEdit = SampleForm(instance=sample)
 
     if request.method == 'POST':
         formSample = SampleForm(request.POST, request.FILES)
+        formSampleEdit = SampleForm(request.POST, request.FILES, instance=sample)
+
         if formSample.is_valid():
             new_sample = formSample.save()
-            return redirect('db:sample', new_sample.id)
+            sample = get_object_or_404(Sample, id=new_sample.id)
+            return redirect('db:sample', sample.id)
+        elif formSampleEdit.is_valid():
+            edit_sample = formSampleEdit.save()
+            sample = get_object_or_404(Sample, id=edit_sample.id)
+            return redirect('db:sample', sample.id)
 
     context = {
         'form_sample': formSample,
+        'form_sample_edit': formSampleEdit,
         "all_samples": all_samples,
         "filter": sample_filter,
         "sample": sample,
@@ -307,50 +353,67 @@ def add_sample(request):
     else:
         formSample = SampleForm()
 
-    return render(request, 'db/add_data.html', {'form_sample': formSample})
+    return render(request, 'db/samples_list.html', {'form_sample': formSample})
 
 
 
 @login_required()
 def edit_sample(request, sample_id):
-    sample = get_object_or_404(Sample, id=sample_id)
-    form = SampleForm(request.POST or None, request.FILES, instance=sample)
-    if form.is_valid():
-        form.save()
-        return redirect('db:samples_list')
+    # all_samples = Sample.objects.all()
+    # sample_filter = SampleFilter(request.GET, queryset=all_samples)
+    sample = Sample.objects.get(id=sample_id)
+    # all_wells = Well.objects.filter(samples=sample_id)
+    # formSample = SampleForm()
+    # formSampleEdit = SampleForm(instance=sample)
 
-    return render(request, 'db/add_data.html', {'form': form})
-
-
-
-@login_required()
-def create_sample(request):
     if request.method == 'POST':
-        formSample = SampleForm(request.POST, request.FILES)
-        formPlate = PlateForm(request.POST, request.FILES)
-        if formSample.is_valid():
-            new_sample = formSample.save()
-            return redirect('db:sample', new_sample.id)
-        elif formPlate.is_valid():
-            new_plate = formPlate.save()
-            return redirect('db:index', new_plate)
-        else:
-            samples_resources = SampleResource()
-            dataset = Dataset()
-            new_samples = request.FILES['upload_file_samples']
-            imported_data = dataset.load(new_samples.read().decode('utf-8'), format='csv')
-            result = samples_resources.import_data(imported_data, dry_run=True, raise_errors=True, collect_failed_rows=True)
-
-            if not result.has_errors():
-                samples_resources.import_data(imported_data, dry_run=False)
-            else:
-                print(result.invalid_rows)
+        formSampleEdit = SampleForm(instance=sample)
+        if formSampleEdit.is_valid():
+            formSampleEdit.save()
+            print(formSampleEdit)
             return redirect('db:samples_list')
-    else:
-        formSample = SampleForm()
-        formPlate = PlateForm()
 
-    return render(request, 'db/add_data.html', {'form_sample': formSample, 'form_plate': formPlate})
+    # context = {
+    #     'form_sample': formSample,
+    #     'form_sample_edit': formSampleEdit,
+    #     "all_samples": all_samples,
+    #     "filter": sample_filter,
+    #     "sample": sample,
+    #     "wells": all_wells
+    # }
+
+    return render(request, 'db/samples_list.html')
+
+
+
+# @login_required()
+# def create_sample(request):
+#     if request.method == 'POST':
+#         formSample = SampleForm(request.POST, request.FILES)
+#         formPlate = PlateForm(request.POST, request.FILES)
+#         if formSample.is_valid():
+#             new_sample = formSample.save()
+#             return redirect('db:sample', new_sample.id)
+#         elif formPlate.is_valid():
+#             new_plate = formPlate.save()
+#             return redirect('db:index', new_plate)
+#         else:
+#             samples_resources = SampleResource()
+#             dataset = Dataset()
+#             new_samples = request.FILES['upload_file_samples']
+#             imported_data = dataset.load(new_samples.read().decode('utf-8'), format='csv')
+#             result = samples_resources.import_data(imported_data, dry_run=True, raise_errors=True, collect_failed_rows=True)
+#
+#             if not result.has_errors():
+#                 samples_resources.import_data(imported_data, dry_run=False)
+#             else:
+#                 print(result.invalid_rows)
+#             return redirect('db:samples_list')
+#     else:
+#         formSample = SampleForm()
+#         formPlate = PlateForm()
+#
+#     return render(request, 'db/samples_list.html', {'form_sample': formSample, 'form_plate': formPlate})
 
 
 
