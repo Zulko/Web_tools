@@ -89,7 +89,7 @@
                     <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deletesample"> <i class="fas fa-trash-alt"></i> Delete </button>
                 </div>
                 <div class="btn-group" align="left">
-                    <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#update_sample"> <i class="fas fa-edit"></i> Edit </button>
+                    <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#update_sample"> <i class="fas fa-edit"></i> Update </button>
                 </div>
             </div>
             </font>
@@ -121,12 +121,12 @@
                       </div>
                     </div>
 
-
-                    <div class="modal fade" id="update_sample" tabindex="-1" role="dialog" aria-labelledby="edit_sampleLabel" aria-hidden="true">
+                    <!-- Modal button to update sample on inventory -->
+                    <div class="modal fade" id="update_sample" tabindex="-1" role="dialog" aria-labelledby="update_sampleLabel" aria-hidden="true">
                       <div class="modal-dialog modal-lg" role="document">
                         <div class="modal-content">
                           <div class="modal-header">
-                            <h5 class="modal-title" id="edit_sampleLabel">Edit Sample: {{ sample.name }}</h5>
+                            <h5 class="modal-title" id="update_sampleLabel">Update Sample: {{ sample.name }}</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                               <span aria-hidden="true">&times;</span>
                             </button>
@@ -135,12 +135,12 @@
                           <form id="form_edit_sample" method="post" enctype="multipart/form-data">{% csrf_token %}
                             <div class="modal-body">
                                 {% csrf_token %}
-                                {{ form_sample_edit | bootstrap }}
+                                {{ form_sample_update | bootstrap }}
 
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="submit" action="{% url 'db:sample_edit' sample.id %}" class="btn btn-warning">Update</button>
+                                <button type="submit" action="{% url 'db:sample_update' sample.id %}" class="btn btn-warning">Update</button>
                             </div>
                           </form>
                         </div>
@@ -164,28 +164,26 @@
                 <th class="th-sm">Reference</th>
                 <th class="th-sm">Comments</th>
 {#                <th>Parent</th>#}
-                <th>Organism</th>
-                <th>Specie</th>
-{#                <th>Marker</th>#}
-{#                <th>Application</th>#}
-{#                <th>Strategy</th>#}
-{#                <th>Seq verified</th>#}
-{#                <th>Origin</th>#}
-{#                <th>Cloning System</th>#}
-{#                <th>Strand</th>#}
-{#                <th>Order_number</th>#}
-{#                <th>Part Type</th>#}
-{#                <th>Moclo Type</th>#}
-{#                <th>Samples</th>#}
-{#                <th>End</th>#}
-{#                <th>Direction</th>#}
-{#                <th>TM</th>#}
-                <th>Active</th>
-                <th>Status</th>
-                <th>Created</th>
-{#                <th></th>#}
-
-
+                <th class="th-sm">Organism</th>
+                <th class="th-sm">Specie</th>
+                <th class="th-sm">Marker</th>
+                <th class="th-sm">Application</th>
+                <th class="th-sm">Strategy</th>
+                <th class="th-sm">Seq_verif</th>
+                <th class="th-sm">Origin</th>
+                <th class="th-sm">Cloning_system</th>
+                <th class="th-sm">Strand</th>
+                <th class="th-sm">Order_number</th>
+                <th class="th-sm">Part_type</th>
+                <th class="th-sm">Moclo_type</th>
+                <th class="th-sm">Samples</th>
+                <th class="th-sm">End</th>
+                <th class="th-sm">Direction</th>
+                <th class="th-sm">TM</th>
+                <th class="th-sm">Active</th>
+                <th class="th-sm">Status</th>
+                <th class="th-sm">Created</th>
+                <th class="th-sm">Updated</th>
                 </tr>
               </thead>
               <tbody>
@@ -199,7 +197,10 @@
                         <td>{{ sample.description }}</td>
                         <td>{{ sample.project }}</td>
                         <td>{{ sample.author }}</td>
-                        <td>{{ sample.length }}</td>
+                        <td>{% if sample.length is not None %}
+                            {{ sample.length }}
+                            {% else %}
+                            {% endif %}</td>
                         {% if sample.genbank %}
                             <td><a href="{{ sample.genbank.url }}" style="font-size: 12px;" class="btn btn-outline-secondary btn-sm m-0;" target="_blank">File</a></td>
                             {% else %}
@@ -209,9 +210,24 @@
                         <td>{{ sample.comments }}</td>
                         <td>{{ sample.organism }}</td>
                         <td>{{ sample.genus_specie }}</td>
+                        <td>{{ sample.marker }}</td>
+                        <td>{{ sample.application }}</td>
+                        <td>{{ sample.strategy }}</td>
+                        <td>{{ sample.seq_verified }}</td>
+                        <td>{{ sample.origin_rep }}</td>
+                        <td>{{ sample.cloning_system }}</td>
+                        <td>{{ sample.strand }}</td>
+                        <td>{{ sample.order_number }}</td>
+                        <td>{{ sample.part_type }}</td>
+                        <td>{{ sample.moclo_type }}</td>
+                        <td>{{ sample.sub_sample_id }}</td>
+                        <td>{{ sample.end }}</td>
+                        <td>{{ sample.direction }}</td>
+                        <td>{{ sample.tm }}</td>
                         <td>{{ sample.active }}</td>
                         <td>{{ sample.status }}</td>
                         <td>{{ sample.created_at }}</td>
+                        <td>{{ sample.updated_at }}</td>
 {#                        <td> <button type="submit" class="btn btn-outline-danger btn-sm">#}
 {#                                <i class="fas fa-trash-alt" style="font-size:15px;"></i>#}
 {#                             </button>#}
@@ -230,6 +246,7 @@
 
       <script type="text/javascript">
         $('#sample_list_table').DataTable({
+            "scrollX": true,
             searching: false,
             lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]]
         });

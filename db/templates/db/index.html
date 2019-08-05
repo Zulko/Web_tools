@@ -263,6 +263,10 @@
                                         <th>Organism</th>
                                         <td>{{ sample.organism }}</td>
                                     </tr>
+                                    <tr>
+                                        <th>More info</th>
+                                        <td><a href="{% url 'db:sample' sample.id %}" class="btn btn-info btn-sm btn-block" target="_blank">Info</a></td>
+                                    </tr>
                                 </table>
                             </div>
                         {% endfor %}

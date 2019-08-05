@@ -273,24 +273,24 @@ def sample_delete(request, sample_id):
 def samples_list(request):
     all_samples = Sample.objects.all()
     sample_filter = SampleFilter(request.GET, queryset=all_samples)
-    formSample = SampleForm()
-    formSampleEdit = SampleForm()
+    formSampleView = SampleForm()
+    formSampleUpdate = SampleForm()
 
     if request.method == 'POST':
-        formSample = SampleForm(request.POST or None, request.FILES or None)
-        if formSample.is_valid():
-            new_sample = formSample.save()
+        formSampleView = SampleForm(request.POST or None, request.FILES or None)
+        if formSampleView.is_valid():
+            new_sample = formSampleView.save()
             sample = get_object_or_404(Sample, id=new_sample.id)
             return redirect('db:sample', sample.id)
-        elif formSampleEdit.is_valid():
-            edit_sample = formSampleEdit.save()
-            sample = get_object_or_404(Sample, id=edit_sample.id)
+        elif formSampleUpdate.is_valid():
+            update_sample = formSampleUpdate.save()
+            sample = get_object_or_404(Sample, id=update_sample.id)
             return redirect('db:sample', sample.id)
 
 
     context = {
-        'form_sample': formSample,
-        'form_sample_edit': formSampleEdit,
+        'form_sample': formSampleView,
+        'form_sample_update': formSampleUpdate,
         "all_samples": all_samples,
         "filter": sample_filter
     }
@@ -304,25 +304,25 @@ def sample(request, sample_id):
     sample_filter = SampleFilter(request.GET, queryset=all_samples)
     sample = Sample.objects.get(id=sample_id)
     all_wells = Well.objects.filter(samples=sample_id)
-    formSample = SampleForm()
-    formSampleEdit = SampleForm(instance=sample)
+    formSampleView = SampleForm()
+    formSampleUpdate = SampleForm(instance=sample)
 
     if request.method == 'POST':
-        formSample = SampleForm(request.POST, request.FILES)
-        formSampleEdit = SampleForm(request.POST, request.FILES, instance=sample)
+        formSampleView = SampleForm(request.POST, request.FILES)
+        formSampleUpdate = SampleForm(request.POST, request.FILES, instance=sample)
 
-        if formSample.is_valid():
-            new_sample = formSample.save()
+        if formSampleView.is_valid():
+            new_sample = formSampleView.save()
             sample = get_object_or_404(Sample, id=new_sample.id)
             return redirect('db:sample', sample.id)
-        elif formSampleEdit.is_valid():
-            edit_sample = formSampleEdit.save()
-            sample = get_object_or_404(Sample, id=edit_sample.id)
+        elif formSampleUpdate.is_valid():
+            update_sample = formSampleUpdate.save()
+            sample = get_object_or_404(Sample, id=update_sample.id)
             return redirect('db:sample', sample.id)
 
     context = {
-        'form_sample': formSample,
-        'form_sample_edit': formSampleEdit,
+        'form_sample': formSampleView,
+        'form_sample_update': formSampleUpdate,
         "all_samples": all_samples,
         "filter": sample_filter,
         "sample": sample,
@@ -358,29 +358,13 @@ def add_sample(request):
 
 
 @login_required()
-def edit_sample(request, sample_id):
-    # all_samples = Sample.objects.all()
-    # sample_filter = SampleFilter(request.GET, queryset=all_samples)
+def sample_update(request, sample_id):
     sample = Sample.objects.get(id=sample_id)
-    # all_wells = Well.objects.filter(samples=sample_id)
-    # formSample = SampleForm()
-    # formSampleEdit = SampleForm(instance=sample)
-
     if request.method == 'POST':
-        formSampleEdit = SampleForm(instance=sample)
-        if formSampleEdit.is_valid():
-            formSampleEdit.save()
-            print(formSampleEdit)
+        formSampleUpdate = SampleForm(instance=sample)
+        if formSampleUpdate.is_valid():
+            formSampleUpdate.save()
             return redirect('db:samples_list')
-
-    # context = {
-    #     'form_sample': formSample,
-    #     'form_sample_edit': formSampleEdit,
-    #     "all_samples": all_samples,
-    #     "filter": sample_filter,
-    #     "sample": sample,
-    #     "wells": all_wells
-    # }
 
     return render(request, 'db/samples_list.html')
 
