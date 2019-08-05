@@ -154,7 +154,7 @@
                                         </div>
                                       <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="submit" action="{% url 'db:well_add' plate.id %}" class="btn btn-info">Add</button>
+                                        <button type="submit" name="add_well" action="{% url 'db:well_add' plate.id %}" class="btn btn-info">Add</button>
                                       </div>
                                       </form>
                                     </div>
@@ -201,13 +201,14 @@
                               <span aria-hidden="true">&times;</span>
                             </button>
                           </div>
-                          <form id="form_plate" method="post" enctype="multipart/form-data">{% csrf_token %}
+                          <form id="form_update_well" method="post" enctype="multipart/form-data">{% csrf_token %}
                             <div class="modal-body">
+                                {% csrf_token %}
                                 {{ form_update_well | bootstrap }}
                             </div>
                           <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" action="{% url 'db:well_update' plate.id well.id %}" class="btn btn-warning">Update</button>
+                            <button type="submit" name="update_well" action="{% url 'db:well_update' well.plate.id well.id %}" class="btn btn-warning">Update</button>
                           </div>
                           </form>
                         </div>

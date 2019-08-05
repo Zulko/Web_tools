@@ -12,12 +12,12 @@ urlpatterns = [
     path('add_plate/', views.plate_add, name='plate_add'),
     path('export/plate<int:plate_id>/', views.plate_export, name='plate_export'),
     path('delete/plate<int:plate_id>/', views.plate_delete, name='plate_delete'),
-    path('update/plate<int:plate_id>/<int:well_id>', views.well_update, name='well_update'),
 
     # Wells views
     path('delete/plate<int:plate_id>/<int:well_id>', views.well_delete, name='well_delete'),
     path('plate<int:plate_id>/<int:well_id>', views.well, name='well'),
     path('add_well/<int:plate_id>', views.well_add, name='well_add'),
+    path('update/plate<int:plate_id>/<int:well_id>', views.well_update, name='well_update'),
 
     # Sample views
     path('view_sample/', views.samples_list, name='samples_list'),

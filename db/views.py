@@ -73,7 +73,7 @@ def plate_layout(plate_id, all_wells):
                 if col == well.name:
                     row_list.append([col, plate_id, well.id])
                     found = True
-            if found == False:
+            if found is False:
                 row_list.append([col, "", ""])
         layout_fill.append(row_list)
 
@@ -85,21 +85,21 @@ def plate_layout(plate_id, all_wells):
 @login_required()
 def plate_view(request, plate_id):
     all_plates = Plate.objects.all()
+    plate = get_object_or_404(Plate, id=plate_id)
     plate_filter = PlateFilter(request.GET, queryset=all_plates)
     formPlateAdd = PlateForm()
-    formWellAdd = WellForm()
+    formWellAdd = WellForm(initial={'plate': plate.id})
 
-    #ADDING PLATE AND WELL HERE?
     if request.method == 'POST':
         plate = get_object_or_404(Plate, id=plate_id)
         formPlate = PlateForm(request.POST, request.FILES)
-        formWell = WellForm(request.POST, request.FILES)
+        formWell = WellForm(request.POST, request.FILES, initial={'plate': plate.id})
         if formPlate.is_valid():
             new_plate = formPlate.save()
             return redirect('db:plate', new_plate.id)
         elif formWell.is_valid():
             new_well = formWell.save()
-            well = get_object_or_404(Well, id=new_well.id)
+            well = get_object_or_404(Well, id=new_well.id, initial={'plate': plate.id})
             return redirect('db:well', plate.id, well.id)
     try:
         all_wells = Well.objects.filter(plate_id=plate_id)
@@ -156,7 +156,6 @@ def plate_add(request):
     context = {
         'form_plate_add': formPlate,
     }
-
     return render(request, 'db/index.html', context)
 
 
@@ -166,24 +165,25 @@ def well(request, plate_id, well_id):
     plate_filter = PlateFilter(request.GET, queryset=all_plates)
     all_wells = Well.objects.filter(plate_id=plate_id)
     well = get_object_or_404(Well, id=well_id)
+    plate = get_object_or_404(Plate, id=plate_id)
 
     formPlateAdd = PlateForm()
-    formWellAdd = WellForm(initial={'plate': plate_id})
+    formWellAdd = WellForm(initial={'plate': plate.id})
     formWellUpdate = WellForm(instance=well)
 
     layout, colnames, plate = plate_layout(plate_id, all_wells)
 
-    if request.method == 'POST':
-        plate = get_object_or_404(Plate, id=plate_id)
-        formWellAdd = WellForm(request.POST, request.FILES)
-        formWellUpdate = WellForm(request.POST, request.FILES, instance=well)
-
+    print(plate.name)
+    if 'add_well' in request.POST:
+        formWellAdd = WellForm(request.POST, request.FILES, initial={'plate': plate.id})
         if formWellAdd.is_valid():
             new_well = formWellAdd.save()
             well = get_object_or_404(Well, id=new_well.id)
             return redirect('db:well', plate.id, well.id)
 
-        elif formWellUpdate.is_valid():
+    elif 'update_well' in request.POST:
+        formWellUpdate = WellForm(request.POST, request.FILES, instance=well)
+        if formWellUpdate.is_valid():
             edit_well = formWellUpdate.save()
             well = get_object_or_404(Well, id=edit_well.id)
             return redirect('db:well', plate.id, well.id)
@@ -224,15 +224,16 @@ def well_add(request, plate_id):
 @login_required()
 def well_update(request, plate_id, well_id):
     well = get_object_or_404(Well, id=well_id)
+    plate = get_object_or_404(Plate, id=plate_id)
+    form = WellForm(instance=well)
+
     if request.method == 'POST':
-        plate = get_object_or_404(Plate, id=plate_id)
-        form = WellForm(request.POST, request.FILES, instance=well)
         if form.is_valid():
             edit_well = form.save()
             well = get_object_or_404(Well, id=edit_well.id)
             return redirect('db:well', plate.id, well.id)
-    else:
-        form = WellForm()
+    # else:
+    #     form = WellForm(instance=well)
 
     return render(request, 'db/index.html', {'form_update_well': form})
 
