@@ -173,15 +173,14 @@ def well(request, plate_id, well_id):
 
     layout, colnames, plate = plate_layout(plate_id, all_wells)
 
-    print(plate.name)
-    if 'add_well' in request.POST:
+    if 'form_add_well' in request.POST:
         formWellAdd = WellForm(request.POST, request.FILES, initial={'plate': plate.id})
         if formWellAdd.is_valid():
             new_well = formWellAdd.save()
             well = get_object_or_404(Well, id=new_well.id)
             return redirect('db:well', plate.id, well.id)
 
-    elif 'update_well' in request.POST:
+    elif 'form_update_well' in request.POST:
         formWellUpdate = WellForm(request.POST, request.FILES, instance=well)
         if formWellUpdate.is_valid():
             edit_well = formWellUpdate.save()
