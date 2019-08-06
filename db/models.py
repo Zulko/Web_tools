@@ -1,6 +1,8 @@
 # Create sql to do migration -> python manage.py makemigrations db
 # Then, make the migrate -> python manage.py migrate
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
+from django.utils import timezone
 
 import libs.misc.calc as calc
 
@@ -22,23 +24,23 @@ class Plate(models.Model):
     )
 
     def get_barcode():
-        num = Plate.objects.latest('id').id
-        if num is None:
-            num = 1
-            return '{0:07}'.format(num)
-        else:
+        try:
+            num = Plate.objects.latest('id').id
             num += 1
+            return '{0:07}'.format(num)
+        except ObjectDoesNotExist:
+            num = 1
             return '{0:07}'.format(num)
 
     def get_name():
-        num = Plate.objects.latest('id').id
-        if num is None:
-            num = 1
-            name = 'Plate_' + '{0:07}'.format(1)
-            return name
-        else:
+        try:
+            num = Plate.objects.latest('id').id
             num += 1
             name = 'Plate_' + '{0:07}'.format(num)
+            return name
+        except ObjectDoesNotExist:
+            num = 1
+            name = 'Plate_' + '{0:07}'.format(1)
             return name
 
     name = models.CharField(max_length=50, unique=True, default=get_name)
@@ -49,7 +51,7 @@ class Plate(models.Model):
     num_well = models.IntegerField()
     active = models.BooleanField(default=True)
     status = models.CharField(max_length=1, choices=STATUS, blank=True)
-    created_at = models.DateField(auto_now_add=True)
+    created_at = models.DateField(auto_now_add=True, editable=False)
     updated_at = models.DateField(auto_now=True)
 
     class Meta:
@@ -119,8 +121,8 @@ class Sample(models.Model):
         ('Y', 'Yeast'),
     )
     DIRECTION = (
-        ('F', 'Forward'),
-        ('R', 'Reverse'),
+        ('FWD', 'Forward'),
+        ('REV', 'Reverse'),
     )
     STRAND = (
         ('+', 'Positive'),
@@ -131,17 +133,17 @@ class Sample(models.Model):
     name = models.CharField('Name', max_length=50, unique=True)
     alias = models.CharField(max_length=50)
     sample_type = models.CharField(max_length=50, choices=SAMPLE_TYPES, default=SAMPLE_TYPES[4][0])
-    description = models.CharField(max_length=100, blank=True)
+    description = models.CharField(max_length=500, blank=True)
     project = models.CharField(max_length=30, choices=PROJECT, blank=True)  # Multi select option
     author = models.CharField(max_length=50, blank=True)
     sequence = models.CharField(max_length=10000, blank=True)
     length = models.IntegerField(blank=True, null=True)
     genbank = models.FileField(upload_to='gb_files/', max_length=10000, blank=True)
     source_reference = models.CharField(max_length=30, blank=True)
-    comments = models.CharField(max_length=100, blank=True)
-    created_at = models.DateField(auto_now_add=True)
+    comments = models.CharField(max_length=500, blank=True)
+    created_at = models.DateField(default=timezone.now)
     updated_at = models.DateField(auto_now=True)
-    parent_id = models.IntegerField(blank=True, null=True)  # ID of a sample that was used to originated other
+    parent_id = models.ForeignKey('Sample', null=True, blank=True, on_delete=models.SET_NULL)
     organism = models.CharField(max_length=1, choices=ORGANISM, blank=True)
     genus_specie = models.CharField(max_length=50, blank=True)
     marker = models.CharField(max_length=50, blank=True)
@@ -166,7 +168,7 @@ class Sample(models.Model):
     end = models.CharField(max_length=1, choices=END_TYPES, blank=True)
 
     # Primer option
-    direction = models.CharField(max_length=1, choices=DIRECTION, blank=True)
+    direction = models.CharField(max_length=3, choices=DIRECTION, blank=True)
     tm = models.IntegerField(null=True, blank=True)
 
     # Meta Class
@@ -204,7 +206,7 @@ class Well(models.Model):
     samples = models.ManyToManyField(Sample)
     active = models.BooleanField(default=True)
     status = models.CharField(max_length=1, choices=STATUS, blank=True)
-    # parent_well = models.ForeignKey(Well, )
+    parent_well = models.ForeignKey('Well', null=True, blank=True, on_delete=models.SET_NULL)
 
     class Meta:
         ordering = ('name', 'plate',)

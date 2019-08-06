@@ -23,6 +23,7 @@ urlpatterns = [
     path('view_sample/', views.samples_list, name='samples_list'),
     path('view_sample/<int:sample_id>', views.sample, name='sample'),
     path('add_sample/', views.add_sample, name='sample_add'),
+    path('add_sample_file/', views.add_file_sample, name='sample_file_add'),
     path('export_sample/export', views.sample_export, name='sample_export'),
     path('delete/sample<int:sample_id>/', views.sample_delete, name='sample_delete'),
     path('update/sample<int:sample_id>/', views.sample_update, name='sample_update'),

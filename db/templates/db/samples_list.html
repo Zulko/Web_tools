@@ -16,8 +16,8 @@
             </form>
           </fieldset>
 
+            <!-- Modal button to add sample -->
             <div align="right">
-            <!-- Modal button to add sample on inventory -->
             <button type="button" class="btn btn-info" style="float:right" data-toggle="modal" data-target="#add_sample"> <i class="fas fa-plus-circle"></i> Add sample </button>
             </div>
             <div class="modal fade" id="add_sample" tabindex="-1" role="dialog" aria-labelledby="add_sampleLabel" aria-hidden="true">
@@ -30,36 +30,44 @@
                     </button>
                   </div>
 
-                  <form id="form_plate" method="post" enctype="multipart/form-data">{% csrf_token %}
+                    <!-- Add samples modal page -->
                     <div class="modal-body">
                         <div role="tabpanel">
+                        <!-- Tab list to add samples -->
                         <ul class="nav nav-tabs" role="tablist">
                             <li class="nav-item" role="presentation" ><a class="nav-link active" href="#add_sampleTab" aria-controls="add_sampleTab" role="tab" data-toggle="tab">Add Sample Form</a></li>
                             <li class="nav-item" role="presentation"><a class="nav-link" href="#file_sampleTab" aria-controls="file_sampleTab" role="tab" data-toggle="tab">Add Sample File</a></li>
                         </ul><br>
                         <div class="tab-content">
-                            <div role="tabpanel" class="tab-pane active" id="add_sampleTab">{{ form_sample | bootstrap }}</div>
+                            <div role="tabpanel" class="tab-pane active" id="add_sampleTab">
+                                <!-- Add samples using a form -->
+                                <form id="form_add_sample" method="post" enctype="multipart/form-data">{% csrf_token %}
+                                {{ form_sample | bootstrap }}<br>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" action="{% url 'db:sample_add' %}" class="btn btn-info">Add</button>
+                                </div>
+                                </form>
+                            </div>
                             <div role="tabpanel" class="tab-pane" id="file_sampleTab">
+                                <!-- Add samples using a form -->
+                                <form id="form_submit_file" method="post" enctype="multipart/form-data">{% csrf_token %}
                                 <div class="form-row align-items-center"><br><br>
                                     <div class="col-auto"></div>
                                     <div class="col">
                                         <input type="file" class="form-control-file border" name="upload_file_samples">
                                     </div>
-                                    <div class="col-right">
-                                        <button class="btn btn-secondary" type="submit">
-                                            <i class="fas fa-file-import"></i> Update
-                                        </button>
-                                    </div>
+                                    <div class="col-auto"></div>
+                                </div><br>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" name="upload_file_samples" action="{% url 'db:sample_file_add' %}" class="btn btn-info">Add</button>
                                 </div>
+                                </form>
                             </div>
                         </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" action="{% url 'db:sample_add' %}" class="btn btn-info">Add</button>
-                    </div>
-                  </form>
                 </div>
               </div>
             </div>
@@ -69,9 +77,10 @@
       <div class="col-10">
         <div align="right">
           <a href="{% url 'db:sample_export' %}" class="btn btn-info"> <i class="fas fa-file-export"></i> Export data </a>
-        </div><br>
+        </div>
 
           <font size="2">
+          <!-- Details of samples in inventory -->
           {% if sample %}
             <div class="info">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
@@ -93,7 +102,7 @@
                 </div>
             </div>
             </font>
-                    <!-- Modal button to delete sample on inventory -->
+                    <!-- Modal button to delete sample -->
                     <div class="modal fade" id="deletesample" tabindex="-1" role="dialog" aria-labelledby="delete_sampleLabel" aria-hidden="true">
                       <div class="modal-dialog" role="document">
                         <div class="modal-content">
@@ -121,7 +130,7 @@
                       </div>
                     </div>
 
-                    <!-- Modal button to update sample on inventory -->
+                    <!-- Modal button to update sample -->
                     <div class="modal fade" id="update_sample" tabindex="-1" role="dialog" aria-labelledby="update_sampleLabel" aria-hidden="true">
                       <div class="modal-dialog modal-lg" role="document">
                         <div class="modal-content">
@@ -136,7 +145,6 @@
                             <div class="modal-body">
                                 {% csrf_token %}
                                 {{ form_sample_update | bootstrap }}
-
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -149,6 +157,7 @@
           {% endif %}
 
           <br>
+         <!-- Table list of samples -->
          <font size="2">
          <table id="sample_list_table" class="table table-hover table-striped table-sm" cellspacing="0" width="100%">
               <thead>

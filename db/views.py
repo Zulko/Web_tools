@@ -91,15 +91,14 @@ def plate_view(request, plate_id):
     formWellAdd = WellForm(initial={'plate': plate.id})
 
     if request.method == 'POST':
-        plate = get_object_or_404(Plate, id=plate_id)
         formPlate = PlateForm(request.POST, request.FILES)
-        formWell = WellForm(request.POST, request.FILES, initial={'plate': plate.id})
+        formWell = WellForm(request.POST, request.FILES)
         if formPlate.is_valid():
             new_plate = formPlate.save()
             return redirect('db:plate', new_plate.id)
         elif formWell.is_valid():
             new_well = formWell.save()
-            well = get_object_or_404(Well, id=new_well.id, initial={'plate': plate.id})
+            well = get_object_or_404(Well, id=new_well.id)
             return redirect('db:well', plate.id, well.id)
     try:
         all_wells = Well.objects.filter(plate_id=plate_id)
@@ -286,7 +285,18 @@ def samples_list(request):
             update_sample = formSampleUpdate.save()
             sample = get_object_or_404(Sample, id=update_sample.id)
             return redirect('db:sample', sample.id)
+        elif 'upload_file_samples' in request.POST:
+            samples_resources = SampleResource()
+            dataset = Dataset()
+            new_samples = request.FILES['upload_file_samples']
+            imported_data = dataset.load(new_samples.read().decode('utf-8'), format='csv')
+            result = samples_resources.import_data(imported_data, dry_run=True, raise_errors=True, collect_failed_rows=True)
 
+            if not result.has_errors():
+                samples_resources.import_data(imported_data, dry_run=False)
+            else:
+                print(result.invalid_rows)
+            return redirect('db:samples_list')
 
     context = {
         'form_sample': formSampleView,
@@ -300,6 +310,7 @@ def samples_list(request):
 
 @login_required()
 def sample(request, sample_id):
+
     all_samples = Sample.objects.all()
     sample_filter = SampleFilter(request.GET, queryset=all_samples)
     sample = Sample.objects.get(id=sample_id)
@@ -319,6 +330,18 @@ def sample(request, sample_id):
             update_sample = formSampleUpdate.save()
             sample = get_object_or_404(Sample, id=update_sample.id)
             return redirect('db:sample', sample.id)
+        elif 'upload_file_samples' in request.POST:
+            samples_resources = SampleResource()
+            dataset = Dataset()
+            new_samples = request.FILES['upload_file_samples']
+            imported_data = dataset.load(new_samples.read().decode('utf-8'), format='csv')
+            result = samples_resources.import_data(imported_data, dry_run=True, raise_errors=True, collect_failed_rows=True)
+
+            if not result.has_errors():
+                samples_resources.import_data(imported_data, dry_run=False)
+            else:
+                print(result.invalid_rows)
+            return redirect('db:samples_list')
 
     context = {
         'form_sample': formSampleView,
@@ -369,6 +392,24 @@ def sample_update(request, sample_id):
     return render(request, 'db/samples_list.html')
 
 
+@login_required()
+def add_file_sample(request):
+    if request.method == 'POST':
+        samples_resources = SampleResource()
+        dataset = Dataset()
+        new_samples = request.FILES['upload_file_samples']
+        imported_data = dataset.load(new_samples.read().decode('utf-8'), format='csv')
+        result = samples_resources.import_data(imported_data, dry_run=True, raise_errors=True, collect_failed_rows=True)
+
+        if not result.has_errors():
+            samples_resources.import_data(imported_data, dry_run=False)
+        else:
+            print(result.invalid_rows)
+        return redirect('db:samples_list')
+    else:
+        formSample = SampleForm()
+
+    return render(request, 'db/samples_list.html')
 
 # @login_required()
 # def create_sample(request):

@@ -7,6 +7,7 @@ class SampleResource(resources.ModelResource):
     #     return self.fields['delete'].clean(row)
     class Meta:
         model = Sample
+        exclude = ('created_at', 'updated_at')
         skip_unchanged = True
         report_skipped = False
 
