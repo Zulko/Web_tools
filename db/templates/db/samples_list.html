@@ -1,10 +1,10 @@
 {% extends 'base_layout.html' %}
+{% load static from staticfiles %}
 {% load bootstrap %}
 
 
 {% block content %}
     <div class="row">
-
       <div class="col-2">
       <h5>Search Samples</h5>
           <fieldset class="form-group" style="padding: 20px 20px 20px 20px">
@@ -45,7 +45,7 @@
                                 {{ form_sample | bootstrap }}<br>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="submit" action="{% url 'db:sample_add' %}" class="btn btn-info">Add</button>
+                                    <button type="submit" name="form_add_sample" action="{% url 'db:sample_add' %}" class="btn btn-info">Add</button>
                                 </div>
                                 </form>
                             </div>
@@ -60,7 +60,8 @@
                                     <div class="col-auto"></div>
                                 </div><br>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <a class="btn btn-secondary mr-auto" href="{% static 'docs/import_sample_file.csv' %}" target="_blank" download> Sample File </a>
+                                    <button type="button" class="btn btn-secondary " data-dismiss="modal">Close</button>
                                     <button type="submit" name="upload_file_samples" action="{% url 'db:sample_file_add' %}" class="btn btn-info">Add</button>
                                 </div>
                                 </form>
@@ -71,18 +72,16 @@
                 </div>
               </div>
             </div>
-
       </div>
 
       <div class="col-10">
         <div align="right">
           <a href="{% url 'db:sample_export' %}" class="btn btn-info"> <i class="fas fa-file-export"></i> Export data </a>
         </div>
-
           <font size="2">
           <!-- Details of samples in inventory -->
           {% if sample %}
-            <div class="info">
+            <div class="info" style="margin: 10px 0px 10px 0px" >
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
                     {{ sample.name }}
                     {% if wells %}
@@ -148,7 +147,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="submit" action="{% url 'db:sample_update' sample.id %}" class="btn btn-warning">Update</button>
+                                <button type="submit" name= "form_update_sample" action="{% url 'db:sample_update' sample.id %}" class="btn btn-warning">Update</button>
                             </div>
                           </form>
                         </div>
@@ -156,9 +155,9 @@
                     </div>
           {% endif %}
 
-          <br>
          <!-- Table list of samples -->
          <font size="2">
+         {{ form_sample.errors }}
          <table id="sample_list_table" class="table table-hover table-striped table-sm" cellspacing="0" width="100%">
               <thead>
                 <tr class="table-dark text-dark">
@@ -172,7 +171,7 @@
                 <th class="th-sm">Genbank</th>
                 <th class="th-sm">Reference</th>
                 <th class="th-sm">Comments</th>
-{#                <th>Parent</th>#}
+                <th class="th-sm">Parent</th>
                 <th class="th-sm">Organism</th>
                 <th class="th-sm">Specie</th>
                 <th class="th-sm">Marker</th>
@@ -206,17 +205,21 @@
                         <td>{{ sample.description }}</td>
                         <td>{{ sample.project }}</td>
                         <td>{{ sample.author }}</td>
-                        <td>{% if sample.length is not None %}
-                            {{ sample.length }}
-                            {% else %}
-                            {% endif %}</td>
+                        <td>{% if sample.length is not None %} {{ sample.length }} {% else %}  {# Left blank instead of None#}{% endif %}</td>
+
                         {% if sample.genbank %}
                             <td><a href="{{ sample.genbank.url }}" style="font-size: 12px;" class="btn btn-outline-secondary btn-sm m-0;" target="_blank">File</a></td>
-                            {% else %}
-                                <td> {{ sample.genbank }} </td>
+                        {% else %} {# Left blank instead of None#}
+                            <td> {{ sample.genbank }} </td>
                         {% endif %}
+
                         <td>{{ sample.reference }}</td>
                         <td>{{ sample.comments }}</td>
+                        <td>{% if sample.parent_id is not None %}
+                            <a href="{% url 'db:sample' sample.parent_id.id %}" style="font-size: 12px;" class="btn btn-outline-secondary btn-sm m-0;"> {{ sample.parent_id }}</a>
+                            {% else %}  {# Left blank instead of None#}
+                            {% endif %}</td>
+
                         <td>{{ sample.organism }}</td>
                         <td>{{ sample.genus_specie }}</td>
                         <td>{{ sample.marker }}</td>
@@ -229,7 +232,13 @@
                         <td>{{ sample.order_number }}</td>
                         <td>{{ sample.part_type }}</td>
                         <td>{{ sample.moclo_type }}</td>
-                        <td>{{ sample.sub_sample_id }}</td>
+                        <td>{% if sample.child_sample is not None %}
+                            {% for child in sample.child_sample.all %}
+                            {{ child.name }}
+{#                        <a href="{% url 'db:sample' sample.sub_sample_id.id %}" style="font-size: 12px;" class="btn btn-outline-secondary btn-sm m-0;"> {{ sample.sub_sample_id.name }}</a>#}
+                            {% endfor %}
+                        {% else %}  {# Left blank instead of None
+                            {% endif %}</td>
                         <td>{{ sample.end }}</td>
                         <td>{{ sample.direction }}</td>
                         <td>{{ sample.tm }}</td>
@@ -237,18 +246,12 @@
                         <td>{{ sample.status }}</td>
                         <td>{{ sample.created_at }}</td>
                         <td>{{ sample.updated_at }}</td>
-{#                        <td> <button type="submit" class="btn btn-outline-danger btn-sm">#}
-{#                                <i class="fas fa-trash-alt" style="font-size:15px;"></i>#}
-{#                             </button>#}
-{#                            <button type="submit" class="btn btn-outline-warning btn-sm">#}
-{#                                <i class="far fa-edit" style="font-size:10px;"></i>#}
-{#                            </button></td>#}
                     </tr>
                   {% endfor %}
               </tbody>
          </table>
 
-        </font>
+         </font>
       </div>
     </div>
 
@@ -257,7 +260,7 @@
         $('#sample_list_table').DataTable({
             "scrollX": true,
             searching: false,
-            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]]
+            lengthMenu: [[5, 10, 50, 100, -1], [5, 10, 50, 100, "All"]]
         });
 
         $('.dataTables_length').addClass('bs-select');

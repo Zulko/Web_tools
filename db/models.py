@@ -115,7 +115,6 @@ class Sample(models.Model):
         ('Ma', 'Marker'),
         ('Mi', 'Miscellaneous'),
     )
-
     ORGANISM = (
         ('H', 'Human'),
         ('Y', 'Yeast'),
@@ -162,7 +161,7 @@ class Sample(models.Model):
     # Plasmid or Primer options
     # Plasmid has parts
     # Primer has linkers
-    sub_sample_id = models.IntegerField(null=True, blank=True)  # Multi select option
+    sub_sample_id = models.ManyToManyField('Sample', related_name='child_sample')  # Multi select option
 
     # Linker options
     end = models.CharField(max_length=1, choices=END_TYPES, blank=True)
@@ -210,6 +209,7 @@ class Well(models.Model):
 
     class Meta:
         ordering = ('name', 'plate',)
+        unique_together = ('name', 'plate')
 
     def __str__(self):
         return self.name

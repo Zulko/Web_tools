@@ -16,10 +16,8 @@
             </form>
           </fieldset><br>
 
-
       <!-- List of plates on inventory -->
       <h5>List of Plates
-
         <!-- Modal button to add plate on inventory -->
         <button type="button" class="btn btn-info" style="float:right" data-toggle="modal" data-target="#add_plate"> <i class="fas fa-plus-circle"></i> Add plate </button>
 
@@ -90,6 +88,7 @@
       <div class="col-8">
             <!-- Selected Plate layout from Plate list -->
             {% if plate %}
+                {{ form_add_well.errors }}
                 <h5>{{ plate.name }} <a href="#" class="btn btn-warning btn-sm disabled"> <i class="fas fa-info-circle"></i></a>
                 <div align="right">
                     <a href="#" class="btn btn-warning disabled"> <i class="fas fa-edit"></i> Update </a>

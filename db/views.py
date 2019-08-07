@@ -272,34 +272,38 @@ def sample_delete(request, sample_id):
 def samples_list(request):
     all_samples = Sample.objects.all()
     sample_filter = SampleFilter(request.GET, queryset=all_samples)
-    formSampleView = SampleForm()
+    formSampleAdd = SampleForm()
     formSampleUpdate = SampleForm()
 
-    if request.method == 'POST':
-        formSampleView = SampleForm(request.POST or None, request.FILES or None)
-        if formSampleView.is_valid():
-            new_sample = formSampleView.save()
+    if 'form_add_well' in request.POST:
+        formSampleAdd = SampleForm(request.POST, request.FILES)
+        if formSampleAdd.is_valid():
+            new_sample = formSampleAdd.save()
             sample = get_object_or_404(Sample, id=new_sample.id)
             return redirect('db:sample', sample.id)
-        elif formSampleUpdate.is_valid():
+
+    elif 'form_update_sample' in request.POST:
+        formSampleUpdate = SampleForm(request.POST, request.FILES)
+        if formSampleUpdate.is_valid():
             update_sample = formSampleUpdate.save()
             sample = get_object_or_404(Sample, id=update_sample.id)
             return redirect('db:sample', sample.id)
-        elif 'upload_file_samples' in request.POST:
-            samples_resources = SampleResource()
-            dataset = Dataset()
-            new_samples = request.FILES['upload_file_samples']
-            imported_data = dataset.load(new_samples.read().decode('utf-8'), format='csv')
-            result = samples_resources.import_data(imported_data, dry_run=True, raise_errors=True, collect_failed_rows=True)
 
-            if not result.has_errors():
-                samples_resources.import_data(imported_data, dry_run=False)
-            else:
-                print(result.invalid_rows)
-            return redirect('db:samples_list')
+    elif 'upload_file_samples' in request.POST:
+        samples_resources = SampleResource()
+        dataset = Dataset()
+        new_samples = request.FILES['upload_file_samples']
+        imported_data = dataset.load(new_samples.read().decode('utf-8'), format='csv')
+        result = samples_resources.import_data(imported_data, dry_run=True, raise_errors=True, collect_failed_rows=True)
+
+        if not result.has_errors():
+            samples_resources.import_data(imported_data, dry_run=False)
+        else:
+            print(result.invalid_rows)
+        return redirect('db:samples_list')
 
     context = {
-        'form_sample': formSampleView,
+        'form_sample': formSampleAdd,
         'form_sample_update': formSampleUpdate,
         "all_samples": all_samples,
         "filter": sample_filter

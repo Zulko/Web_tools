@@ -5,7 +5,7 @@ from .models import File, Sample, Plate, Well
 class FileForm(forms.ModelForm):
     class Meta:
         model = File
-        fields = ('name', 'script', 'author', 'file')
+        fields = ['name', 'script', 'author', 'file']
 
 
 class SampleForm(forms.ModelForm):
