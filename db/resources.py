@@ -11,7 +11,7 @@ class SampleResource(resources.ModelResource):
     sub_sample_id = fields.Field(
         column_name='sub_sample_id',
         attribute='sub_sample_id',
-        widget=widgets.ForeignKeyWidget(Sample, 'name')
+        widget=widgets.ManyToManyWidget(Sample, field='name')
     )
 
     class Meta:

@@ -205,7 +205,7 @@
                         <td>{{ sample.description }}</td>
                         <td>{{ sample.project }}</td>
                         <td>{{ sample.author }}</td>
-                        <td>{% if sample.length is not None %} {{ sample.length }} {% else %}  {# Left blank instead of None#}{% endif %}</td>
+                        <td>{% if sample.length is not None %} {{ sample.length }} {% endif %}</td>
 
                         {% if sample.genbank %}
                             <td><a href="{{ sample.genbank.url }}" style="font-size: 12px;" class="btn btn-outline-secondary btn-sm m-0;" target="_blank">File</a></td>
@@ -217,9 +217,7 @@
                         <td>{{ sample.comments }}</td>
                         <td>{% if sample.parent_id is not None %}
                             <a href="{% url 'db:sample' sample.parent_id.id %}" style="font-size: 12px;" class="btn btn-outline-secondary btn-sm m-0;"> {{ sample.parent_id }}</a>
-                            {% else %}  {# Left blank instead of None#}
                             {% endif %}</td>
-
                         <td>{{ sample.organism }}</td>
                         <td>{{ sample.genus_specie }}</td>
                         <td>{{ sample.marker }}</td>
@@ -232,16 +230,10 @@
                         <td>{{ sample.order_number }}</td>
                         <td>{{ sample.part_type }}</td>
                         <td>{{ sample.moclo_type }}</td>
-                        <td>{% if sample.child_sample is not None %}
-                            {% for child in sample.child_sample.all %}
-                            {{ child.name }}
-{#                        <a href="{% url 'db:sample' sample.sub_sample_id.id %}" style="font-size: 12px;" class="btn btn-outline-secondary btn-sm m-0;"> {{ sample.sub_sample_id.name }}</a>#}
-                            {% endfor %}
-                        {% else %}  {# Left blank instead of None
-                            {% endif %}</td>
+                        <td>{{ sample.subsample_names }}</td>
                         <td>{{ sample.end }}</td>
                         <td>{{ sample.direction }}</td>
-                        <td>{{ sample.tm }}</td>
+                        <td>{% if sample.tm is not None %}{{ sample.tm }}{% endif %}</td>
                         <td>{{ sample.active }}</td>
                         <td>{{ sample.status }}</td>
                         <td>{{ sample.created_at }}</td>

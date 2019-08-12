@@ -161,7 +161,7 @@ class Sample(models.Model):
     # Plasmid or Primer options
     # Plasmid has parts
     # Primer has linkers
-    sub_sample_id = models.ManyToManyField('Sample', related_name='child_sample')  # Multi select option
+    sub_sample_id = models.ManyToManyField('Sample', blank=True, related_name='subsample', unique=False)  # Multi select option
 
     # Linker options
     end = models.CharField(max_length=1, choices=END_TYPES, blank=True)
@@ -188,6 +188,9 @@ class Sample(models.Model):
             num += 1
             name = self.sample_type + '{0:07}'.format(num)
             return name
+
+    def subsample_names(self):
+        return '\n'.join([a.name for a in self.sub_sample_id.all()])
 
 
 class Well(models.Model):
