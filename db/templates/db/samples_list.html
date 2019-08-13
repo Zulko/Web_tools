@@ -206,13 +206,10 @@
                         <td>{{ sample.project }}</td>
                         <td>{{ sample.author }}</td>
                         <td>{% if sample.length is not None %} {{ sample.length }} {% endif %}</td>
-
                         {% if sample.genbank %}
                             <td><a href="{{ sample.genbank.url }}" style="font-size: 12px;" class="btn btn-outline-secondary btn-sm m-0;" target="_blank">File</a></td>
-                        {% else %} {# Left blank instead of None#}
-                            <td> {{ sample.genbank }} </td>
+                        {% else %} <td> {{ sample.genbank }} </td>
                         {% endif %}
-
                         <td>{{ sample.reference }}</td>
                         <td>{{ sample.comments }}</td>
                         <td>{% if sample.parent_id is not None %}
@@ -223,7 +220,10 @@
                         <td>{{ sample.marker }}</td>
                         <td>{{ sample.application }}</td>
                         <td>{{ sample.strategy }}</td>
-                        <td>{{ sample.seq_verified }}</td>
+                        {% if sample.seq_verified %}
+                        <td><a href="{{ sample.seq_verified.url }}" style="font-size: 12px;" class="btn btn-outline-secondary btn-sm m-0;" target="_blank"> File </a></td>
+                        {% else %} <td>{{ sample.seq_verified }}</td>
+                        {% endif %}
                         <td>{{ sample.origin_rep }}</td>
                         <td>{{ sample.cloning_system }}</td>
                         <td>{{ sample.strand }}</td>
@@ -247,7 +247,6 @@
       </div>
     </div>
 
-
       <script type="text/javascript">
         $('#sample_list_table').DataTable({
             "scrollX": true,
@@ -257,8 +256,6 @@
 
         $('.dataTables_length').addClass('bs-select');
       </script>
-
-
 
 {% endblock%}
 

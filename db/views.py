@@ -294,8 +294,9 @@ def samples_list(request):
         dataset = Dataset()
         new_samples = request.FILES['upload_file_samples']
         imported_data = dataset.load(new_samples.read().decode('utf-8'), format='csv')
+        print(imported_data)
         result = samples_resources.import_data(imported_data, dry_run=True, raise_errors=True, collect_failed_rows=True)
-
+        print(result)
         if not result.has_errors():
             samples_resources.import_data(imported_data, dry_run=False)
         else:
