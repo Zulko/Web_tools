@@ -10,7 +10,9 @@ urlpatterns = [
     path('', views.plate_list, name='index'),
     path('plate<int:plate_id>/', views.plate_view, name='plate'),
     path('add_plate/', views.plate_add, name='plate_add'),
+    path('add_plate_file/', views.plate_add_file, name='plate_file_add'),
     path('export/plate<int:plate_id>/', views.plate_export, name='plate_export'),
+    path('update/plate<int:plate_id>/', views.plate_update, name='plate_update'),
     path('delete/plate<int:plate_id>/', views.plate_delete, name='plate_delete'),
 
     # Wells views

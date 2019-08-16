@@ -1,4 +1,5 @@
 {% extends 'base_layout.html' %}
+{% load static from staticfiles %}
 {% load bootstrap %}
 
 {% block content %}
@@ -37,12 +38,12 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" action="{% url 'db:plate_add' %}" class="btn btn-info">Add</button>
+                        <button type="submit" name="submit_plate_add" action="{% url 'db:plate_add' %}" class="btn btn-info">Add</button>
                     </div>
                   </form>
                 </div>
               </div>
-            </div>
+        </div>
       </h5><br>
 
         <!-- Table with list of plates on inventory -->
@@ -91,11 +92,64 @@
                 {{ form_add_well.errors }}
                 <h5>{{ plate.name }} <a href="#" class="btn btn-warning btn-sm disabled"> <i class="fas fa-info-circle"></i></a>
                 <div align="right">
-                    <a href="#" class="btn btn-warning disabled"> <i class="fas fa-edit"></i> Update </a>
+                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#update_plate"> <i class="fas fa-edit"></i> Update </button>
                     <a href="{% url 'db:plate_export' plate.id %}" class="btn btn-info"> <i class="fas fa-file-export"></i> Export </a>
                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete_plate"> <i class="fas fa-trash-alt"></i> Delete </button>
                 </div>
                 </h5>
+                <!-- Modal toggle to update plate -->
+                <div class="modal fade" id="update_plate" tabindex="-1" role="dialog" aria-labelledby="update_plateLabel" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="update_plateLabel">Update Plate: {{ plate.name }}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <!-- Modal toggle to update plate -->
+                      <div class="modal-body">
+                        <div role="tabpanel">
+                        <!-- Tab list to update plate -->
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li class="nav-item" role="presentation" ><a class="nav-link active" href="#update_plateTab" aria-controls="add_sampleTab" role="tab" data-toggle="tab">Update Plate Form</a></li>
+                                <li class="nav-item" role="presentation"><a class="nav-link" href="#file_update_plateTab" aria-controls="file_update_plateTab" role="tab" data-toggle="tab">Update Plate File</a></li>
+                            </ul><br>
+                            <div class="tab-content">
+                                <div role="tabpanel" class="tab-pane active" id="update_plateTab">
+                                <!-- Update plate using a form -->
+                                    <form id="form_update_plate" method="post" enctype="multipart/form-data">{% csrf_token %}
+                                        {{ form_plate_update | bootstrap }}<br>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="submit" name="submit_plate_update" action="{% url 'db:plate_update' plate.id %}" class="btn btn-info">Update</button>
+                                    </div>
+                                    </form>
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="file_update_plateTab">
+                                <!-- Update plate using a form -->
+                                    <form id="form_submit_file" method="post" enctype="multipart/form-data">{% csrf_token %}
+                                        <div class="form-row align-items-center"><br><br>
+                                            <div class="col-auto"></div>
+                                            <div class="col">
+                                                <input type="file" class="form-control-file border" name="upload_file_plate">
+                                            </div>
+                                            <div class="col-auto"></div>
+                                        </div><br>
+                                    <div class="modal-footer">
+                                        <a class="btn btn-secondary mr-auto" href="{% static 'docs/import_plate_file.csv' %}" target="_blank" download> Plate File </a>
+                                        <button type="button" class="btn btn-secondary " data-dismiss="modal">Close</button>
+                                        <button type="submit" name="upload_file_plate" action="{% url 'db:plate_file_add' %}" class="btn btn-info">Update</button>
+                                    </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <!-- Modal toggle to delete plate -->
                     <div class="modal fade" id="delete_plate" tabindex="-1" role="dialog" aria-labelledby="delete_plateLabel" aria-hidden="true">
                       <div class="modal-dialog" role="document">
@@ -112,7 +166,7 @@
                           <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                           <form method="POST" action="{% url 'db:plate_delete' plate.id %}">{% csrf_token %}
-                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <button type="submit" name="submit_delete_plate" class="btn btn-danger">Delete</button>
                           </form>
                           </div>
                         </div>
@@ -153,7 +207,7 @@
                                         </div>
                                       <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="submit" name="form_add_well" action="{% url 'db:well_add' plate.id %}" class="btn btn-info">Add</button>
+                                        <button type="submit" name="submit_add_well" action="{% url 'db:well_add' plate.id %}" class="btn btn-info">Add</button>
                                       </div>
                                       </form>
                                     </div>
@@ -207,7 +261,7 @@
                             </div>
                           <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" name="form_update_well" action="{% url 'db:well_update' well.plate.id well.id %}" class="btn btn-warning">Update</button>
+                            <button type="submit" name="submit_update_well" action="{% url 'db:well_update' well.plate.id well.id %}" class="btn btn-warning">Update</button>
                           </div>
                           </form>
                         </div>
@@ -230,7 +284,7 @@
                           <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                           <form method="POST" action="{% url 'db:well_delete' well.plate.id well.id %}">{% csrf_token %}
-                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <button type="submit" name="submit_delete_well" class="btn btn-danger">Delete</button>
                           </form>
                           </div>
                         </div>
@@ -242,7 +296,7 @@
                     <fieldset class="form-group overflow-auto">
                     {% for sample in well.samples.all %}
                         <a class="btn btn-info btn-block"
-                            data-toggle="collapse" href="#collapse" > {{ sample.name }} [{{ sample.alias }}]
+                            data-toggle="collapse" href="#collapse" > {{ sample }}
                             </a>
                             <div class="collapse" id="collapse">
                                 <table class="table table-hover ">

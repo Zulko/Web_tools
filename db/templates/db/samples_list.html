@@ -45,7 +45,7 @@
                                 {{ form_sample | bootstrap }}<br>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="submit" name="form_add_sample" action="{% url 'db:sample_add' %}" class="btn btn-info">Add</button>
+                                    <button type="submit" name="submit_add_sample" action="{% url 'db:sample_add' %}" class="btn btn-info">Add</button>
                                 </div>
                                 </form>
                             </div>
@@ -55,7 +55,7 @@
                                 <div class="form-row align-items-center"><br><br>
                                     <div class="col-auto"></div>
                                     <div class="col">
-                                        <input type="file" class="form-control-file border" name="upload_file_samples">
+                                        <input type="file" class="form-control-file border" name="upload_file_plate">
                                     </div>
                                     <div class="col-auto"></div>
                                 </div><br>
@@ -147,7 +147,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="submit" name= "form_update_sample" action="{% url 'db:sample_update' sample.id %}" class="btn btn-warning">Update</button>
+                                <button type="submit" name= "submit_update_sample" action="{% url 'db:sample_update' sample.id %}" class="btn btn-warning">Update</button>
                             </div>
                           </form>
                         </div>
@@ -158,7 +158,7 @@
          <!-- Table list of samples -->
          <font size="2">
          {{ form_sample.errors }}
-         <table id="sample_list_table" class="table table-hover table-striped table-sm" cellspacing="0" width="100%">
+         <table id="sample_list_table" class="table table-hover table-striped table-sm cell-border" cellspacing="0" width="100%">
               <thead>
                 <tr class="table-dark text-dark">
                 <th class="th-sm">Name</th>
@@ -210,7 +210,7 @@
                             <td><a href="{{ sample.genbank.url }}" style="font-size: 12px;" class="btn btn-outline-secondary btn-sm m-0;" target="_blank">File</a></td>
                         {% else %} <td> {{ sample.genbank }} </td>
                         {% endif %}
-                        <td>{{ sample.reference }}</td>
+                        <td>{{ sample.source_reference }}</td>
                         <td>{{ sample.comments }}</td>
                         <td>{% if sample.parent_id is not None %}
                             <a href="{% url 'db:sample' sample.parent_id.id %}" style="font-size: 12px;" class="btn btn-outline-secondary btn-sm m-0;"> {{ sample.parent_id }}</a>
@@ -230,7 +230,11 @@
                         <td>{{ sample.order_number }}</td>
                         <td>{{ sample.part_type }}</td>
                         <td>{{ sample.moclo_type }}</td>
-                        <td>{{ sample.subsample_names }}</td>
+                        <td>
+                            {% for sample in sample.sub_sample_id.all %}
+                                <a href="{% url 'db:sample' sample.id %}" style="font-size: 12px;" class="btn btn-outline-secondary btn-sm m-0;"> {{ sample }}</a>
+                            {% endfor %}
+                        </td>
                         <td>{{ sample.end }}</td>
                         <td>{{ sample.direction }}</td>
                         <td>{% if sample.tm is not None %}{{ sample.tm }}{% endif %}</td>
@@ -249,9 +253,10 @@
 
       <script type="text/javascript">
         $('#sample_list_table').DataTable({
+            columnDefs: [{ targets: -1, className: 't-body-center'}],
             "scrollX": true,
             searching: false,
-            lengthMenu: [[5, 10, 50, 100, -1], [5, 10, 50, 100, "All"]]
+            lengthMenu: [[5, 10, 50, 100, -1], [5, 10, 50, 100, "All"]],
         });
 
         $('.dataTables_length').addClass('bs-select');

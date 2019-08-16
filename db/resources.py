@@ -28,10 +28,15 @@ class SampleResource(resources.ModelResource):
 
 
 class PlateResource(resources.ModelResource):
+    name = fields.Field(
+        column_name='well',
+        attribute='name',
+    )
+
     plate = fields.Field(
         column_name='plate',
         attribute='plate',
-        widget=widgets.ForeignKeyWidget(Well, field='name')
+        widget=widgets.ForeignKeyWidget(Plate, field='name')
     )
     samples = fields.Field(
         column_name='samples',
@@ -40,10 +45,12 @@ class PlateResource(resources.ModelResource):
     )
 
     class Meta:
+        exclude = ('id',)
+        import_id_fields = ['name', 'plate']
         model = Well
         skip_unchanged = True
         fields = ('name', 'plate', 'samples', 'volume', 'concentration', 'active', 'status')
-        export_order = ('plate', 'name', 'samples', 'volume', 'concentration', 'active', 'status')
+        # export_order = ('plate', 'name', 'samples', 'volume', 'concentration', 'active', 'status')
 
 
 

@@ -12,6 +12,8 @@ from .models import Plate, Sample, Well, File
 
 @admin.register(Well)
 class WellAdmin(ImportExportModelAdmin):
+    list_display = ['name','plate']
+    ordering = ['plate','name']
     pass
 
 

@@ -116,8 +116,8 @@ class Sample(models.Model):
         ('Mi', 'Miscellaneous'),
     )
     ORGANISM = (
-        ('H', 'Human'),
-        ('Y', 'Yeast'),
+        ('Human', 'Human'),
+        ('Yeast', 'Yeast'),
     )
     DIRECTION = (
         ('FWD', 'Forward'),
@@ -138,12 +138,12 @@ class Sample(models.Model):
     sequence = models.CharField(max_length=10000, blank=True)
     length = models.IntegerField(blank=True, null=True)
     genbank = models.FileField(upload_to='gb_files/', max_length=10000, blank=True)
-    source_reference = models.CharField(max_length=30, blank=True)
+    source_reference = models.CharField(max_length=500, blank=True)
     comments = models.CharField(max_length=500, blank=True)
     created_at = models.DateField(default=timezone.now)
     updated_at = models.DateField(auto_now=True)
     parent_id = models.ForeignKey('Sample', null=True, blank=True, on_delete=models.SET_NULL)
-    organism = models.CharField(max_length=1, choices=ORGANISM, blank=True)
+    organism = models.CharField(max_length=50, choices=ORGANISM, blank=True)
     genus_specie = models.CharField(max_length=50, blank=True)
     marker = models.CharField(max_length=50, blank=True)
     application = models.CharField(max_length=50, blank=True)
@@ -216,6 +216,9 @@ class Well(models.Model):
 
     def __str__(self):
         return self.name
+
+    def sample_names(self):
+        return '\n'.join([a.name for a in self.samples.all()])
 
 
 class File(models.Model):
