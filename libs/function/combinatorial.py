@@ -1,5 +1,7 @@
+import itertools, csv, os
+from ..biofoundry import db
 from ..misc import file, calc
-import itertools, csv
+
 
 
 def get_combinations(parts):
@@ -22,7 +24,7 @@ def get_sets(parts_dct, header):
     return parts
 
 
-def run_combination(path, filename):
+def run_combination(path, filename, user):
     lists_parts = []
     lists_combination_parts = []
 
@@ -58,11 +60,16 @@ def run_combination(path, filename):
     num_combinations_in_list = calc.num_combinations(lists_combination_parts)
 
     """Write a output file"""
-    fileout = file.create(path+"/"+'combination_' + str(filename), 'w')
+    outfile_name = 'combination_' + str(filename)
+    fileout = file.create(path+"/docs/"+outfile_name, 'w')
     file.write_combinations(fileout, lists_combination_parts)
+    # outfile_name = os.path.basename(fileout)
+    # print(outfile_name)
+    db_outfile = db.save_file(outfile_name, 'Combinatorial', user)
+
     fileout.close()
 
-    return fileout, list_set_num_parts, num_combinations_in_list
+    return db_outfile, list_set_num_parts, num_combinations_in_list
 
 
 

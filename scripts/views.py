@@ -42,11 +42,12 @@ def spotting(request):
 # @login_required(login_url="/accounts/login/")
 def combinatorial(request):
     if request.method == "POST":
+        user = request.user
         if len(request.FILES) != 0:
             upload, fs, name, url = upload_file(request, 'myFile')
 
             ''' Calling Python Script'''
-            outfile, list_num_parts, list_num_combinations = run_combination(settings.MEDIA_ROOT, name)
+            outfile, list_num_parts, list_num_combinations = run_combination(settings.MEDIA_ROOT, name, user)
             if outfile is not None:
                 outfile_name = os.path.basename(outfile.name)
                 outfile_url = fs.url(outfile_name)
