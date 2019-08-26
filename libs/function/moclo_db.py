@@ -257,10 +257,8 @@ def verify_samples_volume(vol_for_part, count_unique_list, robot):
         for part in vol_for_part:
             sample_name, sample_type, sample_length, sample_concentration, sample_volume, sample_times_needed, vol_part_add, plate_in_name, wellD_name = part
             if part_name == sample_name:
-                print(part_name)
                 '''Calculate how many 'vol_part_add' have in the total volume in one well'''
                 available_vol = float(sample_volume) - robot.dead_vol
-                print(sample_volume, robot.dead_vol, available_vol)
                 '''total times per well'''
                 times_available = int(available_vol/vol_part_add)
                 '''total times in all database'''
@@ -270,7 +268,6 @@ def verify_samples_volume(vol_for_part, count_unique_list, robot):
                 if int(sample_times_needed) <= times_available:
                     list_source_wells.append([sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, times_available, vol_part_add, plate_in_name, wellD_name])
                     break
-        print(int(tot_times), int(times_needed))
         if int(tot_times) >= int(times_needed):
             for part in part_info:
                 sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, vol_part_add, plate_in_name, wellD_name = part
@@ -283,7 +280,6 @@ def verify_samples_volume(vol_for_part, count_unique_list, robot):
             for part in part_info:
                 sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, vol_part_add, plate_in_name, wellD_name = part
                 total_vol_part = times_needed*vol_part_add
-                print(total_vol_part, times_needed, vol_for_part, vol_part_add)
                 print('Not enough volume for sample: ' + str(part_name) + ' available: ' + str(sample_volume) + " need: " + str(round(total_vol_part+robot.dead_vol,2)))
                 alert.append(['Not enough volume for sample: ' + str(part_name) + ' available: ' + str(sample_volume) + " need: " + str(round(total_vol_part+robot.dead_vol,2))])
                 list_part_low_vol.append([sample_name, total_vol_part])
