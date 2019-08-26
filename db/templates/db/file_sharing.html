@@ -8,45 +8,39 @@
       </div>
 
       <div class="col-6">
-            <div class="column">
-                <h5> Temporary files </h5><br>
+        <div class="column">
+        <h5> Temporary files </h5><br>
+            <table id="file_list_table" class="table table-hover table-striped table-sm" cellspacing="0" width="100%">
+              <thead align="center">
+                <tr class="table-dark text-dark">
+                    <th>Name</th>
+                    <th>Script</th>
+                    <th>Created by</th>
+                    <th>Created at</th>
+                    <th>File</th>
+                    <th></th>
+                </tr>
+              </thead>
+            <tbody>
+            {% for file in files %}
+                <tr align="center">
+                    <td>{{ file.name }}</td>
+                    <td>{{ file.script }}</td>
+                    <td>{{ file.author }}</td>
+                    <td>{{ file.created_at }}</td>
+                    <td><a href="{{ file.file.url }}" class="btn btn-info btn-sm btn-block" target="_blank">Download File</a></td>
+                    <td><button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deletefile"> <i class="fas fa-trash-alt"></i></button></td>
+                </tr>
 
-                <table id="file_list_table" class="table table-hover table-striped table-sm" cellspacing="0" width="100%">
-                      <thead align="center">
-                        <tr class="table-dark text-dark">
-                        <th>Name</th>
-                        <th>Script</th>
-                        <th>Created by</th>
-                        <th>Created at</th>
-                        <th>File</th>
-                        <th></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-
-                        {% for file in files %}
-                            <tr align="center">
-                            <td>{{ file.name }}</td>
-                            <td>{{ file.script }}</td>
-                            <td>{{ file.author }}</td>
-                            <td>{{ file.created_at }}</td>
-                            <td>
-                                <a href="{{ file.file.url }}" class="btn btn-info btn-sm btn-block" target="_blank">Download File</a>
-                            </td>
-                            <td>
-                                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deletefile"> <i class="fas fa-trash-alt"></i></button>
-                            </td>
-                            </tr>
-
-                            <!-- Modal button to delete file on inventory -->
-                                <div class="modal fade" id="deletefile" tabindex="-1" role="dialog" aria-labelledby="delete_fileLabel" aria-hidden="true">
-                                  <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                      <div class="modal-header">
-                                        <h5 class="modal-title" id="delete_fileLabel">Delete File</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                          <span aria-hidden="true">&times;</span>
-                                        </button>
+                <!-- Modal button to delete file on inventory -->
+                <div class="modal fade" id="deletefile" tabindex="-1" role="dialog" aria-labelledby="delete_fileLabel" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="delete_fileLabel">Delete File</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                                      </button>
                                       </div>
                                       <div class="modal-body">
                                           <h6>Are you sure to delete the file {{ file.name }}?</h6>
@@ -74,9 +68,10 @@
       </div>
 
     </div>
-          <script type="text/javascript">
+      <script type="text/javascript">
         $('#file_list_table').DataTable({
-            searching: false,
+            {#searching: false,#}
+            "order":[[3, "desc"]]
         });
 
         $('.dataTables_length').addClass('bs-select');

@@ -19,13 +19,14 @@ def upload_file(request, filename):
 
 def genbank(request):
     if request.method == "POST":
+        user = request.user
         if len(request.FILES) != 0:
             upload, fs, name, url = upload_file(request, 'myFile')
 
             ''' Calling Python Script'''
-            outfile = generate_from_csv(settings.MEDIA_ROOT, name)
+            outfile = generate_from_csv(settings.MEDIA_ROOT, name, user)
             if outfile is not None:
-                outfile_name = os.path.basename(outfile.filename)
+                outfile_name = str(outfile)
                 outfile_url = fs.url(outfile_name)
                 return render(request, 'misc/genbank.html',
                               {'uploadfile_name': upload.name, 'url': url, 'outfile_name': outfile_name,
@@ -37,13 +38,14 @@ def genbank(request):
 
 def primer(request):
     if request.method == 'POST':
+        user = request.user
         if len(request.FILES) != 0:
             upload, fs, name, url = upload_file(request, 'myFile')
             start_prime = request.POST['start_prime']
             end_prime = request.POST['end_prime']
 
             ''' Calling Python Script'''
-            outfile = run_primer(settings.MEDIA_ROOT, name, start_prime, end_prime)
+            outfile = run_primer(settings.MEDIA_ROOT, name, start_prime, end_prime, user)
             if outfile is not None:
                 outfile_name = os.path.basename(outfile.name)
                 outfile_url = fs.url(outfile_name)
@@ -55,6 +57,7 @@ def primer(request):
 
 def normalization(request):
     if request.method == "POST":
+        user = request.user
         if len(request.FILES) != 0:
             upload, fs, name, url = upload_file(request, 'upload_file')
             in_well = request.POST['num_well_source']
@@ -63,9 +66,10 @@ def normalization(request):
             part_fmol = request.POST['part_fmol']
 
             ''' Calling Python Script'''
-            outfile, alert = run_normalization(settings.MEDIA_ROOT, name, int(in_well), int(out_well), int(bb_fmol), int(part_fmol))
+            outfile, alert = run_normalization(settings.MEDIA_ROOT, name, int(in_well), int(out_well), int(bb_fmol), int(part_fmol), user)
             if outfile is not None:
-                outfile_name = os.path.basename(outfile.name)
+                outfile_name = str(outfile)
+                print(outfile_name)
                 outfile_url = fs.url(outfile_name)
                 return render(request, 'misc/normalization.html', {'uploadfile_name': upload.name, 'url': url, 'outfile_name': outfile_name, 'outfile_url': outfile_url, 'alert':alert})
             else:

@@ -89,7 +89,7 @@ def create_output_file(path, fastafile):
     return outfile
 
 
-def run_primer(path, fastafile, start, end):
+def run_primer(path, fastafile, start, end, user):
     '''Read the fasta sequences from input file'''
     seqs = load_seqs(path, fastafile)
     stubbornseqs = []

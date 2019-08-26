@@ -1,3 +1,4 @@
+from ..biofoundry import db
 from ..misc import calc, file, parser
 from ..container import plate, machine
 import sys, os
@@ -256,8 +257,10 @@ def verify_samples_volume(vol_for_part, count_unique_list, robot):
         for part in vol_for_part:
             sample_name, sample_type, sample_length, sample_concentration, sample_volume, sample_times_needed, vol_part_add, plate_in_name, wellD_name = part
             if part_name == sample_name:
+                print(part_name)
                 '''Calculate how many 'vol_part_add' have in the total volume in one well'''
                 available_vol = float(sample_volume) - robot.dead_vol
+                print(sample_volume, robot.dead_vol, available_vol)
                 '''total times per well'''
                 times_available = int(available_vol/vol_part_add)
                 '''total times in all database'''
@@ -267,6 +270,7 @@ def verify_samples_volume(vol_for_part, count_unique_list, robot):
                 if int(sample_times_needed) <= times_available:
                     list_source_wells.append([sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, times_available, vol_part_add, plate_in_name, wellD_name])
                     break
+        print(int(tot_times), int(times_needed))
         if int(tot_times) >= int(times_needed):
             for part in part_info:
                 sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, vol_part_add, plate_in_name, wellD_name = part
@@ -279,8 +283,9 @@ def verify_samples_volume(vol_for_part, count_unique_list, robot):
             for part in part_info:
                 sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, vol_part_add, plate_in_name, wellD_name = part
                 total_vol_part = times_needed*vol_part_add
-                # print('Not enough volume for sample: ' + str(part_name) + ' available: ' + str(sample_volume) + " need: " + str(round(total_vol_part,2)))
-                alert.append(['Not enough volume for sample: ' + str(part_name) + ' available: ' + str(sample_volume) + " need: " + str(round(total_vol_part,2))])
+                print(total_vol_part, times_needed, vol_for_part, vol_part_add)
+                print('Not enough volume for sample: ' + str(part_name) + ' available: ' + str(sample_volume) + " need: " + str(round(total_vol_part+robot.dead_vol,2)))
+                alert.append(['Not enough volume for sample: ' + str(part_name) + ' available: ' + str(sample_volume) + " need: " + str(round(total_vol_part+robot.dead_vol,2))])
                 list_part_low_vol.append([sample_name, total_vol_part])
 
     return list_source_wells, list_part_low_vol, alert
@@ -304,14 +309,14 @@ def find_samples_database(unique_list):
                 samples = well.samples.all()
                 if len(samples) == 1:
                     for sample in samples:
-                        if well.volume > 0 and sample.name == part:
+                        if well.volume > 0 and sample.name == part and sample.length is not None and sample.sample_type is not None:
                             found = True
-                            #     part_indb, part_type, part_length, part_conc, part_vol, source_plate, source_well, num_well = line
-                            lista = [sample.name, str(sample.type), int(sample.length), float(well.concentration), float(well.volume), well.plate.name, well.name, int(well.plate.num_well)]
+                            lista = [sample.name, str(sample.sample_type), int(sample.length), float(well.concentration), float(well.volume), well.plate.name, well.name, int(well.plate.num_well)]
                             found_list.append(lista)
-        else:
-            print(part + ' is missing in database.')
-            missing_list.append(part)
+
+                        else:
+                            print(part + ' is missing in database or missing information.')
+                            missing_list.append(part)
     return found_list, missing_list
 
 
@@ -341,13 +346,14 @@ def get_sets_in_filepath(reader):
         '''List of parts'''
         for part in parts:
             part = part.replace(" ", "")
+            part = part.replace('"', "")
             set.append(part)
         ''' Create the single list of parts'''
         lists_parts.append(list(set))
     return lists_parts
 
 
-def run_moclo_db(path, filename, dispenser_parameters, mix_parameters, out_num_well, pattern, use_high_low_chip_mantis):
+def run_moclo_db(path, filename, dispenser_parameters, mix_parameters, out_num_well, pattern, use_high_low_chip_mantis, user):
     total_alert = []
     name_machine, min_vol, res_vol, dead_vol = dispenser_parameters
     robot = machine.Machine(name_machine, min_vol, res_vol, dead_vol)
@@ -357,8 +363,10 @@ def run_moclo_db(path, filename, dispenser_parameters, mix_parameters, out_num_w
     filein = file.verify(path + "/" + filename)
 
     ''' Create write files'''
-    file_mantis = file.create(path + "/" + 'mantis_' + str(os.path.splitext(filename)[0]) + '.csv', 'w')
-    file_robot = file.create(path + "/" + str(robot.name) + "_" + str(os.path.splitext(filename)[0]) + '.csv', 'w')
+    db_mantis_name = 'mantis_' + str(os.path.splitext(filename)[0]) + '.csv'
+    db_robot_name = str(robot.name) + "_" + str(os.path.splitext(filename)[0]) + '.csv'
+    file_mantis = file.create(path + "/docs/" + db_mantis_name, 'w')
+    file_robot = file.create(path + "/docs/" + db_robot_name, 'w')
     mantis_csv = file.create_writer_csv(file_mantis)
     robot_csv = file.create_writer_csv(file_robot)
 
@@ -372,7 +380,7 @@ def run_moclo_db(path, filename, dispenser_parameters, mix_parameters, out_num_w
 
     ''' Verify how many times it appears'''
     count_unique_list = get_count_unique_list(unique_list, lists_parts)
-    # print(count_unique_list)
+    print(count_unique_list)
 
     """Verify the parts on database"""
     found_list, missing_list = find_samples_database(unique_list)
@@ -380,7 +388,7 @@ def run_moclo_db(path, filename, dispenser_parameters, mix_parameters, out_num_w
     if len(missing_list) > 0:
         print(len(missing_list))
         for item in missing_list:
-            total_alert.append('Missing part: ' + str(item))
+            total_alert.append('Missing info for part: ' + str(item))
         return total_alert, None, None, None, None
 
     else:
@@ -459,6 +467,7 @@ def run_moclo_db(path, filename, dispenser_parameters, mix_parameters, out_num_w
         else:
             return total_alert, None, None, None, None
             # sys.exit()
-    #
+    db_mantis = db.save_file(db_mantis_name, 'Moclo_DB', user)
+    db_robot = db.save_file(db_robot_name, 'Moclo_DB', user)
     return total_alert, file_mantis, file_robot, mixer_recipe_zip, chip_mantis_zip
     # return total_alert, file_mantis, file_robot, None, None

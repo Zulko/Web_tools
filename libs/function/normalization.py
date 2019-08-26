@@ -1,7 +1,7 @@
 """
 # File to calculate the normalization of samples and create a csv file to be used on BIOMEK
 """
-
+from ..biofoundry import db
 from ..container import plate
 from ..misc import file, calc
 import os, sys
@@ -222,7 +222,7 @@ def create_destination_plates(plates_in, in_well, out_well):
         return plates_out
 
 
-def run_normalization(path, filename, in_well, out_well, bb_fmol, part_fmol):
+def run_normalization(path, filename, in_well, out_well, bb_fmol, part_fmol, user):
     """
     Creates a CSV file to be used in Biomek with the volume of sample and water to normalize the sample
     :param path: input file with parts information
@@ -233,7 +233,7 @@ def run_normalization(path, filename, in_well, out_well, bb_fmol, part_fmol):
 
     filein = file.verify(path+"/"+filename)
     reader_csv = file.create_reader_csv(filein)
-    fileout = file.create(path+"/"+'dilution_' + str(filename), 'w')
+    fileout = file.create('media/docs/dilution_' + str(filename), 'w')
     writer_csv = file.create_writer_csv(fileout)
     file.set_normal_header(writer_csv)
 
@@ -263,7 +263,8 @@ def run_normalization(path, filename, in_well, out_well, bb_fmol, part_fmol):
     # """Write the result in a CSV file"""
 
     alert = file.write_normal_result(writer_csv, new_result)
-    print(file.colours.BOLD + 'Output File: ' + fileout.name + file.colours.ENDC)
+    # print(file.colours.BOLD + 'Output File: ' + 'dilution_' + str(filename) + file.colours.ENDC)
+    db_fileout = db.save_file('dilution_' + str(filename), 'Normalization', user)
     filein.close()
     fileout.close()
-    return fileout, alert
+    return db_fileout, alert

@@ -75,6 +75,7 @@ def assembly(request):
 # @login_required(login_url="/accounts/login/")
 def moclo(request):
     if request.method == "POST":
+        user = request.user
         if len(request.FILES) != 0:
             upload_f, fs, name_file, url_file = upload_file(request, 'upload_file')
             upload_db, fs, name_db, url_db = upload_file(request, 'upload_db')
@@ -102,7 +103,8 @@ def moclo(request):
             pattern = request.POST['pattern']
 
             ''' Calling Python Script'''
-            alerts, outfile_mantis, outfile_robot, mixer_recipe, chip_mantis = run_moclo(settings.MEDIA_ROOT, name_file, name_db, dispenser_parameters, mix_parameters, int(num_well_destination), int(pattern), mantis_two_chips)
+            alerts, outfile_mantis, outfile_robot, mixer_recipe, chip_mantis = \
+                run_moclo(settings.MEDIA_ROOT, name_file, name_db, dispenser_parameters, mix_parameters, int(num_well_destination), int(pattern), mantis_two_chips, user)
 
             if mixer_recipe is not None:
                 outfile_mantis_name = os.path.basename(outfile_mantis.name)
@@ -124,6 +126,7 @@ def moclo(request):
 @login_required(login_url="/accounts/login/")
 def moclo_db(request):
     if request.method == "POST":
+        user = request.user
         if len(request.FILES) != 0:
             upload, fs, name_file, url_file = upload_file(request, 'upload_file')
 
@@ -150,7 +153,7 @@ def moclo_db(request):
             pattern = request.POST['pattern']
 
             ''' Calling Python Script'''
-            alerts, outfile_mantis, outfile_robot, mixer_recipe, chip_mantis = run_moclo_db(settings.MEDIA_ROOT, name_file, dispenser_parameters, mix_parameters, int(num_well_destination), int(pattern), mantis_two_chips)
+            alerts, outfile_mantis, outfile_robot, mixer_recipe, chip_mantis = run_moclo_db(settings.MEDIA_ROOT, name_file, dispenser_parameters, mix_parameters, int(num_well_destination), int(pattern), mantis_two_chips, user)
 
             if mixer_recipe is not None:
                 outfile_mantis_name = os.path.basename(outfile_mantis.name)

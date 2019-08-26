@@ -1,3 +1,4 @@
+from ..biofoundry import db
 from ..misc import calc, file, parser
 from ..container import plate, machine
 import sys, os
@@ -350,7 +351,7 @@ def create_and_populate_sources_plate(db_reader, database):
     return plates_in
 
 
-def run_moclo(path, filename, database, dispenser_parameters, mix_parameters, out_num_well, pattern, use_high_low_chip_mantis):
+def run_moclo(path, filename, database, dispenser_parameters, mix_parameters, out_num_well, pattern, use_high_low_chip_mantis, user):
     total_alert = []
     name_machine, min_vol, res_vol, dead_vol = dispenser_parameters
     robot = machine.Machine(name_machine, min_vol, res_vol, dead_vol)
@@ -362,8 +363,10 @@ def run_moclo(path, filename, database, dispenser_parameters, mix_parameters, ou
     db_reader = file.create_reader_csv(database)
 
     ''' Create write files'''
-    file_mantis = file.create(path + "/" + 'mantis_' + str(os.path.splitext(filename)[0]) + '.csv', 'w')
-    file_robot = file.create(path + "/" + str(robot.name) + "_" + str(os.path.splitext(filename)[0]) + '.csv', 'w')
+    db_mantis_name = 'mantis_' + str(os.path.splitext(filename)[0]) + '.csv'
+    db_robot_name = str(robot.name) + "_" + str(os.path.splitext(filename)[0]) + '.csv'
+    file_mantis = file.create(path + "/docs/" + db_mantis_name, 'w')
+    file_robot = file.create(path + "/docs/" + db_robot_name, 'w')
     mantis_csv = file.create_writer_csv(file_mantis)
     robot_csv = file.create_writer_csv(file_robot)
 
@@ -452,7 +455,6 @@ def run_moclo(path, filename, database, dispenser_parameters, mix_parameters, ou
             else:
                 master_total = file.write_dispenser_mantis(mantis_csv, out_master_mix)
                 water_total = file.write_dispenser_mantis(mantis_csv, out_water)
-
                 chip_matis_title = ["Master mix total volume", "Water total volume"]
                 chip_matis_vol = [round(master_total, 2), round(water_total, 2)]
                 chip_mantis_zip = zip(chip_matis_title, chip_matis_vol)
@@ -463,6 +465,7 @@ def run_moclo(path, filename, database, dispenser_parameters, mix_parameters, ou
 
         else:
             return total_alert, None, None, None, None
-            # sys.exit()
 
-    return total_alert, file_mantis, file_robot, mixer_recipe_zip, chip_mantis_zip
+    db_mantis = db.save_file(db_mantis_name, 'Moclo', user)
+    db_robot = db.save_file(db_robot_name, 'Moclo', user)
+    return total_alert, db_mantis, db_robot, mixer_recipe_zip, chip_mantis_zip

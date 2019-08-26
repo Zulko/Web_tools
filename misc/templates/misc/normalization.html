@@ -83,20 +83,6 @@
                 <input type="submit" class="btn btn-info btn-block" value="Submit">
               </fieldset>
             </form>
-
-
-            <br><br>
-            {% if url %}
-            <fieldset>
-                Uploaded file: <a href="{{ url }}" target="_blank" ><p>{{ uploadfile_name }}</p></a>
-                {% if outfile_name %}
-                    <br><br>
-                    Output file: <a href="{{ outfile_url }}" target="_blank" download> <p>{{ outfile_name }}</p> </a>
-                {% endif %}
-            </fieldset>
-            {% endif %}
-
-
         </div>
       </div>
 
@@ -212,12 +198,35 @@
                 </tbody>
             </table>
       </div>
-
-        {% comment %}
-        <div class="col-3">
-        <h4>Side</h4>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit..</p>
-        </div>
-        {% endcomment %}
+      <div class="col-3">
+      {% if url %}
+        <h4>Output </h4>
+        <fieldset class="form-group"><br>
+            <div class="form-row align-items-center">
+                <div class="col-auto"></div>
+                <div class="col">
+                    Uploaded file:
+                </div>
+                <div class="col">
+                    <a href="{{ url }}" target="_blank" >{{ uploadfile_name }}</a>
+                </div>
+                <div class="col-auto"></div>
+            </div>
+            <div class="form-row align-items-center">
+                <div class="col-auto"></div>
+                {% if outfile_name %}
+                <div class="col">
+                    Output file:
+                </div>
+                <div class="col">
+                    <a href="{{ outfile_url }}" target="_blank" download> {{ outfile_name }} </a>
+                </div>
+                {% endif %}
+                <div class="col-auto"></div>
+            </div>
+        </fieldset>
+      {% endif %}
+      </div>
     </div>
+
 {% endblock%}

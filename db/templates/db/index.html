@@ -91,7 +91,7 @@
             {% if plate %}
                 {{ form_add_well.errors }}
                 <h5>{{ plate.name }} <a href="#" class="btn btn-warning btn-sm disabled"> <i class="fas fa-info-circle"></i></a>
-                <div align="right">
+                <div align="center">
                     <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#update_plate"> <i class="fas fa-edit"></i> Update </button>
                     <a href="{% url 'db:plate_export' plate.id %}" class="btn btn-info"> <i class="fas fa-file-export"></i> Export </a>
                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete_plate"> <i class="fas fa-trash-alt"></i> Delete </button>
@@ -174,48 +174,48 @@
                     </div><br>
 
                 <!-- Table to create the plate layout -->
-                <table style="border-spacing: 0; border-width: 0; padding: 0; border-collapse:collapse;">
+                <table id="plate_table" class="table table-sm">
                  <thead>
-                    <tr>
-                    <th style="padding-right: 0px;">  </th>
+                    <tr >
+                    <th></th>
                     {% for colname in colnames %}
-                        <th style="padding-right: 0px;" > {{ colname }} </th>
+                        <th> {{ colname }} </th>
                     {% endfor %}
                     </tr>
                  </thead>
                  <tbody>
                     {% for rowname, fill in layout %}
                     <tr>
-                    <th style="padding-right: 0px;"> {{ rowname }}</th>
+                    <th> {{ rowname }}</th>
                     {% for col in fill %}
                         {% if col.1 == '' %}
-                            <td style="padding-right: 0px;">
-                                 <button class="circle_empty" data-toggle="modal" data-target="#add_well" value="{{ col.0 }}"> {{ col.0 }}</button>
-                                <!-- Modal toggle to Add Well -->
-                                <div class="modal fade" id="add_well" tabindex="-1" role="dialog" aria-labelledby="add_wellLabel" aria-hidden="true">
-                                  <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                      <div class="modal-header">
-                                        <h5 class="modal-title" id="add_wellLabel">Add well </h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                          <span aria-hidden="true">&times;</span>
-                                        </button>
-                                      </div>
-                                      <form id="form_plate" method="post" enctype="multipart/form-data">{% csrf_token %}
-                                        <div class="modal-body">
-                                            {{ form_add_well | bootstrap }}
-                                        </div>
-                                      <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="submit" name="submit_add_well" action="{% url 'db:well_add' plate.id %}" class="btn btn-info">Add</button>
-                                      </div>
-                                      </form>
-                                    </div>
-                                  </div>
+                        <td>
+                        <button class="circle_empty" data-toggle="modal" data-target="#add_well" value="{{ col.0 }}"> {{ col.0 }}</button>
+                        <!-- Modal toggle to Add Well -->
+                        <div class="modal fade" id="add_well" tabindex="-1" role="dialog" aria-labelledby="add_wellLabel" aria-hidden="true">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="add_wellLabel">Add well</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <form id="form_plate" method="post" enctype="multipart/form-data">{% csrf_token %}
+                                <div class="modal-body">
+                                    {{ form_add_well | bootstrap }}
                                 </div>
-                            </td>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" name="submit_add_well" action="{% url 'db:well_add' plate.id %}" class="btn btn-info">Add</button>
+                                </div>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                        </td>
                         {% else %}
-                            <td style="padding-right: 0px;">
+                            <td>
                                 <button class="circle_full"> <a href="{% url 'db:well' col.1 col.2 %}"> {{ col.0 }} </a> </button>
                             </td>
                         {% endif %}
@@ -224,6 +224,17 @@
                     {% endfor %}
                 </tbody>
                </table>
+
+                <script type="text/javascript">
+                    $('#plate_table').DataTable({
+                    paging: false,
+                    ordering: false,
+                    info: false,
+                    searching: false,
+                    tr: {border: none;}
+                    })
+                    $('.dataTables_length').addClass('bs-select');
+                </script>
 
                 <!-- Foot table with extra plate info -->
                <div><br>

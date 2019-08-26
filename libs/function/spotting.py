@@ -36,36 +36,6 @@ def verify_entry(type, num):
 
 
 
-def run_spotting(num_source_plates, num_wells, num_pattern, pattern, user):
-    """
-    Calls a function to create a output file
-    The output file has the source plate and the distribution of the samples according to the num_pattern and pattern
-    :param num_source_plates: int number
-    :param num_pattern: int number
-    :param pattern: 0 or 1
-    """
-    ver_num_source = verify_entry(int, num_source_plates)
-    ver_pattern = verify_entry(int, num_pattern)
-    total_destination = ver_num_source * ver_pattern
-    total_plates = ver_num_source + total_destination
-    if total_plates > MAX_PLATES:
-        print('The total plates (%d) exceeds the biomek limit of %d' % (total_plates, MAX_PLATES))
-        alert = 'The total number of plates is %d and exceeds the maximum number of plates (%d) in Biomek' % (total_plates, MAX_PLATES)
-        return None, None, alert
-    else:
-        # print('The total plates in biomek is %d' % total_plates)
-        # print('The total destination plate(s) is %d and total source plate(s) is %d' % (total_destination, ver_num_source))
-        outfile_name, outfilepath, worklist_name, worklistpath = \
-            create_output_file(ver_num_source, num_wells, total_destination, pattern)
-
-        db_outfile = db.save_file(outfile_name, 'Spotting', user)
-        db_worklist = db.save_file(worklist_name, 'Spotting', user)
-        print(db_worklist, db_outfile.file.url)
-
-    # return outfile_name, worklist_name, None
-    return db_outfile, db_worklist, None
-
-
 def generate_random_names(name, init, end):
     """
     Returns a vector with a main name + number
@@ -171,3 +141,33 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
         outfile_worlistname = os.path.basename(file_worklist_path_out)
         # print(file.colours.BOLD + 'Output File: ' + outfile_name + '\tWorklist: ' + outfile_worlistname + file.colours.BOLD)
         return outfile_name, file_path_out, outfile_worlistname, file_worklist_path_out
+
+
+def run_spotting(num_source_plates, num_wells, num_pattern, pattern, user):
+    """
+    Calls a function to create a output file
+    The output file has the source plate and the distribution of the samples according to the num_pattern and pattern
+    :param num_source_plates: int number
+    :param num_pattern: int number
+    :param pattern: 0 or 1
+    """
+    ver_num_source = verify_entry(int, num_source_plates)
+    ver_pattern = verify_entry(int, num_pattern)
+    total_destination = ver_num_source * ver_pattern
+    total_plates = ver_num_source + total_destination
+    if total_plates > MAX_PLATES:
+        print('The total plates (%d) exceeds the biomek limit of %d' % (total_plates, MAX_PLATES))
+        alert = 'The total number of plates is %d and exceeds the maximum number of plates (%d) in Biomek' % (total_plates, MAX_PLATES)
+        return None, None, alert
+    else:
+        # print('The total plates in biomek is %d' % total_plates)
+        # print('The total destination plate(s) is %d and total source plate(s) is %d' % (total_destination, ver_num_source))
+        outfile_name, outfilepath, worklist_name, worklistpath = \
+            create_output_file(ver_num_source, num_wells, total_destination, pattern)
+
+        db_outfile = db.save_file(outfile_name, 'Spotting', user)
+        db_worklist = db.save_file(worklist_name, 'Spotting', user)
+        # print(db_worklist, db_outfile.file.url)
+
+    # return outfile_name, worklist_name, None
+    return db_outfile, db_worklist, None
