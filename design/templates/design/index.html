@@ -1,0 +1,48 @@
+{% extends 'base_layout.html' %}
+{% load static from staticfiles %}
+
+{% block content %}
+
+
+    <div class="row">
+      <div class="col-3">
+        <h2></h2>
+      </div>
+
+      <div class="col-6">
+{#      {% if all_experiments.count > 0 %}#}
+        <table id="sample_list_table" class="table table-hover table-striped table-sm cell-border" cellspacing="0" width="100%">
+          <thead>
+            <tr class="table-dark text-dark">
+            <th class="th-sm">Name</th>
+            <th class="th-sm">Project</th>
+            <th class="th-sm">Author</th>
+            <th class="th-sm">Workflow</th>
+            <th class="th-sm">Created at</th>
+            <th class="th-sm">Updated at</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for experiment in all_experiments %}
+                <tr>
+                <td>{{ experiment.name }} </td>
+                <td>{{ experiment.project }} </td>
+                <td>{{ experiment.author }} </td>
+                <td>{{ experiment.workflow }} </td>
+                <td>{{ experiment.created_at }} </td>
+                <td>{{ experiment.updated_at }} </td>
+                </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+{#      {% endif %}#}
+      </div>
+
+      <div class="col-3">
+        <h2>
+        </h2>
+      </div>
+
+    </div>
+
+{% endblock%}

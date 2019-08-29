@@ -36,7 +36,7 @@ def upload_file(request, filename):
 
 @login_required()
 def plate_list(request):
-    print('plate_list')
+    # print('plate_list')
     all_plates = Plate.objects.all()
     plate_filter = PlateFilter(request.GET, queryset=all_plates)
     formPlateAdd = PlateForm()
@@ -492,7 +492,6 @@ def add_sample(request):
         formSample = SampleForm()
 
     return render(request, 'db/samples_list.html', {'form_sample': formSample})
-
 
 
 @login_required()

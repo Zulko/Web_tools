@@ -322,7 +322,10 @@
 
                                     <tr>
                                         <th>Genbank</th>
-                                        <td>{{ sample.genbank }}</td>
+                                        {% if sample.genbank %}
+                                            <td><a href="{{ sample.genbank.url }}" class="btn btn-info btn-sm btn-block" target="_blank">File</a></td>
+                                        {% endif %}
+{#                                        <td>{{ sample.genbank }}</td>#}
                                     </tr>
                                     <tr>
                                         <th>Organism</th>
