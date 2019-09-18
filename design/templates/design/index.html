@@ -10,7 +10,7 @@
         <!-- Modal button to add experiment, workflow and step -->
         <div>
             <button type="button" class="btn btn-info" data-toggle="modal" data-target="#add_experiment"> <i class="fas fa-plus-circle"></i> New Experiment </button><br><br>
-            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#add_experiment"> <i class="fas fa-plus-circle"></i> New Workflow </button><br><br>
+            <button type="button" class="btn btn-info disabled" data-toggle="modal" data-target="#"> <!--"#add_experiment"--> <i class="fas fa-plus-circle"></i> New Workflow </button><br><br>
             <button type="button" class="btn btn-info" data-toggle="modal" data-target="#add_step"> <i class="fas fa-plus-circle"></i> New Step </button><br><br>
         </div>
 
@@ -30,11 +30,11 @@
                 <!-- Tab list to add samples -->
                 <ul class="nav nav-tabs" role="tablist">
                     <li class="nav-item" role="presentation" ><a class="nav-link active" href="#add_experimentTab" aria-controls="add_experimentTab" role="tab" data-toggle="tab">Add Experiment Form</a></li>
-                    <li class="nav-item" role="presentation"><a class="nav-link" href="#file_experimentTab" aria-controls="file_experimentTab" role="tab" data-toggle="tab">Add Experiment File</a></li>
+{#                    <li class="nav-item" role="presentation"><a class="nav-link" href="#file_experimentTab" aria-controls="file_experimentTab" role="tab" data-toggle="tab">Add Experiment File</a></li>#}
                 </ul><br>
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane active" id="add_experimentTab">
-                        <!-- Add samples using a form -->
+                        <!-- Add experiment using a form -->
                         <form id="form_add_experiment" method="post" enctype="multipart/form-data">{% csrf_token %}
                             {{ form_experiment_add | bootstrap }}<br>
                         <div class="modal-footer">
@@ -43,23 +43,23 @@
                         </div>
                         </form>
                     </div>
-                    <div role="tabpanel" class="tab-pane" id="file_experimentTab">
-                        <!-- Add samples using a form -->
-                        <form id="form_submit_file" method="post" enctype="multipart/form-data">{% csrf_token %}
-                        <div class="form-row align-items-center"><br><br>
-                            <div class="col-auto"></div>
-                            <div class="col">
-                                <input type="file" class="form-control-file border" name="upload_file_plate">
-                            </div>
-                            <div class="col-auto"></div>
-                        </div><br>
-                        <div class="modal-footer">
-                            <a class="btn btn-secondary mr-auto" href="{% static 'docs/import_sample_file.csv' %}" target="_blank" download> Sample File </a>
-                            <button type="button" class="btn btn-secondary " data-dismiss="modal">Close</button>
-                            <button type="submit" name="upload_file_samples" action="{% url 'design:experiment_add' %}" class="btn btn-info">Add</button>
-                        </div>
-                        </form>
-                    </div>
+{#                    <div role="tabpanel" class="tab-pane" id="file_experimentTab">#}
+                        <!-- Add experiment using a file -->
+{#                        <form id="form_submit_file" method="post" enctype="multipart/form-data">{% csrf_token %}#}
+{#                        <div class="form-row align-items-center"><br><br>#}
+{#                            <div class="col-auto"></div>#}
+{#                            <div class="col">#}
+{#                                <input type="file" class="form-control-file border" name="upload_file_plate">#}
+{#                            </div>#}
+{#                            <div class="col-auto"></div>#}
+{#                        </div><br>#}
+{#                        <div class="modal-footer">#}
+{#                            <a class="btn btn-secondary mr-auto" href="{% static 'docs/import_sample_file.csv' %}" target="_blank" download> Sample File </a>#}
+{#                            <button type="button" class="btn btn-secondary " data-dismiss="modal">Close</button>#}
+{#                            <button type="submit" name="upload_file_samples" action="{% url 'design:experiment_add' %}" class="btn btn-info">Add</button>#}
+{#                        </div>#}
+{#                        </form>#}
+{#                    </div>#}
                 </div>
                 </div>
               </div>
@@ -84,7 +84,7 @@
                 <!-- Tab list to add step -->
                 <ul class="nav nav-tabs" role="tablist">
                     <li class="nav-item" role="presentation" ><a class="nav-link active" href="#add_stepTab" aria-controls="add_stepTab" role="tab" data-toggle="tab">Add Step Form</a></li>
-                    <li class="nav-item" role="presentation"><a class="nav-link" href="#file_stepTab" aria-controls="file_stepTab" role="tab" data-toggle="tab">Add Step File</a></li>
+{#                    <li class="nav-item" role="presentation"><a class="nav-link" href="#file_stepTab" aria-controls="file_stepTab" role="tab" data-toggle="tab">Add Step File</a></li>#}
                 </ul><br>
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane active" id="add_stepTab">
@@ -97,23 +97,23 @@
                         </div>
                         </form>
                     </div>
-                    <div role="tabpanel" class="tab-pane" id="file_stepTab">
+{#                    <div role="tabpanel" class="tab-pane" id="file_stepTab">#}
                         <!-- Add samples using a form -->
-                        <form id="form_submit_file" method="post" enctype="multipart/form-data">{% csrf_token %}
-                        <div class="form-row align-items-center"><br><br>
-                            <div class="col-auto"></div>
-                            <div class="col">
-                                <input type="file" class="form-control-file border" name="upload_file_plate">
-                            </div>
-                            <div class="col-auto"></div>
-                        </div><br>
-                        <div class="modal-footer">
-                            <a class="btn btn-secondary mr-auto" href="{% static 'docs/import_sample_file.csv' %}" target="_blank" download> Sample File </a>
-                            <button type="button" class="btn btn-secondary " data-dismiss="modal">Close</button>
-                            <button type="submit" name="upload_file_samples" action="{% url 'design:step_add' %}" class="btn btn-info">Add</button>
-                        </div>
-                        </form>
-                    </div>
+{#                        <form id="form_submit_file" method="post" enctype="multipart/form-data">{% csrf_token %}#}
+{#                        <div class="form-row align-items-center"><br><br>#}
+{#                            <div class="col-auto"></div>#}
+{#                            <div class="col">#}
+{#                                <input type="file" class="form-control-file border" name="upload_file_plate">#}
+{#                            </div>#}
+{#                            <div class="col-auto"></div>#}
+{#                        </div><br>#}
+{#                        <div class="modal-footer">#}
+{#                            <a class="btn btn-secondary mr-auto" href="{% static 'docs/import_sample_file.csv' %}" target="_blank" download> Sample File </a>#}
+{#                            <button type="button" class="btn btn-secondary " data-dismiss="modal">Close</button>#}
+{#                            <button type="submit" name="upload_file_samples" action="{% url 'design:step_add' %}" class="btn btn-info">Add</button>#}
+{#                        </div>#}
+{#                        </form>#}
+{#                    </div>#}
                 </div>
                 </div>
               </div>
@@ -133,21 +133,28 @@
             <th class="th-sm">Workflow</th>
             <th class="th-sm">Created at</th>
             <th class="th-sm">Updated at</th>
+            <th class="th-sm">Status</th>
             </tr>
           </thead>
           <tbody>
             {% for experiment in all_experiments %}
                 <tr>
-                <td>{{ experiment.name }} </td>
+                <td><a href="{% url 'design:experiment_view' experiment.id %}" style="font-size: 12px;" class="btn btn-outline-secondary btn-sm m-0;"> {{ experiment.name }} </a> </td>
                 <td>{{ experiment.project }} </td>
                 <td>{{ experiment.author }} </td>
-                <td>{{ experiment.workflow }} </td>
+                <td>{% for workflow in experiment.workflow.all %}
+                    {{ workflow }}
+                    {% endfor %}
+                </td>
                 <td>{{ experiment.created_at }} </td>
                 <td>{{ experiment.updated_at }} </td>
+                <td>{{ experiment.status }} </td>
                 </tr>
+
           {% endfor %}
           </tbody>
         </table>
+
 {#      {% endif %}#}
       <script type="text/javascript">
         $('#sample_list_table').DataTable({

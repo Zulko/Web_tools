@@ -157,7 +157,7 @@ def plate_export(request, plate_id):
         all_wells = Well.objects.filter(plate_id=plate_id)
         dataset = plate_resource.export(all_wells)
         response = HttpResponse(dataset.csv, content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="plate.csv"'
+        response['Content-Disposition'] = 'attachment; filename="{}.csv"'.format(plate_filter)
         return response
     except:
         return None
@@ -187,6 +187,7 @@ def plate_add(request):
     return render(request, 'db/index.html', context)
 
 
+@login_required()
 def plate_add_file(request):
     if 'upload_file_plate' in request.POST:
         plate_resources = PlateResource()
@@ -202,6 +203,7 @@ def plate_add_file(request):
             print('result has errors')
             print(result.invalid_rows)
         return redirect('db:index')
+
 
 @login_required()
 def plate_update(request, plate_id):

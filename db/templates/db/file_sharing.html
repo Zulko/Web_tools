@@ -21,8 +21,8 @@
                     <th></th>
                 </tr>
               </thead>
-            <tbody>
-            {% for file in files %}
+              <tbody>
+                {% for file in files %}
                 <tr align="center">
                     <td>{{ file.name }}</td>
                     <td>{{ file.script }}</td>
@@ -40,27 +40,25 @@
                         <h5 class="modal-title" id="delete_fileLabel">Delete File</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
-                                      </button>
-                                      </div>
-                                      <div class="modal-body">
-                                          <h6>Are you sure to delete the file {{ file.name }}?</h6>
-                                      </div>
-                                      <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                          <form method="POST" action="{% url 'db:file_delete' file.id %}">
-                                              {% csrf_token %}
-                                            <button type="submit" class="btn btn-danger">Delete</button>
-                                          </form>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                        {%  endfor %}
-
-                      </tbody>
-                </table>
-
-            </div>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                          <h6>Are you sure to delete the file {{ file.name }}?</h6>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                          <form method="POST" action="{% url 'db:file_delete' file.id %}">
+                              {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                          </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {%  endfor %}
+              </tbody>
+            </table>
+        </div>
       </div>
 
       <div class="col-2">
