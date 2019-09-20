@@ -8,4 +8,5 @@ urlpatterns = [
     path('genbank/', views.genbank, name='genbank'),
     path('primer/', views.primer, name='primer'),
     path('normalization/', views.normalization, name='normalization'),
+    path('nrc_script/', views.nrc_sequence, name='nrc_sequence'),
 ]

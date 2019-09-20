@@ -1,0 +1,78 @@
+{% extends 'base_layout.html' %}
+{% load static from staticfiles %}
+
+{% block content %}
+    <div class="row">
+      <div class="col-3">
+        <h4>Options</h4>
+        <div class="options">
+
+            <form method="post" enctype="multipart/form-data"> {% csrf_token %}
+              <fieldset class="form-group"><br>
+                  <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col">
+                        <label for="file">Select a file: </label>
+                    </div>
+                    <div class="col-left">
+                        <input type="file" class="form-control-file border" name="upload_file">
+                    </div>
+                    <div class="col-auto"></div>
+                  </div><br>
+
+                  <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col">
+                        <label for="source-plate">Sequence :</label>
+                    </div>
+                    <div class="col">
+                        <select class="form-control" id="num_well_source" name="num_well_source">
+                            <option value="96"></option>
+                            <option value="384">384 Wells</option>
+                        </select>
+                    </div>
+                    <div class="col-auto"></div>
+                    <br><br>
+                  </div><br>
+                <input type="submit" class="btn btn-info btn-block" value="Submit">
+              </fieldset>
+            </form>
+        </div>
+      </div>
+
+      <div class="col-6">
+
+      </div>
+
+      <div class="col-3">
+      {% if url %}
+        <h4>Output </h4>
+        <fieldset class="form-group"><br>
+            <div class="form-row align-items-center">
+                <div class="col-auto"></div>
+                <div class="col">
+                    Uploaded file:
+                </div>
+                <div class="col">
+                    <a href="{{ url }}" target="_blank" >{{ uploadfile_name }}</a>
+                </div>
+                <div class="col-auto"></div>
+            </div>
+            <div class="form-row align-items-center">
+                <div class="col-auto"></div>
+                {% if outfile_name %}
+                <div class="col">
+                    Output file:
+                </div>
+                <div class="col">
+                    <a href="{{ outfile_url }}" target="_blank" download> {{ outfile_name }} </a>
+                </div>
+                {% endif %}
+                <div class="col-auto"></div>
+            </div>
+        </fieldset>
+      {% endif %}
+      </div>
+    </div>
+
+{% endblock%}

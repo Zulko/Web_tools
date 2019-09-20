@@ -56,6 +56,7 @@ class Experiment(models.Model):
     author = models.CharField(max_length=30)
     workflow = models.ManyToManyField(Step, blank=True)
     status = models.CharField(default='On going', max_length=30, choices=STATUS, blank=True)
+    input_file = models.FileField(upload_to='design/', max_length=10000, blank=True)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
 

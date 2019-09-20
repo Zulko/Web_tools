@@ -40,7 +40,7 @@
               </div>
             </div>
 
-            <!-- Modal button to update sample -->
+            <!-- Modal button to update experiment -->
             <div class="modal fade" id="update_experiment" tabindex="-1" role="dialog" aria-labelledby="update_experimentLabel" aria-hidden="true">
               <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
@@ -69,14 +69,81 @@
                 <ul>
                     {% for step in experiment.workflow.all %}
                     <li>
-                    <a href="#{{step.id}}">{{step.name}}<br/><small>Step Description 1</small></a></li>
+                    <a href="#{{step.id}}">{{step.name}}<br/>
+                        <small>
+                            <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#update_step"> <i class="fas fa-edit"></i></button>
+                        </small></a></li>
                     </li>
+
+                     <!-- Modal button to update step -->
+                        <div class="modal fade" id="update_step" tabindex="-1" role="dialog" aria-labelledby="update_stepLabel" aria-hidden="true">
+                          <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="update_stepLabel">Update Experiment: {{ step.name }}</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+
+                              <form id="form_edit_sample" method="post" enctype="multipart/form-data">{% csrf_token %}
+                                <div class="modal-body">
+                                    {% csrf_token %}
+                                    {{ form_step_update | bootstrap }}<br>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" name= "submit_update_step" action="{% url 'design:step_update' experiment.id step.id %}" class="btn btn-warning">Update</button>
+                                </div>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
                     {% endfor %}
+
+                <button type="button" class="btn btn-info btn-small pull-right" data-toggle="modal" data-target="#add_step"> <i class="fas fa-plus-circle"></i> New Step </button><br><br>
+                    <!-- Modal to add Step -->
+                    <div class="modal fade" id="add_step" tabindex="-1" role="dialog" aria-labelledby="add_stepLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="add_stepLabel">New Step</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <!-- Add step modal page -->
+                          <div class="modal-body">
+                            <div role="tabpanel">
+                            <!-- Tab list to add step -->
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li class="nav-item" role="presentation" ><a class="nav-link active" href="#add_stepTab" aria-controls="add_stepTab" role="tab" data-toggle="tab">Add Step Form</a></li>
+            {#                    <li class="nav-item" role="presentation"><a class="nav-link" href="#file_stepTab" aria-controls="file_stepTab" role="tab" data-toggle="tab">Add Step File</a></li>#}
+                            </ul><br>
+                            <div class="tab-content">
+                                <div role="tabpanel" class="tab-pane active" id="add_stepTab">
+                                    <!-- Add samples using a form -->
+                                    <form id="form_add_step" method="post" enctype="multipart/form-data">{% csrf_token %}
+                                        {{ form_step_add | bootstrap }}<br>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="submit" name="submit_add_step" action="{% url 'design:step_add' experiment.id %}" class="btn btn-info">Add</button>
+                                    </div>
+                                    </form>
+                                </div>
+                            </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
                 </ul>
+
                 <div>
                     {% for step in experiment.workflow.all %}
                     <div id="{{ step.id }}">
-                        <div><br>
+                        <div class="col"><br>
                             <p>ID: {{ step.id }}</p>
                             <p>Name: {{ step.name }}</p>
                             <p>Description: {{ step.description }}</p>
@@ -102,6 +169,7 @@
         $(document).ready(function(){
             $('#stepwizard').smartWizard({
                 theme: 'arrows',
+                transitionEffect:'fade',
             });
             $("#stepwizard").on("leaveStep", function(e, anchorObject, stepNumber, stepDirection) {
                 return confirm("Do you want to leave the step "+stepNumber+"?");

@@ -18,7 +18,7 @@ def design_view(request):
 
     if 'submit_add_experiment' in request.POST:
         print('design_view: submit_add_experiment')
-        formExperimentAdd = ExperimentForm(request.POST, initial={'author': user})
+        formExperimentAdd = ExperimentForm(request.POST, request.FILES, initial={'author': user})
         if formExperimentAdd.is_valid():
             formExperimentAdd.save()
             return redirect('design:design_view')
@@ -46,20 +46,31 @@ def design_view(request):
 def experiment_view(request, experiment_id):
     experiment = get_object_or_404(Experiment, id=experiment_id)
     formExperimentUpdate = ExperimentForm(instance=experiment)
+    formStepAdd = StepForm()
+    formStepUpdate = StepForm()
 
     if 'submit_update_experiment' in request.POST:
         print('found the form update')
-        formExperimentUpdate = ExperimentForm(request.POST,  instance=experiment)
+        formExperimentUpdate = ExperimentForm(request.POST, request.FILES, instance=experiment)
         if formExperimentUpdate.is_valid():
             formExperimentUpdate.save()
             return redirect('design:experiment_view', experiment.id)
-        else:
-            print('form is not valid')
+
+    # elif 'submit_update_step' in request.POST:
+    #     formStepUpdate = StepForm(request.POST, request.FILES, instance=step)
+    #     if formStepUpdate.is_valid():
+    #         formStepUpdate.save()
+    #         return redirect('design:experiment_view', experiment.id, step.id)
+    # else:
+    #     formStepUpdate = StepForm(instance=step)
 
     context = {
         'experiment': experiment,
         'form_experiment_update': formExperimentUpdate,
+        'form_step_add': formStepAdd,
+        'form_step_update': formStepUpdate,
     }
+
     return render(request, 'design/experiment.html', context)
 
 
@@ -72,7 +83,7 @@ def experiment_add(request):
     formStepAdd = StepForm()
 
     if 'submit_add_experiment' in request.POST:
-        formExperimentAdd = ExperimentForm(request.POST, initial={'author': user})
+        formExperimentAdd = ExperimentForm(request.POST, request.FILES, initial={'author': user})
         if formExperimentAdd.is_valid():
             formExperimentAdd.save()
             return redirect('design:design_view')
@@ -103,8 +114,9 @@ def experiment_delete(request, experiment_id):
 @login_required()
 def experiment_update(request, experiment_id):
     experiment = get_object_or_404(Experiment, id=experiment_id)
+    formStepAdd = StepForm()
     if 'submit_update_experiment' in request.POST:
-        formExperimentUpdate = ExperimentForm(request.POST, instance=experiment)
+        formExperimentUpdate = ExperimentForm(request.POST, request.FILES, instance=experiment)
         if formExperimentUpdate.is_valid():
             formExperimentUpdate.save()
             return redirect('design:experiment_view', experiment.id)
@@ -112,27 +124,49 @@ def experiment_update(request, experiment_id):
         formExperimentUpdate = ExperimentForm(instance=experiment)
 
     context = {
-        'form_experiment_update': formExperimentUpdate
+        'form_experiment_update': formExperimentUpdate,
+        'form_step_add': formStepAdd,
     }
 
     return render(request,'design/experiment.html', context)
 
 
 @login_required()
-def step_add(request):
-    all_experiments = Experiment.objects.all()
-    formExperimentAdd = ExperimentForm()
+def step_add(request, experiment_id):
+    experiment = get_object_or_404(Experiment, id=experiment_id)
+    formExperimentUpdate = ExperimentForm(instance=experiment)
     formStepAdd = StepForm()
 
     if 'submit_add_step' in request.POST:
         formStepAdd = StepForm(request.POST)
         if formStepAdd.is_valid():
             formStepAdd.save()
-            return redirect('design:design_view')
+            return redirect('design:experiment_view')
 
     context = {
-        'form_experiment_add': formExperimentAdd,
+        'form_experiment_update': formExperimentUpdate,
         'form_step_add': formStepAdd,
-        'all_experiments': all_experiments,
+        # 'all_experiments': all_experiments,
     }
     return render(request, 'design/index.html', context)
+
+
+@login_required()
+def step_update(request, experiment_id, step_id):
+    experiment = get_object_or_404(Experiment, id=experiment_id)
+    step = get_object_or_404(Experiment, id=step_id)
+    formExperimentUpdate = ExperimentForm(instance=experiment)
+    if 'submit_update_step' in request.POST:
+        formStepUpdate = StepForm(request.POST, request.FILES, instance=step)
+        if formStepUpdate.is_valid():
+            formStepUpdate.save()
+            return redirect('design:experiment_view', experiment.id, step.id)
+    else:
+        formStepUpdate = StepForm(instance=step)
+
+    context = {
+        'form_experiment_update': formExperimentUpdate,
+        'form_step_update': formStepUpdate,
+    }
+
+    return render(request, 'design/experiment.html', context)

@@ -3,6 +3,7 @@ from django.conf import settings
 from django.shortcuts import render
 
 from libs.misc.genbank import generate_from_csv
+from libs.misc.nrc_sequence import run_nrc_sequence
 from libs.function.fasta2primer3 import run_primer
 from libs.function.normalization import run_normalization
 
@@ -77,3 +78,23 @@ def normalization(request):
                               {'uploadfile_name': upload.name, 'url': url, 'outfile_name': '',
                                'outfile_url': '', 'alert': alert})
     return render(request, 'misc/normalization.html', {'uploadfile_name': '', 'url': '', 'outfile_name': '', 'outfile_url': '', 'alert': ''})
+
+
+def nrc_sequence(request):
+    if request.method == "POST":
+        user = request.user
+        if len(request.FILES) != 0:
+            upload, fs, name, url = upload_file(request, 'upload_file')
+            sequence = request.POST['sequence']
+
+            ''' Calling Python Script'''
+            outfile, alert = run_nrc_sequence(settings.MEDIA_ROOT, name, sequence, user)
+            if outfile is not None:
+                outfile_name = str(outfile)
+                outfile_url = fs.url(outfile_name)
+                return render(request, 'misc/nrc_sequence.html', {'uploadfile_name': upload.name, 'url': url, 'outfile_name': outfile_name, 'outfile_url': outfile_url, 'alert':alert})
+            else:
+                return render(request, 'misc/nrc_sequence.html',
+                              {'uploadfile_name': upload.name, 'url': url, 'outfile_name': '',
+                               'outfile_url': '', 'alert': alert})
+    return render(request, 'misc/nrc_sequence.html', {'uploadfile_name': '', 'url': '', 'outfile_name': '', 'outfile_url': '', 'alert': ''})
