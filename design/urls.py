@@ -14,6 +14,9 @@ urlpatterns = [
     path('experiment<int:experiment_id>/', views.experiment_view, name='experiment_view'),
     path('experiment<int:experiment_id>/delete/', views.experiment_delete, name='experiment_delete'),
     path('experiment<int:experiment_id>/update/', views.experiment_update, name='experiment_update'),
-    path('experiment<int:experiment_id>/#<int:step_id>/update', views.step_update, name='step_update'),
+    path('experiment<int:experiment_id>/<int:step_id>', views.step_view, name='step_view'),
+    path('experiment<int:experiment_id>/<int:step_id>/update/', views.step_update, name='step_update'),
+    path('experiment<int:experiment_id>/<int:step_id>/delete/', views.step_delete, name='step_delete'),
     path('experiment<int:experiment_id>/add_step/', views.step_add, name='step_add'),
+
 ]

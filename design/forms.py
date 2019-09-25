@@ -3,11 +3,11 @@ from .models import Experiment, Step
 
 
 class ExperimentForm(forms.ModelForm):
-    project = forms.MultipleChoiceField(choices=Experiment.PROJECT, widget=forms.CheckboxSelectMultiple)
+    # project = forms.MultipleChoiceField(choices=Experiment.PROJECT, widget=forms.CheckboxSelectMultiple)
 
     class Meta:
         model = Experiment
-        fields = ['name', 'project', 'author', 'workflow', 'status']
+        fields = ['name', 'project', 'author', 'status']
         widgets = {'author': forms.TextInput(attrs={'readonly': 'readonly'})}
 
 
@@ -21,4 +21,4 @@ class StepForm(forms.ModelForm):
 
     class Meta:
         model = Step
-        fields = ['name', 'description', 'script', 'instrument', 'input_file']
+        fields = ['name', 'description', 'script', 'instrument', 'experiment', 'input_file']

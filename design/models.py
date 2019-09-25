@@ -4,6 +4,33 @@ from db.models import File, Sample, Plate, Well
 # Create your models here.
 
 
+class Experiment(models.Model):
+    PROJECT = (
+        ('GF', 'GF_general'),
+        ('SA', 'Sanguinarine'),
+        ('MK', 'MoClo kit'),
+        ('YK', 'Yeast CRISPR kit'),
+    )
+    STATUS = (
+        ('On going', 'On going'),
+        ('Completed', 'Completed'),
+        ('Aborted', 'Aborted'),
+        ('On hold', 'On hold'),
+    )
+
+    name = models.CharField(max_length=100)
+    project = models.CharField(max_length=100, choices=PROJECT, blank=True)
+    author = models.CharField(max_length=30)
+    # workflow = models.ManyToManyField(Step, blank=True)
+    status = models.CharField(default='On going', max_length=30, choices=STATUS, blank=True)
+    input_file = models.FileField(upload_to='design/', max_length=10000, blank=True)
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Step(models.Model):
     SCRIPTS = (
         ('Moclo', 'Moclo'),
@@ -32,33 +59,7 @@ class Step(models.Model):
     # Create new plates by the script
     output = models.ManyToManyField(Plate, blank=True, related_name='output_plates')
     # relationship = table with relatioship between plate/well source and destination including samples, volume and concentration.
-
-    def __str__(self):
-        return self.name
-
-
-class Experiment(models.Model):
-    PROJECT = (
-        ('GF', 'GF_general'),
-        ('SA', 'Sanguinarine'),
-        ('MK', 'MoClo kit'),
-        ('YK', 'Yeast CRISPR kit'),
-    )
-    STATUS = (
-        ('On going', 'On going'),
-        ('Completed', 'Completed'),
-        ('Aborted', 'Aborted'),
-        ('On hold', 'On hold'),
-    )
-
-    name = models.CharField(max_length=100)
-    project = models.CharField(max_length=100, blank=True)
-    author = models.CharField(max_length=30)
-    workflow = models.ManyToManyField(Step, blank=True)
-    status = models.CharField(default='On going', max_length=30, choices=STATUS, blank=True)
-    input_file = models.FileField(upload_to='design/', max_length=10000, blank=True)
-    created_at = models.DateField(auto_now_add=True)
-    updated_at = models.DateField(auto_now=True)
+    experiment = models.ForeignKey(Experiment, default=None, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name

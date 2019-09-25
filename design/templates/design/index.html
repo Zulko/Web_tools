@@ -70,8 +70,8 @@
 
 
           </div>
-        </div>
-      </div>
+{#        </div>#}
+{#      </div>#}
 
       <div class="col-8">
 {#      {% if all_experiments.count > 0 %}#}
@@ -93,8 +93,11 @@
                 <td><a href="{% url 'design:experiment_view' experiment.id %}" style="font-size: 12px;" class="btn btn-outline-secondary btn-sm m-0;"> {{ experiment.name }} </a> </td>
                 <td>{{ experiment.project }} </td>
                 <td>{{ experiment.author }} </td>
-                <td>{% for workflow in experiment.workflow.all %}
-                    {{ workflow }}
+
+                <td>{% for step in all_steps %}
+                    {% if step.experiment.id == experiment.id %}
+                        {{ step }}
+                    {% endif %}
                     {% endfor %}
                 </td>
                 <td>{{ experiment.created_at }} </td>
