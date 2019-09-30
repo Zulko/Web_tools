@@ -12,7 +12,7 @@ def design_view(request):
     print('design_view')
     user = request.user
     all_experiments = Experiment.objects.all()
-    all_steps = Step.objects.all()
+    all_steps = Step.objects.all().order_by('-id').reverse()
     formExperimentAdd = ExperimentForm(initial={'author': user})
     formExperimentUpdate = ExperimentForm(initial={'author': user})
     formStepAdd = StepForm()
@@ -48,7 +48,7 @@ def design_view(request):
 def experiment_view(request, experiment_id):
     print('experiment_view')
     experiment = get_object_or_404(Experiment, id=experiment_id)
-    all_steps = Step.objects.filter(experiment_id=experiment.id)
+    all_steps = Step.objects.filter(experiment_id=experiment.id).order_by('-id').reverse()
     formExperimentUpdate = ExperimentForm(instance=experiment)
     formStepAdd = StepForm(initial={'experiment': experiment})
     formStepUpdate = StepForm(initial={'experiment': experiment})
@@ -174,6 +174,7 @@ def step_view(request, experiment_id, step_id):
     formExperimentUpdate = ExperimentForm(instance=experiment)
     formStepAdd = StepForm(initial={'experiment': experiment})
     formStepUpdate = StepForm(instance=step)
+    run_results = None
 
     if 'submit_update_experiment' in request.POST:
         print('found the form update')
@@ -199,6 +200,20 @@ def step_view(request, experiment_id, step_id):
             formStepUpdate.save()
             return redirect('design:step_view', experiment.id, step.id)
 
+    elif 'submit_run_step' in request.POST:
+        # step.status_run = True
+        # step.save()
+        print(step.script)
+        if step.script == 'Spotting':
+            print('Spotting: Yes')
+        if step.script == 'Moclo':
+            print('Moclo: Yes')
+
+            print(step.name, step.id, step.script, step.instrument, step.input_file, step.status_run)
+
+        return redirect('design:step_view', experiment.id, step.id)
+
+
     context = {
         'all_steps': all_steps,
         'step': step,
@@ -206,6 +221,7 @@ def step_view(request, experiment_id, step_id):
         'form_experiment_update': formExperimentUpdate,
         'form_step_add': formStepAdd,
         'form_step_update': formStepUpdate,
+        'run_results': run_results,
     }
 
     return render(request, 'design/experiment.html', context)
@@ -241,3 +257,18 @@ def step_delete(request, experiment_id, step_id):
         step.delete()
 
     return redirect('design:experiment_view', experiment.id)
+
+
+@login_required()
+def step_run(request, experiment_id, step_id):
+    experiment = get_object_or_404(Experiment, id=experiment_id)
+    step = get_object_or_404(Step, id=step_id)
+
+    if request.method == 'POST':
+        formStepUpdate = StepForm(request.POST, request.FILES, instance=step, initial={'status_run':True})
+        if formStepUpdate.is_valid():
+            formStepUpdate.save()
+
+        print(step.name, step.id, step.script, step.instrument, step.input_file)
+
+    return redirect('design:step_view', experiment.id, step.id)

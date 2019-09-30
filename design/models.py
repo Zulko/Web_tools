@@ -56,6 +56,7 @@ class Step(models.Model):
     instrument = models.CharField(max_length=30, blank=True)
     input_file = models.FileField(upload_to='design/', max_length=10000, blank=True)
     input = models.ManyToManyField(Plate, blank=True, related_name='input_plates')
+    status_run = models.BooleanField(default=False)
     # Create new plates by the script
     output = models.ManyToManyField(Plate, blank=True, related_name='output_plates')
     # relationship = table with relatioship between plate/well source and destination including samples, volume and concentration.
