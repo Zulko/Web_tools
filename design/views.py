@@ -4,6 +4,8 @@ from django.contrib.auth.decorators import login_required
 from .models import Experiment, Step
 from .forms import ExperimentForm, StepForm
 
+from libs.function.spotting import run_spotting
+
 # Create your views here.
 
 
@@ -201,15 +203,42 @@ def step_view(request, experiment_id, step_id):
             return redirect('design:step_view', experiment.id, step.id)
 
     elif 'submit_run_step' in request.POST:
-        # step.status_run = True
-        # step.save()
-        print(step.script)
+        print("Nome do script:" + step.script)
         if step.script == 'Spotting':
             print('Spotting: Yes')
-        if step.script == 'Moclo':
-            print('Moclo: Yes')
+            step.status_run = True
+            step.save()
+            user = request.user
+            num_sources = request.POST['num_sources']
+            num_well = request.POST['num_well']
+            num_pattern = request.POST['num_pattern']
+            pattern = request.POST['pattern']
+            ''' Calling Python Script'''
+            outfile, worklist, alert = run_spotting(int(num_sources), int(num_well), int(num_pattern), int(pattern),
+                                                    user)
+            print(outfile.name)
+            context = {
+                'all_steps': all_steps,
+                'step': step,
+                'experiment': experiment,
+                'form_experiment_update': formExperimentUpdate,
+                'form_step_add': formStepAdd,
+                'form_step_update': formStepUpdate,
+                'run_results': run_results,
+                'outfile': outfile,
+                'worklist': worklist
+            }
 
-            print(step.name, step.id, step.script, step.instrument, step.input_file, step.status_run)
+            return render(request, 'design/experiment.html', context)
+
+        elif step.script == 'Moclo':
+            print('Moclo: Yes')
+        elif step.script == 'Normalization':
+            print('Normalization: Yes')
+        elif step.script == '':
+            run_results = 'Resultado do step sem script'
+            step.status_run = True
+            step.save()
 
         return redirect('design:step_view', experiment.id, step.id)
 
@@ -222,6 +251,8 @@ def step_view(request, experiment_id, step_id):
         'form_step_add': formStepAdd,
         'form_step_update': formStepUpdate,
         'run_results': run_results,
+        'outfile:': None,
+        'worklist': None,
     }
 
     return render(request, 'design/experiment.html', context)
@@ -268,7 +299,5 @@ def step_run(request, experiment_id, step_id):
         formStepUpdate = StepForm(request.POST, request.FILES, instance=step, initial={'status_run':True})
         if formStepUpdate.is_valid():
             formStepUpdate.save()
-
-        print(step.name, step.id, step.script, step.instrument, step.input_file)
 
     return redirect('design:step_view', experiment.id, step.id)
