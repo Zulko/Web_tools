@@ -5,6 +5,7 @@ from .models import Experiment, Step
 from .forms import ExperimentForm, StepForm
 
 from libs.function.spotting import run_spotting
+from libs.biofoundry.db import save_file
 
 # Create your views here.
 
@@ -170,6 +171,7 @@ def step_add(request, experiment_id):
 @login_required()
 def step_view(request, experiment_id, step_id):
     print('step_view')
+    user = request.user
     experiment = get_object_or_404(Experiment, id=experiment_id)
     all_steps = Step.objects.filter(experiment_id=experiment.id).order_by('-id').reverse()
     step = get_object_or_404(Step, id=step_id)
@@ -206,9 +208,8 @@ def step_view(request, experiment_id, step_id):
         print("Nome do script:" + step.script)
         if step.script == 'Spotting':
             print('Spotting: Yes')
-            step.status_run = True
-            step.save()
-            user = request.user
+
+
             num_sources = request.POST['num_sources']
             num_well = request.POST['num_well']
             num_pattern = request.POST['num_pattern']
@@ -216,7 +217,13 @@ def step_view(request, experiment_id, step_id):
             ''' Calling Python Script'''
             outfile, worklist, alert = run_spotting(int(num_sources), int(num_well), int(num_pattern), int(pattern),
                                                     user)
-            print(outfile.name)
+            step.status_run = True
+            out1 = save_file(outfile.name, step.script, user)
+            out2 = save_file(worklist.name, step.script, user)
+            step.output_files.add(out1)
+            step.output_files.add(out2)
+            step.save()
+
             context = {
                 'all_steps': all_steps,
                 'step': step,

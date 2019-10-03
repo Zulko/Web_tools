@@ -55,6 +55,7 @@ class Step(models.Model):
     script = models.CharField(max_length=30, choices=SCRIPTS, blank=True)
     instrument = models.CharField(max_length=30, blank=True)
     input_file = models.FileField(upload_to='design/', max_length=10000, blank=True)
+    output_files = models.ManyToManyField(File, blank=True)
     input = models.ManyToManyField(Plate, blank=True, related_name='input_plates')
     status_run = models.BooleanField(default=False)
     # Create new plates by the script

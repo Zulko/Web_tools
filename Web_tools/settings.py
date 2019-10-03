@@ -27,7 +27,17 @@ SECRET_KEY = '&ty^-p09dly9byg05%9v%mnq)vdqdoc_4@d_(c5n*69!!qddjr'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]', '0.0.0.0', 'biofoundry.concordia.ca', '10.211.128.168', '172.30.109.167', 'flavia-optiplex-3060']
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '[::1]',
+    '0.0.0.0',
+    'biofoundry.concordia.ca',
+    '10.211.128.168',
+    '172.30.109.167',
+    '172.30.57.1',
+    'flavia-optiplex-3060'
+]
 
 
 # Application definition
@@ -48,7 +58,6 @@ INSTALLED_APPS = [
     'misc',
     'scripts',
     'design',
-
 ]
 
 

@@ -66,11 +66,11 @@
 
                 <!-- step menu -->
                 <div class="shadow p-4 mb-4 bg-white">
-                    <ul class="pagination ">
+                    <ul class="pagination">
     {#                  <li class="pagination-previous"><a class="page-link" tabindex="-1"> <span aria-hidden="true">&laquo;</span> Previous </a></li>#}
                         {% for step in all_steps.all %}
                             {% if step.status_run is True %}
-                                <li class="page-item active"><a class="page-link" href="{% url 'design:step_view' experiment.id step.id %}">{{ step.name }}</a></li>
+                                <li class="page-item active"><a class="page-link" href="{% url 'design:step_view' experiment.id step.id %}">{{ step.name }}  <i class="fas fa-check-circle"></i></a></li>
                             {%  else %}
                                 <li class="page-item"><a class="page-link" href="{% url 'design:step_view' experiment.id step.id %}">{{ step.name }}</a></li>
                             {% endif %}
@@ -128,24 +128,26 @@
                                 <p>Status: {{ step.status_run }}</p>
                             </div>
                             {% if step.status_run is True %}
-                                <!-- Output for Spotting Script -->
-                                {% if step.script == '' %}
+                                <div class="col-6 shadow-sm p-4 mb-4 bg-white">
+                                    <!-- Output for Spotting Script -->
+                                    {% if step.script == '' %}
 
-                                {% endif %}
-                                <!-- Output for Spotting Script -->
-                                {% if step.script == 'Spotting' %}
-                                    <p>File: <a href="{{ outfile.file.url }}" class="btn btn-info btn-block" target="_blank" download> <strong> {{ outfile.name }} </strong> </a> </p>
-                                    <p>Worklist: <a href="{{ worklist.file.url }}" class="btn btn-info btn-block" target="_blank" download> <strong> {{ worklist.name }} </strong> </a></p>
-                                {% endif %}
+                                    {% endif %}
+                                    <!-- Output for Spotting Script -->
+                                    {% if step.script == 'Spotting' %}
+                                        {% for file in step.output_files.all %}
+                                            <p>File: <a href="{{ file.file.url }}" class="btn btn-info btn-sm btn-block" target="_blank">{{file.name}} </a></p>
+                                        {% endfor %}
+                                    {% endif %}
 
-                                {% if step.script == 'Moclo' %}
+                                    {% if step.script == 'Moclo' %}
 
-                                {% endif %}
-                                {% if step.script == 'Combinatorial' %}
+                                    {% endif %}
+                                    {% if step.script == 'Combinatorial' %}
 
-                                {% endif %}
+                                    {% endif %}
 
-                            </div>
+                                </div>
                             {% endif %}
                         </div>
                     </div>
