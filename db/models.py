@@ -88,32 +88,35 @@ class Plate(models.Model):
 class Sample(models.Model):
     # Choices
     SAMPLE_TYPES = (
-        ('Pr', 'Primer'),
-        ('Pd', 'Plasmid'),
-        ('Pt', 'Part'),
-        ('Lr', 'Linker'),
-        ('Ot', 'Other'),
+        ('Primer', 'Primer'),
+        ('Plasmid', 'Plasmid'),
+        ('Part', 'Part'),
+        ('Linker', 'Linker'),
+        ('Other', 'Other'),
     )
     END_TYPES = (
         ('R', 'Right'),
         ('L', 'Left'),
     )
     PROJECT = (
-        ('GF', 'GF_general'),
-        ('SA', 'Sanguinarine'),
-        ('MK', 'MoClo kit'),
-        ('YK', 'Yeast CRISPR kit'),
+        ('GF_General', 'GF_General'),
+        ('Sanguinarine', 'Sanguinarine'),
+        ('MoClo_Kit', 'MoClo_Kit'),
+        ('Yeast_CRISPR_Kit', 'Yeast_CRISPR_Kit'),
+        ('Foundry_Kit', 'Foundry_Kit'),
     )
     PART_TYPE = (
-        ('P', 'Promoter'),
-        ('T', 'Terminator'),
+        ('Promoter', 'Promoter'),
+        ('Terminator', 'Terminator'),
         ('CDS', 'CDS'),
-        ('CR', 'Connector_Right'),
-        ('CL', 'Connector_Left'),
-        ('B', 'Backbone'),
-        ('CS', 'Counter_Screen'),
-        ('Ma', 'Marker'),
-        ('Mi', 'Miscellaneous'),
+        ('Connector_R', 'Connector_R'),
+        ('Connector_L', 'Connector_L'),
+        ('Backbone', 'Backbone'),
+        ('Counter_Screen', 'Counter_Screen'),
+        ('Marker', 'Marker'),
+        ('Miscellaneous', 'Miscellaneous'),
+        ('Complementation_Marker', 'Complementation_Marker'),
+        ('Homology', 'Homology'),
     )
     ORGANISM = (
         ('Human', 'Human'),
@@ -155,7 +158,7 @@ class Sample(models.Model):
     order_number = models.CharField(max_length=50, blank=True)
 
     # Part options
-    part_type = models.CharField(max_length=3, choices=PART_TYPE, blank=True)
+    part_type = models.CharField(max_length=50, choices=PART_TYPE, blank=True)
     moclo_type = models.CharField(max_length=5, blank=True)
 
     # Plasmid or Primer options
