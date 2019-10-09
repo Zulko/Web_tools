@@ -55,14 +55,14 @@
                                 <div class="form-row align-items-center"><br><br>
                                     <div class="col-auto"></div>
                                     <div class="col">
-                                        <input type="file" class="form-control-file border" name="upload_file_plate">
+                                        <input type="file" class="form-control-file border" name="upload_file_samples">
                                     </div>
                                     <div class="col-auto"></div>
                                 </div><br>
                                 <div class="modal-footer">
                                     <a class="btn btn-secondary mr-auto" href="{% static 'docs/import_sample_file.csv' %}" target="_blank" download> Sample File </a>
                                     <button type="button" class="btn btn-secondary " data-dismiss="modal">Close</button>
-                                    <button type="submit" name="upload_file_samples" action="{% url 'db:sample_file_add' %}" class="btn btn-info">Add</button>
+                                    <button type="submit" name="submit_file_samples" action="{% url 'db:sample_file_add' %}" class="btn btn-info">Add</button>
                                 </div>
                                 </form>
                             </div>
@@ -83,7 +83,8 @@
           {% if sample %}
             <div class="info" style="margin: 10px 0px 10px 0px" >
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                    {{ sample.name }}
+                    {{ sample.name }}<br>
+                    {{ sample.sequence }}
                     {% if wells %}
                         <p> Location:
                         {% for well in wells %}
@@ -184,7 +185,7 @@
                 <th class="th-sm">Order_number</th>
                 <th class="th-sm">Part_type</th>
                 <th class="th-sm">Moclo_type</th>
-                <th class="th-sm">Samples</th>
+                <th class="th-sm">Sub_samples</th>
                 <th class="th-sm">End</th>
                 <th class="th-sm">Direction</th>
                 <th class="th-sm">TM</th>

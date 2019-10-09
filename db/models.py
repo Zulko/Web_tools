@@ -105,19 +105,21 @@ class Sample(models.Model):
         ('Yeast_CRISPR_Kit', 'Yeast_CRISPR_Kit'),
         ('Foundry_Kit', 'Foundry_Kit'),
     )
-    PART_TYPE = (
-        ('Promoter', 'Promoter'),
-        ('Terminator', 'Terminator'),
-        ('CDS', 'CDS'),
-        ('Connector_R', 'Connector_R'),
-        ('Connector_L', 'Connector_L'),
-        ('Backbone', 'Backbone'),
-        ('Counter_Screen', 'Counter_Screen'),
-        ('Marker', 'Marker'),
-        ('Miscellaneous', 'Miscellaneous'),
-        ('Complementation_Marker', 'Complementation_Marker'),
-        ('Homology', 'Homology'),
-    )
+    # PART_TYPE = (
+    #     ('Promoter', 'Promoter'),
+    #     ('Terminator', 'Terminator'),
+    #     ('CDS', 'CDS'),
+    #     ('Connector_R', 'Connector_R'),
+    #     ('Connector_L', 'Connector_L'),
+    #     ('Backbone', 'Backbone'),
+    #     ('Counter_Screen', 'Counter_Screen'),
+    #     ('Marker', 'Marker'),
+    #     ('Miscellaneous', 'Miscellaneous'),
+    #     ('Complementation_Marker', 'Complementation_Marker'),
+    #     ('S. cerevisiae_marker', 'S. cerevisiae_marker'),
+    #     ('Homology', 'Homology'),
+    #
+    # )
     ORGANISM = (
         ('Human', 'Human'),
         ('Yeast', 'Yeast'),
@@ -158,7 +160,7 @@ class Sample(models.Model):
     order_number = models.CharField(max_length=50, blank=True)
 
     # Part options
-    part_type = models.CharField(max_length=50, choices=PART_TYPE, blank=True)
+    part_type = models.CharField(max_length=50, blank=True)
     moclo_type = models.CharField(max_length=5, blank=True)
 
     # Plasmid or Primer options

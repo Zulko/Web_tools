@@ -367,6 +367,7 @@ def sample_delete(request, sample_id):
 
 @login_required()
 def samples_list(request):
+    print('sample list')
     all_samples = Sample.objects.all()
     sample_filter = SampleFilter(request.GET, queryset=all_samples)
     formSampleAdd = SampleForm()
@@ -386,11 +387,15 @@ def samples_list(request):
             sample = get_object_or_404(Sample, id=update_sample.id)
             return redirect('db:sample', sample.id)
 
-    elif 'upload_file_samples' in request.POST:
+    elif 'submit_file_samples' in request.POST:
+        print('file sample upload')
         samples_resources = SampleResource()
+        print(samples_resources.fields)
         dataset = Dataset()
         new_samples = request.FILES['upload_file_samples']
+        print(new_samples)
         imported_data = dataset.load(new_samples.read().decode('utf-8'), format='csv')
+        # imported_data = dataset.load(new_samples.read(), format='csv')
         print(imported_data)
         result = samples_resources.import_data(imported_data, dry_run=True, raise_errors=True, collect_failed_rows=True)
         print(result)
@@ -412,7 +417,7 @@ def samples_list(request):
 
 @login_required()
 def sample(request, sample_id):
-
+    print('sample view')
     all_samples = Sample.objects.all()
     sample_filter = SampleFilter(request.GET, queryset=all_samples)
     sample = Sample.objects.get(id=sample_id)
@@ -447,13 +452,12 @@ def sample(request, sample_id):
                 sample = get_object_or_404(Sample, id=update_sample.id)
                 return redirect('db:sample', sample.id)
 
-        elif 'upload_file_samples' in request.POST:
+        elif 'submit_file_samples' in request.POST:
             samples_resources = SampleResource()
             dataset = Dataset()
             new_samples = request.FILES['upload_file_samples']
             imported_data = dataset.load(new_samples.read().decode('utf-8'), format='csv')
             result = samples_resources.import_data(imported_data, dry_run=True, raise_errors=True, collect_failed_rows=True)
-
             if not result.has_errors():
                 samples_resources.import_data(imported_data, dry_run=False)
             else:
