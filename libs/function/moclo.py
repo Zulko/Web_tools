@@ -365,8 +365,10 @@ def run_moclo(path, filename, database, dispenser_parameters, mix_parameters, ou
     ''' Create write files'''
     db_mantis_name = 'mantis_' + str(os.path.splitext(filename)[0]) + '.csv'
     db_robot_name = str(robot.name) + "_" + str(os.path.splitext(filename)[0]) + '.csv'
-    file_mantis = file.create(path + "/docs/" + db_mantis_name, 'w')
-    file_robot = file.create(path + "/docs/" + db_robot_name, 'w')
+    # file_mantis = file.create(path + "/docs/" + db_mantis_name, 'w')
+    # file_robot = file.create(path + "/docs/" + db_robot_name, 'w')
+    file_mantis = file.create(path + "/" + db_mantis_name, 'w')
+    file_robot = file.create(path + "/" + db_robot_name, 'w')
     mantis_csv = file.create_writer_csv(file_mantis)
     robot_csv = file.create_writer_csv(file_robot)
 
