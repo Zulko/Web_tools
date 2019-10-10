@@ -61,7 +61,7 @@ def run_combination(path, filename, user):
 
     """Write a output file"""
     outfile_name = 'combination_' + str(filename)
-    fileout = file.create(path+"/docs/"+outfile_name, 'w')
+    fileout = file.create(path+"/"+outfile_name, 'w')
     file.write_combinations(fileout, lists_combination_parts)
     # outfile_name = os.path.basename(fileout)
     # print(outfile_name)
