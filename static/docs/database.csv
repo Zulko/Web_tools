@@ -1,10 +1,10 @@
 Part,Type,Length,ng/uL,vol,source plate,source well,num_well
 TU1-5',1,556,5,100,Plate1,A1,96
-PSMB gblock,2,848,10,10,Plate1,A3,96
-pYTK001,3,2676,50,10,Plate1,A4,96
-TU1-5' gblock,4,250,5,10,Plate1,A5,96
-TU1-3',5,150,5,100,Plate1,A6,96
-PSMB gblock,6,800,10,100,Plate1,A7,96
+PSMBgblock,2,848,10,10,Plate1,A3,96
+TU1-5'gblock,3,2676,100,10,Plate1,A4,96
+TU1-5'gblock,4,250,100,16,Plate1,A5,96
+TU1-3',5,150,10,100,Plate1,A6,96
+PSMBgblock,6,800,10,100,Plate1,A7,96
 pYTK001,7,2676,50,100,Plate1,A8,96
 pYTK001,8,2676,245.2,100,Plate1,A9,96
 pYTK002,1,1856,175.8,100,Plate1,A10,96

@@ -10,6 +10,7 @@ class SampleFilter(django_filters.FilterSet):
             'name': ['icontains', ],
             'alias': ['icontains', ],
             'author': ['icontains', ],
+            'project': ['exact', ],
             'sample_type': ['exact', ],
         }
 
