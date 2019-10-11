@@ -1,0 +1,91 @@
+{% extends 'base_layout.html' %}
+{% load static from staticfiles %}
+{% load bootstrap %}
+
+{% block content %}
+    <div class="row">
+      <div class="col-2">
+        <h2></h2>
+      </div>
+
+      <div class="col-8">
+        <div class="column">
+        <h5> Log Book: {{ machine.name }}
+            <div align="left">
+                <button type="button" class="btn btn-info" style="float:right" data-toggle="modal" data-target="#add_entry"> <i class="fas fa-plus-circle"></i> Add new entry </button>
+            </div>
+        </h5><br><br><br>
+        <!-- Modal button to add sample -->
+
+            </div>
+            <div class="modal fade" id="add_entry" tabindex="-1" role="dialog" aria-labelledby="add_entryLabel" aria-hidden="true">
+              <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="add_entryLabel">Add new entry</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+
+                    <!-- Add entry modal page -->
+                    <div class="modal-body">
+                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane active" id="add_entryTab">
+                                <!-- Add samples using a form -->
+                                <form id="form_add_entry" method="post" enctype="multipart/form-data">{% csrf_token %}
+                                {{ formLogBookAdd | bootstrap }}<br>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" name="submit_add_entry" action="{% url 'logbook:book_add' machine.id %}" class="btn btn-info">Add</button>
+                                </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Table entry list -->
+            <table id="file_list_table" class="table table-hover table-striped table-sm" cellspacing="0" width="100%">
+              <thead align="center">
+                <tr class="table-dark text-dark">
+                    <th>User</th>
+                    <th>Supervisor</th>
+                    <th>Time Used</th>
+                    <th>Created at</th>
+                    <th>Comments</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for logbook in all_logbook %}
+                <tr align="center">
+                    <td>{{ logbook.user }}</td>
+                    <td>{{ logbook.supervisor }}</td>
+                    <td>{{ logbook.time_used }}</td>
+                    <td>{{ logbook.created_at }}</td>
+                    <td>{{ logbook.comments }}</td>
+                </tr>
+                {%  endfor %}
+              </tbody>
+            </table>
+        </div>
+      </div>
+
+      <div class="col-2">
+        <h2></h2>
+      </div>
+
+    </div>
+      <script type="text/javascript">
+        $('#file_list_table').DataTable({
+            {#searching: false,#}
+            "order":[[3, "desc"]]
+        });
+
+        $('.dataTables_length').addClass('bs-select');
+      </script>
+
+
+{% endblock%}

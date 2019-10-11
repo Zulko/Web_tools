@@ -33,6 +33,7 @@ urlpatterns = [
     path('misc/', include('misc.urls')),
     path('scripts/', include('scripts.urls')),
     path('design/', include('design.urls')),
+    path('logbook/', include('logbook.urls')),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

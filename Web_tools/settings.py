@@ -36,6 +36,7 @@ ALLOWED_HOSTS = [
     '10.211.128.168',
     '172.30.109.167',
     '172.30.57.1',
+    '172.30.45.120',
     'flavia-optiplex-3060'
 ]
 
@@ -58,6 +59,8 @@ INSTALLED_APPS = [
     'misc',
     'scripts',
     'design',
+    'logbook',
+
 ]
 
 

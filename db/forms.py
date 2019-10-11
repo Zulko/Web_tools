@@ -1,5 +1,11 @@
 from django import forms
-from .models import File, Sample, Plate, Well
+from .models import File, Sample, Plate, Well, Machine
+
+
+class MachineForm(forms.ModelForm):
+    class Meta:
+        model = Machine
+        fields = ['name', 'author', 'status', 'comments']
 
 
 class FileForm(forms.ModelForm):

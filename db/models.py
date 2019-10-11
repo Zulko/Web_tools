@@ -10,6 +10,38 @@ from django.db import models
 from django.urls import reverse
 
 
+class Machine(models.Model):
+    MACHINE = (
+        ('Accuri', 'Accuri'),
+        ('Sunrise', 'Sunrise'),
+        ('TapeStation', 'TapeStation'),
+        ('Echo', 'Echo'),
+        ('QPix', 'QPix'),
+        ('Biomek', 'Biomek'),
+        ('Mantis', 'Mantis'),
+        ('QuBit', 'QuBit'),
+        ('Chromium', 'Chromium'),
+        ('MultiFlow', 'MultiFlow'),
+        ('Fragment Analyzer', 'Fragment Analyzer'),
+        ('ViiA7', 'ViiA7'),
+        ('inSPIRE', 'inSPIRE'),
+    )
+    STATUS = (
+        ('Working', 'Working'),
+        ('Not working', 'Not working'),
+    )
+
+    name = models.CharField(max_length=100, choices=MACHINE, default='Accuri')
+    author = models.CharField(max_length=50)
+    status = models.CharField(max_length=50, choices=STATUS, default='Working')
+    comments = models.CharField(max_length=100, blank=True)
+    image = models.ImageField(upload_to="pics", max_length=10000, blank=True)
+    created_at = models.DateField(auto_now_add=True, editable=False)
+
+    def __str__(self):
+        return self.name
+
+
 class Plate(models.Model):
     STATUS = (
         ('G', 'On going'),

@@ -1,0 +1,147 @@
+{% extends 'base_layout.html' %}
+{% load static from staticfiles %}
+
+{% block content %}
+
+    <div class="row">
+      <div class="col-3">
+        <h2></h2>
+      </div>
+      <div class="col-6">
+          <div class="row">
+              <div class="card-deck" >
+                  <div class="card-body text-center">
+                  {% for machine in all_machines %}
+                      {% if machine.id is 1 %}
+                        <a href= "{% url 'logbook:book' machine.id %}" target="_blank"> <img class="img-fluid" src="{{ machine.image.url }}"/> </a>
+                        <h5> {{ machine.name }} </h5>
+                      {% endif %}
+                  {% endfor %}
+                  </div>
+                  <div class="card-body text-center">
+                  {% for machine in all_machines %}
+                      {% if machine.id is 2 %}
+                        <a href= "{% url 'logbook:book' machine.id %}" target="_blank"> <img class="img-fluid" src="{{ machine.image.url }}"/> </a>
+                        <h5> {{ machine.name }} </h5>
+                      {% endif %}
+                  {% endfor %}
+                  </div>
+                  <div class="card-body text-center">
+                  {% for machine in all_machines %}
+                      {% if machine.id is 3 %}
+                        <a href= "{% url 'logbook:book' machine.id %}" target="_blank"> <img class="img-fluid" src="{{ machine.image.url }}"/> </a>
+                        <h5> {{ machine.name }} </h5>
+                      {% endif %}
+                  {% endfor %}
+                  </div>
+                  <div class="card-body text-center">
+                  {% for machine in all_machines %}
+                      {% if machine.id is 4 %}
+                        <a href= "{% url 'logbook:book' machine.id %}" target="_blank"> <img class="img-fluid" src="{{ machine.image.url }}"/> </a>
+                        <h5> {{ machine.name }} </h5>
+                      {% endif %}
+                  {% endfor %}
+                  </div>
+                  <div class="card-body text-center">
+                  {% for machine in all_machines %}
+                      {% if machine.id is 5 %}
+                        <a href= "{% url 'logbook:book' machine.id %}" target="_blank"> <img class="img-fluid" src="{{ machine.image.url }}"/> </a>
+                        <h5> {{ machine.name }} </h5>
+                      {% endif %}
+                  {% endfor %}
+                  </div>
+              </div>
+          </div>
+
+          <div class="row">
+              <div class="card-deck">
+                  <div class="card-body text-center">
+                     {% for machine in all_machines %}
+                      {% if machine.id is 6 %}
+                        <a href= "{% url 'logbook:book' machine.id %}" target="_blank"> <img class="img-fluid" src="{{ machine.image.url }}"/> </a>
+                        <h5> {{ machine.name }} </h5>
+                      {% endif %}
+                  {% endfor %}
+                  </div>
+                  <div class="card-body text-center">
+                  {% for machine in all_machines %}
+                      {% if machine.id is 7 %}
+                        <a href= "{% url 'logbook:book' machine.id %}" target="_blank"> <img class="img-fluid" src="{{ machine.image.url }}"/> </a>
+                        <h5> {{ machine.name }} </h5>
+                      {% endif %}
+                  {% endfor %}
+                  </div>
+                  <div class="card-body text-center">
+                  {% for machine in all_machines %}
+                      {% if machine.id is 8 %}
+                        <a href= "{% url 'logbook:book' machine.id %}" target="_blank"> <img class="img-fluid" src="{{ machine.image.url }}"/> </a>
+                        <h5> {{ machine.name }} </h5>
+                      {% endif %}
+                  {% endfor %}
+                  </div>
+                  <div class="card-body text-center">
+                  {% for machine in all_machines %}
+                      {% if machine.id is 9 %}
+                        <a href= "{% url 'logbook:book' machine.id %}" target="_blank"> <img class="img-fluid" src="{{ machine.image.url }}"/> </a>
+                        <h5> {{ machine.name }} </h5>
+                      {% endif %}
+                  {% endfor %}
+                  </div>
+                  <div class="card-body text-center">
+                  {% for machine in all_machines %}
+                      {% if machine.id is 10 %}
+                        <a href= "{% url 'logbook:book' machine.id %}" target="_blank"> <img class="img-fluid" src="{{ machine.image.url }}"/> </a>
+                        <h5> {{ machine.name }} </h5>
+                      {% endif %}
+                  {% endfor %}
+                  </div>
+
+              </div>
+          </div>
+          <div class="row">
+              <div class="card-deck">
+                  <div class="card-body text-center">
+                  {% for machine in all_machines %}
+                      {% if machine.id is 11 %}
+                        <a href= "{% url 'logbook:book' machine.id %}" target="_blank"> <img class="img-fluid" src="{{ machine.image.url }}"/> </a>
+                        <h5> {{ machine.name }} </h5>
+                      {% endif %}
+                  {% endfor %}
+                  </div>
+                  <div class="card-body text-center">
+                  {% for machine in all_machines %}
+                      {% if machine.id is 12 %}
+                        <a href= "{% url 'logbook:book' machine.id %}" target="_blank"> <img class="img-fluid" src="{{ machine.image.url }}"/> </a>
+                        <h5> {{ machine.name }} </h5>
+                      {% endif %}
+                  {% endfor %}
+                  </div>
+                  <div class="card-body text-center">
+                  {% for machine in all_machines %}
+                      {% if machine.id is 13 %}
+                        <a href= "{% url 'logbook:book' machine.id %}" target="_blank"> <img class="img-fluid" src="{{ machine.image.url }}"/> </a>
+                        <h5> {{ machine.name }} </h5>
+                      {% endif %}
+                  {% endfor %}
+                  </div>
+                  <div class="card-body text-center">
+                        <a href= "#" target="_blank"> <img class="img-fluid" src="{% static 'images/empty_img.png' %}"/> </a>
+                        <h5> -- </h5>
+                  </div>
+                  <div class="card-body text-center">
+                        <a href= "#" target="_blank"> <img class="img-fluid" src="{% static 'images/empty_img.png' %}"/> </a>
+                        <h5> -- </h5>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+
+      <div class="col-3">
+        <h2>
+        </h2>
+      </div>
+
+    </div>
+
+{% endblock%}

@@ -27,14 +27,18 @@
                         <a href="https://github.com/frba/" target="_blank"> <img class="img-fluid" src="{% static 'images/github_logo.png' %}" /> </a>
                         <h5> Github </h5>
                   </div>
+                  <div class="card-body text-center">
+                        <a href="https://edinburgh-genome-foundry.github.io/" target="_blank"> <img class="img-fluid" src="{% static 'images/egf_logo.png' %}" /> </a>
+                        <h5> EGF Foundry </h5>
+                  </div>
               </div>
           </div>
 
           <div class="row">
               <div class="card-deck">
                 <div class="card-body text-center">
-                  <a href="https://edinburgh-genome-foundry.github.io/" target="_blank"> <img class="img-fluid" src="{% static 'images/egf_logo.png' %}" /> </a>
-                  <h5> EGF Foundry </h5>
+                  <a href="{% url 'logbook:index' %}" target="_blank"> <img class="img-fluid" src="{% static 'images/foundry_logbook.png' %}" /> </a>
+                  <h5> LogBooks </h5>
                 </div>
                 <div class="card-body text-center">
                   <a href="https://bookings.fungalgenomics.ca/Web/index.php?redirect=%2FWeb%2Fdashboard.php%3F" target="_blank"> <img class="img-fluid" src="{% static 'images/concordia_genomics_logo.png' %}" /> </a>
