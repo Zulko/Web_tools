@@ -44,10 +44,8 @@ class Machine(models.Model):
 
 class Plate(models.Model):
     STATUS = (
-        ('G', 'On going'),
-        ('C', 'Completed'),
-        ('A', 'Aborted'),
-        ('H', 'On hold'),
+        ('Working', 'Working'),
+        ('Backup', 'Backup'),
     )
     # Choices
     CONTAINER_TYPES = (
