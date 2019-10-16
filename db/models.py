@@ -193,7 +193,7 @@ class Sample(models.Model):
 
     # Part options
     part_type = models.CharField(max_length=50, blank=True)
-    moclo_type = models.CharField(max_length=5, blank=True)
+    moclo_type = models.CharField(max_length=30, blank=True)
 
     # Plasmid or Primer options
     # Plasmid has parts
