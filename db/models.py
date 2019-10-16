@@ -80,7 +80,7 @@ class Plate(models.Model):
     num_rows = models.IntegerField()
     num_well = models.IntegerField()
     active = models.BooleanField(default=True)
-    status = models.CharField(max_length=1, choices=STATUS, blank=True)
+    status = models.CharField(max_length=30, choices=STATUS, blank=True)
     created_at = models.DateField(auto_now_add=True, editable=False)
     updated_at = models.DateField(auto_now=True)
 
