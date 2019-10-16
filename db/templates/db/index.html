@@ -90,6 +90,31 @@
             {% if plate %}
                 {{ form_add_well.errors }}
                 <h5>{{ plate.name }} <a href="#" class="btn btn-warning btn-sm disabled"> <i class="fas fa-info-circle"></i></a>
+                     <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#add_well" ><i class="fas fa-plus-circle"></i></button>
+
+                    <!-- Modal toggle to Add Well -->
+                    <div class="modal fade" id="add_well" tabindex="-1" role="dialog" aria-labelledby="add_wellLabel" aria-hidden="true">
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="add_wellLabel">Add well</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <form id="form_plate" method="post" enctype="multipart/form-data">{% csrf_token %}
+                            <div class="modal-body">
+                                {{ form_add_well | bootstrap }}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" name="submit_add_well" action="{% url 'db:well_add' plate.id %}" class="btn btn-info">Add</button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+
                 <div align="center">
                     <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#update_plate"> <i class="fas fa-edit"></i> Update </button>
                     <a href="{% url 'db:plate_export' plate.id %}" class="btn btn-info"> <i class="fas fa-file-export"></i> Export </a>
@@ -189,29 +214,7 @@
                     {% for col in fill %}
                         {% if col.1 == '' %}
                         <td>
-                        <button class="circle_empty" data-toggle="modal" data-target="#add_well" value="{{ col.0 }}"> {{ col.0 }}</button>
-                        <!-- Modal toggle to Add Well -->
-                        <div class="modal fade" id="add_well" tabindex="-1" role="dialog" aria-labelledby="add_wellLabel" aria-hidden="true">
-                          <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                              <div class="modal-header">
-                                <h5 class="modal-title" id="add_wellLabel">Add well</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                  <span aria-hidden="true">&times;</span>
-                                </button>
-                              </div>
-                              <form id="form_plate" method="post" enctype="multipart/form-data">{% csrf_token %}
-                                <div class="modal-body">
-                                    {{ form_add_well | bootstrap }}
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="submit" name="submit_add_well" action="{% url 'db:well_add' plate.id %}" class="btn btn-info">Add</button>
-                                </div>
-                              </form>
-                            </div>
-                          </div>
-                        </div>
+                            <button class="circle_empty"> {{ col.0 }}</button>
                         </td>
                         {% else %}
                             <td>
