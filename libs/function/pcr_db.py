@@ -325,7 +325,7 @@ def find_primers_database(unique_list):
     for part in unique_list:
         primers_fwd = []
         primers_rev = []
-        primer = sample.(name__exact=str(part[0]))
+        samples = Sample.objects.filter(name__exact=str(part[0]))
         for sample in samples:
             print(sample.name)
             if sample.primer_id is not None:
