@@ -197,6 +197,7 @@ class Sample(models.Model):
     # Plasmid has parts
     # Primer has linkers
     sub_sample_id = models.ManyToManyField('Sample', blank=True, related_name='subsample', unique=False)  # Multi select option
+    primer_id = models.ManyToManyField('Sample', blank=True, related_name='primer', unique=False)  # Multi select option
 
     # Linker options
     end = models.CharField(max_length=1, choices=END_TYPES, blank=True)

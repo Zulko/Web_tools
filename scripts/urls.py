@@ -10,4 +10,5 @@ urlpatterns = [
     path('assembly/', views.assembly, name='assembly'),
     path('moclo/', views.moclo, name='moclo'),
     path('moclo_db/', views.moclo_db, name='moclodb'),
+    path('pcr_db/', views.pcr_db, name='pcrdb'),
 ]

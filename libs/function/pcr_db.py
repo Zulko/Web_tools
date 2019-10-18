@@ -125,7 +125,8 @@ def get_part_info(found_list, name):
 
 
 def calc_part_volumes_in_plate(count_unique_list, plates_in, mix_parameters, dispenser_parameters):
-    part_fmol, bb_fmol, total_vol, buffer, rest_enz, lig_enz, add_water = mix_parameters
+    # part_fmol, bb_fmol, total_vol, buffer, rest_enz, lig_enz, add_water = mix_parameters
+    template_conc, primer_f, primer_r, per_buffer, per_phusion, per_dntps, total_vol, add_water = mix_parameters
     machine, min_vol, res_vol, dead_vol = dispenser_parameters
     total_vol_parts = []
 
@@ -298,71 +299,79 @@ def find_samples_database(unique_list):
     found_list = []
     missing_list = []
     for part in unique_list:
-        print(part)
         found = False
-        wells = Well.objects.filter(samples__name__exact=str(part))
-        print(len(wells))
+        wells = Well.objects.filter(samples__name__exact=str(part[0]))
         if len(wells) > 0:
             for well in wells:
                 samples = well.samples.all()
                 if len(samples) == 1:
                     for sample in samples:
-                        if well.volume > 0 and sample.name == part and sample.length is not None and sample.sample_type is not None:
+                        if well.volume > 0 and sample.name == part[0] and sample.length is not None and sample.moclo_type is not None:
                             found = True
-                            lista = [sample.name, str(sample.sample_type), int(sample.length), float(well.concentration), float(well.volume), well.plate.name, well.name, int(well.plate.num_well)]
+                            lista = [sample.name, str(sample.moclo_type), int(sample.length), float(well.concentration), float(well.volume), well.plate.name, well.name, int(well.plate.num_well)]
                             found_list.append(lista)
-
                         else:
-                            missing_list.append(part)
+                            missing_list.append(part[0])
         else:
-            missing_list.append(part)
+            missing_list.append(part[0])
 
     return found_list, missing_list
 
 
-def get_count_unique_list(unique_list, lists_parts):
-    count_unique_list = []
+def find_primers_database(unique_list):
+    ''' Verify parts in database '''
+    found_list = []
+    missing_list = []
     for part in unique_list:
-        count = calc.num_times_part(part, lists_parts)
-        count_unique_list.append([part, count])
-    return count_unique_list
+        primers_fwd = []
+        primers_rev = []
+        primer = sample.(name__exact=str(part[0]))
+        for sample in samples:
+            print(sample.name)
+            if sample.primer_id is not None:
+                print(sample.primer_id)
+                for primer in sample.primer_id.all():
+                    if primer.direction == 'FWD':
+                        primers_fwd.append(primer)
+                    else:
+                        primers_rev.append(primer)
+
+                # sample has two or more fwd and rev primers
+                if len(primers_fwd) > 0 and len(primers_rev) > 0:
+                    wells_fwd = []
+                    wells_rev = []
+                    for primer in primers_fwd:
+                        print(primer.name)
+                        wells_fwd.append(Well.objects.filter(samples__name__exact=str(primer.name)))
+                        if wells_fwd is not None:
+                            print(wells_fwd)
+
+                    for primer in primers_rev:
+                        wells_rev.append(Well.objects.filter(samples__name__exact=str(primer.name)))
+                        if wells_rev is not None:
+                            print(wells_rev)
+            else:
+                print(part[0])
+                missing_list.append(part[0])
+        else:
+            missing_list.append(part[0])
+
+    return found_list, missing_list
 
 
-def get_list_no_repetition(lists_parts):
-    unique_list = []
-    for lista in lists_parts:
-        for part in lista:
-                if add_on_list(unique_list, part):
-                    unique_list.append(part)
-    return unique_list
-
-
-def get_sets_in_filepath(reader):
-    lists_parts = []
-    ''' For each line in file get the list'''
+def get_part_count(reader):
+    list_part_count = []
     for line in reader:
-        set = []
-        parts = line.strip("\n").split(',')
-        '''List of parts'''
-        for part in parts:
-            part = part.replace(" ", "")
-            part = part.replace('"', "")
-            set.append(part)
-        ''' Create the single list of parts'''
-        lists_parts.append(list(set))
-    return lists_parts
+        set = line.strip("\n").split(',')
+        list_part_count.append(list(set))
+    return list_part_count
 
 
-def run_moclo_db(path, filename, dispenser_parameters, mix_parameters, out_num_well, pattern, use_high_low_chip_mantis, user):
+def run_pcr_db(path, filename, dispenser_parameters, mix_parameters, out_num_well, pattern, use_high_low_chip_mantis, user):
     total_alert = []
     name_machine, min_vol, res_vol, dead_vol = dispenser_parameters
     robot = machine.Machine(name_machine, min_vol, res_vol, dead_vol)
-    part_fmol, bb_fmol, total_vol, per_buffer, per_rest_enz, per_lig_enz, add_water = mix_parameters
-
-    # print(name_machine, min_vol, res_vol, dead_vol)
-    # print(name_machine, min_vol, res_vol, dead_vol)
-    # print(part_fmol, bb_fmol, total_vol, per_buffer, per_rest_enz, per_lig_enz, add_water)
-
+    template_conc, primer_f, primer_r, per_buffer, per_phusion, per_dntps, total_vol, add_water = mix_parameters
 
     ''' Create read files'''
     filein = file.verify(path + "/" + filename)
@@ -375,104 +384,103 @@ def run_moclo_db(path, filename, dispenser_parameters, mix_parameters, out_num_w
     mantis_csv = file.create_writer_csv(file_mantis)
     robot_csv = file.create_writer_csv(file_robot)
 
-    """Create combinations"""
-    lists_parts = get_sets_in_filepath(filein)
-    # print(lists_parts)
-
-    ''' Get unique samples - no repetition'''
-    unique_list = get_list_no_repetition(lists_parts)
-    # print(unique_list)
-
-    ''' Verify how many times it appears'''
-    count_unique_list = get_count_unique_list(unique_list, lists_parts)
-    print(count_unique_list)
+    ''' Get parts and number of repetitions desirable'''
+    list_part_count = get_part_count(filein)
 
     """Verify the parts on database"""
-    found_list, missing_list = find_samples_database(unique_list)
+    found_parts, missing_parts = find_samples_database(list_part_count)
 
-    print(len(missing_list))
-    if len(missing_list) > 0:
-        print(len(missing_list))
-        for item in missing_list:
-            total_alert.append('Missing info for part: ' + str(item))
+    if len(missing_parts) > 0:
+        for item in missing_parts:
+            total_alert.append('Not found in database or not enough volume: ' + str(item))
         return total_alert, None, None, None, None
 
     else:
-        """Create and Populate Source Plates"""
-        plates_in = create_and_populate_sources_plate(found_list)
+        '''Verify the primers for the parts'''
+        found_primers, missing_primers = find_primers_database(list_part_count)
 
-        """Calculate the part volumes"""
-        vol_for_part = calc_part_volumes_in_plate(count_unique_list, plates_in, mix_parameters, dispenser_parameters)
-        # print(vol_for_part)
-
-        """Verify parts volume in source plate"""
-        list_source_wells, list_part_low_vol, alert = verify_samples_volume(vol_for_part, count_unique_list, robot)
-        if len(alert) > 0:
-            for item in alert:
-                total_alert.append(item)
-
-        """Create entry list for destination plates"""
-        list_destination_plate = create_entry_list_for_destination_plate(lists_parts, list_part_low_vol)
-
-        if len(list_destination_plate) > 0:
-            """Create a destination plates"""
-            plates_out = create_destination_plates(list_destination_plate, out_num_well)
-
-            """Populate plate"""
-            plates_out, out_dispenser, out_master_mix, out_water, alert = populate_destination_plates(plates_out, list_destination_plate, list_source_wells, mix_parameters, pattern)
-            # file.write_plate_by_col(plates_out)
-
-            """Mantis output file"""
-            file.set_mantis_import_header(mantis_csv)
-            min_water_vol = get_min_water_vol(out_water)
-
-            # water to add in master mix, enzime
-            mixer_recipe = calc_mixer_volumes(mix_parameters)
-            buffer_vol, rest_enz_vol, lig_enz_vol, total_vol_buffer = mixer_recipe
-
-            chip_mantis = []
-
-            if add_water is True:
-                ''' Add water in Master Mix and Remove from Water list'''
-                out_master_mix, out_water = reajust_mixer_water_volumes(out_master_mix, out_water, min_water_vol)
-
-                '''Master Mix recipe output'''
-                mixer_recipe_title = ["Buffer", "Restriction Enzyme", "Ligase Enzyme", "Water", "Master Mix"]
-                min_water_vol = round(min_water_vol, 2)
-                total_vol_buffer += min_water_vol
-                mixer_recipe = [round(buffer_vol, 2), round(rest_enz_vol, 2), round(lig_enz_vol, 2),
-                                round(min_water_vol, 2), round(total_vol_buffer, 2)]
-                mixer_recipe_zip = zip(mixer_recipe, mixer_recipe_title)
-
-            else:
-                mixer_recipe_title = ["Buffer", "Restriction Enzime", "Ligase Enzime", "Total Buffer"]
-                mixer_recipe_zip = zip(mixer_recipe, mixer_recipe_title)
-
-            if use_high_low_chip_mantis is True:
-                master_high, master_low = file.write_dispenser_mantis_in_low_high_chip(mantis_csv, out_master_mix)
-                water_high, water_low = file.write_dispenser_mantis_in_low_high_chip(mantis_csv, out_water)
-
-                chip_matis_title = ["Master mix in high chip", "Master mix in low chip", "Water in high chip",
-                                    "Water in low chip"]
-                chip_matis_vol = [round(master_high, 2), round(master_low, 2), round(water_high, 2),
-                                  round(water_low, 2)]
-                chip_mantis_zip = zip(chip_matis_title, chip_matis_vol)
-
-            else:
-                master_total = file.write_dispenser_mantis(mantis_csv, out_master_mix)
-                water_total = file.write_dispenser_mantis(mantis_csv, out_water)
-
-                chip_matis_title = ["Master mix total volume", "Water total volume"]
-                chip_matis_vol = [round(master_total, 2), round(water_total, 2)]
-                chip_mantis_zip = zip(chip_matis_title, chip_matis_vol)
-
-            ''' Robot Dispenser parts '''
-            file.set_echo_header(robot_csv)
-            file.write_dispenser_echo(out_dispenser, robot_csv)
-
-        else:
+        if len(missing_primers) > 0:
+            for item in missing_primers:
+                total_alert.append('Primers not found in database for ' + str(item) + ' or not enough volume.')
             return total_alert, None, None, None, None
-            # sys.exit()
-    db_mantis = db.save_file(db_mantis_name, 'Moclo_DB', user)
-    db_robot = db.save_file(db_robot_name, 'Moclo_DB', user)
-    return total_alert, file_mantis, file_robot, mixer_recipe_zip, chip_mantis_zip
+
+
+    # else:
+    #     """Create and Populate Source Plates"""
+    #     plates_in = create_and_populate_sources_plate(found_list)
+    #
+    #     """Calculate the part volumes"""
+    #     vol_for_part = calc_part_volumes_in_plate(list_part_count, plates_in, mix_parameters, dispenser_parameters)
+        # print(vol_for_part)
+    #
+    #     """Verify parts volume in source plate"""
+    #     list_source_wells, list_part_low_vol, alert = verify_samples_volume(vol_for_part, count_unique_list, robot)
+    #     if len(alert) > 0:
+    #         for item in alert:
+    #             total_alert.append(item)
+    #
+    #     """Create entry list for destination plates"""
+    #     list_destination_plate = create_entry_list_for_destination_plate(lists_parts, list_part_low_vol)
+    #
+    #     if len(list_destination_plate) > 0:
+    #         """Create a destination plates"""
+    #         plates_out = create_destination_plates(list_destination_plate, out_num_well)
+    #
+    #         """Populate plate"""
+    #         plates_out, out_dispenser, out_master_mix, out_water, alert = populate_destination_plates(plates_out, list_destination_plate, list_source_wells, mix_parameters, pattern)
+    #         # file.write_plate_by_col(plates_out)
+    #
+    #         """Mantis output file"""
+    #         file.set_mantis_import_header(mantis_csv)
+    #         min_water_vol = get_min_water_vol(out_water)
+    #
+    #         # water to add in master mix, enzime
+    #         mixer_recipe = calc_mixer_volumes(mix_parameters)
+    #         buffer_vol, rest_enz_vol, lig_enz_vol, total_vol_buffer = mixer_recipe
+    #
+    #         chip_mantis = []
+    #
+    #         if add_water is True:
+    #             ''' Add water in Master Mix and Remove from Water list'''
+    #             out_master_mix, out_water = reajust_mixer_water_volumes(out_master_mix, out_water, min_water_vol)
+    #
+    #             '''Master Mix recipe output'''
+    #             mixer_recipe_title = ["Buffer", "Restriction Enzyme", "Ligase Enzyme", "Water", "Master Mix"]
+    #             min_water_vol = round(min_water_vol, 2)
+    #             total_vol_buffer += min_water_vol
+    #             mixer_recipe = [round(buffer_vol, 2), round(rest_enz_vol, 2), round(lig_enz_vol, 2),
+    #                             round(min_water_vol, 2), round(total_vol_buffer, 2)]
+    #             mixer_recipe_zip = zip(mixer_recipe, mixer_recipe_title)
+    #
+    #         else:
+    #             mixer_recipe_title = ["Buffer", "Restriction Enzime", "Ligase Enzime", "Total Buffer"]
+    #             mixer_recipe_zip = zip(mixer_recipe, mixer_recipe_title)
+    #
+    #         if use_high_low_chip_mantis is True:
+    #             master_high, master_low = file.write_dispenser_mantis_in_low_high_chip(mantis_csv, out_master_mix)
+    #             water_high, water_low = file.write_dispenser_mantis_in_low_high_chip(mantis_csv, out_water)
+    #
+    #             chip_matis_title = ["Master mix in high chip", "Master mix in low chip", "Water in high chip",
+    #                                 "Water in low chip"]
+    #             chip_matis_vol = [round(master_high, 2), round(master_low, 2), round(water_high, 2),
+    #                               round(water_low, 2)]
+    #             chip_mantis_zip = zip(chip_matis_title, chip_matis_vol)
+    #
+    #         else:
+    #             master_total = file.write_dispenser_mantis(mantis_csv, out_master_mix)
+    #             water_total = file.write_dispenser_mantis(mantis_csv, out_water)
+    #
+    #             chip_matis_title = ["Master mix total volume", "Water total volume"]
+    #             chip_matis_vol = [round(master_total, 2), round(water_total, 2)]
+    #             chip_mantis_zip = zip(chip_matis_title, chip_matis_vol)
+    #
+    #         ''' Robot Dispenser parts '''
+    #         file.set_echo_header(robot_csv)
+    #         file.write_dispenser_echo(out_dispenser, robot_csv)
+    #
+    #     else:
+    #         return total_alert, None, None, None, None
+    #         # sys.exit()
+    # db_mantis = db.save_file(db_mantis_name, 'Moclo_DB', user)
+    # db_robot = db.save_file(db_robot_name, 'Moclo_DB', user)
+    # return total_alert, file_mantis, file_robot, mixer_recipe_zip, chip_mantis_zip

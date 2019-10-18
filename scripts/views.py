@@ -7,6 +7,7 @@ from libs.function.spotting import run_spotting
 from libs.function.combinatorial import run_combination
 from libs.function.moclo import run_moclo
 from libs.function.moclo_db import run_moclo_db
+from libs.function.pcr_db import run_pcr_db
 
 import os
 
@@ -172,5 +173,61 @@ def moclo_db(request):
     return render(request, 'scripts/moclo_db.html')
 
 
+@login_required(login_url="/accounts/login/")
+def pcr_db(request):
+    if request.method == "POST":
+        user = request.user
+        if len(request.FILES) != 0:
+            upload, fs, name_file, url_file = upload_file(request, 'upload_file')
 
+            """Dispenser parameters"""
+            machine = request.POST['machine']
+            min_vol = request.POST['min_vol']
+            vol_resol = request.POST['vol_resol']
+            dead_vol = request.POST['dead_vol']
+            dispenser_parameters = machine, float(min_vol) * 1e-3, float(vol_resol) * 1e-3, float(dead_vol)
+
+            """Reaction parameters"""
+            template_conc = request.POST['template_conc']
+            primer_f = request.POST['primer_f']
+            primer_r = request.POST['primer_r']
+            per_phusion = request.POST['phusion']
+            per_buffer = request.POST['buffer']
+            per_dntps = request.POST['dntps']
+            total_vol = request.POST['total_vol']
+            mantis_two_chips = 'mantis_two_chips' in request.POST
+            add_water = 'add_water' in request.POST
+            mix_parameters = \
+                float(template_conc), \
+                float(primer_f), \
+                float(primer_r), \
+                float(per_buffer), \
+                float(per_phusion), \
+                float(per_dntps), \
+                float(total_vol), \
+                add_water
+
+            """Destination plate"""
+            num_well_destination = request.POST['num_well_destination']
+            pattern = request.POST['pattern']
+
+            ''' Calling Python Script'''
+            alerts, outfile_mantis, outfile_robot, mixer_recipe, chip_mantis = run_pcr_db(settings.MEDIA_ROOT,
+                  name_file, dispenser_parameters, mix_parameters, int(num_well_destination), int(pattern), mantis_two_chips, user)
+
+            if mixer_recipe is not None:
+                outfile_mantis_name = os.path.basename(outfile_mantis.name)
+                outfile_robot_name = os.path.basename(outfile_robot.name)
+                outfile_mantis_url = fs.url(outfile_mantis_name)
+                outfile_robot_url = fs.url(outfile_robot_name)
+                return render(request, 'scripts/pcr_db.html', {'uploadfile_name': upload, 'url_file': url_file,
+                                                      'outfile_mantis_name': outfile_mantis_name, 'outfile_robot_name': outfile_robot_name,
+                                                      'outfile_mantis_url': outfile_mantis_url, 'outfile_robot_url': outfile_robot_url, 'alerts': alerts, 'mixer_recipe': mixer_recipe, 'chip_mantis': chip_mantis})
+            else:
+                return render(request, 'scripts/pcr_db.html',
+                              {'uploadfile_name': upload, 'url_file': url_file,
+                               'outfile_mantis_name': '', 'outfile_robot_name': '',
+                               'outfile_mantis_url': '', 'outfile_robot_url': '',
+                               'alerts': alerts, 'mixer_recipe': '', 'chip_mantis': ''})
+    return render(request, 'scripts/pcr_db.html')
 

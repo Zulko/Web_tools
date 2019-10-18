@@ -186,6 +186,7 @@
                 <th class="th-sm">Part_type</th>
                 <th class="th-sm">Moclo_type</th>
                 <th class="th-sm">Sub_samples</th>
+                <th class="th-sm">Primers</th>
                 <th class="th-sm">End</th>
                 <th class="th-sm">Direction</th>
                 <th class="th-sm">TM</th>
@@ -234,6 +235,11 @@
                         <td>
                             {% for sample in sample.sub_sample_id.all %}
                                 <a href="{% url 'db:sample' sample.id %}" style="font-size: 12px;" class="btn btn-outline-secondary btn-sm m-0;"> {{ sample }}</a>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for primer in sample.primer_id.all %}
+                                <a href="{% url 'db:sample' primer.id %}" style="font-size: 12px;" class="btn btn-outline-secondary btn-sm m-0;"> {{ primer }}</a>
                             {% endfor %}
                         </td>
                         <td>{{ sample.end }}</td>
