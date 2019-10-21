@@ -1,0 +1,45 @@
+{% extends 'base_layout.html' %}
+{% load static from staticfiles %}
+{% load bootstrap %}
+
+
+{% block content %}
+
+<div class="row">
+    <div class="col-4">
+
+    </div>
+
+    <div class="col-4">
+
+        {% if all_news %}
+        {% for new in all_news %}
+            <table>
+            <thead>
+                <tr class="table-dark text-dark">
+                <th class="th-sm">Date</th>
+                <th class="th-sm">Title</th>
+                <th class="th-sm">Text</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>{{ new.created_at }}</td>
+                <td>{{ new.title }}</td>
+                <td>{{ new.text }}</td>
+            </tr>
+            </tbody>
+            </table>
+        {% endfor %}
+        {% endif %}
+
+    </div>
+
+    <div class="col-4">
+
+    </div>
+
+</div>
+
+
+{% endblock%}

@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
+from .models import News
+
 
 class RegistrationForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -40,3 +42,12 @@ class EditProfileForm(UserChangeForm):
             # 'password',
         )
         # exclude = ()
+
+
+class AddNewsForm(forms.ModelForm):
+    text = forms.CharField(widget=forms.Textarea)
+
+    class Meta:
+        model = News
+        fields = ['title', 'author', 'text']
+        widgets = {'author': forms.TextInput(attrs={'readonly': 'readonly'})}

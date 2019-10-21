@@ -1,6 +1,6 @@
 {% extends 'base_layout.html' %}
 {% load static from staticfiles %}
-
+{% load bootstrap %}
 
 {% block content %}
 
@@ -15,7 +15,7 @@
             <h4>Edit Profile</h4>
                 <fieldset class="form-group">
                     <div class="card" style="padding: 20px 20px 20px 20px">
-                        {{ form }}
+                        {{ form | bootstrap}}
                         <div class="span" style="alignment: center">
                             <button class="btn btn-info" type="submit">Submit</button>
                             <a class="btn btn-secondary" role="button" href="{% url 'accounts:change_password' %}">Change password</a>

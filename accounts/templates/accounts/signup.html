@@ -1,5 +1,6 @@
 {% extends 'base_layout.html' %}
 {% load static from staticfiles %}
+{% load bootstrap %}
 
 
 {% block content %}
@@ -13,7 +14,7 @@
             <form method="post"> {% csrf_token %}
                 <fieldset class="form-group">
                     <div class="card" style="padding: 20px 20px 20px 20px">
-                        {{ form }}
+                        {{ form | bootstrap }}
                         <button class="btn btn-secondary" type="submit">Submit</button>
                     </div>
                 </fieldset>
