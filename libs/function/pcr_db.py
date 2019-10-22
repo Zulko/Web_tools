@@ -351,7 +351,6 @@ def find_primers_database(unique_list):
                         if wells_rev is not None:
                             print(wells_rev)
             else:
-                print(part[0])
                 missing_list.append(part[0])
         else:
             missing_list.append(part[0])
@@ -401,7 +400,7 @@ def run_pcr_db(path, filename, dispenser_parameters, mix_parameters, out_num_wel
 
         if len(missing_primers) > 0:
             for item in missing_primers:
-                total_alert.append('Primers not found in database for ' + str(item) + ' or not enough volume.')
+                total_alert.append('Primers not found in database for ' + str(item))
             return total_alert, None, None, None, None
 
 

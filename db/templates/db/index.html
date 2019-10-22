@@ -309,7 +309,7 @@
                     <fieldset class="form-group overflow-auto">
                     {% for sample in well.samples.all %}
                         <a class="btn btn-info btn-block"
-                            data-toggle="collapse" href="#collapse" > {{ sample }}
+                            data-toggle="collapse" href="#collapse" > {{ sample }} <br>({{ sample.alias }})
                             </a>
                             <div class="collapse" id="collapse">
                                 <table class="table table-hover ">

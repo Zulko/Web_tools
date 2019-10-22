@@ -83,7 +83,7 @@
           {% if sample %}
             <div class="info" style="margin: 10px 0px 10px 0px" >
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                    {{ sample.name }}<br>
+                    {{ sample.name }} ({{ sample.alias }}) <br>
                     {{ sample.sequence }}
                     {% if wells %}
                         <p> Location:
