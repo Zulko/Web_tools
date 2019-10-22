@@ -20,3 +20,7 @@ def under_construction(request):
 
 def calendar(request):
     return render(request, 'calendar.html')
+
+
+def schedule(request):
+    return render(request, 'reservations_calendar.html')
