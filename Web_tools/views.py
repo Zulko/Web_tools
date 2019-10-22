@@ -16,3 +16,7 @@ def about(request):
 
 def under_construction(request):
     return render(request, 'under_construction.html')
+
+
+def calendar(request):
+    return render(request, 'calendar.html')

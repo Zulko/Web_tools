@@ -7,24 +7,21 @@
 
 <div class="row">
     <div class="col-4">
-
     </div>
 
     <div class="col-4">
-
         <form method="post"> {% csrf_token %}
             <h4>Create News and Updates to Webpage</h4>
-                <fieldset class="form-group">
-                    <div class="card" style="padding: 20px 20px 20px 20px">
-                        {{ form | bootstrap }}
-                        <div class="span" style="alignment: center">
-                            <button class="btn btn-info" type="submit">Submit</button>
+            <fieldset class="form-group">
+                <div class="card" style="padding: 20px 20px 20px 20px">
+                    {{ form | bootstrap }}
+                    <div class="span" style="alignment: center">
+                        <button class="btn btn-info" type="submit">Submit</button>
 {#                            <button type="submit" name="submit_add_sample" action="{% url 'db:sample_add' %}" class="btn btn-info">Add</button>#}
-                        </div>
                     </div>
-                </fieldset>
+                </div>
+            </fieldset>
         </form>
-
     </div>
 
     <div class="col-4">
