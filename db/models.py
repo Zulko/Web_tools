@@ -25,6 +25,9 @@ class Machine(models.Model):
         ('Fragment Analyzer', 'Fragment Analyzer'),
         ('ViiA7', 'ViiA7'),
         ('inSPIRE', 'inSPIRE'),
+        ('FACSMelody', 'FACSMelody'),
+        ('QuantStudio 3D', 'QuantStudio 3D'),
+
     )
     STATUS = (
         ('Working', 'Working'),
