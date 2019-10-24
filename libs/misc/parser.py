@@ -9,6 +9,7 @@ def create_plate(num_wells, name):
     :param name: String of plate name
     :return: Plate
     """
+    print(num_wells)
     rows, cols = calc.rows_columns(int(num_wells))
     new_plate = plate.Plate(rows, cols, name)
     return new_plate
@@ -20,20 +21,34 @@ def create_source_plates_from_foundlist(foundlist):
     :param list: found_list
     :return: list of Plates
     """
-
     plates_in = []
-    for part in foundlist:
-        found = False
-        samp_name, samp_type, samp_len, samp_conc, volume, plate_name, plate_well, plate_num_well = part
-        if plate_name != '':
-            if len(plates_in) == 0:
-                plates_in.append(create_plate(plate_num_well, plate_name))
-            else:
-                for i in range(0, len(plates_in)):
-                    if plates_in[i].name == plate_name:
-                        found = True
-                if found is False:
+    if len(foundlist[0]) == 9:
+        for list in foundlist:
+            found = False
+            samp_name, subsamp_name, primer_direc, samp_type, samp_conc, volume, plate_name, well_name, plate_num_well = list
+            if plate_name != '':
+                if len(plates_in) == 0:
                     plates_in.append(create_plate(plate_num_well, plate_name))
+                else:
+                    for i in range(0, len(plates_in)):
+                        if plates_in[i].name == plate_name:
+                            found = True
+                    if found is False:
+                        plates_in.append(create_plate(plate_num_well, plate_name))
+
+    else:
+        for part in foundlist:
+            found = False
+            samp_name, samp_type, samp_len, samp_conc, volume, plate_name, plate_well, plate_num_well = part
+            if plate_name != '':
+                if len(plates_in) == 0:
+                    plates_in.append(create_plate(plate_num_well, plate_name))
+                else:
+                    for i in range(0, len(plates_in)):
+                        if plates_in[i].name == plate_name:
+                            found = True
+                    if found is False:
+                        plates_in.append(create_plate(plate_num_well, plate_name))
 
     return plates_in
 
@@ -83,12 +98,23 @@ def csv_to_source_plates(filein, plates):
     return plates
 
 
-def list_to_source_plates(found_list, plates):
-    for part in found_list:
-        samp_name, type, samp_len, samp_conc, volume, plate_name, plate_well, num_well = part
-        for i in range(0, len(plates)):
-            if plates[i].name == plate_name:
-                row, col = calc.wellname_to_coordinates(plate_well)
-                plates[i].wells[row][col].samples.append(
-                    plate.Sample(samp_name, type, samp_len, samp_conc, volume))
+def list_to_source_plates(foundlist, plates):
+    if len(foundlist[0]) == 9:
+        for list in foundlist:
+            samp_name, subsamp_name, primer_direc, samp_type, samp_conc, volume, plate_name, well_name, plate_num_well = list
+            for i in range(0, len(plates)):
+                if plates[i].name == plate_name:
+                    row, col = calc.wellname_to_coordinates(well_name)
+                    plates[i].wells[row][col].samples.append(
+                        plate.Sample(subsamp_name, samp_type, primer_direc, samp_conc, volume))
+
+
+    else:
+        for part in foundlist:
+            samp_name, type, samp_len, samp_conc, volume, plate_name, plate_well, num_well = part
+            for i in range(0, len(plates)):
+                if plates[i].name == plate_name:
+                    row, col = calc.wellname_to_coordinates(plate_well)
+                    plates[i].wells[row][col].samples.append(
+                        plate.Sample(samp_name, type, samp_len, samp_conc, volume))
     return plates

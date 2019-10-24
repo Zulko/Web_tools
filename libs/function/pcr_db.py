@@ -124,78 +124,70 @@ def get_part_info(found_list, name):
     return None
 
 
-def calc_part_volumes_in_plate(count_unique_list, plates_in, mix_parameters, dispenser_parameters):
+def calc_volume_primers(primer_f, primer_r, mix_parameters, dispenser_parameters):
+    # [part[0], primer.name, str(primer.direction), primer.sample_type, float(well.concentration), float(well.volume), well.plate.name, well.name, int(well.plate.num_well)]
+    template_conc, vol_primer_f, vol_primer_r, per_buffer, per_phusion, per_dntps, total_vol, add_water = mix_parameters
+    machine, min_vol, res_vol, dead_vol = dispenser_parameters
+
+    primer_f_vol = (vol_primer_f * total_vol)/primer_f[4]
+    primer_r_vol = (vol_primer_r * total_vol)/primer_r[4]
+
+    while list_wells:
+        try:
+            wellD = next(list_wells)
+            print(wellD.name)
+            for sample in wellD.samples:
+
+                '''Volume of part to get the selected fmol in ng '''
+                vol_part_add = float(fmol) / float(sample.concentration)
+                # print(vol_part_add)
+
+                '''Rounding the part volume according to machine resolution'''
+                vol_part_add = calc.round_at(vol_part_add, res_vol)
+                # print(vol_part_add)
+
+                '''Minimal dispense volume'''
+                vol_part_add = max(vol_part_add, min_vol)
+                # print(vol_part_add)
+
+                total_vol_parts.append(
+                    [sample.name, sample.type, sample.length, sample.concentration, sample.volume, count,
+                     vol_part_add, plate_in.name, wellD.name])
+
+        except StopIteration:
+            break
+
+
+def calc_part_volumes_in_plate(count_unique_list, found_list, plates_in, mix_parameters, dispenser_parameters):
     # part_fmol, bb_fmol, total_vol, buffer, rest_enz, lig_enz, add_water = mix_parameters
-    template_conc, primer_f, primer_r, per_buffer, per_phusion, per_dntps, total_vol, add_water = mix_parameters
+    template_conc, vol_primer_f, vol_primer_r, per_buffer, per_phusion, per_dntps, total_vol, add_water = mix_parameters
     machine, min_vol, res_vol, dead_vol = dispenser_parameters
     total_vol_parts = []
 
     for pair in count_unique_list:
         part_name = pair[0]
-        count = pair[1]  # Number of times it appears in experiment
+        count = pair[1]  # Number of times to replicate the sample
+        primer_f, primer_r, template = get_primers_template(part_name, found_list)
 
-        for plate_in in plates_in:
-            list_wells = plate_in.get_samples_well(part_name)
-            while list_wells:
-                try:
-                    wellD = next(list_wells)
-
-                    for sample in wellD.samples:
-                        if sample.name == part_name:
-                            # print(sample.name, sample.type, sample.length, sample.concentration, sample.volume)
-                            '''fmol -> ng  of the part to give 80 or 40 fmol of that part'''
-                            fmol, concent_fmol = calc.fmol(sample.type, sample.length, bb_fmol, part_fmol)
-
-                            '''Volume of part to get the selected fmol in ng '''
-                            vol_part_add = float(fmol) / float(sample.concentration)
-                            # print(vol_part_add)
-
-                            '''Rounding the part volume according to machine resolution'''
-                            vol_part_add = calc.round_at(vol_part_add, res_vol)
-                            # print(vol_part_add)
-
-                            '''Minimal dispense volume'''
-                            vol_part_add = max(vol_part_add, min_vol)
-                            # print(vol_part_add)
-
-                            total_vol_parts.append([sample.name, sample.type, sample.length, sample.concentration, sample.volume, count, vol_part_add, plate_in.name, wellD.name])
-
-                except StopIteration:
-                    break
-    return total_vol_parts
-
-
-def calc_part_volumes(count_unique_list, found_list, mix_parameters, dispenser_parameters):
-    part_fmol, bb_fmol, total_vol, buffer, rest_enz, lig_enz = mix_parameters
-    machine, min_vol, res_vol, dead_vol = dispenser_parameters
-
-    total_vol_parts = []
-
-    for pair in count_unique_list:
-        part_name = pair[0]
-        count = pair[1]  # Number of times it appears in experiment
-        part_type, part_length, part_conc = get_part_info(found_list, part_name)
-        # part_in_plate = get_part_in_plate(plates_in, part_name)
-
-        '''fmol -> ng  of the part to give 80 or 40 fmol of that part'''
-        fmol, concent_fmol = calc.fmol(part_type, part_length, bb_fmol, part_fmol)
-        # print(part_name, part_conc, part_type, part_length)
-
-        '''Volume of part to get the selected fmol in ng '''
-        vol_part_add = float(fmol)/float(part_conc)
-        # print(vol_part_add)
-
-        '''Rounding the part volume according to machine resolution'''
-        vol_part_add = calc.round_at(vol_part_add, res_vol)
-        # print(vol_part_add)
-
-        '''Minimal dispense volume'''
-        vol_part_add = max(vol_part_add, min_vol)
-        # print(vol_part_add)
-
-        total_vol_parts.append([part_name, count, vol_part_add])
+        calc_volume_primers(primer_f, primer_r, mix_parameters, dispenser_parameters)
 
     return total_vol_parts
+
+
+def get_primers_template(part_name, found_list):
+    primer_f = 0
+    primer_r = 0
+    template = []
+    for list in found_list:
+        if list[0] == part_name:
+            if list[3] == 'Primer':
+                if list[2] == 'FWD':
+                    primer_f = list
+                else:
+                    primer_r = list
+            else:
+                template.append(list)
+    return primer_f, primer_r, template
 
 
 def calc_mixer_volumes(mix_parameters):
@@ -308,7 +300,7 @@ def find_templates_database(unique_list):
                 if well.samples.count() == 1:
                     for subsample in well.samples.all():
                         if well.volume > 0:
-                            lista = [subsample.name, 0, 0, float(well.concentration), float(well.volume), well.plate.name, well.name, int(well.plate.num_well)]
+                            lista = [part[0], subsample.name, 0, subsample.sample_type, float(well.concentration), float(well.volume), well.plate.name, well.name, int(well.plate.num_well)]
                             found_list.append(lista)
                         else:
                             missing_list.append(part[0])
@@ -343,7 +335,7 @@ def find_primers_database(unique_list, found_parts):
                         wells_fwd = Well.objects.filter(samples__name__exact=str(primer))
                         if len(wells_fwd) > 0:
                             for well in wells_fwd:
-                                lista = [primer.name, str(primer.direction), 0, float(well.concentration), float(well.volume), well.plate.name, well.name, int(well.plate.num_well)]
+                                lista = [part[0], primer.name, str(primer.direction), primer.sample_type, float(well.concentration), float(well.volume), well.plate.name, well.name, int(well.plate.num_well)]
                                 found_list.append(lista)
                         else:
                             missing_list.append(str(part[0])+' ('+str(primer)+')')
@@ -352,7 +344,7 @@ def find_primers_database(unique_list, found_parts):
                         wells_rev = Well.objects.filter(samples__name__exact=str(primer))
                         if len(wells_rev) > 0:
                             for well in wells_rev:
-                                lista = [primer.name, str(primer.direction), 0, float(well.concentration), float(well.volume), well.plate.name, well.name, int(well.plate.num_well)]
+                                lista = [part[0], primer.name, str(primer.direction), primer.sample_type, float(well.concentration), float(well.volume), well.plate.name, well.name, int(well.plate.num_well)]
                                 found_list.append(lista)
                         else:
                             missing_list.append(str(part[0])+' ('+str(primer)+')')
@@ -403,29 +395,27 @@ def run_pcr_db(path, filename, dispenser_parameters, mix_parameters, out_num_wel
     else:
         '''Verify the primers for the parts'''
         found_list, missing_primers = find_primers_database(list_part_count, found_parts)
+        print(found_list)
 
         if len(missing_primers) > 0:
             for item in missing_primers:
                 total_alert.append('Primers not found in database for ' + str(item))
             return total_alert, None, None, None, None
 
-
         else:
-            print(found_list)
-        #
-        #     """Create and Populate Source Plates"""
-        #     plates_in = create_and_populate_sources_plate(found_list)
-        #
-        #     """Calculate the part volumes"""
-        #     vol_for_part = calc_part_volumes_in_plate(list_part_count, plates_in, mix_parameters, dispenser_parameters)
-        #     print(vol_for_part)
+            """Create and Populate Source Plates"""
+            plates_in = create_and_populate_sources_plate(found_list)
 
-        #     """Verify parts volume in source plate"""
-        #     list_source_wells, list_part_low_vol, alert = verify_samples_volume(vol_for_part, count_unique_list, robot)
-        #     if len(alert) > 0:
-        #         for item in alert:
-        #             total_alert.append(item)
-        #
+            """Calculate the part volumes"""
+            vol_for_part = calc_part_volumes_in_plate(list_part_count, found_list, plates_in, mix_parameters, dispenser_parameters)
+            print(vol_for_part)
+
+            # """Verify parts volume in source plate"""
+            # list_source_wells, list_part_low_vol, alert = verify_samples_volume(vol_for_part, count_unique_list, robot)
+            # if len(alert) > 0:
+            #     for item in alert:
+            #         total_alert.append(item)
+
         #     """Create entry list for destination plates"""
         #     list_destination_plate = create_entry_list_for_destination_plate(lists_parts, list_part_low_vol)
         #
