@@ -124,41 +124,62 @@ def get_part_info(found_list, name):
     return None
 
 
-def calc_volume_primers(primer_f, primer_r, mix_parameters, dispenser_parameters):
-    # [part[0], primer.name, str(primer.direction), primer.sample_type, float(well.concentration), float(well.volume), well.plate.name, well.name, int(well.plate.num_well)]
-    template_conc, vol_primer_f, vol_primer_r, per_buffer, per_phusion, per_dntps, total_vol, add_water = mix_parameters
+def calc_wells_available_volume(list_wells, times_needed, conc_primer, total_vol, res_vol, min_vol, robot):
+    total_vol_primers = []
+    for well_pf in list_wells:
+        part_name, sample_name, sample_direction, sample_type, sample_wellconcentration, sample_wellvolume, sample_platename, sample_wellname, sample_num_well = well_pf
+
+        '''Volume needed of the primer '''
+        primer_f_vol_needed = (float(conc_primer) * float(total_vol))/float(well_pf[4])
+
+        '''Rounding the part volume according to machine resolution'''
+        vol_primer_add = calc.round_at(primer_f_vol_needed, res_vol)
+
+        '''Minimal dispense volume'''
+        vol_part_add = max(vol_primer_add, min_vol)
+
+        '''Calculate how many 'vol_part_add' have in the total volume in one well'''
+        available_vol = max(float(sample_wellvolume) - robot.dead_vol, 0)
+
+        '''total times per well'''
+        times_available = int(available_vol / vol_part_add)
+        print(available_vol, vol_part_add)
+
+        total_vol_primers.append([part_name, sample_name, sample_direction, sample_type, sample_wellconcentration, sample_wellvolume, times_needed, times_available, vol_part_add, sample_platename, sample_wellname, sample_num_well])
+
+    return total_vol_primers
+
+
+def calc_volume_primers_template(primer_f, primer_r, template, count, mix_parameters, dispenser_parameters, robot):
+    total_vol_primers = []
+    template_conc, conc_primer_f, conc_primer_r, per_buffer, per_phusion, per_dntps, total_vol, add_water = mix_parameters
     machine, min_vol, res_vol, dead_vol = dispenser_parameters
 
-    primer_f_vol = (vol_primer_f * total_vol)/primer_f[4]
-    primer_r_vol = (vol_primer_r * total_vol)/primer_r[4]
+    total_vol_primers.extend(calc_wells_available_volume(primer_f, count, conc_primer_f, total_vol, res_vol, min_vol, robot))
+    total_vol_primers.extend(calc_wells_available_volume(primer_r, count, conc_primer_r, total_vol, res_vol, min_vol, robot))
+    total_vol_primers.extend(calc_wells_available_volume(template, count, template_conc, total_vol, res_vol, min_vol, robot))
 
-    while list_wells:
-        try:
-            wellD = next(list_wells)
-            print(wellD.name)
-            for sample in wellD.samples:
-
-                '''Volume of part to get the selected fmol in ng '''
-                vol_part_add = float(fmol) / float(sample.concentration)
-                # print(vol_part_add)
-
-                '''Rounding the part volume according to machine resolution'''
-                vol_part_add = calc.round_at(vol_part_add, res_vol)
-                # print(vol_part_add)
-
-                '''Minimal dispense volume'''
-                vol_part_add = max(vol_part_add, min_vol)
-                # print(vol_part_add)
-
-                total_vol_parts.append(
-                    [sample.name, sample.type, sample.length, sample.concentration, sample.volume, count,
-                     vol_part_add, plate_in.name, wellD.name])
-
-        except StopIteration:
-            break
+    return total_vol_primers
 
 
-def calc_part_volumes_in_plate(count_unique_list, found_list, plates_in, mix_parameters, dispenser_parameters):
+def get_primers_template(part_name, found_list):
+    primer_f = []
+    primer_r = []
+    template = []
+    # print(found_list)
+    for list in found_list:
+        if list[0] == part_name:
+            if list[3] == 'Primer':
+                if list[2] == 'FWD':
+                    primer_f.append(list)
+                else:
+                    primer_r.append(list)
+            else:
+                template.append(list)
+    return primer_f, primer_r, template
+
+
+def calc_part_volumes_in_plate(count_unique_list, found_list, plates_in, mix_parameters, dispenser_parameters, robot):
     # part_fmol, bb_fmol, total_vol, buffer, rest_enz, lig_enz, add_water = mix_parameters
     template_conc, vol_primer_f, vol_primer_r, per_buffer, per_phusion, per_dntps, total_vol, add_water = mix_parameters
     machine, min_vol, res_vol, dead_vol = dispenser_parameters
@@ -166,28 +187,11 @@ def calc_part_volumes_in_plate(count_unique_list, found_list, plates_in, mix_par
 
     for pair in count_unique_list:
         part_name = pair[0]
-        count = pair[1]  # Number of times to replicate the sample
+        times_needed = pair[1]  # Number of times to replicate the sample
         primer_f, primer_r, template = get_primers_template(part_name, found_list)
-
-        calc_volume_primers(primer_f, primer_r, mix_parameters, dispenser_parameters)
+        total_vol_parts.extend(calc_volume_primers_template(primer_f, primer_r, template, times_needed, mix_parameters, dispenser_parameters, robot))
 
     return total_vol_parts
-
-
-def get_primers_template(part_name, found_list):
-    primer_f = 0
-    primer_r = 0
-    template = []
-    for list in found_list:
-        if list[0] == part_name:
-            if list[3] == 'Primer':
-                if list[2] == 'FWD':
-                    primer_f = list
-                else:
-                    primer_r = list
-            else:
-                template.append(list)
-    return primer_f, primer_r, template
 
 
 def calc_mixer_volumes(mix_parameters):
@@ -236,8 +240,31 @@ def add_on_list(lista, item):
     return True
 
 
-def verify_samples_volume(vol_for_part, count_unique_list, robot):
+def verify_wells_available_volume(list_wells, part_name):
     alert = []
+    list_source_wells = []
+    list_source_wells_joint = []
+    tot_times = 0
+    total_available_vol = 0
+    for well in list_wells:
+        part_name, sample_name, sample_direction, sample_type, sample_wellconcentration, available_vol, times_needed, times_available, vol_part_add, sample_platename, sample_wellname, sample_num_well = well
+        tot_times += times_available
+        if int(times_needed) <= times_available:
+            list_source_wells.append(well)
+            return list_source_wells, alert
+        else:
+            total_available_vol += available_vol
+            list_source_wells_joint.append(well)
+            if tot_times >= int(times_needed):
+                return list_source_wells_joint, alert
+    print(list_wells[0][6], list_wells[0][7], list_wells[0][5])
+    vol_need = float(list_wells[0][8])*int(list_wells[0][6])
+    alert = 'Not enough volume of: ' + str(list_wells[0][1]) + ' to build: '+ str(part_name) +'. Available volume: ' + str(total_available_vol) + ' needed: ' + str(vol_need)
+    print(alert)
+    return None, alert
+
+
+def verify_samples_volume(vol_for_part, count_unique_list, robot):
     '''Volume needed of parts for the experiment'''
     list_source_wells = []
     list_part_low_vol = []
@@ -247,35 +274,46 @@ def verify_samples_volume(vol_for_part, count_unique_list, robot):
         part_info = []
         part_name = pair[0]
         times_needed = pair[1]  # Number of times it appears in experiment
-        for part in vol_for_part:
-            sample_name, sample_type, sample_length, sample_concentration, sample_volume, sample_times_needed, vol_part_add, plate_in_name, wellD_name = part
-            if part_name == sample_name:
-                '''Calculate how many 'vol_part_add' have in the total volume in one well'''
-                available_vol = float(sample_volume) - robot.dead_vol
-                '''total times per well'''
-                times_available = int(available_vol/vol_part_add)
-                '''total times in all database'''
-                tot_times += times_available
-                part_info.append(part)
 
-                if int(sample_times_needed) <= times_available:
-                    list_source_wells.append([sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, times_available, vol_part_add, plate_in_name, wellD_name])
-                    break
-        if int(tot_times) >= int(times_needed):
-            for part in part_info:
-                sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, vol_part_add, plate_in_name, wellD_name = part
-                # Calculate how many 'vol_part_add' have in the total volume in one well
-                available_vol = float(sample_volume) - robot.dead_vol
-                # total times per well
-                times_available = int(available_vol / vol_part_add)
-                list_source_wells.append([sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, times_available, vol_part_add, plate_in_name, wellD_name])
-        else:
-            for part in part_info:
-                sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, vol_part_add, plate_in_name, wellD_name = part
-                total_vol_part = times_needed*vol_part_add
-                print('Not enough volume for sample: ' + str(part_name) + ' available: ' + str(sample_volume) + " need: " + str(round(total_vol_part+robot.dead_vol,2)))
-                alert.append(['Not enough volume for sample: ' + str(part_name) + ' available: ' + str(sample_volume) + " need: " + str(round(total_vol_part+robot.dead_vol,2))])
-                list_part_low_vol.append([sample_name, total_vol_part])
+        '''Get list of wells'''
+        primer_f, primer_r, template = get_primers_template(part_name, vol_for_part)
+        list_source_wells_primerF, alertF = verify_wells_available_volume(primer_f, part_name)
+        list_source_wells_primerR, alertR = verify_wells_available_volume(primer_r, part_name)
+        list_source_wells_template, alertT = verify_wells_available_volume(template, part_name)
+
+        print(list_source_wells_primerF)
+        print(list_source_wells_primerR)
+        print(list_source_wells_template)
+
+        # for part in vol_for_part:
+        #     sample_name, sample_type, sample_length, sample_concentration, sample_volume, sample_times_needed, vol_part_add, plate_in_name, wellD_name = part
+        #     if part_name == sample_name:
+        #         '''Calculate how many 'vol_part_add' have in the total volume in one well'''
+        #         available_vol = float(sample_volume) - robot.dead_vol
+        #         '''total times per well'''
+        #         times_available = int(available_vol/vol_part_add)
+        #         '''total times in all database'''
+        #         tot_times += times_available
+        #         part_info.append(part)
+        #
+        #         if int(sample_times_needed) <= times_available:
+        #             list_source_wells.append([sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, times_available, vol_part_add, plate_in_name, wellD_name])
+        #             break
+        # if int(tot_times) >= int(times_needed):
+        #     for part in part_info:
+        #         sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, vol_part_add, plate_in_name, wellD_name = part
+        #         # Calculate how many 'vol_part_add' have in the total volume in one well
+        #         available_vol = float(sample_volume) - robot.dead_vol
+        #         # total times per well
+        #         times_available = int(available_vol / vol_part_add)
+        #         list_source_wells.append([sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, times_available, vol_part_add, plate_in_name, wellD_name])
+        # else:
+        #     for part in part_info:
+        #         sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, vol_part_add, plate_in_name, wellD_name = part
+        #         total_vol_part = times_needed*vol_part_add
+        #         print('Not enough volume for sample: ' + str(part_name) + ' available: ' + str(sample_volume) + " need: " + str(round(total_vol_part+robot.dead_vol,2)))
+        #         alert.append(['Not enough volume for sample: ' + str(part_name) + ' available: ' + str(sample_volume) + " need: " + str(round(total_vol_part+robot.dead_vol,2))])
+        #         list_part_low_vol.append([sample_name, total_vol_part])
 
     return list_source_wells, list_part_low_vol, alert
 
@@ -319,7 +357,6 @@ def find_primers_database(unique_list, found_parts):
         primer_rev = []
         samples = Sample.objects.filter(name__exact=str(part[0]))
         for sample in samples:
-            print(sample.name)
             if sample.primer_id is not None:
                 for primer in sample.primer_id.all():
                     if primer.direction == 'FWD':
@@ -395,7 +432,6 @@ def run_pcr_db(path, filename, dispenser_parameters, mix_parameters, out_num_wel
     else:
         '''Verify the primers for the parts'''
         found_list, missing_primers = find_primers_database(list_part_count, found_parts)
-        print(found_list)
 
         if len(missing_primers) > 0:
             for item in missing_primers:
@@ -407,14 +443,14 @@ def run_pcr_db(path, filename, dispenser_parameters, mix_parameters, out_num_wel
             plates_in = create_and_populate_sources_plate(found_list)
 
             """Calculate the part volumes"""
-            vol_for_part = calc_part_volumes_in_plate(list_part_count, found_list, plates_in, mix_parameters, dispenser_parameters)
-            print(vol_for_part)
+            vol_for_part = calc_part_volumes_in_plate(list_part_count, found_list, plates_in, mix_parameters, dispenser_parameters, robot)
+            # print(vol_for_part)
 
-            # """Verify parts volume in source plate"""
-            # list_source_wells, list_part_low_vol, alert = verify_samples_volume(vol_for_part, count_unique_list, robot)
-            # if len(alert) > 0:
-            #     for item in alert:
-            #         total_alert.append(item)
+            """Verify parts volume in source plate"""
+            list_source_wells, list_part_low_vol, alert = verify_samples_volume(vol_for_part, list_part_count, robot)
+            if len(alert) > 0:
+                for item in alert:
+                    total_alert.append(item)
 
         #     """Create entry list for destination plates"""
         #     list_destination_plate = create_entry_list_for_destination_plate(lists_parts, list_part_low_vol)
