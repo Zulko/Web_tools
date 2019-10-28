@@ -1,7 +1,10 @@
+import sys, os
+
+from django.core.exceptions import ObjectDoesNotExist
+
 from ..biofoundry import db
 from ..misc import calc, file, parser
 from ..container import plate, machine
-import sys, os
 from db.models import Plate, Well, Sample
 
 
@@ -13,11 +16,15 @@ MAX_VALUE = 999999
 
 def get_localization_vol(part_name, list_source_wells):
     for i, item in enumerate(list_source_wells):
-        sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, times_available, vol_part_add, plate_in_name, wellD_name = list_source_wells[i]
-        if part_name == sample_name and times_available > 0:
+        name, sample_name, sample_direction, sample_type, sample_wellconcentration, available_vol, times_needed, times_available, vol_part_add, sample_platename, sample_wellname, sample_num_well = list_source_wells[i]
+        if part_name == name and times_available > 0:
             new_times_available = times_available - 1
-            list_source_wells[i] = [sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, new_times_available, vol_part_add, plate_in_name, wellD_name]
-            # print(part_name, times_available, wellD_name)
+            list_source_wells[i] = [
+                name, sample_name, sample_direction, sample_type, sample_wellconcentration, available_vol, times_needed,
+                new_times_available, vol_part_add, sample_platename, sample_wellname, sample_num_well]
+
+            print(part_name, sample_name, sample_type, times_available)
+            print(list_source_wells, list_source_wells[i])
             return list_source_wells, list_source_wells[i]
         # elif part_name == sample_name and times_available == 0:
         #     print(part_name, times_available, wellD_name)
@@ -36,26 +43,29 @@ def get_plate_with_empty_well(destination_plates, pattern):
                 return p, i, j
 
 
-def populate_destination_plates(plates_out, list_destination_plate, list_source_wells, mix_parameters, pattern):
+def populate_destination_plates(plates_out, list_part_count, list_source_wells, mix_parameters, pattern):
     alert = []
-    part_fmol, bb_fmol, total_vol, per_buffer, per_rest_enz, per_lig_enz, add_water = mix_parameters
+    template_conc, conc_primer_f, conc_primer_r, per_buffer, per_phusion, per_dntps, total_vol, add_water = mix_parameters
     out_dispenser = []
     out_master_mix = []
     out_water = []
-    for set in list_destination_plate:
-        p, i, j = get_plate_with_empty_well(plates_out, pattern)
-        total_parts_vol = 0
-        for part in set:
-            list_source_wells, part = get_localization_vol(part, list_source_wells)
-            sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, new_times_available, vol_part_add, source_plate, source_well = part
-            final_conc = calc.fmol_by_parttype(sample_type, bb_fmol, part_fmol)
-
+    for part in list_part_count:
+        count = int(part[1])
+        for i in range(0, count):
+            total_parts_vol = 0
+            p, i, j = get_plate_with_empty_well(plates_out, pattern)
+            print(p,i,j)
+            print(list_source_wells)
+            print(part[0])
+            part_name, template = get_localization_vol(part[0], list_source_wells)
+            name, sample_name, sample_direction, sample_type, sample_wellconcentration, available_vol, times_needed, times_available, vol_part_add, sample_platename, sample_wellname, sample_num_well = part_name
+            print(part_name)
             """ Adding parts in destination plate """
-            plates_out[p].wells[i][j].samples.append(plate.Sample(sample_name, sample_type, sample_length, final_conc, vol_part_add))
-            out_dispenser.append([sample_name, sample_type, source_plate, source_well, vol_part_add, plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
+            # plates_out[p].wells[i][j].samples.append(plate.Sample(sample_name, sample_type, sample_length, final_conc, vol_part_add))
+            # out_dispenser.append([sample_name, sample_type, source_plate, source_well, vol_part_add, plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
 
             """ Sum of total volume of parts """
-            total_parts_vol += vol_part_add
+            # total_parts_vol += vol_part_add
 
         '''Calculate buffer and enzimes'''
         vol_for_mixer = calc_mixer_volumes(mix_parameters)
@@ -84,13 +94,17 @@ def create_plate(num_wells, name):
     return new_plate
 
 
-def create_destination_plates(list_destination_plate, out_num_well):
+def create_destination_plates(list_part_count, list_destination_plate, out_num_well):
+    num = Plate.objects.latest('id').id
     plates_out = []
-    num_receipts = len(list_destination_plate)
+    num_receipts = 0
+    for part in list_part_count:
+        num_receipts += int(part[1])
+
     num_plates = calc.num_destination_plates(num_receipts, out_num_well)
 
     for i in range(0, num_plates):
-        plates_out.append(create_plate(out_num_well, 'Destination_' + str(i+1)))
+        plates_out.append(create_plate(out_num_well, 'PCR_' + '{0:07}'.format(num+1)))
     return plates_out
 
 
@@ -103,17 +117,17 @@ def create_entry_list_for_destination_plate(list_source_wells, list_part_count):
         primer_f, primer_r, template = get_primers_template(part_name, list_source_wells)
 
         count = 0
-        for sample in primer_f:
+        for sample in primer_r:
+            print(len(primer_r))
+            print(sample)
             if int(sample[8]) <= int(sample[7]):
                 for i in range(0, int(sample[8]-count)):
                     count+=1
-                    list_destination_plate.extend(sample)
+                    list_destination_plate.append(sample)
             else:
                 for j in range(0, int(sample[7]-count)):
-                    list_destination_plate.extend(sample)
-        print(primer_f, primer_r, template)
-
-
+                    list_destination_plate.append(sample)
+        print(list_destination_plate)
 
     return list_destination_plate
 
@@ -129,11 +143,11 @@ def get_part_info(found_list, name):
 
 def calc_wells_available_volume(list_wells, times_needed, conc_primer, total_vol, res_vol, min_vol, robot):
     total_vol_primers = []
-    for well_pf in list_wells:
-        part_name, sample_name, sample_direction, sample_type, sample_wellconcentration, sample_wellvolume, sample_platename, sample_wellname, sample_num_well = well_pf
+    for well_part in list_wells:
+        part_name, sample_name, sample_direction, sample_type, sample_wellconcentration, sample_wellvolume, sample_platename, sample_wellname, sample_num_well = well_part
 
         '''Volume needed of the primer '''
-        primer_f_vol_needed = (float(conc_primer) * float(total_vol))/float(well_pf[4])
+        primer_f_vol_needed = (float(conc_primer) * float(total_vol))/float(well_part[4])
 
         '''Rounding the part volume according to machine resolution'''
         vol_primer_add = calc.round_at(primer_f_vol_needed, res_vol)
@@ -167,7 +181,6 @@ def get_primers_template(part_name, found_list):
     primer_f = []
     primer_r = []
     template = []
-    # print(found_list)
     for list in found_list:
         if list[0] == part_name:
             if list[3] == 'Primer':
@@ -271,9 +284,6 @@ def verify_samples_volume(vol_for_part, count_unique_list, robot):
     list_source_wells = []
     list_part_low_vol = []
     for pair in count_unique_list:
-        found = False
-        tot_times = 0
-        part_info = []
         part_name = pair[0]
         times_needed = pair[1]  # Number of times it appears in experiment
 
@@ -430,17 +440,12 @@ def run_pcr_db(path, filename, dispenser_parameters, mix_parameters, out_num_wel
                 return alert, None, None, None, None
 
             else:
-                # print(list_source_wells)
-                """Create entry list for destination plates"""
-                list_destination_plate = create_entry_list_for_destination_plate(list_source_wells, list_part_count)
+                """Create a destination plates"""
+                plates_out = create_destination_plates(list_part_count, list_source_wells, out_num_well)
 
-                # if len(list_destination_plate) > 0:
-                #     """Create a destination plates"""
-                #     plates_out = create_destination_plates(list_source_wells, out_num_well)
-        #
-        #         """Populate plate"""
-        #         plates_out, out_dispenser, out_master_mix, out_water, alert = populate_destination_plates(plates_out, list_destination_plate, list_source_wells, mix_parameters, pattern)
-        #         # file.write_plate_by_col(plates_out)
+                """Populate plate"""
+                plates_out, out_dispenser, out_master_mix, out_water, alert = populate_destination_plates(plates_out, list_part_count, list_source_wells, mix_parameters, pattern)
+                # file.write_plate_by_col(plates_out)
         #
         #         """Mantis output file"""
         #         file.set_mantis_import_header(mantis_csv)
