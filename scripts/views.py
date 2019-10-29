@@ -32,9 +32,7 @@ def spotting(request):
         outfile, worklist, alert = run_spotting(int(num_sources), int(num_well), int(num_pattern), int(pattern), user)
 
         if alert is not None:
-            return render(request, 'scripts/spotting.html',
-                          {'outfile_name': '', 'outfile_url': '',
-                           'worklist_name': '', 'outfileworklist_url': '', 'alert': alert})
+            return render(request, 'scripts/spotting.html', {'outfile': '', 'worklist': '', 'alert': alert})
         else:
             return render(request, 'scripts/spotting.html', {'outfile': outfile, 'worklist': worklist})
     return render(request, 'scripts/spotting.html', {'outfile': '', 'worklist': ''})
@@ -157,18 +155,13 @@ def moclo_db(request):
             alerts, outfile_mantis, outfile_robot, mixer_recipe, chip_mantis = run_moclo_db(settings.MEDIA_ROOT, name_file, dispenser_parameters, mix_parameters, int(num_well_destination), int(pattern), mantis_two_chips, user)
 
             if mixer_recipe is not None:
-                outfile_mantis_name = os.path.basename(outfile_mantis.name)
-                outfile_robot_name = os.path.basename(outfile_robot.name)
-                outfile_mantis_url = fs.url(outfile_mantis_name)
-                outfile_robot_url = fs.url(outfile_robot_name)
                 return render(request, 'scripts/moclo_db.html', {'uploadfile_name': upload, 'url_file': url_file,
-                                                      'outfile_mantis_name': outfile_mantis_name, 'outfile_robot_name': outfile_robot_name,
-                                                      'outfile_mantis_url': outfile_mantis_url, 'outfile_robot_url': outfile_robot_url, 'alerts': alerts, 'mixer_recipe': mixer_recipe, 'chip_mantis': chip_mantis})
+                                                      'outfile_mantis': outfile_mantis, 'outfile_robot': outfile_robot,
+                                                      'alerts': alerts, 'mixer_recipe': mixer_recipe, 'chip_mantis': chip_mantis})
             else:
                 return render(request, 'scripts/moclo_db.html',
                               {'uploadfile_name': upload, 'url_file': url_file,
-                               'outfile_mantis_name': '', 'outfile_robot_name': '',
-                               'outfile_mantis_url': '', 'outfile_robot_url': '',
+                               'outfile_mantis': '', 'outfile_robot': '',
                                'alerts': alerts, 'mixer_recipe': '', 'chip_mantis': ''})
     return render(request, 'scripts/moclo_db.html')
 
@@ -216,18 +209,13 @@ def pcr_db(request):
                   name_file, dispenser_parameters, mix_parameters, int(num_well_destination), int(pattern), mantis_two_chips, user)
 
             if mixer_recipe is not None:
-                outfile_mantis_name = os.path.basename(outfile_mantis.name)
-                outfile_robot_name = os.path.basename(outfile_robot.name)
-                outfile_mantis_url = fs.url(outfile_mantis_name)
-                outfile_robot_url = fs.url(outfile_robot_name)
                 return render(request, 'scripts/pcr_db.html', {'uploadfile_name': upload, 'url_file': url_file,
-                                                      'outfile_mantis_name': outfile_mantis_name, 'outfile_robot_name': outfile_robot_name,
-                                                      'outfile_mantis_url': outfile_mantis_url, 'outfile_robot_url': outfile_robot_url, 'alerts': alerts, 'mixer_recipe': mixer_recipe, 'chip_mantis': chip_mantis})
+                                                      'outfile_mantis': outfile_mantis, 'outfile_robot': outfile_robot,
+                                                      'alerts': alerts, 'mixer_recipe': mixer_recipe, 'chip_mantis': chip_mantis})
             else:
                 return render(request, 'scripts/pcr_db.html',
                               {'uploadfile_name': upload, 'url_file': url_file,
-                               'outfile_mantis_name': '', 'outfile_robot_name': '',
-                               'outfile_mantis_url': '', 'outfile_robot_url': '',
+                               'outfile_mantis': '', 'outfile_robot': '',
                                'alerts': alerts, 'mixer_recipe': '', 'chip_mantis': ''})
     return render(request, 'scripts/pcr_db.html')
 

@@ -15,19 +15,27 @@ MAX_VALUE = 999999
 
 
 def get_localization_vol(part_name, list_source_wells):
+    primer_f, primer_r, template = get_primers_template(part_name, list_source_wells)
+    primer_f = 0
+    primer_r = 0
+    template = 0
     for i, item in enumerate(list_source_wells):
         name, sample_name, sample_direction, sample_type, sample_wellconcentration, available_vol, times_needed, times_available, vol_part_add, sample_platename, sample_wellname, sample_num_well = list_source_wells[i]
         if part_name == name and times_available > 0:
             new_times_available = times_available - 1
+            if sample_type == 'Primer':
+                if sample_direction == 'FWD':
+                    primer_f = list_source_wells[i]
+                else:
+                    primer_r = list_source_wells[i]
+            else:
+                template = list_source_wells[i]
+
             list_source_wells[i] = [
                 name, sample_name, sample_direction, sample_type, sample_wellconcentration, available_vol, times_needed,
                 new_times_available, vol_part_add, sample_platename, sample_wellname, sample_num_well]
 
-            print(part_name, sample_name, sample_type, times_available)
-            print(list_source_wells, list_source_wells[i])
-            return list_source_wells, list_source_wells[i]
-        # elif part_name == sample_name and times_available == 0:
-        #     print(part_name, times_available, wellD_name)
+    return list_source_wells, primer_r, primer_f, template
 
 
 def get_plate_with_empty_well(destination_plates, pattern):
@@ -44,8 +52,8 @@ def get_plate_with_empty_well(destination_plates, pattern):
 
 
 def populate_destination_plates(plates_out, list_part_count, list_source_wells, mix_parameters, pattern):
-    alert = []
     template_conc, conc_primer_f, conc_primer_r, per_buffer, per_phusion, per_dntps, total_vol, add_water = mix_parameters
+    alert = []
     out_dispenser = []
     out_master_mix = []
     out_water = []
@@ -54,36 +62,41 @@ def populate_destination_plates(plates_out, list_part_count, list_source_wells, 
         for i in range(0, count):
             total_parts_vol = 0
             p, i, j = get_plate_with_empty_well(plates_out, pattern)
-            print(p,i,j)
-            print(list_source_wells)
-            print(part[0])
-            part_name, template = get_localization_vol(part[0], list_source_wells)
-            name, sample_name, sample_direction, sample_type, sample_wellconcentration, available_vol, times_needed, times_available, vol_part_add, sample_platename, sample_wellname, sample_num_well = part_name
-            print(part_name)
+            list_source_wells, primer_r, primer_f, template = get_localization_vol(part[0], list_source_wells)
+            name_part_pf, pf_name, pf_direction, pf_type, pf_wellconcentration, pf_available_vol, pf_times_needed, pf_times_available, pf_vol_part_add, pf_platename, pf_wellname, pf_num_well = primer_f
+            name_part_pr, pr_name, pr_direction, pr_type, pr_wellconcentration, pr_available_vol, pr_times_needed, pr_times_available, pr_vol_part_add, pr_platename, pr_wellname, pr_num_well = primer_r
+            name_part_t, t_name, t_direction, t_type, t_wellconcentration, t_available_vol, t_times_needed, t_times_available, t_vol_part_add, t_platename, t_wellname, t_num_well = template
+
             """ Adding parts in destination plate """
-            # plates_out[p].wells[i][j].samples.append(plate.Sample(sample_name, sample_type, sample_length, final_conc, vol_part_add))
-            # out_dispenser.append([sample_name, sample_type, source_plate, source_well, vol_part_add, plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
+            plates_out[p].wells[i][j].samples.append(plate.Sample(primer_r[1], primer_r[2], primer_r[3], primer_r[4], primer_r[8]))
+            plates_out[p].wells[i][j].samples.append(plate.Sample(primer_f[1], primer_f[2], primer_f[3], primer_f[4], primer_f[8]))
+            plates_out[p].wells[i][j].samples.append(plate.Sample(template[1], template[2], template[3], template[4], template[8]))
+            # header = 'Part', 'Source Plate Name', 'Source Well', 'Destination ID', 'Destination Plate Name', 'Destination Well', 'Volume'
+            out_dispenser.append([name_part_pf+'-'+pf_name, pf_type, pf_platename, pf_wellname, pf_vol_part_add, plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
+            out_dispenser.append([name_part_pr+'-'+pr_name, pr_type, pr_platename, pr_wellname, pr_vol_part_add, plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
+            out_dispenser.append([name_part_t+'-'+t_name, t_type, t_platename, t_wellname, t_vol_part_add, plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
 
             """ Sum of total volume of parts """
-            # total_parts_vol += vol_part_add
+            total_parts_vol += pf_vol_part_add + pr_vol_part_add + t_vol_part_add
 
-        '''Calculate buffer and enzimes'''
-        vol_for_mixer = calc_mixer_volumes(mix_parameters)
-        buffer_vol, rest_enz_vol, lig_enz_vol, total_vol_buffer = vol_for_mixer
+            '''Calculate buffer and enzimes'''
+            vol_for_mixer = calc_mixer_volumes(mix_parameters)
+            phusion_vol, buffer_vol, dNTPS_vol, total_vol_buffer = vol_for_mixer
 
-        '''Total water volume in well'''
-        vol_water = total_vol - (total_vol_buffer + total_parts_vol)
+            '''Total water volume in well'''
+            water_vol = total_vol - (total_vol_buffer + total_parts_vol)
 
-        if vol_water >= 0:
-            ''' Add receipts in list destination'''
-            out_master_mix.append(['buffer', total_vol_buffer, plates_out[p].wells[i][j].name])
-            out_water.append(['water', vol_water, plates_out[p].wells[i][j].name])
+            if water_vol >= 0:
+                ''' Add receipts in list destination'''
+                out_master_mix.append(['buffer', total_vol_buffer, plates_out[p].wells[i][j].name])
+                out_water.append(['water', water_vol, plates_out[p].wells[i][j].name])
 
-            ''' Add receipts in destination plate '''
-            plates_out[p].wells[i][j].samples.append(plate.Sample('Mastermix_Moclo', None, None, None, total_vol_buffer))
-            plates_out[p].wells[i][j].samples.append(plate.Sample('Water', None, None, None, vol_water))
-        else:
-            alert.append('In constructor: ' + str(set) + '. The water volume is negative.')
+                ''' Add receipts in destination plate '''
+                plates_out[p].wells[i][j].samples.append(plate.Sample('Mastermix_PCR', None, None, None, total_vol_buffer))
+                plates_out[p].wells[i][j].samples.append(plate.Sample('Water', None, None, None, water_vol))
+
+            else:
+                alert.append('Rx for: ' + str(part[0]) + '. The water volume is negative.')
 
     return plates_out, out_dispenser, out_master_mix, out_water, alert
 
@@ -118,8 +131,6 @@ def create_entry_list_for_destination_plate(list_source_wells, list_part_count):
 
         count = 0
         for sample in primer_r:
-            print(len(primer_r))
-            print(sample)
             if int(sample[8]) <= int(sample[7]):
                 for i in range(0, int(sample[8]-count)):
                     count+=1
@@ -127,7 +138,6 @@ def create_entry_list_for_destination_plate(list_source_wells, list_part_count):
             else:
                 for j in range(0, int(sample[7]-count)):
                     list_destination_plate.append(sample)
-        print(list_destination_plate)
 
     return list_destination_plate
 
@@ -193,10 +203,7 @@ def get_primers_template(part_name, found_list):
     return primer_f, primer_r, template
 
 
-def calc_part_volumes_in_plate(count_unique_list, found_list, plates_in, mix_parameters, dispenser_parameters, robot):
-    # part_fmol, bb_fmol, total_vol, buffer, rest_enz, lig_enz, add_water = mix_parameters
-    template_conc, vol_primer_f, vol_primer_r, per_buffer, per_phusion, per_dntps, total_vol, add_water = mix_parameters
-    machine, min_vol, res_vol, dead_vol = dispenser_parameters
+def calc_part_volumes_in_plate(count_unique_list, found_list, mix_parameters, dispenser_parameters, robot):
     total_vol_parts = []
 
     for pair in count_unique_list:
@@ -204,19 +211,20 @@ def calc_part_volumes_in_plate(count_unique_list, found_list, plates_in, mix_par
         times_needed = pair[1]  # Number of times to replicate the sample
         primer_f, primer_r, template = get_primers_template(part_name, found_list)
         total_vol_parts.extend(calc_volume_primers_template(primer_f, primer_r, template, times_needed, mix_parameters, dispenser_parameters, robot))
+        print(total_vol_parts)
 
     return total_vol_parts
 
 
 def calc_mixer_volumes(mix_parameters):
-    part_fmol, bb_fmol, total_vol, per_buffer, per_rest_enz, per_lig_enz, add_water = mix_parameters
+    template_conc, primer_f, primer_r, per_buffer, per_phusion, per_dntps, total_vol, add_water = mix_parameters
 
     '''Calculate buffer and enzimes'''
+    phusion_vol = (per_phusion * total_vol) / 100
     buffer_vol = (per_buffer * total_vol) / 100
-    rest_enz_vol = (per_rest_enz * total_vol) / 100
-    lig_enz_vol = (per_lig_enz * total_vol) / 100
-    total_vol_buffer = buffer_vol + rest_enz_vol + lig_enz_vol
-    vol_for_mixer = [buffer_vol, rest_enz_vol, lig_enz_vol, total_vol_buffer]
+    dNTPS_vol = (per_dntps * total_vol) / 100
+    total_vol_buffer = phusion_vol + buffer_vol + dNTPS_vol
+    vol_for_mixer = [phusion_vol, buffer_vol, dNTPS_vol, total_vol_buffer]
     return vol_for_mixer
 
 
@@ -240,8 +248,7 @@ def reajust_mixer_water_volumes(out_master_mix, out_water, min_water_vol):
 
     for item in out_master_mix:
         name, vol, well = item
-        # new_name = name+'+water'
-        new_name = 'Mastermix_Moclo'
+        new_name = 'Mastermix_PCR'
         new_vol = vol + min_water_vol
         reaj_out_master_mix.append([new_name,new_vol,well])
     return reaj_out_master_mix, reaj_out_water
@@ -254,7 +261,7 @@ def add_on_list(lista, item):
     return True
 
 
-def verify_wells_available_volume(list_wells, part_name):
+def verify_wells_available_volume(list_wells, part_name, robot):
     alert = []
     list_source_wells = []
     list_source_wells_joint = []
@@ -273,7 +280,7 @@ def verify_wells_available_volume(list_wells, part_name):
                 return list_source_wells_joint, alert
 
     vol_need = float(list_wells[0][8])*int(list_wells[0][6])
-    alert = 'Not enough volume of: ' + str(list_wells[0][1]) + ' to synthesize: '+ str(part_name) +'. Available volume: ' + str(total_available_vol) + ' needed: ' + str(vol_need)
+    alert = 'Not enough volume of: ' + str(list_wells[0][1]) + ' to synthesize: '+ str(part_name) +'. Available volume after remove dead volume: ' + str(total_available_vol-robot.dead_vol*len(list_wells)) + ' needed: ' + str(vol_need)
 
     return None, alert
 
@@ -286,12 +293,14 @@ def verify_samples_volume(vol_for_part, count_unique_list, robot):
     for pair in count_unique_list:
         part_name = pair[0]
         times_needed = pair[1]  # Number of times it appears in experiment
+        print(part_name)
 
         '''Get list of wells'''
         primer_f, primer_r, template = get_primers_template(part_name, vol_for_part)
-        list_source_wells_primerF, alertF = verify_wells_available_volume(primer_f, part_name)
-        list_source_wells_primerR, alertR = verify_wells_available_volume(primer_r, part_name)
-        list_source_wells_template, alertT = verify_wells_available_volume(template, part_name)
+        print(primer_f, primer_r, template)
+        list_source_wells_primerF, alertF = verify_wells_available_volume(primer_f, part_name, robot)
+        list_source_wells_primerR, alertR = verify_wells_available_volume(primer_r, part_name, robot)
+        list_source_wells_template, alertT = verify_wells_available_volume(template, part_name, robot)
 
         if len(alertF) > 0 or len(alertR) > 0 or len(alertT) > 0:
             if len(alertF) > 0: alert.append(alertF)
@@ -384,8 +393,10 @@ def find_primers_database(unique_list, found_parts):
 def get_part_count(reader):
     list_part_count = []
     for line in reader:
-        set = line.strip("\n").split(',')
-        list_part_count.append(list(set))
+        line = line.rstrip()
+        if line:
+            set = line.split(',')
+            list_part_count.append(list(set))
     return list_part_count
 
 
@@ -427,12 +438,11 @@ def run_pcr_db(path, filename, dispenser_parameters, mix_parameters, out_num_wel
             return total_alert, None, None, None, None
 
         else:
-            """Create and Populate Source Plates"""
-            plates_in = create_and_populate_sources_plate(found_list)
+            # """Create and Populate Source Plates"""
+            # plates_in = create_and_populate_sources_plate(found_list)
 
             """Calculate the part volumes"""
-            vol_for_part = calc_part_volumes_in_plate(list_part_count, found_list, plates_in, mix_parameters, dispenser_parameters, robot)
-            # print(vol_for_part)
+            vol_for_part = calc_part_volumes_in_plate(list_part_count, found_list, mix_parameters, dispenser_parameters, robot)
 
             """Verify parts volume in source plate"""
             list_source_wells, list_part_low_vol, alert = verify_samples_volume(vol_for_part, list_part_count, robot)
@@ -445,59 +455,55 @@ def run_pcr_db(path, filename, dispenser_parameters, mix_parameters, out_num_wel
 
                 """Populate plate"""
                 plates_out, out_dispenser, out_master_mix, out_water, alert = populate_destination_plates(plates_out, list_part_count, list_source_wells, mix_parameters, pattern)
-                # file.write_plate_by_col(plates_out)
-        #
-        #         """Mantis output file"""
-        #         file.set_mantis_import_header(mantis_csv)
-        #         min_water_vol = get_min_water_vol(out_water)
-        #
-        #         # water to add in master mix, enzime
-        #         mixer_recipe = calc_mixer_volumes(mix_parameters)
-        #         buffer_vol, rest_enz_vol, lig_enz_vol, total_vol_buffer = mixer_recipe
-        #
-        #         chip_mantis = []
-        #
-        #         if add_water is True:
-        #             ''' Add water in Master Mix and Remove from Water list'''
-        #             out_master_mix, out_water = reajust_mixer_water_volumes(out_master_mix, out_water, min_water_vol)
-        #
-        #             '''Master Mix recipe output'''
-        #             mixer_recipe_title = ["Buffer", "Restriction Enzyme", "Ligase Enzyme", "Water", "Master Mix"]
-        #             min_water_vol = round(min_water_vol, 2)
-        #             total_vol_buffer += min_water_vol
-        #             mixer_recipe = [round(buffer_vol, 2), round(rest_enz_vol, 2), round(lig_enz_vol, 2),
-        #                             round(min_water_vol, 2), round(total_vol_buffer, 2)]
-        #             mixer_recipe_zip = zip(mixer_recipe, mixer_recipe_title)
-        #
-        #         else:
-        #             mixer_recipe_title = ["Buffer", "Restriction Enzime", "Ligase Enzime", "Total Buffer"]
-        #             mixer_recipe_zip = zip(mixer_recipe, mixer_recipe_title)
-        #
-        #         if use_high_low_chip_mantis is True:
-        #             master_high, master_low = file.write_dispenser_mantis_in_low_high_chip(mantis_csv, out_master_mix)
-        #             water_high, water_low = file.write_dispenser_mantis_in_low_high_chip(mantis_csv, out_water)
-        #
-        #             chip_matis_title = ["Master mix in high chip", "Master mix in low chip", "Water in high chip",
-        #                                 "Water in low chip"]
-        #             chip_matis_vol = [round(master_high, 2), round(master_low, 2), round(water_high, 2),
-        #                               round(water_low, 2)]
-        #             chip_mantis_zip = zip(chip_matis_title, chip_matis_vol)
-        #
-        #         else:
-        #             master_total = file.write_dispenser_mantis(mantis_csv, out_master_mix)
-        #             water_total = file.write_dispenser_mantis(mantis_csv, out_water)
-        #
-        #             chip_matis_title = ["Master mix total volume", "Water total volume"]
-        #             chip_matis_vol = [round(master_total, 2), round(water_total, 2)]
-        #             chip_mantis_zip = zip(chip_matis_title, chip_matis_vol)
-        #
-        #         ''' Robot Dispenser parts '''
-        #         file.set_echo_header(robot_csv)
-        #         file.write_dispenser_echo(out_dispenser, robot_csv)
-        #
-        #     else:
-        #         return total_alert, None, None, None, None
-        #         # sys.exit()
-    # db_mantis = db.save_file(db_mantis_name, 'Moclo_DB', user)
-    # db_robot = db.save_file(db_robot_name, 'Moclo_DB', user)
-    # return total_alert, file_mantis, file_robot, mixer_recipe_zip, chip_mantis_zip
+
+                """Mantis output file"""
+                file.set_mantis_import_header(mantis_csv)
+                min_water_vol = get_min_water_vol(out_water)
+
+                """Mixer Recipe"""
+                mixer_recipe = calc_mixer_volumes(mix_parameters)
+                phusion_vol, buffer_vol, dNTPS_vol, total_vol_buffer = mixer_recipe
+
+                chip_mantis = []
+
+                if add_water is True:
+                    '''Add water in Master Mix and Remove from Water list'''
+                    out_master_mix, out_water = reajust_mixer_water_volumes(out_master_mix, out_water, min_water_vol)
+
+                    '''Master Mix recipe output'''
+                    mixer_recipe_title = ["Phusion", "Buffer", "dNTPs", "Water", "Master Mix"]
+                    min_water_vol = round(min_water_vol, 2)
+                    total_vol_buffer += min_water_vol
+                    mixer_recipe = [round(phusion_vol, 2), round(buffer_vol, 2), round(dNTPS_vol, 2),
+                                    round(min_water_vol, 2), round(total_vol_buffer, 2)]
+                    mixer_recipe_zip = zip(mixer_recipe, mixer_recipe_title)
+
+                else:
+                    mixer_recipe_title = ["Phusion", "Buffer", "dNTPs", "Water", "Master Mix"]
+                    mixer_recipe_zip = zip(mixer_recipe, mixer_recipe_title)
+
+                if use_high_low_chip_mantis is True:
+                    master_high, master_low = file.write_dispenser_mantis_in_low_high_chip(mantis_csv, out_master_mix)
+                    water_high, water_low = file.write_dispenser_mantis_in_low_high_chip(mantis_csv, out_water)
+
+                    chip_matis_title = ["Master mix in high chip", "Master mix in low chip", "Water in high chip",
+                                        "Water in low chip"]
+                    chip_matis_vol = [round(master_high, 2), round(master_low, 2), round(water_high, 2),
+                                      round(water_low, 2)]
+                    chip_mantis_zip = zip(chip_matis_title, chip_matis_vol)
+
+                else:
+                    master_total = file.write_dispenser_mantis(mantis_csv, out_master_mix)
+                    water_total = file.write_dispenser_mantis(mantis_csv, out_water)
+
+                    chip_matis_title = ["Master mix total volume", "Water total volume"]
+                    chip_matis_vol = [round(master_total, 2), round(water_total, 2)]
+                    chip_mantis_zip = zip(chip_matis_title, chip_matis_vol)
+
+                ''' Robot Dispenser parts '''
+                file.set_echo_header(robot_csv)
+                file.write_dispenser_echo(out_dispenser, robot_csv)
+
+    db_mantis = db.save_file(db_mantis_name, 'PCR_DB', user)
+    db_robot = db.save_file(db_robot_name, 'PCR_DB', user)
+    return total_alert, db_mantis, db_robot, mixer_recipe_zip, chip_mantis_zip

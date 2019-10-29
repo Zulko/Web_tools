@@ -475,4 +475,4 @@ def run_moclo_db(path, filename, dispenser_parameters, mix_parameters, out_num_w
             # sys.exit()
     db_mantis = db.save_file(db_mantis_name, 'Moclo_DB', user)
     db_robot = db.save_file(db_robot_name, 'Moclo_DB', user)
-    return total_alert, file_mantis, file_robot, mixer_recipe_zip, chip_mantis_zip
+    return total_alert, db_mantis, db_robot, mixer_recipe_zip, chip_mantis_zip

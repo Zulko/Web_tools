@@ -204,17 +204,7 @@
             </ol>
         </div>
     {% endif %}
-{#  <p> Example of a database file (<a href="{% static 'docs/database.csv' %}" target="_blank" download><strong> Database.csv </strong></a>) </p>#}
-  <p> Example of an input file with parts (<a href="{% static 'docs/combination_parts.txt' %}" target="_blank" download><strong> File.csv </strong></a>) </p> <br>
-
-  <div class="card-0">
-      <div class="card-img-top">
-          <center>
-{#              <img src="{% static "images/moclo.png" %}" alt="Moclo" style="width:50%; height: 50%">#}
-          </center>
-      </div>
-  </div>
-
+    <p> Example of an input file with parts (<a href="{% static 'docs/combination_parts.txt' %}" target="_blank" download><strong> File.csv </strong></a>) </p> <br>
 
   </div>
 
@@ -235,25 +225,14 @@
                     <div class="col-auto"></div>
                 </div>
 
-{#                <div class="form-row align-items-center">#}
-{#                    <div class="col-auto"></div>#}
-{#                    <div class="col-right" >#}
-{#                        <label for="inputfile">Input file:</label>#}
-{#                    </div>#}
-{#                    <div class="col" >#}
-{#                        <label for="inputfile_url"><a href="{{ url_db }}" target="_blank" >{{ upload_db }}</a></label>#}
-{#                    </div>#}
-{#                    <div class="col-auto"></div>#}
-{#                </div>#}
-
-            {% if outfile_mantis_url %}<br>
+            {% if outfile_mantis %}<br>
                 <div class="form-row align-items-center">
                     <div class="col-auto"></div>
                     <div class="col" >
-                        <label for="outputfile">Output file:</label>
+                        <label for="outputfile">Mantis file:</label>
                     </div>
                     <div class="col" >
-                        <label for="outputfile_url"><a href="{{ outfile_mantis_url }}" target="_blank" download> {{ outfile_mantis_name }} </a></label>
+                        <label for="outputfile"><a href="{{ outfile_mantis.file.url }}" target="_blank" download> {{ outfile_mantis.name }} </a></label>
                     </div>
                     <div class="col-auto"></div>
                 </div>
@@ -261,10 +240,10 @@
                 <div class="form-row align-items-center">
                     <div class="col-auto"></div>
                     <div class="col" >
-                        <label for="inputfile">Output file:</label>
+                        <label for="inputfile">Echo file:</label>
                     </div>
                     <div class="col" >
-                        <label for="inputfile_url"><a href="{{ outfile_robot_url }}" target="_blank" download>{{ outfile_robot_name }}</a></label>
+                        <label for="inputfile_url"><a href="{{ outfile_robot.file.url }}" target="_blank" download>{{ outfile_robot.name }}</a></label>
                     </div>
                     <div class="col-auto"></div>
                 </div>
@@ -276,12 +255,6 @@
         <fieldset class="form-group">
             <legend>Master Mix Recipe </legend>
             <table class="table">
-                <thead>
-{#                    <tr>#}
-{#                        <th>Items</th>#}
-{#                        <th>Volume</th>#}
-{#                    </tr>#}
-                </thead>
                 <tbody>
                     {% for item in mixer_recipe %}
                         <tr>
@@ -295,12 +268,6 @@
         <fieldset class="form-group">
             <legend> Mantis Configuration </legend>
             <table class="table">
-                <thead>
-{#                    <tr>#}
-{#                        <th>Items</th>#}
-{#                        <th>Volume</th>#}
-{#                    </tr>#}
-                </thead>
                 <tbody>
                     {% for item in chip_mantis %}
                         <tr>
