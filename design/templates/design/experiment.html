@@ -4,13 +4,13 @@
 
 
 {% block content %}
-
     <div class="row">
-        <div class="col-2">
+
+        <div class="col-sm-1">
         </div>
 
-        <div class="col-8">
-            <div class="container mt-5 mb-5">
+        <div class="col-10">
+            <div class="container mt-lg-auto mb-lg-auto">
                 <h4>Experiment: {{ experiment.name }}</h4>
                 <div align="right">
                     <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete_experiment"> Delete <i class="fas fa-trash-alt"></i></button>
@@ -64,106 +64,184 @@
                       </div>
                     </div>
 
-                <!-- step menu -->
                 <div class="shadow p-4 mb-4 bg-white">
+                    <!-- Step Menu -->
                     <ul class="pagination">
-    {#                  <li class="pagination-previous"><a class="page-link" tabindex="-1"> <span aria-hidden="true">&laquo;</span> Previous </a></li>#}
-                        {% for step in all_steps.all %}
-                            {% if step.status_run is True %}
-                                <li class="page-item active"><a class="page-link" href="{% url 'design:step_view' experiment.id step.id %}">{{ step.name }}  <i class="fas fa-check-circle"></i></a></li>
+                        {% for steplist in all_steps.all %}
+                            {% if steplist.status_run is True %}
+                                {% if step %}
+                                    <li class="page-item active">
+                                        <a class="page-link" href="{% url 'design:step_view' experiment.id steplist.id %}">{{ steplist.name }}  <i class="fas fa-check-circle"></i></a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{% url 'design:step_view' experiment.id steplist.id %}">{{ steplist.name }}  <i class="fas fa-check-circle"></i></a>
+                                {% endif %}
                             {%  else %}
-                                <li class="page-item"><a class="page-link" href="{% url 'design:step_view' experiment.id step.id %}">{{ step.name }}</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="{% url 'design:step_view' experiment.id steplist.id %}">{{ steplist.name }}</a>
+                                </li>
                             {% endif %}
                         {% endfor %}
-                      <li class="page-item"><a class="page-link" href="#" data-toggle="modal" data-target="#add_step"> <i class="fas fa-plus-circle"></i> New Step </a></li>
-    {#                  <li class="pagination-next"><a class="page-link" href="#">Next <span aria-hidden="true">&raquo;</span></a></li>#}
-                    </ul>
-                    <!-- Modal to add Step -->
-                    <div class="modal fade" id="add_step" tabindex="-1" role="dialog" aria-labelledby="add_stepLabel" aria-hidden="true">
-                      <div class="modal-dialog modal-lg" role="document">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h5 class="modal-title" id="add_stepLabel">New Step</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                            </button>
-                          </div>
-                          <!-- Add step modal page -->
-                          <div class="modal-body">
-                            <div role="tabpanel">
-                            <!-- Tab list to add step -->
-                            <ul class="nav nav-tabs" role="tablist">
-                                <li class="nav-item" role="presentation" ><a class="nav-link active" href="#add_stepTab" aria-controls="add_stepTab" role="tab" data-toggle="tab">Add Step Form</a></li>
-                            </ul><br>
-                            <div class="tab-content">
-                                <div role="tabpanel" class="tab-pane active" id="add_stepTab">
-                                    <!-- Add samples using a form -->
-                                    <form id="form_add_step" method="post" enctype="multipart/form-data">{% csrf_token %}
-                                        {{ form_step_add | bootstrap }}<br>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="submit" name="submit_add_step" action="{% url 'design:step_add' experiment.id %}" class="btn btn-info">Add</button>
+                        <li class="page-item"><a class="page-link" href="#" data-toggle="modal" data-target="#add_step"> <i class="fas fa-plus-circle"></i> New Step </a></li>
+                        <!-- Modal to add Step -->
+                        <div class="modal fade" id="add_step" tabindex="-1" role="dialog" aria-labelledby="add_stepLabel" aria-hidden="true">
+                          <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="add_stepLabel">New Step</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <!-- Add step modal page -->
+                              <div class="modal-body">
+                                <div role="tabpanel">
+                                <!-- Tab list to add step -->
+                                <ul class="nav nav-tabs" role="tablist">
+                                    <li class="nav-item" role="presentation" ><a class="nav-link active" href="#add_stepTab" aria-controls="add_stepTab" role="tab" data-toggle="tab">Add Step Form</a></li>
+                                </ul><br>
+                                <div class="tab-content">
+                                    <div role="tabpanel" class="tab-pane active" id="add_stepTab">
+                                        <!-- Add samples using a form -->
+                                        <form id="form_add_step" method="post" enctype="multipart/form-data">{% csrf_token %}
+                                            {{ form_step_add | bootstrap }}<br>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                            <button type="submit" name="submit_add_step" action="{% url 'design:step_add' experiment.id %}" class="btn btn-info">Add</button>
+                                        </div>
+                                        </form>
                                     </div>
-                                    </form>
                                 </div>
-                            </div>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    </div>
-
-                <!-- step content -->
-
-                {% if step %}
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-6 shadow-sm p-4 mb-4 bg-white">
-                                <p>ID: {{ step.id }} </p>
-                                <p>Name: {{ step.name }}</p>
-                                <p>Description: {{ step.description }}</p>
-                                <p>Script: {{ step.script }}</p>
-                                <p>Instrument: {{ step.instrument }}</p>
-                                <p>File: {{ step.input_file }}</p>
-                                <p>Status: {{ step.status_run }}</p>
-                            </div>
-                            {% if step.status_run is True %}
+                    </ul>
+                    <!-- Step Content -->
+                    {% if step %}
+                        <div class="container">
+                            <div class="row">
                                 <div class="col-6 shadow-sm p-4 mb-4 bg-white">
-                                    <!-- Output for Spotting Script -->
-                                    {% if step.script == '' %}
-
-                                    {% endif %}
-                                    <!-- Output for Spotting Script -->
-                                    {% if step.script == 'Spotting' %}
-                                        {% for file in step.output_files.all %}
-                                            <p>File: <a href="{{ file.file.url }}" class="btn btn-info btn-sm btn-block" target="_blank">{{file.name}} </a></p>
-                                        {% endfor %}
-                                    {% endif %}
-
-                                    {% if step.script == 'Moclo' %}
-
-                                    {% endif %}
-                                    {% if step.script == 'Combinatorial' %}
-
-                                    {% endif %}
-
+                                    <h5>{{ step.name }}
+                                        {% if step.status_run is True %}
+                                            <i class="fas fa-check-circle"></i>
+                                        {% endif %}
+                                    </h5><br>
+                                    <p>Description: {{ step.description }}</p>
+                                    <p>Script: {{ step.script }}</p>
+                                    <p>Instrument: {{ step.instrument }}</p>
+                                    <p>File: {{ step.input_file }}</p>
+                                    <p>Status: {{ step.status_run }}</p>
                                 </div>
-                            {% endif %}
+
+                                <!-- Runned Script shows the output files  -->
+                                {% if step.status_run is True %}
+                                    <div class="col-6 shadow-sm p-4 mb-4 bg-white">
+                                        <!-- Output for Script -->
+                                        {% if step.script == '' %}
+                                        {% endif %}
+
+                                        <!-- Output for Spotting Script -->
+                                        {% if step.script == 'Spotting' %}
+                                            {% for file in step.output_files.all %}
+                                                <p>File: <a href="{{ file.file.url }}" class="btn btn-info btn-sm btn-block" target="_blank">{{file.name}} </a></p>
+                                            {% endfor %}
+                                        {% endif %}
+
+                                        <!-- Output for Moclo Script -->
+                                        {% if step.script == 'Moclo' %}
+                                        {% endif %}
+
+                                        <!-- Output for Combinatorial Script -->
+                                        {% if step.script == 'Combinatorial' %}
+                                        {% endif %}
+
+                                        <!-- Output for PCR Script -->
+                                        {% if step.script == 'PCR' %}
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            </div>
                         </div>
-                    </div>
 
                     <!-- Execute button at Experiment Bottom  -->
+
                     {% if step.script == '' %}
                         <div class="btn-group">
                         <form id="form_run_step" method="post" enctype="multipart/form-data">{% csrf_token %}
-                            <button type="submit" name="submit_run_step" action="{% url 'design:step_run' experiment.id step.id %}" class="btn btn-success btn-sm"> Run <i class="fas fa-play"></i></button>
+                            {% if step.status_run is False %}
+                                <button type="submit" name="submit_run_step" action="{% url 'design:step_run' experiment.id step.id %}" class="btn btn-success btn-sm"> Run <i class="fas fa-play"></i></button>
+                            {% else %}
+                                <button type="submit" name="submit_run_step" class="btn btn-success btn-sm disabled"> Run <i class="fas fa-play"></i></button>
+                            {% endif %}
                         </form>
                         </div>
                     {% else %}
-                        <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#run_step"> Run <i class="fas fa-play"></i></button>
+{#                        {% if step.status_run is False %}#}
+                            <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#run_step"> Run <i class="fas fa-play"></i></button>
+{#                        {% else %}#}
+{#                            <button type="button" class="btn btn-success btn-sm disabled"> Run <i class="fas fa-play"></i></button>#}
+{#                        {% endif %}#}
                     {% endif %}
-                    <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#update_step"> Update <i class="fas fa-edit"></i></button>
-                    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete_step"> Delete <i class="fas fa-trash-alt"></i></button>
+
+
+{#                    {% if step.status_run is False %}#}
+                        <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#update_step"> Update <i class="fas fa-edit"></i></button>
+                        <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete_step"> Delete <i class="fas fa-trash-alt"></i></button>
+                        <!-- Modal button to update step -->
+                        <div class="modal fade" id="update_step" tabindex="-1" role="dialog" aria-labelledby="update_stepLabel" aria-hidden="true">
+                          <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="update_stepLabel">Update Step: {{ step.name }}</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+
+                              <form id="form_edit_sample" method="post" enctype="multipart/form-data">{% csrf_token %}
+                                <div class="modal-body">
+                                    {% csrf_token %}
+                                    {{ form_step_update | bootstrap }}<br>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" name= "submit_update_step" action="{% url 'design:step_update' experiment.id step.id %}" class="btn btn-warning">Update</button>
+                                </div>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- Modal button to delete experiment on inventory -->
+                        <div class="modal fade" id="delete_experiment" tabindex="-1" role="dialog" aria-labelledby="delete_experimentLabel" aria-hidden="true">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="delete_experimentLabel">Delete Experiment</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                  <h6>Are you sure to delete the experiment {{ experiment.name }}?</h6>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                  <form method="POST" action="{% url 'design:experiment_delete' experiment.id %}">
+                                      {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                  </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+{#                    {% else %}#}
+{#                        <button type="button" class="btn btn-warning btn-sm disabled"> Update <i class="fas fa-edit"></i></button>#}
+{#                        <button type="button" class="btn btn-danger btn-sm disabled"> Delete <i class="fas fa-trash-alt"></i></button>#}
+{#                    {% endif %}#}
 
                     <!-- Modal button to run step -->
                     {% if step.script == 'Spotting' %}
@@ -253,6 +331,7 @@
                           </div>
                             <form id="form_run_step" method="post" enctype="multipart/form-data">{% csrf_token %}
                                 <div class="modal-body">
+                                    <!-- Form for Moclo Script -->
                                     <legend><h5>Assembly file</h5></legend>
                                     <div class="form-row align-items-center">
                                         <div class="col">
@@ -404,54 +483,210 @@
 
                     {% endif %}
 
-
-                    <!-- Modal button to update step -->
-                    <div class="modal fade" id="update_step" tabindex="-1" role="dialog" aria-labelledby="update_stepLabel" aria-hidden="true">
-                      <div class="modal-dialog modal-lg" role="document">
+                    {% if step.script == 'PCR' %}
+                        <div class="modal fade" id="run_step" tabindex="-1" role="dialog" aria-labelledby="run_stepLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
                         <div class="modal-content">
                           <div class="modal-header">
-                            <h5 class="modal-title" id="update_stepLabel">Update Step: {{ step.name }}</h5>
+                            <h5 class="modal-title" id="run_stepLabel">Run Step: {{ step.name }}</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                               <span aria-hidden="true">&times;</span>
                             </button>
                           </div>
+                            <form id="form_run_step" method="post" enctype="multipart/form-data">{% csrf_token %}
+                                <div class="modal-body">
 
-                          <form id="form_edit_sample" method="post" enctype="multipart/form-data">{% csrf_token %}
-                            <div class="modal-body">
-                                {% csrf_token %}
-                                {{ form_step_update | bootstrap }}<br>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="submit" name= "submit_update_step" action="{% url 'design:step_update' experiment.id step.id %}" class="btn btn-warning">Update</button>
-                            </div>
-                          </form>
+                                    <legend><h5>PCR file</h5></legend>
+                                    <div class="form-row align-items-center">
+                                        <div class="col-auto"></div>
+                                        <div class="col">
+                                            <label for="file">Select a file: </label>
+                                        </div>
+                                        <div class="col-left">
+                                            <input type="file" class="form-control-file border" name="upload_file">
+                                        </div>
+                                        <div class="col-auto"></div>
+                                    </div><br>
+
+                                    <legend><h5>Dispenser</h5></legend>
+                                    <div class="form-row align-items-center">
+                                        <div class="col-auto"></div>
+                                        <div class="col">
+                                            <label for="machine">Machine: </label>
+                                        </div>
+                                        <div class="col">
+                                            <select class="form-control" id="machine" name="machine">
+                                                <option value="echo">Echo</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-auto"></div>
+                                    </div><br>
+                                    <div class="form-row align-items-center">
+                                        <div class="col-auto"></div>
+                                        <div class="col">
+                                            <label for="min_vol">Min Volume(nL): </label>
+                                        </div>
+                                        <div class="col">
+                                            <input type="number" class="form-control" name="min_vol" min="1" max="5" step="0.5" value="2.5">
+                                        </div>
+                                        <div class="col-auto"></div>
+                                    </div><br>
+
+                                    <div class="form-row align-items-center">
+                                        <div class="col-auto"></div>
+                                        <div class="col">
+                                            <label for="vol_res">Volume resolution(nL): </label>
+                                        </div>
+                                        <div class="col">
+                                            <input type="number" class="form-control" name="vol_resol" min="1" max="10" step="0.5" value="2.5">
+                                        </div>
+                                        <div class="col-auto"></div>
+                                    </div><br>
+                                    <div class="form-row align-items-center">
+                                        <div class="col-auto"></div>
+                                        <div class="col">
+                                            <label for="vol_res">Dead Volume (µL): </label>
+                                        </div>
+                                        <div class="col">
+                                            <input type="number" class="form-control" name="dead_vol" min="1" max="15" step="0.5" value="13">
+                                        </div>
+                                        <div class="col-auto"></div>
+                                    </div><br>
+
+                                    <legend><h5>Reaction Conditions</h5></legend>
+                                    <div class="form-row align-items-center">
+                                        <div class="col-auto"></div>
+                                        <div class="col">
+                                            <label for="part">Template conc (ng/µL): </label>
+                                        </div>
+                                        <div class="col">
+                                            <input type="number" class="form-control" name="template_conc" min="0.1" max="10" step="0.1" value="0.4">
+                                        </div>
+                                        <div class="col-auto"></div>
+                                    </div><br>
+
+                                    <div class="form-row align-items-center">
+                                        <div class="col-auto"></div>
+                                        <div class="col">
+                                            <label for="backbone">Primer F (µM): </label>
+                                        </div>
+                                        <div class="col">
+                                            <input type="number" class="form-control" name="primer_f" min="0.1" max="1" step="0.1" value="0.5">
+                                        </div>
+                                        <div class="col-auto"></div>
+                                    </div><br>
+
+                                    <div class="form-row align-items-center">
+                                        <div class="col-auto"></div>
+                                        <div class="col">
+                                            <label for="tot_vol">Primer R (µM): </label>
+                                        </div>
+                                        <div class="col">
+                                            <input type="number" class="form-control" name="primer_r" min="0.1" max="1" step="0.1" value="0.5">
+                                        </div>
+                                        <div class="col-auto"></div>
+                                    </div><br>
+
+                                    <div class="form-row align-items-center">
+                                        <div class="col-auto"></div>
+                                        <div class="col">
+                                            <label for="rest_enz">Phusion polymerase vol (% of tot vol): </label>
+                                        </div>
+                                        <div class="col">
+                                            <input type="number" class="form-control" name="phusion" min="1" max="10" step="0.5" value="1">
+                                        </div>
+                                        <div class="col-auto"></div>
+                                    </div><br>
+
+                                    <div class="form-row align-items-center">
+                                        <div class="col-auto"></div>
+                                        <div class="col">
+                                            <label for="buffer">Buffer 5x vol (% of tot vol): </label>
+                                        </div>
+                                        <div class="col">
+                                            <input type="number" class="form-control" name="buffer" min="1" max="20" step="0.5" value="20">
+                                        </div>
+                                        <div class="col-auto"></div>
+                                    </div><br>
+
+                                    <div class="form-row align-items-center">
+                                        <div class="col-auto"></div>
+                                        <div class="col">
+                                            <label for="lig_enz">dNTPs vol (% of tot vol): </label>
+                                        </div>
+                                        <div class="col">
+                                            <input type="number" class="form-control" name="dntps" min="1" max="20" step="0.5" value="2">
+                                        </div>
+                                        <div class="col-auto"></div>
+                                    </div><br>
+
+                                    <div class="form-row align-items-center">
+                                        <div class="col-auto"></div>
+                                        <div class="col">
+                                            <label for="lig_enz">Total vol (µL): </label>
+                                        </div>
+                                        <div class="col">
+                                            <input type="number" class="form-control" name="total_vol" min="10" max="100" step="5" value="50">
+                                        </div>
+                                        <div class="col-auto"></div>
+                                    </div><br>
+
+                                    <div class="form-row align-items-center">
+                                        <div class="col-auto"></div>
+                                        <div class="col">
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="add_water" name="add_water" value="True" checked>
+                                                <label class="custom-control-label" for="add_water">Add water in Master Mix</label>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="mantis_two_chips" name="mantis_two_chips" value="True">
+                                                <label class="custom-control-label" for="mantis_two_chips">Use Mantis with low/high chips</label>
+                                            </div>
+                                         </div>
+                                        <div class="col-auto"></div>
+                                    </div><br>
+
+                                    <legend><h5>Destination Plate</h5></legend>
+                                    <div class="form-row align-items-center">
+                                        <div class="col-auto"></div>
+                                        <div class="col">
+                                            <label for="num_well">Num Wells: </label>
+                                        </div>
+                                        <div class="col">
+                                            <select class="form-control" id="num_well_destination" name="num_well_destination">
+                                                <option value="96">96 Wells</option>
+                                                <option value="384">384 Wells</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-auto"></div>
+                                    </div><br>
+                                    <div class="form-row align-items-center">
+                                        <div class="col-auto"></div>
+
+                                        <div class="col">
+                                            <label for="filled_by">Filled by: </label>
+                                        </div>
+                                        <div class="col">
+                                            <select class="form-control" id="pattern" name="pattern">
+                                                <option value="0">by row</option>
+                                                <option selected value="1">by column</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-auto"></div>
+                                    </div><br>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" name= "submit_run_step" action="{% url 'design:step_run' experiment.id step.id %}" class="btn btn-success btn">Run <i class="fas fa-play"></i></button>
+                                </div>
+                                </div>
+                            </form>
                         </div>
-                      </div>
-                    </div>
-                    <!-- Modal button to delete experiment on inventory -->
-                    <div class="modal fade" id="delete_experiment" tabindex="-1" role="dialog" aria-labelledby="delete_experimentLabel" aria-hidden="true">
-                      <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h5 class="modal-title" id="delete_experimentLabel">Delete Experiment</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                            </button>
-                          </div>
-                          <div class="modal-body">
-                              <h6>Are you sure to delete the experiment {{ experiment.name }}?</h6>
-                          </div>
-                          <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                              <form method="POST" action="{% url 'design:experiment_delete' experiment.id %}">
-                                  {% csrf_token %}
-                                <button type="submit" class="btn btn-danger">Delete</button>
-                              </form>
-                          </div>
                         </div>
-                      </div>
-                    </div>
+
+                    {% endif %}
                 {% endif %}
 
                 </div>

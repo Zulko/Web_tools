@@ -6,14 +6,12 @@
 
 
     <div class="row">
+
       <div class="col-2">
-        <!-- Modal button to add experiment, workflow and step -->
+        <!-- Modal button to add experiment -->
         <div>
             <button type="button" class="btn btn-info" data-toggle="modal" data-target="#add_experiment"> <i class="fas fa-plus-circle"></i> New Experiment </button><br><br>
-{#            <button type="button" class="btn btn-info disabled" data-toggle="modal" data-target="#"> <!--"#add_experiment"--> <i class="fas fa-plus-circle"></i> New Workflow </button><br><br>#}
-            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#add_step"> <i class="fas fa-plus-circle"></i> New Step </button><br><br>
         </div>
-
         <!-- Modal to add Experiment -->
         <div class="modal fade" id="add_experiment" tabindex="-1" role="dialog" aria-labelledby="add_experimentLabel" aria-hidden="true">
           <div class="modal-dialog modal-lg" role="document">
@@ -66,12 +64,7 @@
             </div>
           </div>
         </div>
-        <!-- Modal to add Workflow -->
-
-
-          </div>
-{#        </div>#}
-{#      </div>#}
+      </div>
 
       <div class="col-8">
 {#      {% if all_experiments.count > 0 %}#}

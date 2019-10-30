@@ -36,6 +36,7 @@ class Step(models.Model):
         ('Moclo', 'Moclo'),
         ('Normalization', 'Normalization'),
         ('Spotting', 'Spotting'),
+        ('PCR', 'PCR'),
     )
 
     INSTRUMENTS = (
@@ -53,7 +54,7 @@ class Step(models.Model):
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
     script = models.CharField(max_length=30, choices=SCRIPTS, blank=True)
-    instrument = models.CharField(max_length=30, blank=True)
+    instrument = models.CharField(max_length=100, blank=True)
     input_file = models.FileField(upload_to='design/', max_length=10000, blank=True)
     output_files = models.ManyToManyField(File, blank=True)
     input = models.ManyToManyField(Plate, blank=True, related_name='input_plates')
