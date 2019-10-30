@@ -99,8 +99,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'biofoundry',
-        'USER': os.environ.get('DB_USER'),
-        'PASSWORD': os.environ.get('DB_PASS'),
+        # 'USER': os.environ.get('DB_USER'),
+        'USER': 'admin',
+        # 'PASSWORD': os.environ.get('DB_PASS'),
+        'PASSWORD': 'genomefoundry',
         'HOST': 'localhost',
         'PORT': '',
     }
