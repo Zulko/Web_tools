@@ -170,4 +170,5 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'team.concordiagf@gmail.com'
-EMAIL_HOST_PASSWORD = 'xjve srnr hceh ovqn'
+# EMAIL_HOST_PASSWORD = 'xjve srnr hceh ovqn'
+EMAIL_HOST_PASSWORD = 'xdac wwam oxat dvte'

@@ -15,7 +15,6 @@ MAX_VALUE = 999999
 
 
 def get_localization_vol(part_name, list_source_wells):
-    primer_f, primer_r, template = get_primers_template(part_name, list_source_wells)
     primer_f = 0
     primer_r = 0
     template = 0
@@ -211,7 +210,6 @@ def calc_part_volumes_in_plate(count_unique_list, found_list, mix_parameters, di
         times_needed = pair[1]  # Number of times to replicate the sample
         primer_f, primer_r, template = get_primers_template(part_name, found_list)
         total_vol_parts.extend(calc_volume_primers_template(primer_f, primer_r, template, times_needed, mix_parameters, dispenser_parameters, robot))
-        print(total_vol_parts)
 
     return total_vol_parts
 
@@ -293,11 +291,9 @@ def verify_samples_volume(vol_for_part, count_unique_list, robot):
     for pair in count_unique_list:
         part_name = pair[0]
         times_needed = pair[1]  # Number of times it appears in experiment
-        print(part_name)
 
         '''Get list of wells'''
         primer_f, primer_r, template = get_primers_template(part_name, vol_for_part)
-        print(primer_f, primer_r, template)
         list_source_wells_primerF, alertF = verify_wells_available_volume(primer_f, part_name, robot)
         list_source_wells_primerR, alertR = verify_wells_available_volume(primer_r, part_name, robot)
         list_source_wells_template, alertT = verify_wells_available_volume(template, part_name, robot)
@@ -438,9 +434,6 @@ def run_pcr_db(path, filename, dispenser_parameters, mix_parameters, out_num_wel
             return total_alert, None, None, None, None
 
         else:
-            # """Create and Populate Source Plates"""
-            # plates_in = create_and_populate_sources_plate(found_list)
-
             """Calculate the part volumes"""
             vol_for_part = calc_part_volumes_in_plate(list_part_count, found_list, mix_parameters, dispenser_parameters, robot)
 
@@ -463,8 +456,6 @@ def run_pcr_db(path, filename, dispenser_parameters, mix_parameters, out_num_wel
                 """Mixer Recipe"""
                 mixer_recipe = calc_mixer_volumes(mix_parameters)
                 phusion_vol, buffer_vol, dNTPS_vol, total_vol_buffer = mixer_recipe
-
-                chip_mantis = []
 
                 if add_water is True:
                     '''Add water in Master Mix and Remove from Water list'''
