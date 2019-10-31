@@ -1,13 +1,28 @@
+import os
+
+from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 
 from .models import Experiment, Step
 from .forms import ExperimentForm, StepForm
 
 from libs.function.spotting import run_spotting
+from libs.function.pcr_db import run_pcr_db
 from libs.biofoundry.db import save_file
+from libs.misc import file
+from libs.biofoundry import db
 
 # Create your views here.
+
+
+def upload_file(request, filename):
+    upload = request.FILES[filename]
+    fs = FileSystemStorage()
+    name = fs.save(upload.name, upload)
+    url = fs.url(name)
+    return upload, fs, name, url
 
 
 @login_required()
@@ -168,6 +183,88 @@ def step_add(request, experiment_id):
     return render(request, 'design/index.html', context)
 
 
+def spotting_script(request, step, user):
+    num_sources = request.POST['num_sources']
+    num_well = request.POST['num_well']
+    num_pattern = request.POST['num_pattern']
+    pattern = request.POST['pattern']
+    ''' Calling Python Script'''
+    outfile, worklist, alert = run_spotting(int(num_sources), int(num_well), int(num_pattern), int(pattern),
+                                            user)
+    if outfile is not None:
+        step.status_run = True
+        step.output_files.add(outfile)
+        step.output_files.add(worklist)
+        step.save()
+        return outfile, worklist, alert
+    else:
+        return None, None, alert
+
+
+def pcr_script(request, step, user):
+    if len(request.FILES) != 0:
+        upload, fs, name_file, url_file = upload_file(request, 'upload_file')
+
+        """Dispenser parameters"""
+        machine = request.POST['machine']
+        min_vol = request.POST['min_vol']
+        vol_resol = request.POST['vol_resol']
+        dead_vol = request.POST['dead_vol']
+        dispenser_parameters = machine, float(min_vol) * 1e-3, float(vol_resol) * 1e-3, float(dead_vol)
+
+        """Reaction parameters"""
+        template_conc = request.POST['template_conc']
+        primer_f = request.POST['primer_f']
+        primer_r = request.POST['primer_r']
+        per_phusion = request.POST['phusion']
+        per_buffer = request.POST['buffer']
+        per_dntps = request.POST['dntps']
+        total_vol = request.POST['total_vol']
+        mantis_two_chips = 'mantis_two_chips' in request.POST
+        add_water = 'add_water' in request.POST
+        mix_parameters = \
+            float(template_conc), \
+            float(primer_f), \
+            float(primer_r), \
+            float(per_buffer), \
+            float(per_phusion), \
+            float(per_dntps), \
+            float(total_vol), \
+            add_water
+
+        """Destination plate"""
+        num_well_destination = request.POST['num_well_destination']
+        pattern = request.POST['pattern']
+
+        ''' Calling Python Script'''
+        alerts, outfile_mantis, outfile_robot, mixer_recipe, chip_mantis = run_pcr_db(settings.MEDIA_ROOT,
+                                                                                      name_file, dispenser_parameters,
+                                                                                      mix_parameters,
+                                                                                      int(num_well_destination),
+                                                                                      int(pattern), mantis_two_chips,
+                                                                                      user)
+
+        if mixer_recipe is not None:
+            filein = db.save_file(name_file, 'PCR_DB', user)
+            step.status_run = True
+            step.input_file.add(filein)
+            step.output_files.add(outfile_mantis)
+            step.output_files.add(outfile_robot)
+            step.instructions = ''
+            for item in mixer_recipe:
+                step.instructions += str(item[0]) + ': '+str(item[1]) + 'ul, '
+            for item in chip_mantis:
+                step.instructions += str(item[0]) + ': '+str(item[1]) + 'ul, '
+            step.save()
+            return alerts, outfile_mantis, outfile_robot, mixer_recipe, chip_mantis
+        else:
+            return alerts, None, None, None, None
+    else:
+        alerts = ['Missing input file']
+        return alerts, None, None, None, None
+
+
+
 @login_required()
 def step_view(request, experiment_id, step_id):
     print('step_view')
@@ -205,24 +302,8 @@ def step_view(request, experiment_id, step_id):
             return redirect('design:step_view', experiment.id, step.id)
 
     elif 'submit_run_step' in request.POST:
-        print("Nome do script:" + step.script)
         if step.script == 'Spotting':
-            print('Spotting: Yes')
-
-
-            num_sources = request.POST['num_sources']
-            num_well = request.POST['num_well']
-            num_pattern = request.POST['num_pattern']
-            pattern = request.POST['pattern']
-            ''' Calling Python Script'''
-            outfile, worklist, alert = run_spotting(int(num_sources), int(num_well), int(num_pattern), int(pattern),
-                                                    user)
-            step.status_run = True
-            out1 = save_file(outfile.name, step.script, user)
-            out2 = save_file(worklist.name, step.script, user)
-            step.output_files.add(out1)
-            step.output_files.add(out2)
-            step.save()
+            outfile, worklist, alert = spotting_script(request, step, user)
 
             context = {
                 'all_steps': all_steps,
@@ -233,15 +314,38 @@ def step_view(request, experiment_id, step_id):
                 'form_step_update': formStepUpdate,
                 'run_results': run_results,
                 'outfile': outfile,
-                'worklist': worklist
+                'worklist': worklist,
+                'alert': alert,
             }
 
             return render(request, 'design/experiment.html', context)
 
+        elif step.script == 'PCR':
+            print('PCR: Yes')
+            alerts, outfile_mantis, outfile_robot, mixer_recipe, chip_mantis = pcr_script(request, step, user)
+
+            context = {
+                'all_steps': all_steps,
+                'step': step,
+                'experiment': experiment,
+                'form_experiment_update': formExperimentUpdate,
+                'form_step_add': formStepAdd,
+                'form_step_update': formStepUpdate,
+                'run_results': run_results,
+                'outfile': outfile_mantis,
+                'worklist': outfile_robot,
+                'mixer_recipe': mixer_recipe,
+                'chip_mantis': chip_mantis,
+                'alert': alerts,
+            }
+            return render(request, 'design/experiment.html', context)
+
         elif step.script == 'Moclo':
             print('Moclo: Yes')
+
         elif step.script == 'Normalization':
             print('Normalization: Yes')
+
         elif step.script == '':
             run_results = 'Resultado do step sem script'
             step.status_run = True

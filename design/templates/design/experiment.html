@@ -69,14 +69,9 @@
                     <ul class="pagination">
                         {% for steplist in all_steps.all %}
                             {% if steplist.status_run is True %}
-                                {% if step %}
-                                    <li class="page-item active">
-                                        <a class="page-link" href="{% url 'design:step_view' experiment.id steplist.id %}">{{ steplist.name }}  <i class="fas fa-check-circle"></i></a>
-                                    </li>
-                                {% else %}
-                                    <li class="page-item">
-                                        <a class="page-link" href="{% url 'design:step_view' experiment.id steplist.id %}">{{ steplist.name }}  <i class="fas fa-check-circle"></i></a>
-                                {% endif %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{% url 'design:step_view' experiment.id steplist.id %}">{{ steplist.name }}  <i class="fas fa-check-circle"></i></a>
+                                </li>
                             {%  else %}
                                 <li class="page-item">
                                     <a class="page-link" href="{% url 'design:step_view' experiment.id steplist.id %}">{{ steplist.name }}</a>
@@ -131,38 +126,56 @@
                                     </h5><br>
                                     <p>Description: {{ step.description }}</p>
                                     <p>Script: {{ step.script }}</p>
-                                    <p>Instrument: {{ step.instrument }}</p>
+                                    <p>Instruments: {{ step.instrument }}</p>
                                     <p>File: {{ step.input_file }}</p>
                                     <p>Status: {{ step.status_run }}</p>
                                 </div>
 
                                 <!-- Runned Script shows the output files  -->
-                                {% if step.status_run is True %}
-                                    <div class="col-6 shadow-sm p-4 mb-4 bg-white">
-                                        <!-- Output for Script -->
-                                        {% if step.script == '' %}
-                                        {% endif %}
-
-                                        <!-- Output for Spotting Script -->
-                                        {% if step.script == 'Spotting' %}
+                                <div class="col-6 shadow-sm p-4 mb-4 bg-white">
+                                    <!-- Output for Script -->
+                                    {% if step.script == '' %}
+                                    {% endif %}
+                                    <!-- Output for Spotting Script -->
+                                    {% if step.script == 'Spotting' %}
+                                        {% if step.status_run is True %}
                                             {% for file in step.output_files.all %}
                                                 <p>File: <a href="{{ file.file.url }}" class="btn btn-info btn-sm btn-block" target="_blank">{{file.name}} </a></p>
                                             {% endfor %}
+                                        {% else %}
+                                            {% if alert %}
+                                            <div class="alert">
+                                                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> {{ alert }}
+                                            </div>
+                                            {% endif %}
                                         {% endif %}
+                                    {% endif %}
 
-                                        <!-- Output for Moclo Script -->
-                                        {% if step.script == 'Moclo' %}
-                                        {% endif %}
+                                    <!-- Output for Moclo Script -->
+                                    {% if step.script == 'Moclo' %}
+                                    {% endif %}
 
-                                        <!-- Output for Combinatorial Script -->
-                                        {% if step.script == 'Combinatorial' %}
-                                        {% endif %}
+                                    <!-- Output for Combinatorial Script -->
+                                    {% if step.script == 'Combinatorial' %}
+                                    {% endif %}
 
-                                        <!-- Output for PCR Script -->
-                                        {% if step.script == 'PCR' %}
+                                    <!-- Output for PCR Script -->
+                                    {% if step.script == 'PCR' %}
+                                        {% if step.status_run is True %}
+                                            {% for file in step.output_files.all %}
+                                                <p>File: <a href="{{ file.file.url }}" class="btn btn-info btn-sm btn-block" target="_blank">{{file.name}} </a></p>
+                                            {% endfor %}
+                                            <p>Instructions:<br>{{ step.instructions }}</p>
+                                        {% else %}
+                                            {% if alert %}
+                                            <div class="alert">
+                                                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                                                <ol>{% for item in alert %} <li>{{ item }}</li> {% endfor %}</ol>
+                                            </div>
+                                            {% endif %}
                                         {% endif %}
-                                    </div>
-                                {% endif %}
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
 
@@ -179,15 +192,15 @@
                         </form>
                         </div>
                     {% else %}
-{#                        {% if step.status_run is False %}#}
+                        {% if step.status_run is False %}
                             <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#run_step"> Run <i class="fas fa-play"></i></button>
-{#                        {% else %}#}
-{#                            <button type="button" class="btn btn-success btn-sm disabled"> Run <i class="fas fa-play"></i></button>#}
-{#                        {% endif %}#}
+                        {% else %}
+                            <button type="button" class="btn btn-success btn-sm disabled"> Run <i class="fas fa-play"></i></button>
+                        {% endif %}
                     {% endif %}
 
 
-{#                    {% if step.status_run is False %}#}
+                    {% if step.status_run is False %}
                         <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#update_step"> Update <i class="fas fa-edit"></i></button>
                         <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete_step"> Delete <i class="fas fa-trash-alt"></i></button>
                         <!-- Modal button to update step -->
@@ -238,10 +251,10 @@
                           </div>
                         </div>
 
-{#                    {% else %}#}
-{#                        <button type="button" class="btn btn-warning btn-sm disabled"> Update <i class="fas fa-edit"></i></button>#}
-{#                        <button type="button" class="btn btn-danger btn-sm disabled"> Delete <i class="fas fa-trash-alt"></i></button>#}
-{#                    {% endif %}#}
+                    {% else %}
+                        <button type="button" class="btn btn-warning btn-sm disabled"> Update <i class="fas fa-edit"></i></button>
+                        <button type="button" class="btn btn-danger btn-sm disabled"> Delete <i class="fas fa-trash-alt"></i></button>
+                    {% endif %}
 
                     <!-- Modal button to run step -->
                     {% if step.script == 'Spotting' %}
@@ -495,8 +508,7 @@
                           </div>
                             <form id="form_run_step" method="post" enctype="multipart/form-data">{% csrf_token %}
                                 <div class="modal-body">
-
-                                    <legend><h5>PCR file</h5></legend>
+                                    <h5>PCR file</h5>
                                     <div class="form-row align-items-center">
                                         <div class="col-auto"></div>
                                         <div class="col">
@@ -507,8 +519,7 @@
                                         </div>
                                         <div class="col-auto"></div>
                                     </div><br>
-
-                                    <legend><h5>Dispenser</h5></legend>
+                                    <h5>Dispenser</h5>
                                     <div class="form-row align-items-center">
                                         <div class="col-auto"></div>
                                         <div class="col">
@@ -531,7 +542,6 @@
                                         </div>
                                         <div class="col-auto"></div>
                                     </div><br>
-
                                     <div class="form-row align-items-center">
                                         <div class="col-auto"></div>
                                         <div class="col">
@@ -552,8 +562,7 @@
                                         </div>
                                         <div class="col-auto"></div>
                                     </div><br>
-
-                                    <legend><h5>Reaction Conditions</h5></legend>
+                                    <h5>Reaction Conditions</h5>
                                     <div class="form-row align-items-center">
                                         <div class="col-auto"></div>
                                         <div class="col">
@@ -564,7 +573,6 @@
                                         </div>
                                         <div class="col-auto"></div>
                                     </div><br>
-
                                     <div class="form-row align-items-center">
                                         <div class="col-auto"></div>
                                         <div class="col">
@@ -586,7 +594,6 @@
                                         </div>
                                         <div class="col-auto"></div>
                                     </div><br>
-
                                     <div class="form-row align-items-center">
                                         <div class="col-auto"></div>
                                         <div class="col">
@@ -597,7 +604,6 @@
                                         </div>
                                         <div class="col-auto"></div>
                                     </div><br>
-
                                     <div class="form-row align-items-center">
                                         <div class="col-auto"></div>
                                         <div class="col">
@@ -608,7 +614,6 @@
                                         </div>
                                         <div class="col-auto"></div>
                                     </div><br>
-
                                     <div class="form-row align-items-center">
                                         <div class="col-auto"></div>
                                         <div class="col">
@@ -619,7 +624,6 @@
                                         </div>
                                         <div class="col-auto"></div>
                                     </div><br>
-
                                     <div class="form-row align-items-center">
                                         <div class="col-auto"></div>
                                         <div class="col">
@@ -630,7 +634,6 @@
                                         </div>
                                         <div class="col-auto"></div>
                                     </div><br>
-
                                     <div class="form-row align-items-center">
                                         <div class="col-auto"></div>
                                         <div class="col">
@@ -647,8 +650,7 @@
                                          </div>
                                         <div class="col-auto"></div>
                                     </div><br>
-
-                                    <legend><h5>Destination Plate</h5></legend>
+                                    <h5>Destination Plate</h5>
                                     <div class="form-row align-items-center">
                                         <div class="col-auto"></div>
                                         <div class="col">
@@ -664,7 +666,6 @@
                                     </div><br>
                                     <div class="form-row align-items-center">
                                         <div class="col-auto"></div>
-
                                         <div class="col">
                                             <label for="filled_by">Filled by: </label>
                                         </div>
@@ -676,7 +677,6 @@
                                         </div>
                                         <div class="col-auto"></div>
                                     </div><br>
-
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                     <button type="submit" name= "submit_run_step" action="{% url 'design:step_run' experiment.id step.id %}" class="btn btn-success btn">Run <i class="fas fa-play"></i></button>
@@ -685,8 +685,9 @@
                             </form>
                         </div>
                         </div>
-
                     {% endif %}
+
+
                 {% endif %}
 
                 </div>
@@ -702,4 +703,4 @@
         <script type="text/javascript">
         </script>
 
-{% endblock%}
+{% endblock %}

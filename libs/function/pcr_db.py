@@ -467,11 +467,11 @@ def run_pcr_db(path, filename, dispenser_parameters, mix_parameters, out_num_wel
                     total_vol_buffer += min_water_vol
                     mixer_recipe = [round(phusion_vol, 2), round(buffer_vol, 2), round(dNTPS_vol, 2),
                                     round(min_water_vol, 2), round(total_vol_buffer, 2)]
-                    mixer_recipe_zip = zip(mixer_recipe, mixer_recipe_title)
+                    mixer_recipe_zip = zip(mixer_recipe_title, mixer_recipe)
 
                 else:
                     mixer_recipe_title = ["Phusion", "Buffer", "dNTPs", "Water", "Master Mix"]
-                    mixer_recipe_zip = zip(mixer_recipe, mixer_recipe_title)
+                    mixer_recipe_zip = zip(mixer_recipe_title, mixer_recipe)
 
                 if use_high_low_chip_mantis is True:
                     master_high, master_low = file.write_dispenser_mantis_in_low_high_chip(mantis_csv, out_master_mix)
