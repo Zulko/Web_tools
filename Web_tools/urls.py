@@ -30,6 +30,7 @@ urlpatterns = [
     path('under_construction/', views.under_construction, name='under'),
     path('calendar/', views.calendar, name='calendar'),
     path('schedule/', views.schedule, name='schedule'),
+    path('sop_microbial/', views.sop, name='sop_microbial'),
     path('accounts/', include('accounts.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('db/', include('db.urls')),

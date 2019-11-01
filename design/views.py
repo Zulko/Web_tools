@@ -8,6 +8,8 @@ from django.conf import settings
 from .models import Experiment, Step
 from .forms import ExperimentForm, StepForm
 
+from db.models import File
+
 from libs.function.spotting import run_spotting
 from libs.function.pcr_db import run_pcr_db
 from libs.biofoundry.db import save_file
@@ -245,11 +247,12 @@ def pcr_script(request, step, user):
                                                                                       user)
 
         if mixer_recipe is not None:
-            filein = db.save_file(name_file, 'PCR_DB', user)
+            filein = File(name=name_file, script=step.experiment.name, author=user, file=name_file)
+            filein.save()
             step.status_run = True
             step.input_file.add(filein)
-            step.output_files.add(outfile_mantis)
-            step.output_files.add(outfile_robot)
+            # step.output_files.add(outfile_mantis)
+            # step.output_files.add(outfile_robot)
             step.instructions = ''
             for item in mixer_recipe:
                 step.instructions += str(item[0]) + ': '+str(item[1]) + 'ul, '

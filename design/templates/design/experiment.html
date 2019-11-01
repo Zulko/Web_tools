@@ -192,15 +192,15 @@
                         </form>
                         </div>
                     {% else %}
-                        {% if step.status_run is False %}
+{#                        {% if step.status_run is False %}#}
                             <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#run_step"> Run <i class="fas fa-play"></i></button>
-                        {% else %}
-                            <button type="button" class="btn btn-success btn-sm disabled"> Run <i class="fas fa-play"></i></button>
-                        {% endif %}
+{#                        {% else %}#}
+{#                            <button type="button" class="btn btn-success btn-sm disabled"> Run <i class="fas fa-play"></i></button>#}
+{#                        {% endif %}#}
                     {% endif %}
 
 
-                    {% if step.status_run is False %}
+{#                    {% if step.status_run is False %}#}
                         <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#update_step"> Update <i class="fas fa-edit"></i></button>
                         <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete_step"> Delete <i class="fas fa-trash-alt"></i></button>
                         <!-- Modal button to update step -->
@@ -251,10 +251,10 @@
                           </div>
                         </div>
 
-                    {% else %}
-                        <button type="button" class="btn btn-warning btn-sm disabled"> Update <i class="fas fa-edit"></i></button>
-                        <button type="button" class="btn btn-danger btn-sm disabled"> Delete <i class="fas fa-trash-alt"></i></button>
-                    {% endif %}
+{#                    {% else %}#}
+{#                        <button type="button" class="btn btn-warning btn-sm disabled"> Update <i class="fas fa-edit"></i></button>#}
+{#                        <button type="button" class="btn btn-danger btn-sm disabled"> Delete <i class="fas fa-trash-alt"></i></button>#}
+{#                    {% endif %}#}
 
                     <!-- Modal button to run step -->
                     {% if step.script == 'Spotting' %}

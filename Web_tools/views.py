@@ -24,3 +24,7 @@ def calendar(request):
 
 def schedule(request):
     return render(request, 'reservations_calendar.html')
+
+
+def sop(request):
+    return render(request, 'sop_microbial.html')
