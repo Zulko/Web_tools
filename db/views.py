@@ -153,8 +153,10 @@ def plate_view(request, plate_id):
 def plate_export(request, plate_id):
     plate_resource = PlateResource()
     plate_filter = Plate.objects.filter(id=plate_id)
+    print(plate_filter)
     try:
-        all_wells = Well.objects.filter(plate_id=plate_id)
+        all_wells = Well.objects.filter(plate_id=plate_id).order_by('name')
+        print(all_wells)
         dataset = plate_resource.export(all_wells)
         response = HttpResponse(dataset.csv, content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="{}.csv"'.format(plate_filter)
