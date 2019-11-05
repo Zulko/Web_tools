@@ -45,25 +45,72 @@ class Machine(models.Model):
         return self.name
 
 
+class Project(models.Model):
+    PROJECT = (
+        ('GF_General', 'GF_General'),
+        ('Sanguinarine', 'Sanguinarine'),
+        ('MoClo_Kit', 'MoClo_Kit'),
+        ('Yeast_CRISPR_Kit', 'Yeast_CRISPR_Kit'),
+        ('Foundry_Kit', 'Foundry_Kit'),
+    )
+
+    STATUS = (
+        ('Working', 'Working'),
+        ('Not working', 'Not working'),
+    )
+
+    name = models.CharField(max_length=100, choices=PROJECT, default='GF_General')
+    author = models.CharField(max_length=50)
+    collaborators = models.CharField(max_length=500)
+    status = models.CharField(max_length=50, choices=STATUS, default='Working')
+    comments = models.CharField(max_length=100, blank=True)
+    image = models.ImageField(upload_to="pics", max_length=10000, blank=True)
+    created_at = models.DateField(auto_now_add=True, editable=False)
+
+    def __str__(self):
+        return self.name
+
+
 class Plate(models.Model):
     STATUS = (
         ('Working', 'Working'),
         ('Backup', 'Backup'),
     )
-    # Choices
     CONTAINER_TYPES = (
         ('Plate', 'Plate'),
         ('Box', 'Box'),
+    )
+    CONTAINER_FUNCTION = (
+        ('Inventory', 'Inventory'),
+        ('Process', 'Process'),
+    )
+    PROJECT = (
+        ('GF_General', 'GF_General'),
+        ('Sanguinarine', 'Sanguinarine'),
+        ('MoClo_Kit', 'MoClo_Kit'),
+        ('Yeast_CRISPR_Kit', 'Yeast_CRISPR_Kit'),
+        ('Foundry_Kit', 'Foundry_Kit'),
+    )
+    CONTENTS = (
+        ('DNA', 'DNA'),
+        ('Cells', 'Cells'),
+        ('Reagents', 'Reagents'),
+    )
+    LOCATION = (
+        ('Fridge', 'Fridge'),
+        ('Freezer -20C', 'Freezer -20C'),
+        ('Freezer -80C', 'Freezer -80C'),
     )
 
     def get_barcode():
         try:
             num = Plate.objects.latest('id').id
             num += 1
-            return '{0:07}'.format(num)
+            name = 'GF' + '{0:05}'.format(num)
+            return name
         except ObjectDoesNotExist:
-            num = 1
-            return '{0:07}'.format(num)
+            name = 'GF' + '{0:05}'.format(1)
+            return name
 
     def get_name():
         try:
@@ -72,18 +119,22 @@ class Plate(models.Model):
             name = 'Plate_' + '{0:07}'.format(num)
             return name
         except ObjectDoesNotExist:
-            num = 1
             name = 'Plate_' + '{0:07}'.format(1)
             return name
 
     name = models.CharField(max_length=50, unique=True, default=get_name)
     type = models.CharField(max_length=50, choices=CONTAINER_TYPES, default=CONTAINER_TYPES[0][0])
-    barcode = models.IntegerField(unique=True, default=get_barcode)
+    function = models.CharField(max_length=50, choices=CONTAINER_FUNCTION, default=CONTAINER_TYPES[0][0], blank=True)
+    barcode = models.CharField(max_length=30, unique=True, default=get_barcode)
+    project = models.CharField(max_length=30, choices=PROJECT, blank=True)  # Multi select option
     num_cols = models.IntegerField()
     num_rows = models.IntegerField()
     num_well = models.IntegerField()
+    location = models.CharField(max_length=30, choices=LOCATION, default=LOCATION[0][0], blank=True)
+    contents = models.CharField(max_length=30, choices=CONTENTS, default=CONTENTS[0][0], blank=True)
     active = models.BooleanField(default=True)
     status = models.CharField(max_length=30, choices=STATUS, blank=True)
+    comments = models.TextField(max_length=500, blank=True)
     created_at = models.DateField(auto_now_add=True, editable=False)
     updated_at = models.DateField(auto_now=True)
 

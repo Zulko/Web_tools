@@ -200,7 +200,7 @@
                   {% for sample in filter.qs %}
                     <tr>
                         <td>
-                            <a href="{% url 'db:sample' sample.id %}" style="font-size: 12px;" class="btn btn-outline-secondary btn-sm m-0;"> {{ sample.name }} </a>
+                            <a href="{% url 'db:sample' sample.id %}" > {{ sample.name }} </a>
                         </td>
                         <td>{{ sample.alias }}</td>
                         <td>{{ sample.sample_type }}</td>

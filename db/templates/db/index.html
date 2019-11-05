@@ -16,349 +16,87 @@
                 </button>
             </form>
           </fieldset><br>
-
-      <!-- List of plates on inventory -->
-      <h5>List of Plates
-        <!-- Modal button to add plate on inventory -->
-        <button type="button" class="btn btn-info" style="float:right" data-toggle="modal" data-target="#add_plate"> <i class="fas fa-plus-circle"></i> Add plate </button>
-        <div class="modal fade" id="add_plate" tabindex="-1" role="dialog" aria-labelledby="add_plateLabel" aria-hidden="true">
-              <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="add_plateLabel">Add Plate</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-
-                  <form id="form_plate" method="post" enctype="multipart/form-data">{% csrf_token %}
-                    <div class="modal-body">
-                        {{ form_plate_add | bootstrap }}
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" name="submit_plate_add" action="{% url 'db:plate_add' %}" class="btn btn-info">Add</button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-        </div>
-      </h5><br>
-
-        <!-- Table with list of plates on inventory -->
-        {% if all_plates %}
-          <div class="form-row align-items-center">
-            <div class="col">
-              <table id="plate_list_table" class="table table-hover table-striped table-sm" cellspacing="0" width="100%">
-               <thead>
-                <tr class="table-dark text-dark">
-                  <th class="th-sm">id</th>
-                  <th class="th-sm">name</th>
-                  <th class="th-sm">wells</th>
-                </tr>
-               </thead>
-               <tbody>
-               {% for plate in filter.qs %}
-                <tr>
-                  <td> {{ plate.id }} </td>
-                  <td> <a href="{% url 'db:plate' plate.id %}"> {{ plate.name }} </a></td>
-                  <td> {{ plate.num_well }} </td>
-                </tr>
-               {% endfor %}
-               </tbody>
-              </table>
-            </div><br>
-          </div>
-        {% else %}
-          <h6> No plates in database </h6>
-        {% endif %}
-
-      </div>
-        <!-- Script to use datatables -->
-        <script type="text/javascript">
-        $('#plate_list_table').DataTable({
-            searching: false,
-        });
-
-        $('.dataTables_length').addClass('bs-select');
-      </script>
-
-
-      <!-- Main page -->
-      <div class="col-8">
-            <!-- Selected Plate layout from Plate list -->
-            {% if plate %}
-                {{ form_add_well.errors }}
-                <h5>{{ plate.name }} <a href="#" class="btn btn-warning btn-sm disabled"> <i class="fas fa-info-circle"></i></a>
-                     <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#add_well" ><i class="fas fa-plus-circle"></i></button>
-
-                    <!-- Modal toggle to Add Well -->
-                    <div class="modal fade" id="add_well" tabindex="-1" role="dialog" aria-labelledby="add_wellLabel" aria-hidden="true">
-                      <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h5 class="modal-title" id="add_wellLabel">Add well</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                            </button>
-                          </div>
-                          <form id="form_plate" method="post" enctype="multipart/form-data">{% csrf_token %}
-                            <div class="modal-body">
-                                {{ form_add_well | bootstrap }}
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="submit" name="submit_add_well" action="{% url 'db:well_add' plate.id %}" class="btn btn-info">Add</button>
-                            </div>
-                          </form>
-                        </div>
-                      </div>
-                    </div>
-
-                <div align="center">
-                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#update_plate"> <i class="fas fa-edit"></i> Update </button>
-                    <a href="{% url 'db:plate_export' plate.id %}" class="btn btn-info"> <i class="fas fa-file-export"></i> Export </a>
-                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete_plate"> <i class="fas fa-trash-alt"></i> Delete </button>
-                </div>
-                </h5>
-                <!-- Modal toggle to update plate -->
-                <div class="modal fade" id="update_plate" tabindex="-1" role="dialog" aria-labelledby="update_plateLabel" aria-hidden="true">
+          <!-- Modal button to add plate on inventory -->
+          <button type="button" class="btn btn-info" style="float:right" data-toggle="modal" data-target="#add_plate"> <i class="fas fa-plus-circle"></i> Add plate </button>
+          <div class="modal fade" id="add_plate" tabindex="-1" role="dialog" aria-labelledby="add_plateLabel" aria-hidden="true">
                   <div class="modal-dialog" role="document">
                     <div class="modal-content">
                       <div class="modal-header">
-                        <h5 class="modal-title" id="update_plateLabel">Update Plate: {{ plate.name }}</h5>
+                        <h5 class="modal-title" id="add_plateLabel">Add Plate</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                          <span aria-hidden="true">&times;</span>
                         </button>
                       </div>
-                      <!-- Modal toggle to update plate -->
-                      <div class="modal-body">
-                        <div role="tabpanel">
-                        <!-- Tab list to update plate -->
-                            <ul class="nav nav-tabs" role="tablist">
-                                <li class="nav-item" role="presentation" ><a class="nav-link active" href="#update_plateTab" aria-controls="add_sampleTab" role="tab" data-toggle="tab">Update Plate Form</a></li>
-                                <li class="nav-item" role="presentation"><a class="nav-link" href="#file_update_plateTab" aria-controls="file_update_plateTab" role="tab" data-toggle="tab">Update Plate File</a></li>
-                            </ul><br>
-                            <div class="tab-content">
-                                <div role="tabpanel" class="tab-pane active" id="update_plateTab">
-                                <!-- Update plate using a form -->
-                                    <form id="form_update_plate" method="post" enctype="multipart/form-data">{% csrf_token %}
-                                        {{ form_plate_update | bootstrap }}<br>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="submit" name="submit_plate_update" action="{% url 'db:plate_update' plate.id %}" class="btn btn-info">Update</button>
-                                    </div>
-                                    </form>
-                                </div>
-                                <div role="tabpanel" class="tab-pane" id="file_update_plateTab">
-                                <!-- Update plate using a form -->
-                                    <form id="form_submit_file" method="post" enctype="multipart/form-data">{% csrf_token %}
-                                        <div class="form-row align-items-center"><br><br>
-                                            <div class="col-auto"></div>
-                                            <div class="col">
-                                                <input type="file" class="form-control-file border" name="upload_file_plate">
-                                            </div>
-                                            <div class="col-auto"></div>
-                                        </div><br>
-                                    <div class="modal-footer">
-                                        <a class="btn btn-secondary mr-auto" href="{% static 'docs/import_plate_file.csv' %}" target="_blank" download> Plate File </a>
-                                        <button type="button" class="btn btn-secondary " data-dismiss="modal">Close</button>
-                                        <button type="submit" name="upload_file_plate" action="{% url 'db:plate_file_add' %}" class="btn btn-info">Update</button>
-                                    </div>
-                                    </form>
-                                </div>
-                            </div>
+
+                      <form id="form_plate" method="post" enctype="multipart/form-data">{% csrf_token %}
+                        <div class="modal-body">
+                            {{ form_plate_add | bootstrap }}
                         </div>
-                      </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" name="submit_plate_add" action="{% url 'db:plate_add' %}" class="btn btn-info">Add</button>
+                        </div>
+                      </form>
                     </div>
                   </div>
-                </div>
+            </div>
+      </div>
 
-                <!-- Modal toggle to delete plate -->
-                    <div class="modal fade" id="delete_plate" tabindex="-1" role="dialog" aria-labelledby="delete_plateLabel" aria-hidden="true">
-                      <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h5 class="modal-title" id="delete_plateLabel">Delete Plate</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                            </button>
-                          </div>
-                          <div class="modal-body">
-                              <h6>Are you sure to delete <a href="{% url 'db:plate' plate.id %}"> {{ plate.name }}</a> ?</h6>
-                          </div>
-                          <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                          <form method="POST" action="{% url 'db:plate_delete' plate.id %}">{% csrf_token %}
-                            <button type="submit" name="submit_delete_plate" class="btn btn-danger">Delete</button>
-                          </form>
-                          </div>
-                        </div>
-                      </div>
-                    </div><br>
 
-                <!-- Table to create the plate layout -->
-                <table id="plate_table" class="table table-sm">
-                 <thead>
-                    <tr >
-                    <th></th>
-                    {% for colname in colnames %}
-                        <th> {{ colname }} </th>
-                    {% endfor %}
+      <div class="col-10">
+            <!-- Table with list of plates on inventory -->
+            {% if all_plates %}
+              <div class="form-row align-items-center">
+                <div class="col">
+                  <table id="plate_list_table" class="table table-hover table-striped table-sm" cellspacing="0" width="100%">
+                   <thead>
+                    <tr class="table-dark text-dark">
+                      <th class="th-sm">id</th>
+                      <th class="th-sm">name</th>
+                      <th class="th-sm">barcode</th>
+                      <th class="th-sm">labware</th>
+                      <th class="th-sm">wells</th>
+                      <th class="th-sm">project</th>
+                      <th class="th-sm">location</th>
+                      <th class="th-sm">comments</th>
+                      <th class="th-sm">status</th>
                     </tr>
-                 </thead>
-                 <tbody>
-                    {% for rowname, fill in layout %}
+                   </thead>
+                   <tbody>
+                   {% for plate in filter.qs %}
                     <tr>
-                    <th> {{ rowname }}</th>
-                    {% for col in fill %}
-                        {% if col.1 == '' %}
-                        <td>
-                            <button class="circle_empty"> {{ col.0 }}</button>
-                        </td>
-                        {% else %}
-                            <td>
-                                <button class="circle_full"> <a href="{% url 'db:well' col.1 col.2 %}"> {{ col.0 }} </a> </button>
-                            </td>
-                        {% endif %}
-                    {% endfor %}
+                      <td> {{ plate.id }} </td>
+                      <td> <a href="{% url 'db:plate' plate.id %}"> {{ plate.name }} </a></td>
+                      <td> {{ plate.barcode }} </td>
+                      <td> {{ plate.type }} </td>
+                      <td> {{ plate.num_well }} </td>
+                      <td> {{ plate.project }} </td>
+                      <td> {{ plate.location }} </td>
+                      <td> {{ plate.comments }} </td>
+                      <td> {{ plate.status }} </td>
                     </tr>
-                    {% endfor %}
-                </tbody>
-               </table>
-
-                <script type="text/javascript">
-                    $('#plate_table').DataTable({
-                    paging: false,
-                    ordering: false,
-                    info: false,
-                    searching: false,
-                    tr: {border: none;}
-                    })
-                    $('.dataTables_length').addClass('bs-select');
-                </script>
-
-                <!-- Foot table with extra plate info -->
-               <div><br>
-                <p>Created at: {{ plate.created_at }}  *  Updated at: {{ plate.updated_at }} </p>
-               </div>
+                   {% endfor %}
+                   </tbody>
+                  </table>
+                </div><br>
+              </div>
+            {% else %}
+              <h6> No plates in database </h6>
             {% endif %}
       </div>
 
-      <div class="col-2">
+        <!-- Script to use datatables -->
+        <script type="text/javascript">
+        $('#plate_list_table').DataTable({
+            searching: true,
+            columnDefs: [{ targets: -1, className: 't-body-center'}],
+            "scrollX": true,
+            lengthMenu: [[10, 50, 100, -1], [10, 50, 100, "All"]],
+        });
 
-            <!-- Selected Well Content from Plate layout -->
-              {% if well.active %}
-                <h5>List of Samples in: <span class="badge badge-pill badge-info">{{ well.name }}</span></h5>
+        $('.dataTables_length').addClass('bs-select');
+        </script>
 
-                    <!-- Button for Well: Delete, Update -->
-                    <div align="right">
-                        <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#update_well"> <i class="fas fa-edit"></i></button>
-                        <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete_well"> <i class="fas fa-trash-alt"></i></button>
-                    </div>
-
-                    <!-- Modal for Well Update Button -->
-                    <div class="modal fade" id="update_well" tabindex="-1" role="dialog" aria-labelledby="update_wellLabel" aria-hidden="true">
-                      <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h5 class="modal-title" id="update_wellLabel">Update well {{ well.name }}</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                            </button>
-                          </div>
-                          <form id="form_update_well" method="post" enctype="multipart/form-data">{% csrf_token %}
-                            <div class="modal-body">
-                                {% csrf_token %}
-                                {{ form_update_well | bootstrap }}
-                            </div>
-                          <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" name="submit_update_well" action="{% url 'db:well_update' well.plate.id well.id %}" class="btn btn-warning">Update</button>
-                          </div>
-                          </form>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Modal for Well Delete Button -->
-                    <div class="modal fade" id="delete_well" tabindex="-1" role="dialog" aria-labelledby="delete_wellLabel" aria-hidden="true">
-                      <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h5 class="modal-title" id="delete_wellLabel">Delete Well</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                            </button>
-                          </div>
-                          <div class="modal-body">
-                              <h6>Are you sure to delete <a href="{% url 'db:well' well.plate.id well.id %}"> {{ well.name }}</a> ?</h6>
-                          </div>
-                          <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                          <form method="POST" action="{% url 'db:well_delete' well.plate.id well.id %}">{% csrf_token %}
-                            <button type="submit" name="submit_delete_well" class="btn btn-danger">Delete</button>
-                          </form>
-                          </div>
-                        </div>
-                      </div>
-                    </div><br>
-
-                <!-- Field with a list of sample in the well -->
-                <ul class="nav flex-column">
-                    <fieldset class="form-group overflow-auto">
-                    {% for sample in well.samples.all %}
-                        <a class="btn btn-info btn-block"
-                            data-toggle="collapse" href="#collapse" > {{ sample }} <br>({{ sample.alias }})
-                            </a>
-                            <div class="collapse" id="collapse">
-                                <table class="table table-hover ">
-                                    <tr>
-                                        <th>Lenght</th>
-                                        <td>{{ sample.length }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Type</th>
-                                        <td>{{ sample.sample_type }}</td>
-                                    </tr>
-
-                                    <tr>
-                                        <th>Genbank</th>
-                                        {% if sample.genbank %}
-                                            <td><a href="{{ sample.genbank.url }}" class="btn btn-info btn-sm btn-block" target="_blank">File</a></td>
-                                        {% endif %}
-{#                                        <td>{{ sample.genbank }}</td>#}
-                                    </tr>
-                                    <tr>
-                                        <th>Organism</th>
-                                        <td>{{ sample.organism }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>More info</th>
-                                        <td><a href="{% url 'db:sample' sample.id %}" class="btn btn-info btn-sm btn-block" target="_blank">Info</a></td>
-                                    </tr>
-                                </table>
-                            </div>
-                        {% endfor %}
-                      </fieldset>
-                      <fieldset class="form-group overflow-auto">
-                        <table class="table table-hover">
-                            <tr>
-                                <th>Volume</th>
-                                <td>{{ well.volume }}</td>
-                            </tr>
-                            <tr>
-                                <th>Concentration</th>
-                                <td> {{ well.concentration }}</td>
-                            </tr>
-                        </table>
-                      </fieldset>
-                 </ul>
-              {% endif %}
-              {% if well.active == False %}
-                  <h5><span class="badge badge-pill badge-secondary">{{ well.name }}: Inactive </span></h5>
-              {% endif %}
-      </div>
     </div>
 
 

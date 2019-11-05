@@ -43,14 +43,21 @@ class PlateResource(resources.ModelResource):
         attribute='samples',
         widget=widgets.ManyToManyWidget(Sample, field='name')
     )
+    alias = fields.Field(
+        column_name='alias',
+        attribute='samples',
+        widget=widgets.ManyToManyWidget(Sample, field='alias')
+    )
 
     class Meta:
         exclude = ('id',)
         import_id_fields = ['name', 'plate']
         model = Well
         skip_unchanged = True
-        fields = ('name', 'plate', 'samples', 'volume', 'concentration', 'active', 'status')
+        fields = ('name', 'plate', 'samples', 'alias', 'volume', 'concentration', 'active', 'status')
         # export_order = ('plate', 'name', 'samples', 'volume', 'concentration', 'active', 'status')
 
-
+        def get_queryset(self):
+            return self.model.objects.all().order_by('name')
+        # return self._meta.model.objects.order_by('name')
 

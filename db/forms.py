@@ -27,7 +27,9 @@ class SampleForm(forms.ModelForm):
 class PlateForm(forms.ModelForm):
     class Meta:
         model = Plate
-        fields = ['name', 'barcode', 'type', 'num_cols', 'num_rows', 'num_well', 'active', 'status']
+        fields = [
+            'name', 'barcode', 'type', 'contents', 'location', 'num_cols', 'num_rows', 'num_well', 'function',
+            'project', 'active', 'status']
 
 
 class WellForm(forms.ModelForm):

@@ -146,7 +146,7 @@ def plate_view(request, plate_id):
         'colnames': colnames,
         'filter': plate_filter
     }
-    return render(request, 'db/index.html', context)
+    return render(request, 'db/plate_view.html', context)
 
 
 @login_required()
@@ -184,7 +184,7 @@ def plate_add(request):
     context = {
         'form_plate_add': formPlate,
     }
-    return render(request, 'db/index.html', context)
+    return render(request, 'db/plate_view.html', context)
 
 
 @login_required()
@@ -219,7 +219,7 @@ def plate_update(request, plate_id):
     context = {
         'form_plate_update': formPlate,
     }
-    return render(request, 'db/index.html', context)
+    return render(request, 'db/plate_view.html', context)
 
 
 @login_required()
@@ -295,7 +295,7 @@ def well(request, plate_id, well_id):
         'filter': plate_filter
     }
 
-    return render(request, 'db/index.html', context)
+    return render(request, 'db/plate_view.html', context)
 
 
 @login_required()
@@ -312,7 +312,7 @@ def well_add(request, plate_id):
     else:
         form = WellForm()
 
-    return render(request, 'db/index.html', {'form_add_well': form})
+    return render(request, 'db/plate_view.html', {'form_add_well': form})
 
 
 @login_required()
@@ -330,7 +330,7 @@ def well_update(request, plate_id, well_id):
     else:
         form = WellForm(instance=well)
 
-    return render(request, 'db/index.html', {'form_update_well': form})
+    return render(request, 'db/plate_view.html', {'form_update_well': form})
 
 
 @login_required()
