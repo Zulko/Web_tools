@@ -2,6 +2,9 @@
 # Library to deal with input and output files
 """
 import os, re, sys, csv, math
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter, inch, landscape
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 
 # DATABASE = "../input/database.csv"
 
@@ -31,6 +34,33 @@ def create_writer_csv(newfile):
     """Create a new file"""
     newfile = csv.writer(newfile, dialect='excel')
     return newfile
+
+
+def create_pdf(filename, data, rows, cols):
+    doc = SimpleDocTemplate(filename, pagesize=landscape(letter))
+    # container for the 'Flowable' objects
+    elements = []
+
+    if rows * cols <= 96:
+        t = Table(data)
+        t = Table(data, cols * [0.75 * inch], rows * [0.75 * inch])
+        t.setStyle(TableStyle([('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                               ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+                               ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+                               ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+                               ]))
+    else:
+        t = Table(data)
+        t = Table(data, cols * [0.35 * inch], rows * [0.35 * inch])
+        t.setStyle(TableStyle([('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                               ('FONTSIZE', (0, 0), (-1, -1), 8),
+                               ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+                               ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+                               ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+                               ]))
+    elements.append(t)
+    # write the document to disk
+    doc.build(elements)
 
 
 def get_extension(path):

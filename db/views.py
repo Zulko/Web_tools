@@ -5,14 +5,16 @@ from django.contrib.auth.decorators import login_required
 from django.db.models.functions import Substr
 from django.db.models.functions import Cast
 from django.db.models import IntegerField
+from django.conf import settings
+
+from tablib import Dataset
 
 from .models import Plate, Well, Sample, File
 from .forms import SampleForm, PlateForm, WellForm
 from .filters import SampleFilter, PlateFilter
 from .resources import SampleResource, PlateResource
 
-from tablib import Dataset
-
+from libs.misc import calc, file
 
 @login_required()
 def file_sharing(request):
@@ -155,12 +157,66 @@ def plate_view(request, plate_id):
 @login_required()
 def plate_export(request, plate_id):
     plate_resource = PlateResource()
-    plate_filter = Plate.objects.filter(id=plate_id)
-    print(plate_filter)
+    plate_filter = Plate.objects.get(id=plate_id)
+    file_txt = file.create(settings.MEDIA_ROOT + "/docs/" + 'filename.txt', 'w')
+    data_pdf = []
+
     try:
         all_wells = Well.objects.filter(plate_id=plate_id).annotate(letter=Substr('name', 1, 1)).annotate(digits=Substr('name', 2)).annotate(number=Cast('digits', IntegerField())).order_by('letter', 'number')
-        print(all_wells)
         dataset = plate_resource.export(all_wells)
+        for j in range(0, plate_filter.num_rows):
+            line = []
+            for i in range(0, plate_filter.num_cols):
+                try:
+                    well = Well.objects.get(plate_id=plate_id, name=calc.coordinates_to_wellname(coords=[j, i]))
+                except:
+                    well = None
+                if well is not None:
+                    sample_well = Well.objects.filter(plate_id=plate_id,
+                                                      name=calc.coordinates_to_wellname(coords=[j, i])).values_list(
+                        'samples__alias', flat=True).get(pk=well.id)
+                    if sample_well is not None: sample_well = sample_well.replace(' ','\n')
+
+                    line.append(sample_well)
+                    file_txt.write(str(sample_well))
+                else:
+                    file_txt.write(calc.coordinates_to_wellname(coords=[j, i]))
+                    # print(calc.coordinates_to_wellname(coords=[j, i]))
+                    line.append(str(calc.coordinates_to_wellname(coords=[j, i])))
+                if i != plate_filter.num_cols -1: file_txt.write(',')
+            if j != plate_filter.num_rows -1: file_txt.write('\n')
+            data_pdf.append(line)
+            print(data_pdf)
+        file_txt.close()
+        file.create_pdf(settings.MEDIA_ROOT + "/docs/" + plate_filter.name +'.pdf', data_pdf, plate_filter.num_rows, plate_filter.num_cols)
+
+
+
+        response = HttpResponse(dataset.csv, content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="{}.csv"'.format(plate_filter)
+        return response
+    except:
+        return None
+
+
+@login_required()
+def plate_print(request, plate_id):
+    plate_resource = PlateResource()
+    plate_filter = Plate.objects.get(id=plate_id)
+    try:
+        all_wells = Well.objects.filter(plate_id=plate_id).annotate(letter=Substr('name', 1, 1)).annotate(digits=Substr('name', 2)).annotate(number=Cast('digits', IntegerField())).order_by('letter', 'number')
+        dataset = plate_resource.export(all_wells)
+        #Change Dataset view
+        samples_list = dataset.get_col(2)
+        print(samples_list)
+
+
+        layout, colnames, plate = plate_layout(plate_id, all_wells)
+
+
+
+        print(layout, colnames, plate)
+
         response = HttpResponse(dataset.csv, content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="{}.csv"'.format(plate_filter)
         return response
@@ -259,16 +315,12 @@ def well(request, plate_id, well_id):
         plate_resources = PlateResource()
         dataset = Dataset()
         new_plate = request.FILES['upload_file_plate']
-        print(new_plate)
         imported_data = dataset.load(new_plate.read().decode('utf-8'), format='csv')
-        print(imported_data)
         result = plate_resources.import_data(imported_data, dry_run=True, raise_errors=True,
                                              collect_failed_rows=True)
         if not result.has_errors():
-            print('result doesnt have errors')
             plate_resources.import_data(imported_data, dry_run=False)
         else:
-            print('result has errors')
             print(result.invalid_rows)
         return redirect('db:plate', plate.id)
 
@@ -322,7 +374,6 @@ def well_add(request, plate_id):
 
 @login_required()
 def well_update(request, plate_id, well_id):
-    print('well_update')
     well = get_object_or_404(Well, id=well_id)
     plate = get_object_or_404(Plate, id=plate_id)
     form = WellForm(request.POST, request.FILES, instance=well)
@@ -372,7 +423,6 @@ def sample_delete(request, sample_id):
 
 @login_required()
 def samples_list(request):
-    print('sample list')
     all_samples = Sample.objects.all()
     sample_filter = SampleFilter(request.GET, queryset=all_samples)
     formSampleAdd = SampleForm()
@@ -393,17 +443,11 @@ def samples_list(request):
             return redirect('db:sample', sample.id)
 
     elif 'submit_file_samples' in request.POST:
-        print('file sample upload')
         samples_resources = SampleResource()
-        print(samples_resources.fields)
         dataset = Dataset()
         new_samples = request.FILES['upload_file_samples']
-        print(new_samples)
         imported_data = dataset.load(new_samples.read().decode('utf-8'), format='csv')
-        # imported_data = dataset.load(new_samples.read(), format='csv')
-        print(imported_data)
         result = samples_resources.import_data(imported_data, dry_run=True, raise_errors=True, collect_failed_rows=True)
-        print(result)
         if not result.has_errors():
             samples_resources.import_data(imported_data, dry_run=False)
         else:
@@ -422,7 +466,6 @@ def samples_list(request):
 
 @login_required()
 def sample(request, sample_id):
-    print('sample view')
     all_samples = Sample.objects.all()
     sample_filter = SampleFilter(request.GET, queryset=all_samples)
     sample = Sample.objects.get(id=sample_id)

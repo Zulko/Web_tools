@@ -26,6 +26,7 @@ psycopg2-binary==2.8.2
 pydent==0.0.35
 pytz==2018.9
 PyYAML==5.1.1
+reportlab==3.5.32
 requests==2.22.0
 six==1.12.0
 sqlparse==0.3.0
