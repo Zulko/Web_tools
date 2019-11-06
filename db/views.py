@@ -2,6 +2,9 @@ from django.core.files.storage import FileSystemStorage
 from django.http import Http404, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.contrib.auth.decorators import login_required
+from django.db.models.functions import Substr
+from django.db.models.functions import Cast
+from django.db.models import IntegerField
 
 from .models import Plate, Well, Sample, File
 from .forms import SampleForm, PlateForm, WellForm
@@ -155,7 +158,7 @@ def plate_export(request, plate_id):
     plate_filter = Plate.objects.filter(id=plate_id)
     print(plate_filter)
     try:
-        all_wells = Well.objects.filter(plate_id=plate_id).order_by('name')
+        all_wells = Well.objects.filter(plate_id=plate_id).annotate(letter=Substr('name', 1, 1)).annotate(digits=Substr('name', 2)).annotate(number=Cast('digits', IntegerField())).order_by('letter', 'number')
         print(all_wells)
         dataset = plate_resource.export(all_wells)
         response = HttpResponse(dataset.csv, content_type='text/csv')
