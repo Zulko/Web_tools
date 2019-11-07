@@ -43,7 +43,7 @@ def create_pdf(filename, data, rows, cols):
     # container for the 'Flowable' objects
     elements = []
     stylesheet = getSampleStyleSheet()
-    
+
     if rows * cols <= 96:
         t = Table(data)
         t = Table(data, cols * [0.75 * inch], rows * [0.75 * inch])
