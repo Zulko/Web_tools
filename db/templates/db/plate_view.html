@@ -91,7 +91,6 @@
                 {{ form_add_well.errors }}
                 <h5>{{ plate.name }} <a href="#" class="btn btn-warning btn-sm disabled"> <i class="fas fa-info-circle"></i></a>
                      <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#add_well" ><i class="fas fa-plus-circle"></i></button>
-
                     <!-- Modal toggle to Add Well -->
                     <div class="modal fade" id="add_well" tabindex="-1" role="dialog" aria-labelledby="add_wellLabel" aria-hidden="true">
                       <div class="modal-dialog" role="document">
@@ -117,7 +116,8 @@
 
                 <div align="center">
                     <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#update_plate"> <i class="fas fa-edit"></i> Update </button>
-                    <a href="{% url 'db:plate_export' plate.id %}" class="btn btn-info"> <i class="fas fa-file-export"></i> Export </a>
+                    <a href="{% url 'db:plate_export' plate.id %}" class="btn btn-info"> <i class="fas fa-file-export"></i> Export .csv </a>
+                    <a href="{% url 'db:plate_print' plate.id %}" class="btn btn-info" target="_blank"> <i class="fas fa-file-pdf"></i> Print .pdf </a>
                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete_plate"> <i class="fas fa-trash-alt"></i> Delete </button>
                 </div>
                 </h5>

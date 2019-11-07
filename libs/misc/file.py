@@ -2,9 +2,11 @@
 # Library to deal with input and output files
 """
 import os, re, sys, csv, math
+from reportlab.pdfgen import canvas
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter, inch, landscape
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
 
 # DATABASE = "../input/database.csv"
 
@@ -40,7 +42,8 @@ def create_pdf(filename, data, rows, cols):
     doc = SimpleDocTemplate(filename, pagesize=landscape(letter))
     # container for the 'Flowable' objects
     elements = []
-
+    stylesheet = getSampleStyleSheet()
+    
     if rows * cols <= 96:
         t = Table(data)
         t = Table(data, cols * [0.75 * inch], rows * [0.75 * inch])
@@ -51,16 +54,51 @@ def create_pdf(filename, data, rows, cols):
                                ]))
     else:
         t = Table(data)
-        t = Table(data, cols * [0.35 * inch], rows * [0.35 * inch])
-        t.setStyle(TableStyle([('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                               ('FONTSIZE', (0, 0), (-1, -1), 8),
+        t = Table(data, cols * [0.45 * inch], rows * [0.35 * inch])
+        t.setStyle(TableStyle([
+                               ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
                                ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
                                ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
                                ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
                                ]))
+
     elements.append(t)
-    # write the document to disk
     doc.build(elements)
+    return filename
+
+
+def smart_split(word, max_block, limit):
+    if len(word) < max_block:
+        return word
+
+    block = 1
+    alpha = word[0].isalpha()
+    case = word[0].islower()
+    result = word[0]
+    for i in range(1, len(word)):
+        char_alpha = word[i].isalpha()
+        char_case = word[i].islower()
+        transition = (char_alpha != alpha or char_case != case)
+        alpha = char_alpha
+        case = char_case
+
+        if word[i] == " " and block >= max_block - 1 and i < len(word) - 1:
+            block = 0
+            result += '\n'
+        else:
+            if block > limit and i < len(word) - 1:
+                block = 0
+                result += '\n'
+            elif transition and block >= max_block and i < len(word) - 1:
+                block = 0
+                result += '\n'
+
+            if word[i] != " " or block > 1:
+                result += word[i]
+
+        block += 1
+
+    return result
 
 
 def get_extension(path):

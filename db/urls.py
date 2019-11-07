@@ -12,6 +12,7 @@ urlpatterns = [
     path('add_plate/', views.plate_add, name='plate_add'),
     path('add_plate_file/', views.plate_add_file, name='plate_file_add'),
     path('export/plate<int:plate_id>/', views.plate_export, name='plate_export'),
+    path('print/plate<int:plate_id>/', views.plate_print, name='plate_print'),
     path('update/plate<int:plate_id>/', views.plate_update, name='plate_update'),
     path('delete/plate<int:plate_id>/', views.plate_delete, name='plate_delete'),
 

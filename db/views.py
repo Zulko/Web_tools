@@ -1,5 +1,8 @@
+import os
+from io import StringIO
+
 from django.core.files.storage import FileSystemStorage
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, FileResponse
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.contrib.auth.decorators import login_required
 from django.db.models.functions import Substr
@@ -115,9 +118,7 @@ def plate_view(request, plate_id):
         plate_resources = PlateResource()
         dataset = Dataset()
         new_plate = request.FILES['upload_file_plate']
-        print(new_plate)
         imported_data = dataset.load(new_plate.read().decode('utf-8'), format='csv')
-        print(imported_data)
         result = plate_resources.import_data(imported_data, dry_run=True, raise_errors=True,
                                              collect_failed_rows=True)
         if not result.has_errors():
@@ -158,40 +159,10 @@ def plate_view(request, plate_id):
 def plate_export(request, plate_id):
     plate_resource = PlateResource()
     plate_filter = Plate.objects.get(id=plate_id)
-    file_txt = file.create(settings.MEDIA_ROOT + "/docs/" + 'filename.txt', 'w')
-    data_pdf = []
 
     try:
         all_wells = Well.objects.filter(plate_id=plate_id).annotate(letter=Substr('name', 1, 1)).annotate(digits=Substr('name', 2)).annotate(number=Cast('digits', IntegerField())).order_by('letter', 'number')
         dataset = plate_resource.export(all_wells)
-        for j in range(0, plate_filter.num_rows):
-            line = []
-            for i in range(0, plate_filter.num_cols):
-                try:
-                    well = Well.objects.get(plate_id=plate_id, name=calc.coordinates_to_wellname(coords=[j, i]))
-                except:
-                    well = None
-                if well is not None:
-                    sample_well = Well.objects.filter(plate_id=plate_id,
-                                                      name=calc.coordinates_to_wellname(coords=[j, i])).values_list(
-                        'samples__alias', flat=True).get(pk=well.id)
-                    if sample_well is not None: sample_well = sample_well.replace(' ','\n')
-
-                    line.append(sample_well)
-                    file_txt.write(str(sample_well))
-                else:
-                    file_txt.write(calc.coordinates_to_wellname(coords=[j, i]))
-                    # print(calc.coordinates_to_wellname(coords=[j, i]))
-                    line.append(str(calc.coordinates_to_wellname(coords=[j, i])))
-                if i != plate_filter.num_cols -1: file_txt.write(',')
-            if j != plate_filter.num_rows -1: file_txt.write('\n')
-            data_pdf.append(line)
-            print(data_pdf)
-        file_txt.close()
-        file.create_pdf(settings.MEDIA_ROOT + "/docs/" + plate_filter.name +'.pdf', data_pdf, plate_filter.num_rows, plate_filter.num_cols)
-
-
-
         response = HttpResponse(dataset.csv, content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="{}.csv"'.format(plate_filter)
         return response
@@ -201,27 +172,34 @@ def plate_export(request, plate_id):
 
 @login_required()
 def plate_print(request, plate_id):
-    plate_resource = PlateResource()
     plate_filter = Plate.objects.get(id=plate_id)
-    try:
-        all_wells = Well.objects.filter(plate_id=plate_id).annotate(letter=Substr('name', 1, 1)).annotate(digits=Substr('name', 2)).annotate(number=Cast('digits', IntegerField())).order_by('letter', 'number')
-        dataset = plate_resource.export(all_wells)
-        #Change Dataset view
-        samples_list = dataset.get_col(2)
-        print(samples_list)
+    data_pdf = []
+    filename = plate_filter.name + '.pdf'
+    filepath = os.path.join(settings.MEDIA_ROOT, "docs", filename)
 
+    for j in range(0, plate_filter.num_rows):
+        line = []
+        for i in range(0, plate_filter.num_cols):
+            try:
+                well = Well.objects.get(plate_id=plate_id, name=calc.coordinates_to_wellname(coords=[j, i]))
+            except:
+                well = None
+            if well is not None:
+                sample_well = Well.objects.filter(plate_id=plate_id,
+                                                  name=calc.coordinates_to_wellname(coords=[j, i])).values_list(
+                    'samples__alias', flat=True).get(pk=well.id)
+                if sample_well is not None:
+                    sample_well = file.smart_split(sample_well, 6, 9)
+                    line.append(sample_well)
+            else:
+                line.append(str(calc.coordinates_to_wellname(coords=[j, i])))
+        data_pdf.append(line)
 
-        layout, colnames, plate = plate_layout(plate_id, all_wells)
+    pdffile = file.create_pdf(filepath, data_pdf, plate_filter.num_rows, plate_filter.num_cols)
 
+    response = FileResponse(open(filepath, 'rb'), content_type='application/pdf')
+    return response
 
-
-        print(layout, colnames, plate)
-
-        response = HttpResponse(dataset.csv, content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="{}.csv"'.format(plate_filter)
-        return response
-    except:
-        return None
 
 
 @login_required()
