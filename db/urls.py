@@ -34,10 +34,4 @@ urlpatterns = [
     # File views
     path('file_sharing/', views.file_sharing, name='file_sharing'),
     path('file_sharing/<int:file_id>', views.delete_file, name='file_delete'),
-
-    # path('plate<int:plate_id>/<int:well_id/<int:sample_id>', views.sample, name='sample'),
-    # path('add_data/', views.create_sample, name='add_data'),
-    # path('add_data/<int:sample_id>', views.edit_sample, name='edit_sample'),
-    # path('add_data/file', views.upload_sample, name='add_file_data'),
-
 ]

@@ -8,9 +8,6 @@ from reportlab.lib.pagesizes import letter, inch, landscape
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
 
-# DATABASE = "../input/database.csv"
-
-# SEP = '\t'
 SEP = ','
 
 
@@ -47,20 +44,16 @@ def create_pdf(filename, data, rows, cols):
     if rows * cols <= 96:
         t = Table(data)
         t = Table(data, cols * [0.75 * inch], rows * [0.75 * inch])
-        t.setStyle(TableStyle([('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                               ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-                               ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
-                               ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
-                               ]))
+
     else:
         t = Table(data)
         t = Table(data, cols * [0.45 * inch], rows * [0.35 * inch])
-        t.setStyle(TableStyle([
-                               ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                               ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-                               ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
-                               ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
-                               ]))
+    t.setStyle(TableStyle([
+                           ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                           ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+                           ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+                           ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+                           ]))
 
     elements.append(t)
     doc.build(elements)

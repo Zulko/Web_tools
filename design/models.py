@@ -58,10 +58,9 @@ class Step(models.Model):
     instrument = models.CharField(max_length=100, blank=True)
     input_file = models.ManyToManyField(File, blank=True, related_name='script_input_files')
     output_files = models.ManyToManyField(File, blank=True, related_name='script_output_files')
-    input = models.ManyToManyField(Plate, blank=True, related_name='input_plates')
+    input_plates = models.ManyToManyField(Plate, blank=True, related_name='input_plates')
+    output_plates = models.ManyToManyField(Plate, blank=True, related_name='output_plates')
     status_run = models.BooleanField(default=False)
-    # Create new plates by the script
-    output = models.ManyToManyField(Plate, blank=True, related_name='output_plates')
     # relationship = table with relatioship between plate/well source and destination including samples, volume and concentration.
     experiment = models.ForeignKey(Experiment, default=None, blank=True, on_delete=models.CASCADE)
 

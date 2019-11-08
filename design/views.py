@@ -12,6 +12,7 @@ from db.models import File
 
 from libs.function.spotting import run_spotting
 from libs.function.pcr_db import run_pcr_db
+from libs.misc import parser
 from libs.biofoundry.db import save_file
 from libs.misc import file
 from libs.biofoundry import db
@@ -244,10 +245,10 @@ def pcr_script(request, step, user):
                                                                                       mix_parameters,
                                                                                       int(num_well_destination),
                                                                                       int(pattern), mantis_two_chips,
-                                                                                      user)
+                                                                                      user, scriptname='Experiment:'+step.experiment.name)
 
         if mixer_recipe is not None:
-            filein = File(name=name_file, script=step.experiment.name, author=user, file=name_file)
+            filein = File(name=name_file, script='Experiment:'+step.experiment.name, author=user, file=name_file)
             filein.save()
             step.status_run = True
             step.input_file.add(filein)
@@ -258,13 +259,28 @@ def pcr_script(request, step, user):
                 step.instructions += str(item[0]) + ': '+str(item[1]) + 'ul, '
             for item in chip_mantis:
                 step.instructions += str(item[0]) + ': '+str(item[1]) + 'ul, '
+
+            '''Gets the source plates used in the experiment'''
+            plates_in = parser.list_plate_from_database(settings.MEDIA_ROOT, outfile_robot)
+            for plate in plates_in:
+                step.input_plates.add(plate)
+
+            plates_out = parser.create_plate_on_database(settings.MEDIA_ROOT, outfile_robot, num_well_destination, step)
+            for plate in plates_out:
+                step.output_plates.add(plate)
+
+            #reduce volume in source plates
+            #create destination plates
+            #list destination plates
+            # create_destination_plates()
+
             step.save()
             return alerts, outfile_mantis, outfile_robot, mixer_recipe, chip_mantis
         else:
-            return alerts, None, None, None, None
+            return alerts, None, None, None, None, None
     else:
         alerts = ['Missing input file']
-        return alerts, None, None, None, None
+        return alerts, None, None, None, None, None
 
 
 

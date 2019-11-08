@@ -396,7 +396,7 @@ def get_part_count(reader):
     return list_part_count
 
 
-def run_pcr_db(path, filename, dispenser_parameters, mix_parameters, out_num_well, pattern, use_high_low_chip_mantis, user):
+def run_pcr_db(path, filename, dispenser_parameters, mix_parameters, out_num_well, pattern, use_high_low_chip_mantis, user, scriptname):
     total_alert = []
     name_machine, min_vol, res_vol, dead_vol = dispenser_parameters
     robot = machine.Machine(name_machine, min_vol, res_vol, dead_vol)
@@ -495,6 +495,6 @@ def run_pcr_db(path, filename, dispenser_parameters, mix_parameters, out_num_wel
                 file.set_echo_header(robot_csv)
                 file.write_dispenser_echo(out_dispenser, robot_csv)
 
-    db_mantis = db.save_file(db_mantis_name, 'PCR_DB', user)
-    db_robot = db.save_file(db_robot_name, 'PCR_DB', user)
+    db_mantis = db.save_file(db_mantis_name, scriptname, user)
+    db_robot = db.save_file(db_robot_name, scriptname, user)
     return total_alert, db_mantis, db_robot, mixer_recipe_zip, chip_mantis_zip

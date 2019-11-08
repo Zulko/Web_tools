@@ -1,5 +1,11 @@
+import os
+from django.shortcuts import get_object_or_404
+
 from ..misc import calc, file, parser
 from ..container import plate, machine
+from db.models import Plate, Well
+
+
 
 
 def create_plate(num_wells, name):
@@ -13,6 +19,56 @@ def create_plate(num_wells, name):
     rows, cols = calc.rows_columns(int(num_wells))
     new_plate = plate.Plate(rows, cols, name)
     return new_plate
+
+
+def create_plate_on_database(path, file, num_well_destination, step):
+    filein = open(path + '/docs/' + file.name, 'r')
+    plates_out = []
+    filein.readline()  # jump header
+    for line in filein:
+        found = False
+        line = line.split(',')
+        part, source_plate, source_well, destination_plate_id, destination_plate_name, destination_well, volume = line
+        if len(plates_out) == 0:
+            if num_well_destination == 96:
+                plate = Plate.create(destination_plate_name, 'Plate', 'Process', step.experiment.project, 12, 8, 96)
+            else:
+                plate = Plate.create(destination_plate_name, 'Plate', 'Process', step.experiment.project, 24, 16, 384)
+            plates_out.append(plate)
+        else:
+            for plate_out in plates_out:
+                if plate_out.name == destination_plate_name:
+                    found = True
+            if found is False:
+                if num_well_destination == 96:
+                    plate = Plate.create(destination_plate_name, 'Plate', 'Process', step.experiment.project, 12, 8, 96)
+                else:
+                    plate = Plate.create(destination_plate_name, 'Plate', 'Process', step.experiment.project, 24, 16,
+                                         384)
+                plates_out.append(plate)
+    return plates_out
+
+
+
+def list_plate_from_database(path, file):
+    filein = open(path +'/docs/' + file.name, 'r')
+    plates_in = []
+    filein.readline() # jump header
+    for line in filein:
+        found = False
+        line = line.split(',')
+        part, source_plate, source_well, destination_plate_id, destination_plate_name, destination_well, volume = line
+        if len(plates_in) == 0:
+            plate = get_object_or_404(Plate, name=source_plate)
+            plates_in.append(plate)
+        else:
+            for plate_in in plates_in:
+                if plate_in.name == source_plate:
+                    found = True
+            if found is False:
+                plate = get_object_or_404(Plate, name=source_plate)
+                plates_in.append(plate)
+    return plates_in
 
 
 def create_source_plates_from_foundlist(foundlist):

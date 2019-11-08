@@ -141,6 +141,15 @@ class Plate(models.Model):
     class Meta:
         ordering = ('id',)
 
+    @classmethod
+    def create(cls, name, type, function, project, num_cols, num_rows, num_well):
+        print(name, type, function, project, num_well)
+        plate = cls(
+            name=name, type=type, function=function, barcode=cls.barcode, project=project,
+            num_cols=num_cols, num_rows=num_rows, num_well=num_well
+        )
+        return plate
+
     def get_absolute_url(self):
         return reverse('db:index', kwargs={'pk': self.pk})
 

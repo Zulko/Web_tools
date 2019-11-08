@@ -1,5 +1,4 @@
 import os
-from io import StringIO
 
 from django.core.files.storage import FileSystemStorage
 from django.http import Http404, HttpResponse, FileResponse
@@ -18,6 +17,7 @@ from .filters import SampleFilter, PlateFilter
 from .resources import SampleResource, PlateResource
 
 from libs.misc import calc, file
+
 
 @login_required()
 def file_sharing(request):
@@ -44,7 +44,6 @@ def upload_file(request, filename):
 
 @login_required()
 def plate_list(request):
-    # print('plate_list')
     all_plates = Plate.objects.all()
     plate_filter = PlateFilter(request.GET, queryset=all_plates)
     formPlateAdd = PlateForm()
@@ -87,7 +86,6 @@ def plate_layout(plate_id, all_wells):
             if found is False:
                 row_list.append([col, "", ""])
         layout_fill.append(row_list)
-
     colnames, rownames = Plate.create_headnames(plate)
     layout = zip(rownames, layout_fill)
     return layout, colnames, plate
@@ -234,12 +232,9 @@ def plate_add_file(request):
         new_plate = request.FILES['upload_file_plate']
         imported_data = dataset.load(new_plate.read().decode('utf-8'), format='csv')
         result = plate_resources.import_data(imported_data, dry_run=True, raise_errors=True, collect_failed_rows=True)
-
         if not result.has_errors():
-            print('result doesnt have errors')
             plate_resources.import_data(imported_data, dry_run=False)
         else:
-            print('result has errors')
             print(result.invalid_rows)
         return redirect('db:index')
 

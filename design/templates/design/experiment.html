@@ -165,7 +165,12 @@
                                             {% for file in step.output_files.all %}
                                                 <p>File: <a href="{{ file.file.url }}" class="btn btn-info btn-sm btn-block" target="_blank">{{file.name}} </a></p>
                                             {% endfor %}
-                                            <p>Instructions:<br>{{ step.instructions }}</p>
+                                            <p>Instructions:<br> {{ step.instructions }}</p>
+                                            <p>Source plates:<br>
+                                            {% for plate in step.input_plates.all %}
+                                                <a href="{% url 'db:plate' plate.id %}"> {{ plate.name }} </a>
+                                            {% endfor %}
+                                            </p>
                                         {% else %}
                                             {% if alert %}
                                             <div class="alert">

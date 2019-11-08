@@ -169,6 +169,7 @@ def moclo_db(request):
 @login_required(login_url="/accounts/login/")
 def pcr_db(request):
     if request.method == "POST":
+        scriptname = 'Script PCR_DB'
         user = request.user
         if len(request.FILES) != 0:
             upload, fs, name_file, url_file = upload_file(request, 'upload_file')
@@ -206,7 +207,7 @@ def pcr_db(request):
 
             ''' Calling Python Script'''
             alerts, outfile_mantis, outfile_robot, mixer_recipe, chip_mantis = run_pcr_db(settings.MEDIA_ROOT,
-                  name_file, dispenser_parameters, mix_parameters, int(num_well_destination), int(pattern), mantis_two_chips, user)
+                  name_file, dispenser_parameters, mix_parameters, int(num_well_destination), int(pattern), mantis_two_chips, user, scriptname)
 
             if mixer_recipe is not None:
                 return render(request, 'scripts/pcr_db.html', {'uploadfile_name': upload, 'url_file': url_file,
