@@ -10,6 +10,7 @@
 import os, glob
 import subprocess
 from Bio import SeqIO
+from ..biofoundry import db
 
 
 def load_seqs(path, fastafile):
@@ -38,19 +39,13 @@ def check_primers_pos(start, end, seq, seqid):
     elif rev_start <= 0:
         alert = 'Reverse primer for sequence ' + seqid + ' start position exceeds sequence length.'
         return alert
-    # elif rev_start <= start:
-    #     alert = 'Reverse primer for sequence ' + seqid + ' starts before forward primer.'
-    #     return alert
     else:
         return None
 
 
 def make_boulderio(seqid, seq, start, end, size_min_prime, size_opt_prime, size_max_prime,
                    tm_min_prime, tm_opt_prime, tm_max_prime, tm_max_pair_prime, tm_gc_perc):
-    # if end.find('length') == -1:
-    #     length = int(end)
-    # else:
-    #     length = len(seq) - 1
+
     length = len(seq)
     if end != 0:
         length = length - int(end) -1
@@ -107,10 +102,11 @@ def make_primerout_dict(primer3out):
 
 
 def create_output_file(path, fastafile):
-    outfile = open(path + '/' + fastafile + ".primers", "w")
+    outfile = open(path + '/docs/' + fastafile + ".primers", "w")
+    outfilename = fastafile + ".primers"
     outfile.write(
         "GeneID" + "\t" + "UpstreamPrimerSequence" + "\t" + "DownstreamPrimerSequence" + "\t" + "UpstreamPrimerLength" + "\t" + "DownstreamPrimerLength" + "\t" + "ProductLength" + "\t" + "UpstreamPrimerTm" + "\t" + "DownstreamPrimerTm" + "\n")
-    return outfile
+    return outfile, outfilename
 
 
 def run_primer(path, fastafile, start, end, size_min_prime,
@@ -124,7 +120,7 @@ def run_primer(path, fastafile, start, end, size_min_prime,
 
     stubbornseqs = []
     '''Create a output file for the primers'''
-    outfile = create_output_file(path, fastafile)
+    outfile, outfilename = create_output_file(path, fastafile)
 
     for record in seqs:
         alert = check_primers_pos(int(start), int(end), str(record.seq), record.id)
@@ -153,5 +149,6 @@ def run_primer(path, fastafile, start, end, size_min_prime,
         else:
             return None, alert
 
+    output_file = db.save_file(outfilename, 'Script: Primer3', user)
     outfile.close()
-    return outfile, alert
+    return output_file, alert

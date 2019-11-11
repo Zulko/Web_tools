@@ -58,9 +58,7 @@ def primer(request):
                                         size_opt_prime, size_max_prime, tm_min_prime, tm_opt_prime, tm_max_prime,
                                         tm_max_pair_prime, tm_gc_perc, user)
             if outfile is not None:
-                outfile_name = os.path.basename(outfile.name)
-                outfile_url = fs.url(outfile_name)
-                return render(request, 'misc/primer.html', {'uploadfile_name': upload.name, 'url': url, 'outfile_name': outfile_name, 'outfile_url': outfile_url})
+                return render(request, 'misc/primer.html', {'uploadfile_name': upload.name, 'url': url, 'outfile': outfile})
             else:
                 return render(request, 'misc/primer.html',
                               {'uploadfile_name': upload.name, 'url': url, 'outfile_name': '',

@@ -174,14 +174,14 @@ CCACTGCACTCACCGCACCCGGCCAATTTTTGTGTTTTTAGTAGAGACTAAATACCATATAGTGAACACCTAAGACGGGG
                      </div>
                     <div class="col-auto"></div>
                 </div><br>
-                {% if outfile_name %}
+                {% if outfile %}
                 <div class="form-row align-items-center">
                     <div class="col-auto"></div>
                     <div class="col" >
                         <label for="outputfile">Output File:</label>
                     </div>
                     <div class="col" align="left">
-                        <label for="outputfile"><a href="{{ outfile_url }}" target="_blank" download> <strong> {{ outfile_name }} </strong> </a></label>
+                        <label for="outputfile"><a href="{{ outfile.file.url }}" target="_blank" download> <strong> {{ outfile.name }} </strong> </a></label>
                     </div>
                     <div class="col-auto"></div>
                 </div><br>
