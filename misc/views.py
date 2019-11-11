@@ -44,9 +44,17 @@ def primer(request):
             upload, fs, name, url = upload_file(request, 'myFile')
             start_prime = request.POST['start_prime']
             end_prime = request.POST['end_prime']
+            size_min_prime = request.POST['size_min_prime']
+            size_opt_prime = request.POST['size_opt_prime']
+            size_max_prime = request.POST['size_max_prime']
+            tm_min_prime = request.POST['tm_min_prime']
+            tm_opt_prime = request.POST['tm_opt_prime']
+            tm_max_prime = request.POST['tm_max_prime']
+            tm_max_pair_prime = request.POST['tm_max_pair_prime']
 
             ''' Calling Python Script'''
-            outfile, alert = run_primer(settings.MEDIA_ROOT, name, start_prime, end_prime, user)
+            outfile, alert = run_primer(settings.MEDIA_ROOT, name, start_prime, end_prime, size_min_prime,
+                                        size_opt_prime, size_max_prime, tm_min_prime, tm_opt_prime, tm_max_prime, tm_max_pair_prime, user)
             if outfile is not None:
                 outfile_name = os.path.basename(outfile.name)
                 outfile_url = fs.url(outfile_name)
@@ -75,7 +83,6 @@ def normalization(request):
             outfile, alert = run_normalization(settings.MEDIA_ROOT, name, int(in_well), int(out_well), int(bb_fmol), int(part_fmol), user)
             if outfile is not None:
                 outfile_name = str(outfile)
-                print(outfile_name)
                 outfile_url = fs.url(outfile_name)
                 return render(request, 'misc/normalization.html', {'uploadfile_name': upload.name, 'url': url, 'outfile_name': outfile_name, 'outfile_url': outfile_url, 'alert':alert})
             else:

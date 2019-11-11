@@ -6,7 +6,7 @@
 
 <div class="row">
     <div class="col-3">
-    <h4>Options</h4>
+    <h5>Options</h5>
         <div class="options">
 
             <form method="post" enctype="multipart/form-data"> {% csrf_token %}
@@ -20,7 +20,8 @@
                         <input type="file" class="form-control-file border" name="myFile">
                     </div>
                     <div class="col-auto"></div>
-                </div><br><br>
+                </div><br>
+
                 <div class="form-row align-items-center">
                     <div class="col-auto"></div>
                     <div class="col">
@@ -43,7 +44,69 @@
                         <input class="form-control" type="text" name="end_prime"  value="length"><br>
                     </div>
                     <div class="col-auto"></div>
+                </div><br>
+
+                <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col">
+                        <label for="sizeOpt"><h6>Primers size options: </h6></label>
+                    </div>
+                    <div class="col-auto"></div>
                 </div>
+                <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col">
+                        <label for="size_min_prime">Min: </label>
+                        <input class="form-control" type="number" name="size_min_prime" value="15" ><br>
+                    </div>
+                    <div class="col">
+                        <label for="size_opt_prime">Optimal: </label>
+                        <input class="form-control" type="number" name="size_opt_prime"  value="18"><br>
+                    </div>
+                    <div class="col">
+                        <label for="size_max_prime">Max: </label>
+                        <input class="form-control" type="number" name="size_max_prime" value="45" ><br>
+                    </div>
+                    <div class="col-auto"></div>
+                </div><br>
+
+                <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col">
+                        <label for="sizeOpt"><h6>Primers TM options: </h6></label>
+                    </div>
+                    <div class="col-auto"></div>
+                </div>
+                <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col">
+                        <label for="tm_min_prime">Min: </label>
+                        <input class="form-control" type="number" name="tm_min_prime" value="59" ><br>
+                    </div>
+                    <div class="col">
+                        <label for="tm_opt_prime">Optimal: </label>
+                        <input class="form-control" type="number" name="tm_opt_prime"  value="60"><br>
+                    </div>
+                    <div class="col">
+                        <label for="tm_max_prime">Max: </label>
+                        <input type="number" class="form-control" name="tm_max_prime" min="50" max="80" step="1" value="61" ><br>
+                    </div>
+                    <div class="col-auto"></div>
+                </div>
+
+                <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col">
+                        <label for="tm_max_pair_prime">Max TM difference primer pair: </label>
+                        <input class="form-control" type="number" name="tm_max_pair_prime" value="1" ><br>
+                    </div>
+                    <div class="col">
+                    </div>
+                    <div class="col">
+                    </div>
+                    <div class="col-auto"></div>
+                </div>
+
                 <input type="submit" class="btn btn-info btn-block btn-lg" value="Submit">
               </fieldset>
             </form>
