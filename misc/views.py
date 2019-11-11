@@ -51,10 +51,11 @@ def primer(request):
             tm_opt_prime = request.POST['tm_opt_prime']
             tm_max_prime = request.POST['tm_max_prime']
             tm_max_pair_prime = request.POST['tm_max_pair_prime']
+            tm_gc_perc = request.POST['tm_gc_perc']
 
             ''' Calling Python Script'''
             outfile, alert = run_primer(settings.MEDIA_ROOT, name, start_prime, end_prime, size_min_prime,
-                                        size_opt_prime, size_max_prime, tm_min_prime, tm_opt_prime, tm_max_prime, tm_max_pair_prime, user)
+                                        size_opt_prime, size_max_prime, tm_min_prime, tm_opt_prime, tm_max_prime, tm_max_pair_prime, tm_gc_perc, user)
             if outfile is not None:
                 outfile_name = os.path.basename(outfile.name)
                 outfile_url = fs.url(outfile_name)

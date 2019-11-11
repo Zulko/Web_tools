@@ -29,7 +29,7 @@ def load_seqs(path, fastafile):
 
 
 def make_boulderio(seqid, seq, start, end, size_min_prime,
-                                        size_opt_prime, size_max_prime, tm_min_prime, tm_opt_prime, tm_max_prime, tm_max_pair_prime):
+                                        size_opt_prime, size_max_prime, tm_min_prime, tm_opt_prime, tm_max_prime, tm_max_pair_prime, tm_gc_perc):
     if end.find('length') == -1:
         length = int(end)
     else:
@@ -54,7 +54,7 @@ def make_boulderio(seqid, seq, start, end, size_min_prime,
     "PRIMER_OPT_TM":tm_opt_prime,
     "PRIMER_MAX_TM":tm_max_prime,
     "PRIMER_PAIR_MAX_DIFF_TM":tm_max_pair_prime,
-    "PRIMER_MIN_GC":20.0,
+    "PRIMER_MIN_GC":tm_gc_perc,
     "PRIMER_MAX_HAIRPIN_TH":100.0,
     "P3_FILE_FLAG":1,
     "PRIMER_EXPLAIN_FLAG":1,
@@ -91,7 +91,7 @@ def create_output_file(path, fastafile):
 
 
 def run_primer(path, fastafile, start, end, size_min_prime,
-                                        size_opt_prime, size_max_prime, tm_min_prime, tm_opt_prime, tm_max_prime, tm_max_pair_prime, user):
+                                        size_opt_prime, size_max_prime, tm_min_prime, tm_opt_prime, tm_max_prime, tm_max_pair_prime, tm_gc_perc, user):
     '''Read the fasta sequences from input file'''
     seqs = load_seqs(path, fastafile)
     alert = []
@@ -106,7 +106,7 @@ def run_primer(path, fastafile, start, end, size_min_prime,
     for record in seqs:
         boulderfile = make_boulderio(record.id, str(record.seq), int(start), end, int(size_min_prime),
                                      int(size_opt_prime), int(size_max_prime), int(tm_min_prime), int(tm_opt_prime),
-                                     int(tm_max_prime), int(tm_max_pair_prime))
+                                     int(tm_max_prime), int(tm_max_pair_prime), int(tm_gc_perc))
         primer3out = run_primer3(boulderfile)
         primerdict = make_primerout_dict(primer3out)
         if "PRIMER_LEFT_0_SEQUENCE" not in primerdict.keys() or "PRIMER_RIGHT_0_SEQUENCE" not in primerdict.keys():
