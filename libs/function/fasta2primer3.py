@@ -28,12 +28,35 @@ def load_seqs(path, fastafile):
     return valid_seqs
 
 
-def make_boulderio(seqid, seq, start, end, size_min_prime,
-                                        size_opt_prime, size_max_prime, tm_min_prime, tm_opt_prime, tm_max_prime, tm_max_pair_prime, tm_gc_perc):
-    if end.find('length') == -1:
-        length = int(end)
+def check_primers_pos(start, end, seq, seqid):
+    length = len(seq)
+    rev_start = length - int(end) -1
+
+    if start >= len(seq):
+        alert = 'Forward primer for sequence ' + seqid + ' start position exceeds sequence length.'
+        return alert
+    elif rev_start <= 0:
+        alert = 'Reverse primer for sequence ' + seqid + ' start position exceeds sequence length.'
+        return alert
+    # elif rev_start <= start:
+    #     alert = 'Reverse primer for sequence ' + seqid + ' starts before forward primer.'
+    #     return alert
     else:
-        length = len(seq) - 1
+        return None
+
+
+def make_boulderio(seqid, seq, start, end, size_min_prime, size_opt_prime, size_max_prime,
+                   tm_min_prime, tm_opt_prime, tm_max_prime, tm_max_pair_prime, tm_gc_perc):
+    # if end.find('length') == -1:
+    #     length = int(end)
+    # else:
+    #     length = len(seq) - 1
+    length = len(seq)
+    if end != 0:
+        length = length - int(end) -1
+    else:
+        length -= 1
+
     boulder = {
     "SEQUENCE_ID":seqid,
     "SEQUENCE_TEMPLATE":seq,
@@ -104,26 +127,31 @@ def run_primer(path, fastafile, start, end, size_min_prime,
     outfile = create_output_file(path, fastafile)
 
     for record in seqs:
-        boulderfile = make_boulderio(record.id, str(record.seq), int(start), end, int(size_min_prime),
-                                     int(size_opt_prime), int(size_max_prime), int(tm_min_prime), int(tm_opt_prime),
-                                     int(tm_max_prime), int(tm_max_pair_prime), int(tm_gc_perc))
-        primer3out = run_primer3(boulderfile)
-        primerdict = make_primerout_dict(primer3out)
-        if "PRIMER_LEFT_0_SEQUENCE" not in primerdict.keys() or "PRIMER_RIGHT_0_SEQUENCE" not in primerdict.keys():
-            stubbornseqs.append(record)
-        else:
-            outfile.write(record.id + "\t" + primerdict["PRIMER_LEFT_0_SEQUENCE"] + "\t" + primerdict[
-                "PRIMER_RIGHT_0_SEQUENCE"] + "\t" + str(len(primerdict["PRIMER_LEFT_0_SEQUENCE"])) + "\t" + str(
-                len(primerdict["PRIMER_RIGHT_0_SEQUENCE"])) + "\t" + primerdict[
-                              "PRIMER_PAIR_0_PRODUCT_SIZE"] + "\t" + primerdict["PRIMER_LEFT_0_TM"] + "\t" +
-                          primerdict["PRIMER_RIGHT_0_TM"] + "\n")
-        #   print seqs[record].id+"\t"+primerdict["PRIMER_LEFT_0_SEQUENCE"]+"\t"+str(len(primerdict["PRIMER_LEFT_0_SEQUENCE"]))+"\t"+primerdict["PRIMER_LEFT_0_TM"]
-        subprocess.call(["rm", boulderfile])
-        subprocess.call(["rm", record.id + ".for"])
-        subprocess.call(["rm", record.id + ".rev"])
+        alert = check_primers_pos(int(start), int(end), str(record.seq), record.id)
 
-    # with open(fastafile + "-stubbornseqs.fasta", "w") as stubbornfile:
-    #     SeqIO.write(stubbornseqs, stubbornfile, "fasta")
+        if alert is None:
+            boulderfile = make_boulderio(record.id, str(record.seq), int(start), int(end), int(size_min_prime),
+                                         int(size_opt_prime), int(size_max_prime), int(tm_min_prime),
+                                         int(tm_opt_prime), int(tm_max_prime), int(tm_max_pair_prime), int(tm_gc_perc))
+            primer3out = run_primer3(boulderfile)
+            primerdict = make_primerout_dict(primer3out)
+            if "PRIMER_LEFT_0_SEQUENCE" not in primerdict.keys() or "PRIMER_RIGHT_0_SEQUENCE" not in primerdict.keys():
+                stubbornseqs.append(record)
+            else:
+                outfile.write(record.id + "\t" + primerdict["PRIMER_LEFT_0_SEQUENCE"] + "\t" + primerdict[
+                    "PRIMER_RIGHT_0_SEQUENCE"] + "\t" + str(len(primerdict["PRIMER_LEFT_0_SEQUENCE"])) + "\t" + str(
+                    len(primerdict["PRIMER_RIGHT_0_SEQUENCE"])) + "\t" + primerdict[
+                                  "PRIMER_PAIR_0_PRODUCT_SIZE"] + "\t" + primerdict["PRIMER_LEFT_0_TM"] + "\t" +
+                              primerdict["PRIMER_RIGHT_0_TM"] + "\n")
+            #   print seqs[record].id+"\t"+primerdict["PRIMER_LEFT_0_SEQUENCE"]+"\t"+str(len(primerdict["PRIMER_LEFT_0_SEQUENCE"]))+"\t"+primerdict["PRIMER_LEFT_0_TM"]
+            subprocess.call(["rm", boulderfile])
+            subprocess.call(["rm", record.id + ".for"])
+            subprocess.call(["rm", record.id + ".rev"])
+
+        # with open(fastafile + "-stubbornseqs.fasta", "w") as stubbornfile:
+        #     SeqIO.write(stubbornseqs, stubbornfile, "fasta")
+        else:
+            return None, alert
 
     outfile.close()
     return outfile, alert
