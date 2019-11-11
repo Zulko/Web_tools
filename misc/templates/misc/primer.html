@@ -52,6 +52,11 @@
 
     <div class="col-6">
         <h4>Primer Script</h4>
+        {% if alert %}
+            <div class="alert">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> {{ alert }}
+            </div>
+        {% endif %}
         <p> Example of an input fasta file (<a href="{% static 'docs/seq.fasta' %}" target="_blank" download><strong> Example file.fasta </strong></a>)</p><br>
         <h5> Primer Script uses <a href="https://pypi.org/project/primer3-py/" target="_blank">Primer3 package</a> to create the forward and reverse primers. </h5>
         <br>

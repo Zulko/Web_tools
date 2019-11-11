@@ -46,13 +46,18 @@ def primer(request):
             end_prime = request.POST['end_prime']
 
             ''' Calling Python Script'''
-            outfile = run_primer(settings.MEDIA_ROOT, name, start_prime, end_prime, user)
+            outfile, alert = run_primer(settings.MEDIA_ROOT, name, start_prime, end_prime, user)
             if outfile is not None:
                 outfile_name = os.path.basename(outfile.name)
                 outfile_url = fs.url(outfile_name)
                 return render(request, 'misc/primer.html', {'uploadfile_name': upload.name, 'url': url, 'outfile_name': outfile_name, 'outfile_url': outfile_url})
+            else:
+                return render(request, 'misc/primer.html',
+                              {'uploadfile_name': upload.name, 'url': url, 'outfile_name': '',
+                               'outfile_url': '', 'alert': alert})
         else:
-            return render(request, 'misc/primer.html', {'uploadfile_name': '', 'url': '', 'outfile_name': 'Missing an Input File', 'abs_path': ''})
+            alert = 'Input file not found'
+            return render(request, 'misc/primer.html', {'uploadfile_name': '', 'url': '', 'outfile_name': '', 'abs_path': '', 'alert': alert})
     return render(request, 'misc/primer.html', {'uploadfile_name': '', 'url': '', 'outfile_name': '', 'abs_path': ''})
 
 

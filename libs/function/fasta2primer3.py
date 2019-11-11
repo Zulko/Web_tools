@@ -92,6 +92,11 @@ def create_output_file(path, fastafile):
 def run_primer(path, fastafile, start, end, user):
     '''Read the fasta sequences from input file'''
     seqs = load_seqs(path, fastafile)
+    alert = []
+    if len(seqs) < 1:
+        alert = 'Please, check the input file format'
+        return None, alert
+
     stubbornseqs = []
     '''Create a output file for the primers'''
     outfile = create_output_file(path, fastafile)
@@ -117,4 +122,4 @@ def run_primer(path, fastafile, start, end, user):
     #     SeqIO.write(stubbornseqs, stubbornfile, "fasta")
 
     outfile.close()
-    return outfile
+    return outfile, alert
