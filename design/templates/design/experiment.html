@@ -126,8 +126,12 @@
                                     </h5><br>
                                     <p>Description: {{ step.description }}</p>
                                     <p>Script: {{ step.script }}</p>
-                                    <p>Instruments: {{ step.instrument }}</p>
-                                    <p>File: {{ step.input_file }}</p>
+                                    <p>Instruments:
+                                        {{ step.instrument }}</p>
+                                    <p>Input file step:
+                                        <a href="{{ step.input_file_step.url }}" class="btn btn-info btn-sm " target="_blank">Download File</a>
+                                        <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deletefile"> <i class="fas fa-trash-alt"></i></button>
+                                    </p>
                                     <p>Status: {{ step.status_run }}</p>
                                 </div>
 

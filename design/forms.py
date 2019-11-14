@@ -21,4 +21,4 @@ class StepForm(forms.ModelForm):
 
     class Meta:
         model = Step
-        fields = ['name', 'status_run', 'description', 'script', 'instrument', 'experiment', 'input_file', ]
+        fields = ['name', 'status_run', 'description', 'script', 'instrument', 'experiment', 'input_file_step',]
