@@ -42,9 +42,40 @@ def upload_file(request, filename):
     return upload, fs, name, url
 
 
+# @login_required()
+# def plate_list(request):
+#     all_plates = Plate.objects.all()
+#     plate_filter = PlateFilter(request.GET, queryset=all_plates)
+#     formPlateAdd = PlateForm()
+#     formPlateUpdate = PlateForm()
+#
+#     if 'submit_plate_add' in request.POST:
+#         formPlateAdd = PlateForm(request.POST, request.FILES)
+#         if formPlateAdd.is_valid():
+#             new_plate = formPlateAdd.save()
+#             return redirect('db:plate', new_plate.id)
+#
+#     elif 'form_plate_update' in request.POST:
+#         formPlateUpdate = PlateForm(request.POST, request.FILES)
+#         if formPlateUpdate.is_valid():
+#             new_plate = formPlateUpdate.save()
+#             return redirect('db:plate', new_plate.id)
+#
+#     context = {
+#         'form_plate_add': formPlateAdd,
+#         'form_plate_update': formPlateUpdate,
+#         "all_plates": all_plates,
+#         'filter': plate_filter
+#     }
+#
+#     return render(request, 'db/index.html', context)
+
+
 @login_required()
-def plate_list(request):
-    all_plates = Plate.objects.all()
+def plate_list_inventory(request):
+    print('plate_list_inventory')
+    all_plates = Plate.objects.filter(function="Inventory")
+    print(all_plates)
     plate_filter = PlateFilter(request.GET, queryset=all_plates)
     formPlateAdd = PlateForm()
     formPlateUpdate = PlateForm()
@@ -64,7 +95,67 @@ def plate_list(request):
     context = {
         'form_plate_add': formPlateAdd,
         'form_plate_update': formPlateUpdate,
-        "all_plates": all_plates,
+        'all_plates': all_plates,
+        'filter': plate_filter
+    }
+
+    return render(request, 'db/index.html', context)
+
+
+@login_required()
+def plate_list_reagents(request):
+    print('plate_list_resgents')
+    all_plates = Plate.objects.filter(function="Reagents")
+    plate_filter = PlateFilter(request.GET, queryset=all_plates)
+    formPlateAdd = PlateForm()
+    formPlateUpdate = PlateForm()
+
+    if 'submit_plate_add' in request.POST:
+        formPlateAdd = PlateForm(request.POST, request.FILES)
+        if formPlateAdd.is_valid():
+            new_plate = formPlateAdd.save()
+            return redirect('db:plate', new_plate.id)
+
+    elif 'form_plate_update' in request.POST:
+        formPlateUpdate = PlateForm(request.POST, request.FILES)
+        if formPlateUpdate.is_valid():
+            new_plate = formPlateUpdate.save()
+            return redirect('db:plate', new_plate.id)
+
+    context = {
+        'form_plate_add': formPlateAdd,
+        'form_plate_update': formPlateUpdate,
+        'all_plates': all_plates,
+        'filter': plate_filter
+    }
+
+    return render(request, 'db/index.html', context)
+
+
+@login_required()
+def plate_list_process(request):
+    print('plate_list_process')
+    all_plates = Plate.objects.filter(function='Process')
+    plate_filter = PlateFilter(request.GET, queryset=all_plates)
+    formPlateAdd = PlateForm()
+    formPlateUpdate = PlateForm()
+
+    if 'submit_plate_add' in request.POST:
+        formPlateAdd = PlateForm(request.POST, request.FILES)
+        if formPlateAdd.is_valid():
+            new_plate = formPlateAdd.save()
+            return redirect('db:plate', new_plate.id)
+
+    elif 'form_plate_update' in request.POST:
+        formPlateUpdate = PlateForm(request.POST, request.FILES)
+        if formPlateUpdate.is_valid():
+            new_plate = formPlateUpdate.save()
+            return redirect('db:plate', new_plate.id)
+
+    context = {
+        'form_plate_add': formPlateAdd,
+        'form_plate_update': formPlateUpdate,
+        'all_plates': all_plates,
         'filter': plate_filter
     }
 

@@ -83,6 +83,7 @@ class Plate(models.Model):
     CONTAINER_FUNCTION = (
         ('Inventory', 'Inventory'),
         ('Process', 'Process'),
+        ('Reagents', 'Reagents'),
     )
     PROJECT = (
         ('GF_General', 'GF_General'),
@@ -124,7 +125,7 @@ class Plate(models.Model):
 
     name = models.CharField(max_length=50, unique=True, default=get_name)
     type = models.CharField(max_length=50, choices=CONTAINER_TYPES, default=CONTAINER_TYPES[0][0])
-    function = models.CharField(max_length=50, choices=CONTAINER_FUNCTION, default=CONTAINER_TYPES[0][0], blank=True)
+    function = models.CharField(max_length=50, choices=CONTAINER_FUNCTION, default=CONTAINER_FUNCTION[0][0], blank=True)
     barcode = models.CharField(max_length=30, unique=True, default=get_barcode)
     project = models.CharField(max_length=30, choices=PROJECT, blank=True)  # Multi select option
     num_cols = models.IntegerField()
@@ -318,6 +319,7 @@ class Well(models.Model):
 
     def save(self, *args, **kwargs):
         self.name = self.name.upper()
+
         return super(Well, self).save(*args, **kwargs)
 
     def sample_names(self):

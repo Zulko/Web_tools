@@ -42,17 +42,19 @@
     <a class="navbar-brand" href="{% url 'home' %}"> <i class="fas fa-home" style="font-size:25px; color:white;" &nbsp;&nbsp;></i></a>
 
     <!-- Toggler/collapsibe Button -->
-     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
-        <span class="navbar-toggler-icon"></span>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+       <span class="navbar-toggler-icon"></span>
     </button>
 
     <!-- Navbar links -->
     <div class="collapse navbar-collapse" id="collapsibleNavbar">
+
         <ul class="navbar-nav ">
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-                    &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-vial" style="font-size:15px; color:white;"></i> &nbsp;Scripts</a>
-                <ul class="dropdown-menu">
+                <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-vial" style="font-size:15px; color:white;"></i> &nbsp;Scripts
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbardrop">
                     <li><a class="dropdown-item" href="{% url 'scripts:spotting' %}">Spotting</a></li>
                     <li><a class="dropdown-item" href="{% url 'scripts:moclo' %}">Moclo</a></li>
                     <li><a class="dropdown-item" href="{% url 'scripts:combinatorial' %}">Combinatorial</a></li>
@@ -61,7 +63,6 @@
 {#                    <a class="dropdown-item" href="{% url 'scripts:assembly' %}">Assembly</a>#}
                 </ul>
             </li>
-
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
                     &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-dna" style="font-size:15px; color:white;"></i> &nbsp;Workflow</a>
@@ -74,9 +75,15 @@
             <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
                 &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-database" style="font-size:15px; color:white;"></i>&nbsp; Database</a>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{% url 'db:index' %}">Inventory</a></li>
                     <li><a class="dropdown-item" href="{% url 'db:samples_list' %}">View Sample</a></li>
                     <li><a class="dropdown-item" href="{% url 'db:file_sharing' %}">File sharing</a></li>
+                    <li class="dropdown-submenu"><a class="dropdown-item dropdown-toggle" href="#">Plates</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'db:inventory_plates' %}">Inventory</a></li>
+                            <li><a class="dropdown-item" href="{% url 'db:process_plates' %}">Process</a></li>
+                            <li><a class="dropdown-item" href="{% url 'db:reagents_plates' %}">Reagents</a></li>
+                        </ul>
+                    </li>
                 </ul>
             </li>
 
@@ -88,11 +95,6 @@
                     <li><a class="dropdown-item" href="{% url 'misc:primer' %}">Primer</a></li>
                     <li><a class="dropdown-item" href="{% url 'misc:normalization' %}">Normalization</a></li>
                     <li><a class="dropdown-item" href="{% url 'misc:nrc_sequence' %}">NRC sequence</a></li>
-                    <li class="dropdown-submenu"><a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-tools" style="font-size:15px; color:white;"></i>&nbsp; Extras</a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'misc:genbank' %}">GB Files</a></li>
-                        </ul>
-                    </li>
                 </ul>
             </li>
 
