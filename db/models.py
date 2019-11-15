@@ -300,7 +300,7 @@ class Well(models.Model):
         ('H', 'On hold'),
     )
 
-    name = models.CharField(max_length=5)
+    name = models.CharField(max_length=3)
     volume = models.DecimalField(max_digits=10, decimal_places=2)
     concentration = models.DecimalField(max_digits=10, decimal_places=2)
     plate = models.ForeignKey(Plate, on_delete=models.CASCADE)
@@ -315,6 +315,10 @@ class Well(models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        self.name = self.name.upper()
+        return super(Well, self).save(*args, **kwargs)
 
     def sample_names(self):
         return '\n'.join([a.name for a in self.samples.all()])
