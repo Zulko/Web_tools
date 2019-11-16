@@ -1,5 +1,5 @@
 from import_export import resources, fields, widgets
-from .models import Sample, Plate, Well
+from .models import Sample, Plate, Well, Project
 
 
 class SampleResource(resources.ModelResource):
@@ -48,13 +48,18 @@ class PlateResource(resources.ModelResource):
         attribute='samples',
         widget=widgets.ManyToManyWidget(Sample, field='alias')
     )
+    project = fields.Field(
+        column_name='project',
+        attribute='project',
+        widget=widgets.ManyToManyWidget(Project, field='name')
+    )
 
     class Meta:
         exclude = ('id',)
         import_id_fields = ['name', 'plate']
         model = Well
         skip_unchanged = True
-        fields = ('name', 'plate', 'samples', 'alias', 'volume', 'concentration', 'active', 'status')
+        fields = ('name', 'plate', 'project', 'samples', 'alias', 'volume', 'concentration', 'active', 'status')
         # export_order = ('plate', 'name', 'samples', 'volume', 'concentration', 'active', 'status')
 
         def get_queryset(self):

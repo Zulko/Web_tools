@@ -1,0 +1,102 @@
+{% extends 'base_layout.html' %}
+{% load static from staticfiles %}
+{% load bootstrap %}
+
+{% block content %}
+
+    <div class="row">
+      <div class="col-2">
+      <!-- Form for search plates in database -->
+{#      <h5>Search Project</h5>#}
+{#          <fieldset class="form-group" style="padding: 20px 20px 20px 20px">#}
+{#            <form method="GET">#}
+{#                {{ filter.form | bootstrap }}#}
+{#                <button class="btn btn-info btn-block" type="submit">#}
+{#                    <i class="fas fa-search" ></i> Search#}
+{#                </button>#}
+{#            </form>#}
+{#          </fieldset><br>#}
+          <!-- Modal button to add project on inventory -->
+          <button type="button" class="btn btn-info" style="float:right" data-toggle="modal" data-target="#add_project"> <i class="fas fa-plus-circle"></i> Add project </button>
+          <div class="modal fade" id="add_plate" tabindex="-1" role="dialog" aria-labelledby="add_projectLabel" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="add_projectLabel">Add Project</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+
+                      <form id="form_project" method="post" enctype="multipart/form-data">{% csrf_token %}
+                        <div class="modal-body">
+                            {{ form_project_add | bootstrap }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" name="submit_project_add" action="{% url 'db:project_add' %}" class="btn btn-info">Add</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+            </div>
+      </div>
+
+
+      <div class="col-10">
+            <!-- Table with list of project on inventory -->
+            {% if all_project %}
+              <div class="form-row align-items-center">
+                <div class="col">
+                  <table id="project_list_table" class="table table-hover table-striped table-sm" cellspacing="0" width="100%">
+                   <thead>
+                    <tr class="table-dark text-dark">
+                      <th class="th-sm">id</th>
+                      <th class="th-sm">name</th>
+                      <th class="th-sm">author</th>
+                      <th class="th-sm">collaborators</th>
+                      <th class="th-sm">status</th>
+                      <th class="th-sm">comments</th>
+                      <th class="th-sm">created at</th>
+                    </tr>
+                   </thead>
+                   <tbody>
+                   {% for project in all_project %}
+                    <tr>
+                      <td> {{ project.id }} </td>
+                      <td> {{ project.name }} </td>
+                      <td> {{ project.author }} </td>
+                      <td> {{ project.collaborators }} </td>
+                      <td> {{ plate.status }} </td>
+                      <td> {{ plate.comments }} </td>
+                      <td> {{ plate.created_at }} </td>
+                    </tr>
+                   {% endfor %}
+                   </tbody>
+                  </table>
+                </div><br>
+              </div>
+            {% else %}
+              <h6> No project in database </h6>
+            {% endif %}
+      </div>
+
+        <!-- Script to use datatables -->
+        <script type="text/javascript">
+        $('#plate_list_table').DataTable({
+            searching: true,
+            columnDefs: [{ targets: -1, className: 't-body-center'}],
+            "scrollX": true,
+            lengthMenu: [[10, 50, 100, -1], [10, 50, 100, "All"]],
+        });
+
+        $('.dataTables_length').addClass('bs-select');
+        </script>
+
+    </div>
+
+
+
+
+
+{% endblock%}

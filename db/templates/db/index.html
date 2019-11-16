@@ -70,7 +70,8 @@
                       <td> {{ plate.barcode }} </td>
                       <td> {{ plate.type }} </td>
                       <td> {{ plate.num_well }} </td>
-                      <td> {{ plate.project }} </td>
+
+                      <td> {% for project in plate.project.all %}{{ project }} {% endfor %}</td>
                       <td> {{ plate.location }} </td>
                       <td> {{ plate.comments }} </td>
                       <td> {{ plate.status }} </td>

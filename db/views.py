@@ -11,8 +11,8 @@ from django.conf import settings
 
 from tablib import Dataset
 
-from .models import Plate, Well, Sample, File
-from .forms import SampleForm, PlateForm, WellForm
+from .models import Plate, Well, Sample, File, Machine, Project
+from .forms import SampleForm, PlateForm, WellForm, MachineForm, ProjectForm
 from .filters import SampleFilter, PlateFilter
 from .resources import SampleResource, PlateResource
 
@@ -642,3 +642,93 @@ def add_file_sample(request):
         formSample = SampleForm()
 
     return render(request, 'db/samples_list.html')
+
+
+@login_required()
+def machine_list(request):
+    all_machines = Machine.objects.all()
+    # plate_filter = PlateFilter(request.GET, queryset=all_plates)
+    formMachineAdd = MachineForm()
+    formMachineUpdate = MachineForm()
+
+    if 'submit_machine_add' in request.POST:
+        formMachineAdd = MachineForm(request.POST, request.FILES)
+        if formMachineAdd.is_valid():
+            formMachineAdd.save()
+            return redirect('db:machine_list')
+
+    elif 'form_machine_update' in request.POST:
+        formMachineUpdate = MachineForm(request.POST, request.FILES)
+        if formMachineUpdate.is_valid():
+            formMachineUpdate.save()
+            return redirect('db:machine_list')
+
+    context = {
+        'form_machine_add': formMachineAdd,
+        'form_machine_update': formMachineUpdate,
+        'all_machines': all_machines,
+        # 'filter': plate_filter
+    }
+
+    return render(request, 'db/machines.html', context)
+
+
+@login_required()
+def machine_add(request):
+    if 'submit_machine_add' in request.POST:
+        formMachine = MachineForm(request.POST, request.FILES)
+        if formMachine.is_valid():
+            formMachine.save()
+            return redirect('db:machine_list')
+    else:
+        formMachine = MachineForm()
+
+    context = {
+        'form_machine_add': formMachine,
+    }
+    return render(request, 'db/machines.html', context)
+
+
+@login_required()
+def project_list(request):
+    all_project = Project.objects.all()
+    # plate_filter = PlateFilter(request.GET, queryset=all_plates)
+    formProjectAdd = ProjectForm()
+    formProjectUpdate = ProjectForm()
+
+    if 'submit_project_add' in request.POST:
+        formProjectAdd = ProjectForm(request.POST, request.FILES)
+        if formProjectAdd.is_valid():
+            formProjectAdd.save()
+            return redirect('db:project_list')
+
+    elif 'form_project_update' in request.POST:
+        formProjectUpdate = ProjectForm(request.POST, request.FILES)
+        if formProjectUpdate.is_valid():
+            formProjectUpdate.save()
+            return redirect('db:project_list')
+
+    context = {
+        'form_project_add': formProjectAdd,
+        'form_project_update': formProjectUpdate,
+        'all_project': all_project,
+        # 'filter': plate_filter
+    }
+
+    return render(request, 'db/projects.html', context)
+
+
+@login_required()
+def project_add(request):
+    if 'submit_project_add' in request.POST:
+        formProject = ProjectForm(request.POST, request.FILES)
+        if formProject.is_valid():
+            formProject.save()
+            return redirect('db:project_list')
+    else:
+        formMachine = MachineForm()
+
+    context = {
+        'form_project_add': formProject,
+    }
+    return render(request, 'db/projects.html', context)

@@ -1,6 +1,6 @@
 from import_export.admin import ImportExportModelAdmin
 from django.contrib import admin
-from .models import Plate, Sample, Well, File, Machine
+from .models import Plate, Sample, Well, File, Machine, Project
 
 
 # Register your models here.
@@ -39,4 +39,8 @@ class FileAdmin(ImportExportModelAdmin):
 
 @admin.register(Machine)
 class MachineAdmin(ImportExportModelAdmin):
+    pass
+
+@admin.register(Project)
+class ProjectAdmin(ImportExportModelAdmin):
     pass

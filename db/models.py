@@ -77,6 +77,13 @@ class Plate(models.Model):
         ('Backup', 'Backup'),
     )
     CONTAINER_TYPES = (
+        # ('Plate: 384PP (Labcyte P-05525))', 'Plate: 384PP (Labcyte P-05525))'),
+        # ('Plate: 384LDV (Labcyte LP-0200)', 'Plate: 384LDV (Labcyte LP-0200)'),
+        # ('Plate: 96 Twin.tec PCR (Eppendorf 951020401)', 'Plate: 96 Twin.tec PCR (Eppendorf 951020401)')
+        # ('Plate: 384 BioRad PCR (HSP3801)', 'Plate: 384 BioRad PCR (HSP3801)')
+        # ('Plate: 384 MicroAmp EnduraPlate (Applied Biosystems 4483273)', 'Plate: 384 MicroAmp EnduraPlate (Applied Biosystems 4483273)')
+        # ('Plate: 384 Greiner Flat Bottom (p/n 781096)', 'Plate: 384 Greiner Flat Bottom (p/n 781096)')
+        # ('Plate: 96 Nunc Flat Bottom (p/n 266120)', 'Plate: 96 Nunc Flat Bottom (p/n 266120)')
         ('Plate', 'Plate'),
         ('Box', 'Box'),
     )
@@ -127,7 +134,9 @@ class Plate(models.Model):
     type = models.CharField(max_length=50, choices=CONTAINER_TYPES, default=CONTAINER_TYPES[0][0])
     function = models.CharField(max_length=50, choices=CONTAINER_FUNCTION, default=CONTAINER_FUNCTION[0][0], blank=True)
     barcode = models.CharField(max_length=30, unique=True, default=get_barcode)
-    project = models.CharField(max_length=30, choices=PROJECT, blank=True)  # Multi select option
+    '''To steps to remove project. First migrate without project, then create new column as manytomany'''
+    # project = models.CharField(max_length=30, choices=PROJECT, blank=True)  # Multi select option
+    project = models.ManyToManyField(Project, blank=True)
     num_cols = models.IntegerField()
     num_rows = models.IntegerField()
     num_well = models.IntegerField()

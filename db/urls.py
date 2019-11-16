@@ -36,4 +36,22 @@ urlpatterns = [
     # File views
     path('file_sharing/', views.file_sharing, name='file_sharing'),
     path('file_sharing/<int:file_id>', views.delete_file, name='file_delete'),
+
+    # Machine views
+    path('view_machine/', views.machine_list, name='machine_list'),
+    path('add_machine/', views.machine_add, name='machine_add'),
+
+    # Project views
+    path('view_project/', views.project_list, name='project_list'),
+    path('add_project/', views.project_add, name='project_add'),
+    # path('plate<int:plate_id>/', views.plate_view, name='plate'),
+    #
+    # path('add_plate_file/', views.plate_add_file, name='plate_file_add'),
+    # path('export/plate<int:plate_id>/', views.plate_export, name='plate_export'),
+    # path('print/plate<int:plate_id>/', views.plate_print, name='plate_print'),
+    # path('update/plate<int:plate_id>/', views.plate_update, name='plate_update'),
+    # path('delete/plate<int:plate_id>/', views.plate_delete, name='plate_delete'),
+
+
+
 ]
