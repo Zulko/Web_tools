@@ -201,13 +201,13 @@ class Sample(models.Model):
         ('R', 'Right'),
         ('L', 'Left'),
     )
-    PROJECT = (
-        ('GF_General', 'GF_General'),
-        ('Sanguinarine', 'Sanguinarine'),
-        ('MoClo_Kit', 'MoClo_Kit'),
-        ('Yeast_CRISPR_Kit', 'Yeast_CRISPR_Kit'),
-        ('Foundry_Kit', 'Foundry_Kit'),
-    )
+    # PROJECT = (
+    #     ('GF_General', 'GF_General'),
+    #     ('Sanguinarine', 'Sanguinarine'),
+    #     ('MoClo_Kit', 'MoClo_Kit'),
+    #     ('Yeast_CRISPR_Kit', 'Yeast_CRISPR_Kit'),
+    #     ('Foundry_Kit', 'Foundry_Kit'),
+    # )
     # PART_TYPE = (
     #     ('Promoter', 'Promoter'),
     #     ('Terminator', 'Terminator'),
@@ -241,7 +241,9 @@ class Sample(models.Model):
     alias = models.CharField(max_length=50)
     sample_type = models.CharField(max_length=50, choices=SAMPLE_TYPES, default=SAMPLE_TYPES[4][0])
     description = models.CharField(max_length=500, blank=True)
-    project = models.CharField(max_length=30, choices=PROJECT, blank=True)  # Multi select option
+    '''Comment project in admin, filters, forms and model, then add as manytomany model'''
+    # project = models.CharField(max_length=30, choices=PROJECT, blank=True)  # Multi select option
+    project = models.ManyToManyField(Project, blank=True)
     author = models.CharField(max_length=50, blank=True)
     sequence = models.CharField(max_length=10000, blank=True)
     length = models.IntegerField(blank=True, null=True)
