@@ -290,7 +290,6 @@ def plate_print(request, plate_id):
     return response
 
 
-
 @login_required()
 def plate_delete(request, plate_id):
     if request.method == 'POST':
@@ -657,7 +656,7 @@ def machine_list(request):
             formMachineAdd.save()
             return redirect('db:machine_list')
 
-    elif 'form_machine_update' in request.POST:
+    elif 'submit_update_machine' in request.POST:
         formMachineUpdate = MachineForm(request.POST, request.FILES)
         if formMachineUpdate.is_valid():
             formMachineUpdate.save()
@@ -670,6 +669,36 @@ def machine_list(request):
         # 'filter': plate_filter
     }
 
+    return render(request, 'db/machines.html', context)
+
+
+@login_required()
+def machine(request, machine_id):
+    all_machines = Machine.objects.all()
+    machine = Machine.objects.get(id=machine_id)
+    # plate_filter = PlateFilter(request.GET, queryset=all_plates)
+    formMachineAdd = MachineForm()
+    formMachineUpdate = MachineForm(instance=machine)
+
+    if 'submit_machine_add' in request.POST:
+        formMachineAdd = MachineForm(request.POST, request.FILES)
+        if formMachineAdd.is_valid():
+            formMachineAdd.save()
+            return redirect('db:machine_list')
+
+    elif 'submit_update_machine' in request.POST:
+        formMachineUpdate = MachineForm(request.POST, instance=machine)
+        if formMachineUpdate.is_valid():
+            formMachineUpdate.save()
+            return redirect('db:machine_list')
+
+    context = {
+        'form_machine_add': formMachineAdd,
+        'form_machine_update': formMachineUpdate,
+        'all_machines': all_machines,
+        'machine': machine,
+        # 'filter': plate_filter
+    }
     return render(request, 'db/machines.html', context)
 
 
@@ -690,7 +719,33 @@ def machine_add(request):
 
 
 @login_required()
+def machine_update(request, machine_id):
+    machine = Machine.objects.get(id=machine_id)
+    if 'submit_update_machine' in request.POST:
+        formMachineUpdate = MachineForm(request.POST, instance=machine)
+        if formMachineUpdate.is_valid():
+            formMachineUpdate.save()
+            return redirect('db:project_list')
+    else:
+        formMachineUpdate = MachineForm(instance=machine)
+
+    context = {
+        'form_machine_update': formMachineUpdate,
+    }
+    return render(request, 'db/machines.html', context)
+
+
+@login_required()
+def machine_delete(request, machine_id):
+    if request.method == 'POST':
+        machine = Machine.objects.get(id=machine_id)
+        machine.delete()
+    return redirect('db:machine_list')
+
+
+@login_required()
 def project_list(request):
+    print('project list')
     all_project = Project.objects.all()
     # plate_filter = PlateFilter(request.GET, queryset=all_plates)
     formProjectAdd = ProjectForm()
@@ -719,6 +774,36 @@ def project_list(request):
 
 
 @login_required()
+def project(request, project_id):
+    all_project = Project.objects.all()
+    project = Project.objects.get(id=project_id)
+    # plate_filter = PlateFilter(request.GET, queryset=all_plates)
+    formProjectAdd = ProjectForm()
+    formProjectUpdate = ProjectForm(instance=project)
+
+    if 'submit_project_add' in request.POST:
+        formProjectAdd = ProjectForm(request.POST, request.FILES)
+        if formProjectAdd.is_valid():
+            formProjectAdd.save()
+            return redirect('db:project_list')
+
+    elif 'submit_update_project' in request.POST:
+        formProjectUpdate = ProjectForm(request.POST, instance=project)
+        if formProjectUpdate.is_valid():
+            formProjectUpdate.save()
+            return redirect('db:project_list')
+
+    context = {
+        'form_project_add': formProjectAdd,
+        'form_project_update': formProjectUpdate,
+        'all_project': all_project,
+        'project': project,
+        # 'filter': plate_filter
+    }
+    return render(request, 'db/projects.html', context)
+
+
+@login_required()
 def project_add(request):
     if 'submit_project_add' in request.POST:
         formProject = ProjectForm(request.POST, request.FILES)
@@ -726,9 +811,34 @@ def project_add(request):
             formProject.save()
             return redirect('db:project_list')
     else:
-        formMachine = MachineForm()
+        formProject = ProjectForm()
 
     context = {
         'form_project_add': formProject,
     }
     return render(request, 'db/projects.html', context)
+
+
+@login_required()
+def project_update(request, project_id):
+    project = Project.objects.get(id=project_id)
+    if 'submit_update_project' in request.POST:
+        formProjectUpdate = ProjectForm(request.POST, instance=project)
+        if formProjectUpdate.is_valid():
+            formProjectUpdate.save()
+            return redirect('db:project_list')
+    else:
+        formProjectUpdate = ProjectForm(instance=project)
+
+    context = {
+        'form_project_update': formProjectUpdate,
+    }
+    return render(request, 'db/projects.html', context)
+
+
+@login_required()
+def project_delete(request, project_id):
+    if request.method == 'POST':
+        project = Project.objects.get(id=project_id)
+        project.delete()
+    return redirect('db:project_list')

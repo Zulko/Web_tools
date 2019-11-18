@@ -17,7 +17,10 @@
 {#            </form>#}
 {#          </fieldset><br>#}
           <!-- Modal button to add project on inventory -->
+
           <button type="button" class="btn btn-info" style="float:right" data-toggle="modal" data-target="#add_project"> <i class="fas fa-plus-circle"></i> Add project </button>
+
+          <!-- Modal button to add project on inventory -->
           <div class="modal fade" id="add_project" tabindex="-1" role="dialog" aria-labelledby="add_projectLabel" aria-hidden="true">
                   <div class="modal-dialog" role="document">
                     <div class="modal-content">
@@ -43,7 +46,72 @@
       </div>
 
 
+
       <div class="col-10">
+            {% if project %}
+                <div class="info" style="margin: 10px 0px 10px 0px" >
+                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    <h5>Project: {{ project.name }}</h5>
+
+                    <div class="btn-group" align="left">
+                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete_project"> <i class="fas fa-trash-alt"></i> Delete </button>
+                    </div>
+                    <div class="btn-group" align="left">
+                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#update_project"> <i class="fas fa-edit"></i> Update </button>
+                    </div>
+                </div>
+
+                <!-- Modal button to delete project -->
+                    <div class="modal fade" id="delete_project" tabindex="-1" role="dialog" aria-labelledby="delete_projectLabel" aria-hidden="true">
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="delete_projectLabel">Delete Project</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                              <h6>Are you sure to delete {{ project.name }} ?</h6>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                              <form method="POST" action="{% url 'db:project_delete' project.id %}">{% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                              </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Modal button to update project -->
+                    <div class="modal fade" id="update_project" tabindex="-1" role="dialog" aria-labelledby="update_projectLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="update_projectLabel">Update Project: {{ project.name }}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+
+                          <form id="form_edit_sample" method="post" enctype="multipart/form-data">{% csrf_token %}
+                            <div class="modal-body">
+                                {% csrf_token %}
+                                {{ form_project_update | bootstrap }}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" name= "submit_update_project" action="{% url 'db:project_update' project.id %}" class="btn btn-warning">Update</button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+            {% endif %}
+
+
+
             <!-- Table with list of project on inventory -->
             {% if all_project %}
               <div class="form-row align-items-center">
@@ -64,12 +132,12 @@
                    {% for project in all_project %}
                     <tr>
                       <td> {{ project.id }} </td>
-                      <td> {{ project.name }} </td>
+                      <td><a href="{% url 'db:project' project.id %}" > {{ project.name }} </a></td>
                       <td> {{ project.author }} </td>
                       <td> {{ project.collaborators }} </td>
-                      <td> {{ plate.status }} </td>
-                      <td> {{ plate.comments }} </td>
-                      <td> {{ plate.created_at }} </td>
+                      <td> {{ project.status }} </td>
+                      <td> {{ project.comments }} </td>
+                      <td> {{ project.created_at }} </td>
                     </tr>
                    {% endfor %}
                    </tbody>
@@ -83,7 +151,7 @@
 
         <!-- Script to use datatables -->
         <script type="text/javascript">
-        $('#plate_list_table').DataTable({
+        $('#project_list_table').DataTable({
             searching: true,
             columnDefs: [{ targets: -1, className: 't-body-center'}],
             "scrollX": true,

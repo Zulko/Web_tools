@@ -44,6 +44,69 @@
 
 
       <div class="col-10">
+            {% if machine %}
+                <div class="info" style="margin: 10px 0px 10px 0px" >
+                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    <h5>Project: {{ machine.name }}</h5>
+
+                    <div class="btn-group" align="left">
+                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete_machine"> <i class="fas fa-trash-alt"></i> Delete </button>
+                    </div>
+                    <div class="btn-group" align="left">
+                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#update_machine"> <i class="fas fa-edit"></i> Update </button>
+                    </div>
+                </div>
+
+                <!-- Modal button to delete machine -->
+                    <div class="modal fade" id="delete_machine" tabindex="-1" role="dialog" aria-labelledby="delete_machineLabel" aria-hidden="true">
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="delete_machineLabel">Delete Machine</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                              <h6>Are you sure to delete {{ machine.name }} ?</h6>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                              <form method="POST" action="{% url 'db:machine_delete' machine.id %}">{% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                              </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Modal button to update machine -->
+                    <div class="modal fade" id="update_machine" tabindex="-1" role="dialog" aria-labelledby="update_machineLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="update_machineLabel">Update Machine: {{ machine.name }}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+
+                          <form id="form_edit_machine" method="post" enctype="multipart/form-data">{% csrf_token %}
+                            <div class="modal-body">
+                                {% csrf_token %}
+                                {{ form_machine_update | bootstrap }}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" name= "submit_update_machine" action="{% url 'db:machine_update' machine.id %}" class="btn btn-warning">Update</button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+            {% endif %}
+
+
             <!-- Table with list of machine on inventory -->
             {% if all_machines %}
               <div class="form-row align-items-center">
@@ -63,11 +126,11 @@
                    {% for machine in all_machines %}
                     <tr>
                       <td> {{ machine.id }} </td>
-                      <td> {{ machine.name }} </td>
+                      <td><a href="{% url 'db:machine' machine.id %}" > {{ machine.name }} </a></td>
                       <td> {{ machine.author }} </td>
-                      <td> {{ plate.status }} </td>
-                      <td> {{ plate.comments }} </td>
-                      <td> {{ plate.created_at }} </td>
+                      <td> {{ machine.status }} </td>
+                      <td> {{ machine.comments }} </td>
+                      <td> {{ machine.created_at }} </td>
                     </tr>
                    {% endfor %}
                    </tbody>
@@ -81,7 +144,7 @@
 
         <!-- Script to use datatables -->
         <script type="text/javascript">
-        $('#plate_list_table').DataTable({
+        $('#machine_list_table').DataTable({
             searching: true,
             columnDefs: [{ targets: -1, className: 't-body-center'}],
             "scrollX": true,

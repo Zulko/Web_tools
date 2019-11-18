@@ -39,19 +39,16 @@ urlpatterns = [
 
     # Machine views
     path('view_machine/', views.machine_list, name='machine_list'),
+    path('view_machine/<int:machine_id>', views.machine, name='machine'),
     path('add_machine/', views.machine_add, name='machine_add'),
+    path('update_machine/<int:machine_id>', views.machine_update, name='machine_update'),
+    path('delete/machine<int:machine_id>/', views.machine_delete, name='machine_delete'),
 
     # Project views
     path('view_project/', views.project_list, name='project_list'),
+    path('view_project/<int:project_id>', views.project, name='project'),
     path('add_project/', views.project_add, name='project_add'),
-    # path('plate<int:plate_id>/', views.plate_view, name='plate'),
-    #
-    # path('add_plate_file/', views.plate_add_file, name='plate_file_add'),
-    # path('export/plate<int:plate_id>/', views.plate_export, name='plate_export'),
-    # path('print/plate<int:plate_id>/', views.plate_print, name='plate_print'),
-    # path('update/plate<int:plate_id>/', views.plate_update, name='plate_update'),
-    # path('delete/plate<int:plate_id>/', views.plate_delete, name='plate_delete'),
-
-
+    path('update_project/<int:project_id>', views.project_update, name='project_update'),
+    path('delete/project<int:project_id>/', views.project_delete, name='project_delete'),
 
 ]
