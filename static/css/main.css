@@ -24,7 +24,7 @@
 
 /* rotate caret on hover */
 .dropdown-menu > li > a:hover:after {
-    text-decoration: underline;
+    text-decoration:none;
     transform: rotate(-90deg);
 }
 

@@ -41,6 +41,7 @@ class FileAdmin(ImportExportModelAdmin):
 class MachineAdmin(ImportExportModelAdmin):
     pass
 
+
 @admin.register(Project)
 class ProjectAdmin(ImportExportModelAdmin):
     pass

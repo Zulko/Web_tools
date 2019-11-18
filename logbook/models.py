@@ -5,7 +5,7 @@ from db.models import Machine
 
 
 class LogBook(models.Model):
-    name = models.CharField(max_length=30, default='')
+    # name = models.CharField(max_length=30, default='')
     user = models.CharField(max_length=30,)
     supervisor = models.CharField(max_length=100)
     time_used = models.CharField(max_length=30, blank=True)
@@ -13,5 +13,9 @@ class LogBook(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE)
 
-    def __str__(self):
-        return self.name
+    # Meta Class
+    # class Meta:
+    #     ordering = ('machine','user')
+    #
+    # def __str__(self):
+    #     return self.machine

@@ -134,8 +134,6 @@ class Plate(models.Model):
     type = models.CharField(max_length=50, choices=CONTAINER_TYPES, default=CONTAINER_TYPES[0][0])
     function = models.CharField(max_length=50, choices=CONTAINER_FUNCTION, default=CONTAINER_FUNCTION[0][0], blank=True)
     barcode = models.CharField(max_length=30, unique=True, default=get_barcode)
-    '''To steps to remove project. First migrate without project, then create new column as manytomany'''
-    # project = models.CharField(max_length=30, choices=PROJECT, blank=True)  # Multi select option
     project = models.ManyToManyField(Project, blank=True)
     num_cols = models.IntegerField()
     num_rows = models.IntegerField()
@@ -241,8 +239,6 @@ class Sample(models.Model):
     alias = models.CharField(max_length=50)
     sample_type = models.CharField(max_length=50, choices=SAMPLE_TYPES, default=SAMPLE_TYPES[4][0])
     description = models.CharField(max_length=500, blank=True)
-    '''Comment project in admin, filters, forms and model, then add as manytomany model'''
-    # project = models.CharField(max_length=30, choices=PROJECT, blank=True)  # Multi select option
     project = models.ManyToManyField(Project, blank=True)
     author = models.CharField(max_length=50, blank=True)
     sequence = models.CharField(max_length=10000, blank=True)
