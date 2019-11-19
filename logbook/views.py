@@ -3,8 +3,7 @@ from django.contrib.auth.decorators import login_required
 
 from db.models import Machine
 from .models import LogBook
-from .forms import LogBookForm
-
+from .forms import LogBookForm, LogBookUpdateForm
 
 
 def logbook_view(request):
@@ -76,7 +75,10 @@ def book_entry_view(request, machine_id, entry_id):
     entry = get_object_or_404(LogBook, machine=machine.id, id=entry_id)
     all_logbook = LogBook.objects.filter(machine_id=machine.id)
     formLogBookAdd = LogBookForm(initial={'machine': machine.id})
-    formLogBookUpdate = LogBookForm(instance=entry)
+    if request.user.is_authenticated:
+        formLogBookUpdate = LogBookForm(instance=entry)
+    else:
+        formLogBookUpdate = LogBookUpdateForm(instance=entry)
 
     if 'submit_add_entry' in request.POST:
         formLogBookAdd = LogBookForm(initial={'machine': machine.id})
@@ -87,7 +89,11 @@ def book_entry_view(request, machine_id, entry_id):
             print('form with error')
 
     elif 'submit_update_entry' in request.POST:
-        formLogBookUpdate = LogBookForm(request.POST, instance=entry)
+        if request.user.is_authenticated:
+            formLogBookUpdate = LogBookForm(request.POST, instance=entry)
+        else:
+            formLogBookUpdate = LogBookUpdateForm(request.POST, instance=entry)
+
         if formLogBookUpdate.is_valid():
             formLogBookUpdate.save()
             return redirect('logbook:book', machine.id)
@@ -106,23 +112,36 @@ def book_entry_view(request, machine_id, entry_id):
     return render(request, 'logbook/index.html', context)
 
 
-@login_required()
 def book_entry_update(request, machine_id, entry_id):
     machine = Machine.objects.get(id=machine_id)
     entry = get_object_or_404(LogBook, machine=machine.id, id=entry_id)
-    if 'submit_update_entry' in request.POST:
-        formLogBookUpdate = LogBookForm(request.POST, instance=entry)
-        if formLogBookUpdate.is_valid():
-            formLogBookUpdate.save()
-            return redirect('logbook:book', machine.id)
+
+    if request.user.is_authenticated:
+        if 'submit_update_entry' in request.POST:
+            formLogBookUpdate = LogBookForm(request.POST, instance=entry)
+            if formLogBookUpdate.is_valid():
+                formLogBookUpdate.save()
+                return redirect('logbook:book', machine.id)
+            else:
+                print('form with error')
         else:
-            print('form with error')
+            formLogBookUpdate = LogBookForm(instance=machine)
+
     else:
-        formLogBookUpdate = LogBookForm(instance=machine)
+        if 'submit_update_entry' in request.POST:
+            formLogBookUpdate = LogBookUpdateForm(request.POST, instance=entry)
+            if formLogBookUpdate.is_valid():
+                formLogBookUpdate.save()
+                return redirect('logbook:book', machine.id)
+            else:
+                print('form with error')
+        else:
+            formLogBookUpdate = LogBookUpdateForm(instance=machine)
 
     context = {
         'formLogBookUpdate': formLogBookUpdate,
     }
+
     return render(request, 'logbook/index.html', context)
 
 

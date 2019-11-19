@@ -39,9 +39,11 @@
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
                 <h6>Entry: {{ entry.id }} created by: {{ entry.user }}</h6><br>
 
+                {% if user.is_authenticated  %}
                 <div class="btn-group" align="left">
                     <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete_entry"> <i class="fas fa-trash-alt"></i> Delete </button>
                 </div>
+                {% endif %}
                 <div class="btn-group" align="left">
                     <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#update_entry"> <i class="fas fa-edit"></i> Update </button>
                 </div>
