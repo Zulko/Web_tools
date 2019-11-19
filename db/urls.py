@@ -42,7 +42,7 @@ urlpatterns = [
     path('view_machine/<int:machine_id>', views.machine, name='machine'),
     path('add_machine/', views.machine_add, name='machine_add'),
     path('update_machine/<int:machine_id>', views.machine_update, name='machine_update'),
-    path('delete/machine<int:machine_id>/', views.machine_delete, name='machine_delete'),
+    path('delete_machine<int:machine_id>/', views.machine_delete, name='machine_delete'),
 
     # Project views
     path('view_project/', views.project_list, name='project_list'),
