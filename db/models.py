@@ -46,20 +46,12 @@ class Machine(models.Model):
 
 
 class Project(models.Model):
-    PROJECT = (
-        ('GF_General', 'GF_General'),
-        ('Sanguinarine', 'Sanguinarine'),
-        ('MoClo_Kit', 'MoClo_Kit'),
-        ('Yeast_CRISPR_Kit', 'Yeast_CRISPR_Kit'),
-        ('Foundry_Kit', 'Foundry_Kit'),
-    )
-
     STATUS = (
         ('Working', 'Working'),
         ('Not working', 'Not working'),
     )
 
-    name = models.CharField(max_length=100, choices=PROJECT, default='GF_General')
+    name = models.CharField(max_length=100)
     author = models.CharField(max_length=50)
     collaborators = models.CharField(max_length=500)
     status = models.CharField(max_length=50, choices=STATUS, default='Working')

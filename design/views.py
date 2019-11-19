@@ -251,7 +251,7 @@ def pcr_script(request, step, user):
             filein = File(name=name_file, script='Experiment:'+step.experiment.name, author=user, file=name_file)
             filein.save()
             step.status_run = True
-            step.input_file.add(filein)
+            step.input_file_script.add(filein)
             # step.output_files.add(outfile_mantis)
             # step.output_files.add(outfile_robot)
             step.instructions = ''
