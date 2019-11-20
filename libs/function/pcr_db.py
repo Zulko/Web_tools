@@ -417,6 +417,7 @@ def run_pcr_db(path, filename, dispenser_parameters, mix_parameters, out_num_wel
     list_part_count = get_part_count(filein)
 
     """Verify the parts on database"""
+    #TODO: Filter plates with function 'inventory' or specific plate
     found_parts, missing_parts = find_templates_database(list_part_count)
 
     if len(missing_parts) > 0:
@@ -426,6 +427,7 @@ def run_pcr_db(path, filename, dispenser_parameters, mix_parameters, out_num_wel
 
     else:
         '''Verify the primers for the parts'''
+        # TODO: Filter plates with function 'inventory' or specific plate
         found_list, missing_primers = find_primers_database(list_part_count, found_parts)
 
         if len(missing_primers) > 0:

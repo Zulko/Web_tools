@@ -10,6 +10,7 @@ PlateS1,A2,PlateD1,D1,4
 from ..biofoundry import db
 from ..misc import calc, file
 from ..container import plate
+from db.models import Plate
 import sys, os
 
 MAX_PLATES = 12
@@ -46,7 +47,7 @@ def generate_random_names(name, init, end):
     """
     names = []
     for i in range(init, end):
-        names.append(str(name) + str(i))
+        names.append(str(name) + '{0:07}'.format(i))
     return names
 
 
@@ -73,6 +74,7 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
     """
     num_pattern = int(total_destination/total_source)
     '''Add the header'''
+    num = Plate.objects.latest('id').id
     if pattern == BY_ROW:
         file_path_out = 'media/docs/source_' + str(total_source) + '_' + str(num_pattern) + 'spot_byrow.csv'
         outfile = file.create(file_path_out, 'w')
@@ -84,7 +86,7 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
             plateS_num = i + 1
             source_name = 'Source_' + str(plateS_num)
             source_plate = create_plate(num_wells, source_name)
-            destination_names = generate_random_names('Destination_', num_pattern*i+1, num_pattern*i+num_pattern+1)
+            destination_names = generate_random_names('Spotting_', num_pattern*i+num+1, num_pattern*i+num_pattern+num+1)
             destination_plates = []
             for j in range(0, len(destination_names)):
                 destination_plates.append(create_plate(num_wells, destination_names[j]))
@@ -92,6 +94,9 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
             file.write_by_row(source_plate, destination_plates, num_pattern, outcsv, VOLUME)
         outfile_name = os.path.basename(file_path_out)
         # print(file.colours.BOLD + 'Output File: ' + outfile_name + file.colours.BOLD)
+        outfile.flush()
+        os.fsync(outfile)
+        outfile.close()
         return outfile_name, file_path_out, None, None
 
     elif pattern == BY_COL:
@@ -105,7 +110,7 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
             plateS_num = i + 1
             source_name = 'Source_' + str(plateS_num)
             source_plate = create_plate(num_wells, source_name)
-            destination_names = generate_random_names('Destination_', num_pattern * i + 1, num_pattern * i + num_pattern + 1)
+            destination_names = generate_random_names('Spotting_', num_pattern * i + num + 1, num_pattern * i + num_pattern + num + 1)
             destination_plates = []
             for j in range(0, len(destination_names)):
                 destination_plates.append(create_plate(num_wells, destination_names[j]))
@@ -113,6 +118,9 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
             file.write_by_col(source_plate, destination_plates, num_pattern, outcsv, VOLUME)
         outfile_name = os.path.basename(file_path_out)
         # print(file.colours.BOLD + 'Output File: ' + outfile_name + file.colours.BOLD)
+        outfile.flush()
+        os.fsync(outfile)
+        outfile.close()
         return outfile_name, file_path_out, None, None
 
     else:
@@ -131,12 +139,18 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
             plateS_num = i + 1
             source_name = 'Source_' + str(plateS_num)
             source_plate = create_plate(num_wells, source_name)
-            destination_names = generate_random_names('Destination_', num_pattern * i + 1, num_pattern * i + num_pattern + 1)
+            destination_names = generate_random_names('Spotting_', num_pattern * i + num + 1, num_pattern * i + num_pattern + num + 1)
             destination_plates = []
             for j in range(0, len(destination_names)):
                 destination_plates.append(create_plate(num_wells, destination_names[j]))
             '''Call Function to write the CSV by rows'''
             file.write_scol_dcol_by_spot(source_plate, destination_plates, num_pattern, outcsv, VOLUME, outcsv_worklist)
+        outfile.flush()
+        out_worklist.flush()
+        os.fsync(outfile)
+        os.fsync(out_worklist)
+        outfile.close()
+        out_worklist.close()
         outfile_name = os.path.basename(file_path_out)
         outfile_worlistname = os.path.basename(file_worklist_path_out)
         # print(file.colours.BOLD + 'Output File: ' + outfile_name + '\tWorklist: ' + outfile_worlistname + file.colours.BOLD)
@@ -167,6 +181,7 @@ def run_spotting(num_source_plates, num_wells, num_pattern, pattern, user):
 
         db_outfile = db.save_file(outfile_name, 'Spotting', user)
         db_worklist = db.save_file(worklist_name, 'Spotting', user)
+
         # print(db_worklist, db_outfile.file.url)
 
     # return outfile_name, worklist_name, None

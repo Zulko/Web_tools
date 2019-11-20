@@ -73,9 +73,7 @@ def upload_file(request, filename):
 
 @login_required()
 def plate_list_inventory(request):
-    print('plate_list_inventory')
     all_plates = Plate.objects.filter(function="Inventory")
-    print(all_plates)
     plate_filter = PlateFilter(request.GET, queryset=all_plates)
     formPlateAdd = PlateForm()
     formPlateUpdate = PlateForm()
@@ -104,7 +102,6 @@ def plate_list_inventory(request):
 
 @login_required()
 def plate_list_reagents(request):
-    print('plate_list_resgents')
     all_plates = Plate.objects.filter(function="Reagents")
     plate_filter = PlateFilter(request.GET, queryset=all_plates)
     formPlateAdd = PlateForm()
@@ -134,7 +131,6 @@ def plate_list_reagents(request):
 
 @login_required()
 def plate_list_process(request):
-    print('plate_list_process')
     all_plates = Plate.objects.filter(function='Process')
     plate_filter = PlateFilter(request.GET, queryset=all_plates)
     formPlateAdd = PlateForm()
@@ -348,7 +344,6 @@ def plate_update(request, plate_id):
 
 @login_required()
 def well(request, plate_id, well_id):
-    print('well')
     all_plates = Plate.objects.all()
     plate_filter = PlateFilter(request.GET, queryset=all_plates)
     all_wells = Well.objects.filter(plate_id=plate_id)
@@ -745,7 +740,6 @@ def machine_delete(request, machine_id):
 
 @login_required()
 def project_list(request):
-    print('project list')
     all_project = Project.objects.all()
     # plate_filter = PlateFilter(request.GET, queryset=all_plates)
     formProjectAdd = ProjectForm()

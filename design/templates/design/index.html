@@ -84,12 +84,15 @@
             {% for experiment in all_experiments %}
                 <tr>
                 <td><a href="{% url 'design:experiment_view' experiment.id %}" style="font-size: 12px;" class="btn btn-outline-secondary btn-sm m-0;"> {{ experiment.name }} </a> </td>
-                <td>{{ experiment.project }} </td>
+                <td>{% for project in experiment.project.all %}
+                    {{ project }}
+                    {% endfor %}
+                </td>
                 <td>{{ experiment.author }} </td>
 
                 <td>{% for step in all_steps %}
                     {% if step.experiment.id == experiment.id %}
-                        {{ step }}
+                        {{ step }}<br>
                     {% endif %}
                     {% endfor %}
                 </td>

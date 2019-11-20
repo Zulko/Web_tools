@@ -118,35 +118,57 @@
                     {% if step %}
                         <div class="container">
                             <div class="row">
+                                <!-- Step Configuration  -->
                                 <div class="col-6 shadow-sm p-4 mb-4 bg-white">
                                     <h5>{{ step.name }}
                                         {% if step.status_run is True %}
                                             <i class="fas fa-check-circle"></i>
                                         {% endif %}
                                     </h5><br>
-                                    <p>Description: {{ step.description }}</p>
-                                    <p>Script: {{ step.script }}</p>
-                                    <p>Instruments: {{ step.instrument }}</p>
-                                    {% if step.input_file_step %}
-                                        <p>Input file step:
-                                            <a href="{{ step.input_file_step.url }}" class="btn btn-info btn-sm " target="_blank">Download File</a>
-                                        </p>
-                                    {% endif %}
-
-                                    <p>Status: {{ step.status_run }}</p>
+                                    <table id="step_list_table" class="table table-sm table-borderless" cellspacing="0" width="100%">
+                                        <thead><tr></tr></thead>
+                                        <tbody>
+                                            <tr><td>Description: {{ step.description }}</td></tr>
+                                            <tr><td>Script: {{ step.script }}</td></tr>
+                                            <tr><td>Instruments:
+                                                {% for machine in step.machine.all %}
+                                                    {{ machine }},
+                                                {% endfor %}
+                                            </td></tr>
+                                            <tr><td>Description: {{ step.description }}</td></tr>
+                                            <tr><td>Input file step:
+                                                {% if step.input_file_step %}
+                                                    <a href="{{ step.input_file_step.url }}"
+                                                    class="btn btn-info btn-sm " target="_blank">Download File
+                                                    </a>
+                                                {% endif %}
+                                            </td></tr>
+                                            <tr><td>Run: {{ step.status_run }}</td></tr>
+                                        </tbody>
+                                    </table>
                                 </div>
 
                                 <!-- Runned Script shows the output files  -->
                                 <div class="col-6 shadow-sm p-4 mb-4 bg-white">
-                                    <!-- Output for Script -->
+
+                                    <!-- Output for Empty Script -->
                                     {% if step.script == '' %}
                                     {% endif %}
+
                                     <!-- Output for Spotting Script -->
                                     {% if step.script == 'Spotting' %}
                                         {% if step.status_run is True %}
+                                            <!-- Files  -->
+                                            Output Files:
                                             {% for file in step.output_files.all %}
-                                                <p>File: <a href="{{ file.file.url }}" class="btn btn-info btn-sm btn-block" target="_blank">{{file.name}} </a></p>
+                                                <li><a href="{{ file.file.url }}">{{file.name}} </a></li>
+                                            {% endfor %}<br>
+                                            Process Plates:
+                                            {% for plate in step.output_plates.all %}
+                                                <li><a href="{% url 'db:plate' plate.id %}" target="_blank">{{plate.name}} </a></li>
                                             {% endfor %}
+
+
                                         {% else %}
                                             {% if alert %}
                                             <div class="alert">

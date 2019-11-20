@@ -1,16 +1,10 @@
 from django.db import models
-from db.models import File, Sample, Plate, Well
+from db.models import File, Sample, Plate, Well, Project, Machine
 
 # Create your models here.
 
 
 class Experiment(models.Model):
-    PROJECT = (
-        ('GF', 'GF_general'),
-        ('SA', 'Sanguinarine'),
-        ('MK', 'MoClo kit'),
-        ('YK', 'Yeast CRISPR kit'),
-    )
     STATUS = (
         ('On going', 'On going'),
         ('Completed', 'Completed'),
@@ -19,7 +13,7 @@ class Experiment(models.Model):
     )
 
     name = models.CharField(max_length=100)
-    project = models.CharField(max_length=100, choices=PROJECT, blank=True)
+    project = models.ManyToManyField(Project, blank=True)
     author = models.CharField(max_length=30)
     # workflow = models.ManyToManyField(Step, blank=True)
     status = models.CharField(default='On going', max_length=30, choices=STATUS, blank=True)
@@ -39,23 +33,13 @@ class Step(models.Model):
         ('PCR', 'PCR'),
     )
 
-    INSTRUMENTS = (
-        ('Echo', 'Echo'),
-        ('Mantis', 'Mantis'),
-        ('Biomek', 'Biomek'),
-        ('QIAquick96', 'QIAquick96'),
-        ('Qpix', 'Qpix'),
-        ('Thermal Cycler', 'Thermal Cycler'),
-        ('Fragment Analyzer', 'Fragment Analyzer'),
-    )
-
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=500, blank=True)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
     script = models.CharField(max_length=30, choices=SCRIPTS, blank=True)
     instructions = models.CharField(max_length=10000, blank=True)
-    instrument = models.CharField(max_length=100, blank=True)
+    machine = models.ManyToManyField(Machine, blank=True) #old instruments column
     input_file_step = models.FileField(upload_to='design/', max_length=10000, null=True, blank=True)
     input_file_script = models.ForeignKey(File, blank=True, null=True, on_delete=models.CASCADE)
     output_files = models.ManyToManyField(File, blank=True, related_name='script_output_files')

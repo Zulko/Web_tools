@@ -6,8 +6,6 @@ from ..container import plate, machine
 from db.models import Plate, Well
 
 
-
-
 def create_plate(num_wells, name):
     """
     Returns a Plate with number of wells and name
@@ -21,19 +19,26 @@ def create_plate(num_wells, name):
     return new_plate
 
 
-def create_plate_on_database(path, file, num_well_destination, step):
+def create_plate_on_database_old(path, file, num_well_destination, step):
     filein = open(path + '/docs/' + file.name, 'r')
     plates_out = []
     filein.readline()  # jump header
     for line in filein:
         found = False
         line = line.split(',')
-        part, source_plate, source_well, destination_plate_id, destination_plate_name, destination_well, volume = line
+        if len(line) == 12:
+            '''Echo file used in Spotting Script'''
+            source_id, source_plate, source_well, destination_plate_id, destination_plate_name, destination_well, \
+            volume, source_row, source_col, destination_row, destination_col, plate_row = line
+
+        else:
+            '''Echo file used in PCR Script and Moclo Script'''
+            part, source_plate, source_well, destination_plate_id, destination_plate_name, destination_well, volume = line
         if len(plates_out) == 0:
             if num_well_destination == 96:
-                plate = Plate.create(destination_plate_name, 'Plate', 'Process', step.experiment.project, 12, 8, 96)
+                plate = Plate.create(destination_plate_name, 'Plate', 'Process', 12, 8, 96)
             else:
-                plate = Plate.create(destination_plate_name, 'Plate', 'Process', step.experiment.project, 24, 16, 384)
+                plate = Plate.create(destination_plate_name, 'Plate', 'Process', 24, 16, 384)
             plates_out.append(plate)
         else:
             for plate_out in plates_out:
@@ -41,10 +46,52 @@ def create_plate_on_database(path, file, num_well_destination, step):
                     found = True
             if found is False:
                 if num_well_destination == 96:
-                    plate = Plate.create(destination_plate_name, 'Plate', 'Process', step.experiment.project, 12, 8, 96)
+                    plate = Plate.create(destination_plate_name, 'Plate', 'Process', 12, 8, 96)
                 else:
-                    plate = Plate.create(destination_plate_name, 'Plate', 'Process', step.experiment.project, 24, 16,
-                                         384)
+                    plate = Plate.create(destination_plate_name, 'Plate', 'Process', 24, 16, 384)
+                plates_out.append(plate)
+    return plates_out
+
+
+def create_plate_on_database(path, file, num_well_destination, step):
+    filein = open(path + '/docs/' + file.name, 'r')
+    plates_out = []
+    filein.readline()  # jump header
+    for line in filein:
+        found = False
+        line = line.split(',')
+        if len(line) == 12:
+            '''Echo file used in Spotting Script'''
+            source_id, source_plate, source_well, destination_plate_id, destination_plate_name, destination_well, \
+            volume, source_row, source_col, destination_row, destination_col, plate_row = line
+
+        else:
+            '''Echo file used in PCR Script and Moclo Script'''
+            part, source_plate, source_well, destination_plate_id, destination_plate_name, destination_well, volume = line
+
+        if len(plates_out) == 0:
+            if num_well_destination == 96:
+                plate = Plate.create(destination_plate_name, 'Plate', 'Process', 12, 8, 96)
+            else:
+                plate = Plate.create(destination_plate_name, 'Plate', 'Process', 24, 16, 384)
+
+            Well.create(name=destination_well, volume=volume, concentration=0, plate=plate,
+                                   parent_well=None)
+            plates_out.append(plate)
+        else:
+            for plate_out in plates_out:
+                if plate_out.name == destination_plate_name:
+                    Well.create(name=destination_well, volume=volume, concentration=0,
+                                       plate=plate, parent_well=None)
+                    found = True
+            if found is False:
+                if num_well_destination == 96:
+                    plate = Plate.create(destination_plate_name, 'Plate', 'Process', 12, 8, 96)
+                else:
+                    plate = Plate.create(destination_plate_name, 'Plate', 'Process', 24, 16, 384)
+
+                Well.create(name=destination_well, volume=volume, concentration=0, plate=plate,
+                                  parent_well=None)
                 plates_out.append(plate)
     return plates_out
 

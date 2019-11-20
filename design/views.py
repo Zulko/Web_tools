@@ -28,6 +28,16 @@ def upload_file(request, filename):
     return upload, fs, name, url
 
 
+def delete_files(list_files):
+    for file in list_files:
+        file.delete()
+
+
+def delete_plates(list_plates):
+    for plate in list_plates:
+        plate.delete()
+
+
 @login_required()
 def design_view(request):
     print('design_view')
@@ -187,6 +197,11 @@ def step_add(request, experiment_id):
 
 
 def spotting_script(request, step, user):
+    '''Clean the old files in step'''
+    delete_files(step.output_files.all())
+    delete_plates(step.output_plates.all())
+    step.save()
+
     num_sources = request.POST['num_sources']
     num_well = request.POST['num_well']
     num_pattern = request.POST['num_pattern']
@@ -194,17 +209,34 @@ def spotting_script(request, step, user):
     ''' Calling Python Script'''
     outfile, worklist, alert = run_spotting(int(num_sources), int(num_well), int(num_pattern), int(pattern),
                                             user)
+
     if outfile is not None:
+        '''Add new files in step'''
         step.status_run = True
         step.output_files.add(outfile)
         step.output_files.add(worklist)
         step.save()
+
+        '''Read outfile and Create destination plates'''
+        plates_out = parser.create_plate_on_database(settings.MEDIA_ROOT, outfile, int(num_well), step)
+        for plate in plates_out:
+            step.output_plates.add(plate)
+            plate.save()
+        step.save()
+
         return outfile, worklist, alert
     else:
         return None, None, alert
 
 
 def pcr_script(request, step, user):
+    '''Clean the info and old files in step'''
+    step.input_file_script.delete()
+    step.instructions = ''
+    delete_files(step.output_files.all())
+    delete_plates(step.output_plates.all())
+    step.save()
+
     if len(request.FILES) != 0:
         upload, fs, name_file, url_file = upload_file(request, 'upload_file')
 
@@ -252,9 +284,8 @@ def pcr_script(request, step, user):
             filein.save()
             step.status_run = True
             step.input_file_script.add(filein)
-            # step.output_files.add(outfile_mantis)
-            # step.output_files.add(outfile_robot)
-            step.instructions = ''
+            step.output_files.add(outfile_mantis)
+            step.output_files.add(outfile_robot)
             for item in mixer_recipe:
                 step.instructions += str(item[0]) + ': '+str(item[1]) + 'ul, '
             for item in chip_mantis:
@@ -267,6 +298,7 @@ def pcr_script(request, step, user):
 
             plates_out = parser.create_plate_on_database(settings.MEDIA_ROOT, outfile_robot, num_well_destination, step)
             for plate in plates_out:
+                print(plate.name)
                 step.output_plates.add(plate)
 
             #reduce volume in source plates
@@ -286,7 +318,6 @@ def pcr_script(request, step, user):
 
 @login_required()
 def step_view(request, experiment_id, step_id):
-    print('step_view')
     user = request.user
     experiment = get_object_or_404(Experiment, id=experiment_id)
     all_steps = Step.objects.filter(experiment_id=experiment.id).order_by('-id').reverse()
@@ -297,24 +328,20 @@ def step_view(request, experiment_id, step_id):
     run_results = None
 
     if 'submit_update_experiment' in request.POST:
-        print('found the form update')
         formExperimentUpdate = ExperimentForm(request.POST, request.FILES, instance=experiment)
         if formExperimentUpdate.is_valid():
             formExperimentUpdate.save()
             return redirect('design:experiment_view', experiment.id)
 
     elif 'submit_add_step' in request.POST:
-        print('try add step')
         formStepAdd = StepForm(request.POST, request.FILES, initial={'experiment': experiment})
         if formStepAdd.is_valid():
-            print('form is valid')
             step = formStepAdd.save()
             return redirect('design:step_view', experiment.id, step.id)
         else:
             print('form is not valid')
 
     elif 'submit_update_step' in request.POST:
-        print('try to update')
         formStepUpdate = StepForm(request.POST, request.FILES, instance=step)
         if formStepUpdate.is_valid():
             formStepUpdate.save()
@@ -324,6 +351,7 @@ def step_view(request, experiment_id, step_id):
         if step.script == 'Spotting':
             outfile, worklist, alert = spotting_script(request, step, user)
 
+            #Read outfile and create process plates
             context = {
                 'all_steps': all_steps,
                 'step': step,
@@ -392,7 +420,6 @@ def step_update(request, experiment_id, step_id):
     experiment = get_object_or_404(Experiment, id=experiment_id)
     step = get_object_or_404(Step, id=step_id)
     formExperimentUpdate = ExperimentForm(instance=experiment)
-    print('submit_update_step')
     if 'submit_update_step' in request.POST:
         formStepUpdate = StepForm(request.POST, request.FILES, instance=step)
         if formStepUpdate.is_valid():

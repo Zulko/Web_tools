@@ -1,5 +1,6 @@
 from django import forms
 from .models import Experiment, Step
+from db.models import Machine
 
 
 class ExperimentForm(forms.ModelForm):
@@ -12,13 +13,9 @@ class ExperimentForm(forms.ModelForm):
 
 
 class StepForm(forms.ModelForm):
-    instrument = forms.MultipleChoiceField(choices=Step.INSTRUMENTS, widget=forms.CheckboxSelectMultiple)
-
-    def clean_region(self):
-        if len(self.cleaned_data['instrument']) > 3:
-            raise forms.ValidationError('Select only 3 option.')
-        return self.cleaned_data['instrument']
+    # machine = forms.MultipleChoiceField(queryset=Machine.objects.all(), widget=forms.CheckboxSelectMultiple, required=False)
+    # TO DO: Add a checkbox
 
     class Meta:
         model = Step
-        fields = ['name', 'status_run', 'description', 'script', 'instrument', 'experiment', 'input_file_step',]
+        fields = ['name', 'status_run', 'description', 'script', 'machine', 'experiment', 'input_file_step',]

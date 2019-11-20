@@ -84,13 +84,6 @@ class Plate(models.Model):
         ('Process', 'Process'),
         ('Reagents', 'Reagents'),
     )
-    PROJECT = (
-        ('GF_General', 'GF_General'),
-        ('Sanguinarine', 'Sanguinarine'),
-        ('MoClo_Kit', 'MoClo_Kit'),
-        ('Yeast_CRISPR_Kit', 'Yeast_CRISPR_Kit'),
-        ('Foundry_Kit', 'Foundry_Kit'),
-    )
     CONTENTS = (
         ('DNA', 'DNA'),
         ('Cells', 'Cells'),
@@ -142,12 +135,12 @@ class Plate(models.Model):
         ordering = ('id',)
 
     @classmethod
-    def create(cls, name, type, function, project, num_cols, num_rows, num_well):
-        print(name, type, function, project, num_well)
+    def create(cls, name, type, function, num_cols, num_rows, num_well):
         plate = cls(
-            name=name, type=type, function=function, barcode=cls.barcode, project=project,
+            name=name, type=type, function=function, barcode=cls.get_barcode(),
             num_cols=num_cols, num_rows=num_rows, num_well=num_well
         )
+        plate.save()
         return plate
 
     def get_absolute_url(self):
@@ -315,6 +308,15 @@ class Well(models.Model):
 
     def __str__(self):
         return self.name
+
+    @classmethod
+    def create(cls, name, volume, concentration, plate, parent_well):
+        well = cls(
+            name=name, volume=volume, concentration=concentration, plate=plate, active=True,
+            parent_well=parent_well
+        )
+        well.save()
+        return well
 
     def save(self, *args, **kwargs):
         self.name = self.name.upper()
