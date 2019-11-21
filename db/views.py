@@ -42,33 +42,33 @@ def upload_file(request, filename):
     return upload, fs, name, url
 
 
-# @login_required()
-# def plate_list(request):
-#     all_plates = Plate.objects.all()
-#     plate_filter = PlateFilter(request.GET, queryset=all_plates)
-#     formPlateAdd = PlateForm()
-#     formPlateUpdate = PlateForm()
-#
-#     if 'submit_plate_add' in request.POST:
-#         formPlateAdd = PlateForm(request.POST, request.FILES)
-#         if formPlateAdd.is_valid():
-#             new_plate = formPlateAdd.save()
-#             return redirect('db:plate', new_plate.id)
-#
-#     elif 'form_plate_update' in request.POST:
-#         formPlateUpdate = PlateForm(request.POST, request.FILES)
-#         if formPlateUpdate.is_valid():
-#             new_plate = formPlateUpdate.save()
-#             return redirect('db:plate', new_plate.id)
-#
-#     context = {
-#         'form_plate_add': formPlateAdd,
-#         'form_plate_update': formPlateUpdate,
-#         "all_plates": all_plates,
-#         'filter': plate_filter
-#     }
-#
-#     return render(request, 'db/index.html', context)
+@login_required()
+def plate_list(request):
+    all_plates = Plate.objects.all()
+    plate_filter = PlateFilter(request.GET, queryset=all_plates)
+    formPlateAdd = PlateForm()
+    formPlateUpdate = PlateForm()
+
+    if 'submit_plate_add' in request.POST:
+        formPlateAdd = PlateForm(request.POST, request.FILES)
+        if formPlateAdd.is_valid():
+            new_plate = formPlateAdd.save()
+            return redirect('db:plate', new_plate.id)
+
+    elif 'form_plate_update' in request.POST:
+        formPlateUpdate = PlateForm(request.POST, request.FILES)
+        if formPlateUpdate.is_valid():
+            new_plate = formPlateUpdate.save()
+            return redirect('db:plate', new_plate.id)
+
+    context = {
+        'form_plate_add': formPlateAdd,
+        'form_plate_update': formPlateUpdate,
+        "all_plates": all_plates,
+        'filter': plate_filter
+    }
+
+    return render(request, 'db/index.html', context)
 
 
 @login_required()
@@ -290,7 +290,16 @@ def plate_print(request, plate_id):
 def plate_delete(request, plate_id):
     if request.method == 'POST':
         plate = Plate.objects.get(id=plate_id)
-        plate.delete()
+        if plate.function == 'Inventory':
+            plate.delete()
+            return redirect('db:inventory_plates')
+        elif plate.function == 'Process':
+            plate.delete()
+            return redirect('db:process_plates')
+        elif plate.function == 'Reagents':
+            plate.delete()
+            return redirect('db:reagents_plates')
+
     return redirect('db:index')
 
 

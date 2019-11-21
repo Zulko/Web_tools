@@ -339,20 +339,43 @@
                                     </tr>
                                 </table>
                             </div>
-                        {% endfor %}
-                      </fieldset>
-                      <fieldset class="form-group overflow-auto">
-                        <table class="table table-hover">
-                            <tr>
-                                <th>Volume</th>
-                                <td>{{ well.volume }}</td>
-                            </tr>
-                            <tr>
-                                <th>Concentration</th>
-                                <td> {{ well.concentration }}</td>
+
+                        {% if well.samples.count < 2%}
+                            <fieldset class="form-group overflow-auto">
+                            <table class="table table-hover">
+                                <tr>
+                                    <th>Volume</th>
+                                    <td>{{ well.volume }} &microL</td>
+                                </tr>
+                                <tr>
+                                    <th>Concentration</th>
+                                    <td> {{ well.concentration }}
+                                    {% if sample.sample_type == 'Primer' %}
+                                        &microM
+                                    {% else %}
+                                        ng/&microL
+                                    {% endif %}
+                                    </td>
+                                </tr>
+                            </table>
+                          </fieldset>
+                        {% endif %}
+                    {% endfor %}
+                    </fieldset>
+                    {% if well.samples.count > 1 or well.samples.count == 0%}
+                    <fieldset class="form-group overflow-auto">
+                      <table class="table table-hover">
+                          <tr>
+                              <th>Volume</th>
+                              <td>{{ well.volume }} &microL</td>
+                          </tr>
+                          <tr>
+                              <th>Concentration</th>
+                              <td> {{ well.concentration }} ng/&microL</td>
                             </tr>
                         </table>
                       </fieldset>
+                    {% endif %}
                  </ul>
               {% endif %}
               {% if well.active == False %}

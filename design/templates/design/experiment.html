@@ -189,15 +189,24 @@
                                     <!-- Output for PCR Script -->
                                     {% if step.script == 'PCR' %}
                                         {% if step.status_run is True %}
+                                            Output Files:
                                             {% for file in step.output_files.all %}
-                                                <p>File: <a href="{{ file.file.url }}" class="btn btn-info btn-sm btn-block" target="_blank">{{file.name}} </a></p>
-                                            {% endfor %}
-                                            <p>Instructions:<br> {{ step.instructions }}</p>
-                                            <p>Source plates:<br>
+                                                <li><a href="{{ file.file.url }}">{{file.name}} </a></li>
+                                            {% endfor %}<br>
+
+                                            <p>Instructions:<br>
+                                                {{ step.instructions }}</p>
+
+                                            Source plates:
                                             {% for plate in step.input_plates.all %}
-                                                <a href="{% url 'db:plate' plate.id %}"> {{ plate.name }} </a>
+                                                <li><a href="{% url 'db:plate' plate.id %}"> {{ plate.name }} </a></li>
+                                            {% endfor %}<br>
+
+                                            Process Plates:
+                                            {% for plate in step.output_plates.all %}
+                                                <li><a href="{% url 'db:plate' plate.id %}" target="_blank">{{plate.name}} </a></li>
                                             {% endfor %}
-                                            </p>
+
                                         {% else %}
                                             {% if alert %}
                                             <div class="alert">

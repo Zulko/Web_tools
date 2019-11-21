@@ -1,4 +1,4 @@
-import os
+import os, decimal
 from django.shortcuts import get_object_or_404
 
 from ..misc import calc, file, parser
@@ -74,15 +74,28 @@ def create_plate_on_database(path, file, num_well_destination, step):
                 plate = Plate.create(destination_plate_name, 'Plate', 'Process', 12, 8, 96)
             else:
                 plate = Plate.create(destination_plate_name, 'Plate', 'Process', 24, 16, 384)
+            try:
+                Well.create(name=destination_well, volume=volume, concentration=0, plate=plate, parent_well=None)
+            except:
+                well = get_object_or_404(Well, plate=plate, name=destination_well)
+                print(well.name, well.volume)
+                well.volume = well.volume + decimal.Decimal(volume)
+                well.save()
+                print(well.name, well.volume)
 
-            Well.create(name=destination_well, volume=volume, concentration=0, plate=plate,
-                                   parent_well=None)
             plates_out.append(plate)
         else:
             for plate_out in plates_out:
                 if plate_out.name == destination_plate_name:
-                    Well.create(name=destination_well, volume=volume, concentration=0,
+                    try:
+                        Well.create(name=destination_well, volume=volume, concentration=0,
                                        plate=plate, parent_well=None)
+                    except:
+                        well = get_object_or_404(Well, plate=plate, name=destination_well)
+                        print(well.name, well.volume)
+                        well.volume = well.volume + decimal.Decimal(volume)
+                        well.save()
+                        print(well.name, well.volume)
                     found = True
             if found is False:
                 if num_well_destination == 96:
@@ -90,9 +103,17 @@ def create_plate_on_database(path, file, num_well_destination, step):
                 else:
                     plate = Plate.create(destination_plate_name, 'Plate', 'Process', 24, 16, 384)
 
-                Well.create(name=destination_well, volume=volume, concentration=0, plate=plate,
+                try:
+                    Well.create(name=destination_well, volume=volume, concentration=0, plate=plate,
                                   parent_well=None)
+                except:
+                    well = get_object_or_404(Well, plate=plate, name=destination_well)
+                    print(well.name, well.volume)
+                    well.volume = well.volume + decimal.Decimal(volume)
+                    well.save()
+                    print(well.name, well.volume)
                 plates_out.append(plate)
+
     return plates_out
 
 

@@ -117,7 +117,7 @@ class Plate(models.Model):
 
     name = models.CharField(max_length=50, unique=True, default=get_name)
     type = models.CharField(max_length=50, choices=CONTAINER_TYPES, default=CONTAINER_TYPES[0][0])
-    function = models.CharField(max_length=50, choices=CONTAINER_FUNCTION, default=CONTAINER_FUNCTION[0][0], blank=True)
+    function = models.CharField(max_length=50, choices=CONTAINER_FUNCTION, default=CONTAINER_FUNCTION[0][0])
     barcode = models.CharField(max_length=30, unique=True, default=get_barcode)
     project = models.ManyToManyField(Project, blank=True)
     num_cols = models.IntegerField()

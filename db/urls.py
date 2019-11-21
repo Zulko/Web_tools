@@ -7,6 +7,7 @@ app_name = 'db'
 urlpatterns = [
 
     # Plate views
+    path('', views.plate_list_inventory, name='index'),
     path('inventory_list/', views.plate_list_inventory, name='inventory_plates'),
     path('reagent_list/', views.plate_list_reagents, name='reagents_plates'),
     path('process_list/', views.plate_list_process, name='process_plates'),

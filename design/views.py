@@ -231,7 +231,8 @@ def spotting_script(request, step, user):
 
 def pcr_script(request, step, user):
     '''Clean the info and old files in step'''
-    step.input_file_script.delete()
+    step.input_plates.clear()
+    step.input_file_script = None
     step.instructions = ''
     delete_files(step.output_files.all())
     delete_plates(step.output_plates.all())
@@ -283,7 +284,7 @@ def pcr_script(request, step, user):
             filein = File(name=name_file, script='Experiment:'+step.experiment.name, author=user, file=name_file)
             filein.save()
             step.status_run = True
-            step.input_file_script.add(filein)
+            step.input_file_script = filein
             step.output_files.add(outfile_mantis)
             step.output_files.add(outfile_robot)
             for item in mixer_recipe:
@@ -298,7 +299,6 @@ def pcr_script(request, step, user):
 
             plates_out = parser.create_plate_on_database(settings.MEDIA_ROOT, outfile_robot, num_well_destination, step)
             for plate in plates_out:
-                print(plate.name)
                 step.output_plates.add(plate)
 
             #reduce volume in source plates
