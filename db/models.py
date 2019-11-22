@@ -62,6 +62,9 @@ class Project(models.Model):
     def __str__(self):
         return self.name
 
+    def get_projects(self):
+        return ",".join([str(p) for p in self.name.all()])
+
 
 class Plate(models.Model):
     STATUS = (

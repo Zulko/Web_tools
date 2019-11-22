@@ -64,10 +64,12 @@ def create_plate_on_database(path, file, num_well_destination, step):
             '''Echo file used in Spotting Script'''
             source_id, source_plate, source_well, destination_plate_id, destination_plate_name, destination_well, \
             volume, source_row, source_col, destination_row, destination_col, plate_row = line
+            volume = float(volume)/1000
 
         else:
             '''Echo file used in PCR Script and Moclo Script'''
             part, source_plate, source_well, destination_plate_id, destination_plate_name, destination_well, volume = line
+            volume = float(volume)/1000
 
         if len(plates_out) == 0:
             if num_well_destination == 96:
@@ -78,10 +80,8 @@ def create_plate_on_database(path, file, num_well_destination, step):
                 Well.create(name=destination_well, volume=volume, concentration=0, plate=plate, parent_well=None)
             except:
                 well = get_object_or_404(Well, plate=plate, name=destination_well)
-                print(well.name, well.volume)
                 well.volume = well.volume + decimal.Decimal(volume)
                 well.save()
-                print(well.name, well.volume)
 
             plates_out.append(plate)
         else:
@@ -92,10 +92,8 @@ def create_plate_on_database(path, file, num_well_destination, step):
                                        plate=plate, parent_well=None)
                     except:
                         well = get_object_or_404(Well, plate=plate, name=destination_well)
-                        print(well.name, well.volume)
                         well.volume = well.volume + decimal.Decimal(volume)
                         well.save()
-                        print(well.name, well.volume)
                     found = True
             if found is False:
                 if num_well_destination == 96:
@@ -108,10 +106,8 @@ def create_plate_on_database(path, file, num_well_destination, step):
                                   parent_well=None)
                 except:
                     well = get_object_or_404(Well, plate=plate, name=destination_well)
-                    print(well.name, well.volume)
                     well.volume = well.volume + decimal.Decimal(volume)
                     well.save()
-                    print(well.name, well.volume)
                 plates_out.append(plate)
 
     return plates_out

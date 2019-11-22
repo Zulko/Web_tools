@@ -199,7 +199,7 @@
 
                                             Source plates:
                                             {% for plate in step.input_plates.all %}
-                                                <li><a href="{% url 'db:plate' plate.id %}"> {{ plate.name }} </a></li>
+                                                <li><a href="{% url 'db:plate' plate.id %}" target="_blank"> {{ plate.name }} </a></li>
                                             {% endfor %}<br>
 
                                             Process Plates:

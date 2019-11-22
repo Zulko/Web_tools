@@ -1,5 +1,6 @@
 from import_export import resources, fields, widgets
-from .models import Sample, Plate, Well, Project
+from import_export.results import RowResult
+from db.models import Sample, Plate, Well, Project
 
 
 class SampleResource(resources.ModelResource):
@@ -32,7 +33,6 @@ class PlateResource(resources.ModelResource):
         column_name='well',
         attribute='name',
     )
-
     plate = fields.Field(
         column_name='plate',
         attribute='plate',
@@ -50,19 +50,40 @@ class PlateResource(resources.ModelResource):
     )
     project = fields.Field(
         column_name='project',
-        attribute='project',
-        widget=widgets.ManyToManyWidget(Project, field='name')
+        attribute='plate',
+        widget=widgets.ManyToManyWidget(Plate, field='project')
     )
+
+    # def import_row(self, row, instance_loader, **kwargs):
+    #     # overriding import_row to ignore errors and skip rows that fail to import
+    #     # without failing the entire import
+    #     import_result = super(PlateResource, self).import_row(row, instance_loader, **kwargs)
+    #     if import_result.import_type == RowResult.IMPORT_TYPE_ERROR:
+    #         # Copy the values to display in the preview report
+    #         import_result.diff = [row[val] for val in row]
+    #         # Add a column with the error message
+    #         import_result.diff.append('Errors: {}'.format([err.error for err in import_result.errors]))
+    #         # clear errors and mark the record to skip
+    #         import_result.errors = []
+    #         import_result.import_type = RowResult.IMPORT_TYPE_SKIP
+    #
+    #     return import_result
 
     class Meta:
         exclude = ('id',)
         import_id_fields = ['name', 'plate']
+        # skip_unchanged = True
+        # report_skipped = True
+        # raise_errors = False
         model = Well
-        skip_unchanged = True
-        fields = ('name', 'plate', 'project', 'samples', 'alias', 'volume', 'concentration', 'active', 'status')
+
+        fields = ('name', 'plate', 'samples', 'alias', 'project', 'volume', 'concentration', 'active', 'status')
         # export_order = ('plate', 'name', 'samples', 'volume', 'concentration', 'active', 'status')
 
         def get_queryset(self):
             return self.model.objects.all().order_by('name')
         # return self._meta.model.objects.order_by('name')
+
+
+
 
