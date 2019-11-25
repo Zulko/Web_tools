@@ -53,11 +53,11 @@ class PlateResource(resources.ModelResource):
         attribute='samples',
         widget=widgets.ManyToManyWidget(Sample, field='alias')
     )
-    project = fields.Field(
-        column_name='project',
-        attribute='plate',
-        widget=widgets.ManyToManyWidget(Plate, field='project')
-    )
+    # project = fields.Field(
+    #     column_name='project',
+    #     attribute='plate',
+    #     widget=widgets.ManyToManyWidget(Plate, field='project')
+    # )
 
     # def import_row(self, row, instance_loader, **kwargs):
     #     # overriding import_row to ignore errors and skip rows that fail to import
@@ -82,7 +82,7 @@ class PlateResource(resources.ModelResource):
         # raise_errors = False
         model = Well
 
-        fields = ('name', 'plate', 'samples', 'alias', 'project', 'volume', 'concentration', 'active', 'status')
+        fields = ('name', 'plate', 'samples', 'alias', 'volume', 'concentration', 'active', 'status')
         # export_order = ('plate', 'name', 'samples', 'volume', 'concentration', 'active', 'status')
 
         def get_queryset(self):
