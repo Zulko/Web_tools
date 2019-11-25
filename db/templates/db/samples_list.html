@@ -210,11 +210,6 @@
                                 {{ project }}
                             {% endfor %}
                         </td>
-
-
-{#                        <td>{% for project in sample.project.all %}#}
-{#                            {{ project }}#}
-{#                            {% endfor %}</td>#}
                         <td>{{ sample.author }}</td>
                         <td>{% if sample.length is not None %} {{ sample.length }} {% endif %}</td>
                         {% if sample.genbank %}

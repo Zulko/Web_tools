@@ -13,7 +13,6 @@ def create_plate(num_wells, name):
     :param name: String of plate name
     :return: Plate
     """
-    print(num_wells)
     rows, cols = calc.rows_columns(int(num_wells))
     new_plate = plate.Plate(rows, cols, name)
     return new_plate
@@ -185,6 +184,7 @@ def create_source_plates_from_csv(filein):
     for line in filein:
         found = False
         samp_name, samp_type, samp_len, samp_conc, volume, plate_name, plate_well, plate_num_well = line
+        # print(line)
         if plate_name != '':
             if len(plates_in) == 0:
                 plates_in.append(create_plate(plate_num_well, plate_name))

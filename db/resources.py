@@ -81,7 +81,7 @@ class PlateResource(resources.ModelResource):
         # report_skipped = True
         # raise_errors = False
         model = Well
-
+        #TODO: Add project column in plate import export files
         fields = ('name', 'plate', 'samples', 'alias', 'volume', 'concentration', 'active', 'status')
         # export_order = ('plate', 'name', 'samples', 'volume', 'concentration', 'active', 'status')
 

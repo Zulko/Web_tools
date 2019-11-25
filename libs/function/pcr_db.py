@@ -169,7 +169,9 @@ def calc_wells_available_volume(list_wells, times_needed, conc_primer, total_vol
 
         '''total times per well'''
         times_available = int(available_vol / vol_part_add)
-        total_vol_primers.append([part_name, sample_name, sample_direction, sample_type, sample_wellconcentration, sample_wellvolume, times_needed, times_available, vol_part_add, sample_platename, sample_wellname, sample_num_well])
+        total_vol_primers.append([part_name, sample_name, sample_direction, sample_type, sample_wellconcentration,
+                                  sample_wellvolume, times_needed, times_available, vol_part_add, sample_platename,
+                                  sample_wellname, sample_num_well])
 
     return total_vol_primers
 
