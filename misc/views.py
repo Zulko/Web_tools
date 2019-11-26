@@ -1,11 +1,14 @@
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 
 from libs.misc.genbank import generate_from_csv
 from libs.misc.nrc_sequence import run_nrc_sequence
+from libs.misc.echo_transfer import run_echo_transfer_from_worklist
 from libs.function.fasta2primer3 import run_primer
 from libs.function.normalization import run_normalization
+
 
 import os
 
@@ -110,3 +113,57 @@ def nrc_sequence(request):
                               {'uploadfile_name': upload.name, 'url': url, 'outfile_name': '',
                                'outfile_url': '', 'alert': alert})
     return render(request, 'misc/nrc_sequence.html', {'uploadfile_name': '', 'url': '', 'outfile_name': '', 'outfile_url': '', 'alert': ''})
+
+
+@login_required(login_url="/accounts/login/")
+def echo_transfer_db(request):
+    if request.method == "POST":
+        scriptname = 'Echo Transfer from Worklist'
+        user = request.user
+        if len(request.FILES) != 0:
+            upload, fs, name_file, url_file = upload_file(request, 'upload_file')
+
+            """Dispenser parameters"""
+            machine = request.POST['machine']
+            min_vol = request.POST['min_vol']
+            vol_resol = request.POST['vol_resol']
+            dead_vol = request.POST['dead_vol']
+            dispenser_parameters = machine, float(min_vol) * 1e-3, float(vol_resol) * 1e-3, float(dead_vol)
+
+            """Reaction parameters"""
+            template_conc = request.POST['template_conc']
+            primer_f = request.POST['primer_f']
+            primer_r = request.POST['primer_r']
+            # per_phusion = request.POST['phusion']
+            # per_buffer = request.POST['buffer']
+            # per_dntps = request.POST['dntps']
+            # total_vol = request.POST['total_vol']
+            # mantis_two_chips = 'mantis_two_chips' in request.POST
+            # add_water = 'add_water' in request.POST
+            mix_parameters = \
+                float(template_conc), \
+                float(primer_f), \
+                float(primer_r), \
+                # float(per_buffer), \
+                # float(per_phusion), \
+                # float(per_dntps), \
+                # float(total_vol), \
+                # add_water
+
+            """Destination plate"""
+            num_well_destination = request.POST['num_well_destination']
+            pattern = request.POST['pattern']
+
+            ''' Calling Python Script'''
+            alerts, outfile_robot = run_echo_transfer_from_worklist(settings.MEDIA_ROOT,
+                  name_file, dispenser_parameters, mix_parameters, int(num_well_destination), int(pattern), user, scriptname)
+
+            if len(alerts) == 0:
+                return render(request, 'misc/echo_transfer.html', {'uploadfile_name': upload, 'url_file': url_file,
+                                                      'outfile_robot': outfile_robot, 'alerts': alerts})
+            else:
+                return render(request, 'misc/echo_transfer.html',
+                              {'uploadfile_name': upload, 'url_file': url_file,
+                               'outfile_mantis': '', 'outfile_robot': '',
+                               'alerts': alerts, 'mixer_recipe': '', 'chip_mantis': ''})
+    return render(request, 'misc/echo_transfer.html')

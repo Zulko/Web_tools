@@ -71,9 +71,12 @@ def populate_destination_plates(plates_out, list_part_count, list_source_wells, 
             plates_out[p].wells[i][j].samples.append(plate.Sample(primer_f[1], primer_f[2], primer_f[3], primer_f[4], primer_f[8]))
             plates_out[p].wells[i][j].samples.append(plate.Sample(template[1], template[2], template[3], template[4], template[8]))
             # header = 'Part', 'Source Plate Name', 'Source Well', 'Destination ID', 'Destination Plate Name', 'Destination Well', 'Volume'
-            out_dispenser.append([name_part_pf+'-'+pf_name, pf_type, pf_platename, pf_wellname, pf_vol_part_add, plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
-            out_dispenser.append([name_part_pr+'-'+pr_name, pr_type, pr_platename, pr_wellname, pr_vol_part_add, plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
-            out_dispenser.append([name_part_t+'-'+t_name, t_type, t_platename, t_wellname, t_vol_part_add, plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
+            # out_dispenser.append([name_part_pf+'-'+pf_name, pf_type, pf_platename, pf_wellname, pf_vol_part_add, plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
+            out_dispenser.append([pf_name, pf_type, pf_platename, pf_wellname, pf_vol_part_add, plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
+            # out_dispenser.append([name_part_pr+'-'+pr_name, pr_type, pr_platename, pr_wellname, pr_vol_part_add, plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
+            out_dispenser.append([pr_name, pr_type, pr_platename, pr_wellname, pr_vol_part_add, plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
+            # out_dispenser.append([name_part_t+'-'+t_name, t_type, t_platename, t_wellname, t_vol_part_add, plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
+            out_dispenser.append([t_name, t_type, t_platename, t_wellname, t_vol_part_add, plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
 
             """ Sum of total volume of parts """
             total_parts_vol += pf_vol_part_add + pr_vol_part_add + t_vol_part_add
@@ -325,6 +328,7 @@ def find_templates_database(unique_list):
     missing_list = []
     for part in unique_list:
         #Need to search for sub_samples in wells
+        print(part[0])
         wells = Well.objects.filter(samples__sub_sample_id__name__exact=str(part[0]))
 
         if len(wells) > 0:
@@ -334,6 +338,7 @@ def find_templates_database(unique_list):
                     for subsample in well.samples.all():
                         if well.volume > 0:
                             lista = [part[0], subsample.name, 0, subsample.sample_type, float(well.concentration), float(well.volume), well.plate.name, well.name, int(well.plate.num_well)]
+                            print(lista)
                             found_list.append(lista)
                         else:
                             missing_list.append(part[0])
@@ -421,10 +426,10 @@ def run_pcr_db(path, filename, dispenser_parameters, mix_parameters, out_num_wel
     """Verify the parts on database"""
     #TODO: Filter plates with function 'inventory' or specific plate
     found_parts, missing_parts = find_templates_database(list_part_count)
-
+    print(found_parts)
     if len(missing_parts) > 0:
         for item in missing_parts:
-            total_alert.append('Parts not found in database or not enough volume: ' + str(item))
+            total_alert.append('Part not found as subsample in database or not enough volume: ' + str(item))
         return total_alert, None, None, None, None
 
     else:

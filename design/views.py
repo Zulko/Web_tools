@@ -309,10 +309,10 @@ def pcr_script(request, step, user):
             step.save()
             return alerts, outfile_mantis, outfile_robot, mixer_recipe, chip_mantis
         else:
-            return alerts, None, None, None, None, None
+            return alerts, None, None, None, None
     else:
         alerts = ['Missing input file']
-        return alerts, None, None, None, None, None
+        return alerts, None, None, None, None
 
 
 

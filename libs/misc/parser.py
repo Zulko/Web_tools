@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 
 from ..misc import calc, file, parser
 from ..container import plate, machine
-from db.models import Plate, Well
+from db.models import Plate, Well, Sample
 
 
 def create_plate(num_wells, name):
@@ -52,62 +52,77 @@ def create_plate_on_database_old(path, file, num_well_destination, step):
     return plates_out
 
 
+def fill_plates(plates_out, num_well_destination, destination_plate_name, destination_well, volume, sample):
+    found = False
+    if len(plates_out) == 0:
+        if num_well_destination == 96:
+            plate = Plate.create(destination_plate_name, 'Plate', 'Process', 12, 8, 96)
+        else:
+            plate = Plate.create(destination_plate_name, 'Plate', 'Process', 24, 16, 384)
+        try:
+            well = Well.create(name=destination_well, volume=volume, concentration=0, plate=plate, parent_well=None)
+            well.samples.add(sample)
+
+        except:
+            well = get_object_or_404(Well, plate=plate, name=destination_well)
+            well.samples.add(sample)
+            well.volume = well.volume + decimal.Decimal(volume)
+            well.save()
+
+        # plates_out.append(plate)
+        return plate
+    else:
+        for plate_out in plates_out:
+            if plate_out.name == destination_plate_name:
+                try:
+                    well = Well.create(name=destination_well, volume=volume, concentration=0,
+                                       plate=plate_out, parent_well=None)
+                    well.samples.add(sample)
+                except:
+                    well = get_object_or_404(Well, plate=plate_out, name=destination_well)
+                    well.volume = well.volume + decimal.Decimal(volume)
+                    well.save()
+                found = True
+        if found is False:
+            if num_well_destination == 96:
+                plate = Plate.create(destination_plate_name, 'Plate', 'Process', 12, 8, 96)
+            else:
+                plate = Plate.create(destination_plate_name, 'Plate', 'Process', 24, 16, 384)
+
+            try:
+                Well.create(name=destination_well, volume=volume, concentration=0, plate=plate,
+                            parent_well=None)
+            except:
+                well = get_object_or_404(Well, plate=plate, name=destination_well)
+                well.volume = well.volume + decimal.Decimal(volume)
+                well.save()
+            # plates_out.append(plate)
+
+
+
 def create_plate_on_database(path, file, num_well_destination, step):
     filein = open(path + '/docs/' + file.name, 'r')
     plates_out = []
     filein.readline()  # jump header
     for line in filein:
-        found = False
         line = line.split(',')
         if len(line) == 12:
             '''Echo file used in Spotting Script'''
             source_id, source_plate, source_well, destination_plate_id, destination_plate_name, destination_well, \
             volume, source_row, source_col, destination_row, destination_col, plate_row = line
             volume = float(volume)/1000
+            plates_out.extend(
+                fill_plates(plates_out, num_well_destination, destination_plate_name, destination_well, volume, None))
 
         else:
             '''Echo file used in PCR Script and Moclo Script'''
             part, source_plate, source_well, destination_plate_id, destination_plate_name, destination_well, volume = line
+            sample = Sample.objects.get(name__exact=part)
             volume = float(volume)/1000
+            plates_out.extend(
+                fill_plates(plates_out, num_well_destination, destination_plate_name, destination_well, volume, sample))
 
-        if len(plates_out) == 0:
-            if num_well_destination == 96:
-                plate = Plate.create(destination_plate_name, 'Plate', 'Process', 12, 8, 96)
-            else:
-                plate = Plate.create(destination_plate_name, 'Plate', 'Process', 24, 16, 384)
-            try:
-                Well.create(name=destination_well, volume=volume, concentration=0, plate=plate, parent_well=None)
-            except:
-                well = get_object_or_404(Well, plate=plate, name=destination_well)
-                well.volume = well.volume + decimal.Decimal(volume)
-                well.save()
 
-            plates_out.append(plate)
-        else:
-            for plate_out in plates_out:
-                if plate_out.name == destination_plate_name:
-                    try:
-                        Well.create(name=destination_well, volume=volume, concentration=0,
-                                       plate=plate, parent_well=None)
-                    except:
-                        well = get_object_or_404(Well, plate=plate, name=destination_well)
-                        well.volume = well.volume + decimal.Decimal(volume)
-                        well.save()
-                    found = True
-            if found is False:
-                if num_well_destination == 96:
-                    plate = Plate.create(destination_plate_name, 'Plate', 'Process', 12, 8, 96)
-                else:
-                    plate = Plate.create(destination_plate_name, 'Plate', 'Process', 24, 16, 384)
-
-                try:
-                    Well.create(name=destination_well, volume=volume, concentration=0, plate=plate,
-                                  parent_well=None)
-                except:
-                    well = get_object_or_404(Well, plate=plate, name=destination_well)
-                    well.volume = well.volume + decimal.Decimal(volume)
-                    well.save()
-                plates_out.append(plate)
 
     return plates_out
 

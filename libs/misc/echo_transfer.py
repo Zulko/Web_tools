@@ -3,8 +3,8 @@ import sys, os
 from django.core.exceptions import ObjectDoesNotExist
 
 from ..biofoundry import db
-from ..misc import calc, file, parser
-from ..container import plate, machine
+from libs.misc import file, calc, parser
+from libs.container import plate, machine
 from db.models import Plate, Well, Sample
 
 
@@ -24,12 +24,10 @@ def get_localization_vol(part, list_source_wells, found_list):
     for i, item in enumerate(list_source_wells):
         sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, times_available, \
         vol_part_add, plate_in_name, wellD_name = list_source_wells[i]
-        # part_sample = Sample.objects.get(alias__exact=str(part))
         part_sample = get_name_from_alias(part, found_list)
         if part_sample == sample_name and times_available > 0:
             new_times_available = times_available - 1
             list_source_wells[i] = [sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, new_times_available, vol_part_add, plate_in_name, wellD_name]
-            # print(part_name, times_available, wellD_name)
             return list_source_wells, list_source_wells[i]
 
 
@@ -372,7 +370,7 @@ def get_sets_in_filepath(reader):
     return lists_parts
 
 
-def run_colony_pcr_db(path, filename, dispenser_parameters, mix_parameters, out_num_well, pattern, user, scriptname):
+def run_echo_transfer_from_worklist(path, filename, dispenser_parameters, mix_parameters, out_num_well, pattern, user, scriptname):
     total_alert = []
     name_machine, min_vol, res_vol, dead_vol = dispenser_parameters
     robot = machine.Machine(name_machine, min_vol, res_vol, dead_vol)
@@ -388,7 +386,6 @@ def run_colony_pcr_db(path, filename, dispenser_parameters, mix_parameters, out_
     robot_csv = file.create_writer_csv(file_robot)
     # file_mantis = file.create(path + "/docs/" + db_mantis_name, 'w')
     # mantis_csv = file.create_writer_csv(file_mantis)
-
 
     """Create combinations"""
     lists_parts = get_sets_in_filepath(filein)
