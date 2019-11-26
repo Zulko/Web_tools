@@ -372,7 +372,7 @@ def get_sets_in_filepath(reader):
     return lists_parts
 
 
-def run_colony_pcr_db(path, filename, dispenser_parameters, mix_parameters, out_num_well, pattern, use_high_low_chip_mantis, user, scriptname):
+def run_colony_pcr_db(path, filename, dispenser_parameters, mix_parameters, out_num_well, pattern, user, scriptname):
     total_alert = []
     name_machine, min_vol, res_vol, dead_vol = dispenser_parameters
     robot = machine.Machine(name_machine, min_vol, res_vol, dead_vol)

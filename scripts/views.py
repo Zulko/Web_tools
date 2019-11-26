@@ -241,21 +241,21 @@ def colony_pcr_db(request):
             template_conc = request.POST['template_conc']
             primer_f = request.POST['primer_f']
             primer_r = request.POST['primer_r']
-            per_phusion = request.POST['phusion']
-            per_buffer = request.POST['buffer']
-            per_dntps = request.POST['dntps']
-            total_vol = request.POST['total_vol']
-            mantis_two_chips = 'mantis_two_chips' in request.POST
-            add_water = 'add_water' in request.POST
+            # per_phusion = request.POST['phusion']
+            # per_buffer = request.POST['buffer']
+            # per_dntps = request.POST['dntps']
+            # total_vol = request.POST['total_vol']
+            # mantis_two_chips = 'mantis_two_chips' in request.POST
+            # add_water = 'add_water' in request.POST
             mix_parameters = \
                 float(template_conc), \
                 float(primer_f), \
                 float(primer_r), \
-                float(per_buffer), \
-                float(per_phusion), \
-                float(per_dntps), \
-                float(total_vol), \
-                add_water
+                # float(per_buffer), \
+                # float(per_phusion), \
+                # float(per_dntps), \
+                # float(total_vol), \
+                # add_water
 
             """Destination plate"""
             num_well_destination = request.POST['num_well_destination']
@@ -263,7 +263,7 @@ def colony_pcr_db(request):
 
             ''' Calling Python Script'''
             alerts, outfile_robot = run_colony_pcr_db(settings.MEDIA_ROOT,
-                  name_file, dispenser_parameters, mix_parameters, int(num_well_destination), int(pattern), mantis_two_chips, user, scriptname)
+                  name_file, dispenser_parameters, mix_parameters, int(num_well_destination), int(pattern), user, scriptname)
 
             if len(alerts) == 0:
                 return render(request, 'scripts/colony_pcr_db.html', {'uploadfile_name': upload, 'url_file': url_file,
