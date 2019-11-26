@@ -183,10 +183,10 @@ def calc_part_volumes_in_plate(count_unique_list, mix_parameters, dispenser_para
                 for sample in well.samples.all():
                     volume = 0
                     if sample.sample_type == 'Primer' and sample.direction == 'FWD':
-                        volume = conc_primer_f/1000
+                        volume = primer_f/1000
 
                     elif sample.sample_type == 'Primer' and sample.direction == 'REV':
-                        volume = conc_primer_r/1000
+                        volume = primer_r/1000
 
                     elif sample.sample_type != 'Primer':
                         volume = template_conc
