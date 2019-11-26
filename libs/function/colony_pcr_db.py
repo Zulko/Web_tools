@@ -14,12 +14,19 @@ BY_COL = 1
 MAX_VALUE = 999999
 
 
-def get_localization_vol(part, list_source_wells):
+def get_name_from_alias(part, found_list):
+    for line in found_list:
+        if part == line[1]:
+            return line[0]
+
+
+def get_localization_vol(part, list_source_wells, found_list):
     for i, item in enumerate(list_source_wells):
         sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, times_available, \
         vol_part_add, plate_in_name, wellD_name = list_source_wells[i]
-        part_sample = Sample.objects.get(alias__exact=str(part))
-        if part_sample.name == sample_name and times_available > 0:
+        # part_sample = Sample.objects.get(alias__exact=str(part))
+        part_sample = get_name_from_alias(part, found_list)
+        if part_sample == sample_name and times_available > 0:
             new_times_available = times_available - 1
             list_source_wells[i] = [sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, new_times_available, vol_part_add, plate_in_name, wellD_name]
             # print(part_name, times_available, wellD_name)
@@ -39,7 +46,7 @@ def get_plate_with_empty_well(destination_plates, pattern):
                 return p, i, j
 
 
-def populate_destination_plates(plates_out, list_destination_plate, list_source_wells, lists_parts,  mix_parameters, pattern):
+def populate_destination_plates(plates_out, list_destination_plate, list_source_wells, lists_parts, found_list, mix_parameters, pattern):
     alert = []
     template_conc, primer_f, primer_r, per_buffer, per_phusion, per_dntps, total_vol, add_water = mix_parameters
     out_dispenser = []
@@ -49,7 +56,7 @@ def populate_destination_plates(plates_out, list_destination_plate, list_source_
         p, i, j = get_plate_with_empty_well(plates_out, pattern)
         total_parts_vol = 0
         for part in set:
-            list_source_wells, part = get_localization_vol(part, list_source_wells)
+            list_source_wells, part = get_localization_vol(part, list_source_wells, found_list)
             name, sample_direction, sample_type, sample_wellconcentration, available_vol, times_needed, times_available, \
             vol_part_add, sample_platename, sample_wellname = part
 
@@ -75,7 +82,8 @@ def create_destination_plates(found_list, out_num_well):
 
     num_plates = calc.num_destination_plates(num_receipts, out_num_well)
     for i in range(0, num_plates):
-        plates_out.append(create_plate(out_num_well, 'PCR_' + '{0:07}'.format(num+1)))
+        num = num+1
+        plates_out.append(create_plate(out_num_well, 'PCR_' + '{0:07}'.format(num)))
     return plates_out
 
 
@@ -413,64 +421,17 @@ def run_colony_pcr_db(path, filename, dispenser_parameters, mix_parameters, out_
         if len(alert) > 0:
             return alert, None, None, None, None
 
-
         else:
             """Create a destination plates"""
             plates_out = create_destination_plates(found_list, out_num_well)
 
             """Populate plate"""
-            plates_out, out_dispenser, out_master_mix, out_water, alert = populate_destination_plates(plates_out,
-                                                                                                  count_unique_list,
-                                                                                                  list_source_wells,
-                                                                                                      lists_parts,
-                                                                                                  mix_parameters, pattern)
-
-    #         """Mantis output file"""
-    #         file.set_mantis_import_header(mantis_csv)
-    #         min_water_vol = get_min_water_vol(out_water)
-    #
-    #         """Mixer Recipe"""
-    #         mixer_recipe = calc_mixer_volumes(mix_parameters)
-    #         phusion_vol, buffer_vol, dNTPS_vol, total_vol_buffer = mixer_recipe
-    #
-    #         if add_water is True:
-    #             '''Add water in Master Mix and Remove from Water list'''
-    #             out_master_mix, out_water = reajust_mixer_water_volumes(out_master_mix, out_water, min_water_vol)
-    #
-    #             '''Master Mix recipe output'''
-    #             mixer_recipe_title = ["Phusion", "Buffer", "dNTPs", "Water", "Master Mix"]
-    #             min_water_vol = round(min_water_vol, 2)
-    #             total_vol_buffer += min_water_vol
-    #             mixer_recipe = [round(phusion_vol, 2), round(buffer_vol, 2), round(dNTPS_vol, 2),
-    #                             round(min_water_vol, 2), round(total_vol_buffer, 2)]
-    #             mixer_recipe_zip = zip(mixer_recipe_title, mixer_recipe)
-    #
-    #         else:
-    #             mixer_recipe_title = ["Phusion", "Buffer", "dNTPs", "Water", "Master Mix"]
-    #             mixer_recipe_zip = zip(mixer_recipe_title, mixer_recipe)
-    #
-    #         if use_high_low_chip_mantis is True:
-    #             master_high, master_low = file.write_dispenser_mantis_in_low_high_chip(mantis_csv, out_master_mix)
-    #             water_high, water_low = file.write_dispenser_mantis_in_low_high_chip(mantis_csv, out_water)
-    #
-    #             chip_matis_title = ["Master mix in high chip", "Master mix in low chip", "Water in high chip",
-    #                                 "Water in low chip"]
-    #             chip_matis_vol = [round(master_high, 2), round(master_low, 2), round(water_high, 2),
-    #                               round(water_low, 2)]
-    #             chip_mantis_zip = zip(chip_matis_title, chip_matis_vol)
-    #
-    #         else:
-    #             master_total = file.write_dispenser_mantis(mantis_csv, out_master_mix)
-    #             water_total = file.write_dispenser_mantis(mantis_csv, out_water)
-    #
-    #             chip_matis_title = ["Master mix total volume", "Water total volume"]
-    #             chip_matis_vol = [round(master_total, 2), round(water_total, 2)]
-    #             chip_mantis_zip = zip(chip_matis_title, chip_matis_vol)
-    #
+            plates_out, out_dispenser, out_master_mix, out_water, alert = \
+                populate_destination_plates(plates_out, count_unique_list, list_source_wells, lists_parts, found_list,
+                                            mix_parameters, pattern)
             ''' Robot Dispenser parts '''
             file.set_echo_header(robot_csv)
             file.write_dispenser_echo(out_dispenser, robot_csv)
 
-    # db_mantis = db.save_file(db_mantis_name, scriptname, user)
     db_robot = db.save_file(db_robot_name, scriptname, user)
     return total_alert, db_robot
