@@ -262,13 +262,12 @@ def colony_pcr_db(request):
             pattern = request.POST['pattern']
 
             ''' Calling Python Script'''
-            alerts, outfile_mantis, outfile_robot, mixer_recipe, chip_mantis = run_colony_pcr_db(settings.MEDIA_ROOT,
+            alerts, outfile_robot = run_colony_pcr_db(settings.MEDIA_ROOT,
                   name_file, dispenser_parameters, mix_parameters, int(num_well_destination), int(pattern), mantis_two_chips, user, scriptname)
 
-            if mixer_recipe is not None:
+            if len(alerts) == 0:
                 return render(request, 'scripts/colony_pcr_db.html', {'uploadfile_name': upload, 'url_file': url_file,
-                                                      'outfile_mantis': outfile_mantis, 'outfile_robot': outfile_robot,
-                                                      'alerts': alerts, 'mixer_recipe': mixer_recipe, 'chip_mantis': chip_mantis})
+                                                      'outfile_robot': outfile_robot, 'alerts': alerts})
             else:
                 return render(request, 'scripts/colony_pcr_db.html',
                               {'uploadfile_name': upload, 'url_file': url_file,
