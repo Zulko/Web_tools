@@ -55,14 +55,14 @@ def populate_destination_plates(plates_out, list_destination_plate, list_source_
     for set in lists_parts:
         p, i, j = get_plate_with_empty_well(plates_out, pattern)
         total_parts_vol = 0
-        for part in set:
-            list_source_wells, part = get_localization_vol(part, list_source_wells, found_list)
+        for partalias in set:
+            list_source_wells, part = get_localization_vol(partalias, list_source_wells, found_list)
             name, sample_direction, sample_type, sample_wellconcentration, available_vol, times_needed, times_available, \
             vol_part_add, sample_platename, sample_wellname = part
 
             """ Adding parts in destination plate """
-            plates_out[p].wells[i][j].samples.append(plate.Sample(name, sample_direction, sample_type, sample_wellconcentration, vol_part_add))
-            out_dispenser.append([name, sample_type, sample_platename, sample_wellname, vol_part_add, plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
+            plates_out[p].wells[i][j].samples.append(plate.Sample(partalias, sample_direction, sample_type, sample_wellconcentration, vol_part_add))
+            out_dispenser.append([partalias, sample_type, sample_platename, sample_wellname, vol_part_add, plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
 
     return plates_out, out_dispenser, out_master_mix, out_water, alert
 
