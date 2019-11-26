@@ -48,7 +48,7 @@ def get_plate_with_empty_well(destination_plates, pattern):
 
 def populate_destination_plates(plates_out, list_destination_plate, list_source_wells, lists_parts, found_list, mix_parameters, pattern):
     alert = []
-    template_conc, primer_f, primer_r, per_buffer, per_phusion, per_dntps, total_vol, add_water = mix_parameters
+    template_conc, primer_f, primer_r = mix_parameters
     out_dispenser = []
     out_master_mix = []
     out_water = []
@@ -170,7 +170,7 @@ def get_primers_template(part_name, found_list):
 
 
 def calc_part_volumes_in_plate(count_unique_list, mix_parameters, dispenser_parameters):
-    template_conc, conc_primer_f, conc_primer_r, per_buffer, per_phusion, per_dntps, total_vol, add_water = mix_parameters
+    template_conc, primer_f, primer_r = mix_parameters
     machine, min_vol, res_vol, dead_vol = dispenser_parameters
 
     total_vol_parts = []
@@ -376,7 +376,7 @@ def run_colony_pcr_db(path, filename, dispenser_parameters, mix_parameters, out_
     total_alert = []
     name_machine, min_vol, res_vol, dead_vol = dispenser_parameters
     robot = machine.Machine(name_machine, min_vol, res_vol, dead_vol)
-    template_conc, primer_f, primer_r, per_buffer, per_phusion, per_dntps, total_vol, add_water = mix_parameters
+    template_conc, primer_f, primer_r = mix_parameters
 
     ''' Create read files'''
     filein = file.verify(path + "/" + filename)
