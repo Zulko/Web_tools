@@ -158,23 +158,24 @@ def calc_wells_available_volume(list_wells, times_needed, conc_primer, total_vol
     for well_part in list_wells:
         part_name, sample_name, sample_direction, sample_type, sample_wellconcentration, sample_wellvolume, sample_platename, sample_wellname, sample_num_well = well_part
 
-        '''Volume needed of the primer '''
-        primer_f_vol_needed = (float(conc_primer) * float(total_vol))/float(well_part[4])
+        if sample_wellconcentration > 0:
+            '''Volume needed of the primer '''
+            primer_f_vol_needed = (float(conc_primer) * float(total_vol))/float(well_part[4])
 
-        '''Rounding the part volume according to machine resolution'''
-        vol_primer_add = calc.round_at(primer_f_vol_needed, res_vol)
+            '''Rounding the part volume according to machine resolution'''
+            vol_primer_add = calc.round_at(primer_f_vol_needed, res_vol)
 
-        '''Minimal dispense volume'''
-        vol_part_add = max(vol_primer_add, min_vol)
+            '''Minimal dispense volume'''
+            vol_part_add = max(vol_primer_add, min_vol)
 
-        '''Calculate how many 'vol_part_add' have in the total volume in one well'''
-        available_vol = max(float(sample_wellvolume) - robot.dead_vol, 0)
+            '''Calculate how many 'vol_part_add' have in the total volume in one well'''
+            available_vol = max(float(sample_wellvolume) - robot.dead_vol, 0)
 
-        '''total times per well'''
-        times_available = int(available_vol / vol_part_add)
-        total_vol_primers.append([part_name, sample_name, sample_direction, sample_type, sample_wellconcentration,
-                                  sample_wellvolume, times_needed, times_available, vol_part_add, sample_platename,
-                                  sample_wellname, sample_num_well])
+            '''total times per well'''
+            times_available = int(available_vol / vol_part_add)
+            total_vol_primers.append([part_name, sample_name, sample_direction, sample_type, sample_wellconcentration,
+                                      sample_wellvolume, times_needed, times_available, vol_part_add, sample_platename,
+                                      sample_wellname, sample_num_well])
 
     return total_vol_primers
 

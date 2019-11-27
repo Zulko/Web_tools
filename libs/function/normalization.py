@@ -222,7 +222,7 @@ def create_destination_plates(plates_in, in_well, out_well):
         return plates_out
 
 
-def run_normalization(path, filename, in_well, out_well, bb_fmol, part_fmol, user):
+def run(path, filename, in_well, out_well, bb_fmol, part_fmol, user):
     """
     Creates a CSV file to be used in Biomek with the volume of sample and water to normalize the sample
     :param path: input file with parts information

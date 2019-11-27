@@ -296,11 +296,13 @@ def pcr_script(request, step, user):
             plates_in = parser.list_plate_from_database(settings.MEDIA_ROOT, outfile_robot)
             for plate in plates_in:
                 step.input_plates.add(plate)
+                # plate.file =
 
             plates_out = parser.create_plate_on_database(settings.MEDIA_ROOT, outfile_robot, num_well_destination, step)
             for plate in plates_out:
                 step.output_plates.add(plate)
 
+            #Add file to save original values of source plate
             #reduce volume in source plates
             #create destination plates
             #list destination plates
@@ -313,7 +315,6 @@ def pcr_script(request, step, user):
     else:
         alerts = ['Missing input file']
         return alerts, None, None, None, None
-
 
 
 @login_required()
@@ -442,6 +443,11 @@ def step_delete(request, experiment_id, step_id):
     step = get_object_or_404(Step, id=step_id)
 
     if request.method == 'POST':
+        if step.input_file_step is not None: step.input_file_step.delete()
+        if step.input_file_script is not None: step.input_file_script.delete()
+        step.input_plates.all().delete()
+        step.output_files.all().delete()
+        step.output_plates.all().delete()
         step.delete()
 
     return redirect('design:experiment_view', experiment.id)

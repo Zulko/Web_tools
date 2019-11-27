@@ -3,14 +3,8 @@ from django.conf import settings
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
-from libs.misc.genbank import generate_from_csv
-from libs.misc.nrc_sequence import run_nrc_sequence
-from libs.misc.echo_transfer import run_echo_transfer_from_worklist
-from libs.function.fasta2primer3 import run_primer
-from libs.function.normalization import run_normalization
-
-
-import os
+from libs.function import normalization, fasta2primer3
+from libs.misc import genbank, nrc_sequence, echo_transfer_db
 
 
 def upload_file(request, filename):
@@ -21,14 +15,14 @@ def upload_file(request, filename):
     return upload, fs, name, url
 
 
-def genbank(request):
+def genbank_view(request):
     if request.method == "POST":
         user = request.user
         if len(request.FILES) != 0:
             upload, fs, name, url = upload_file(request, 'myFile')
 
             ''' Calling Python Script'''
-            outfile = generate_from_csv(settings.MEDIA_ROOT, name, user)
+            outfile = genbank.generate_from_csv(settings.MEDIA_ROOT, name, user)
             if outfile is not None:
                 outfile_name = str(outfile)
                 outfile_url = fs.url(outfile_name)
@@ -40,7 +34,7 @@ def genbank(request):
                   {'uploadfile_name': '', 'url': '', 'outfile_name': '', 'outfile_url': ''})
 
 
-def primer(request):
+def primer_view(request):
     if request.method == 'POST':
         user = request.user
         if len(request.FILES) != 0:
@@ -57,7 +51,7 @@ def primer(request):
             tm_gc_perc = request.POST['tm_gc_perc']
 
             ''' Calling Python Script'''
-            outfile, alert = run_primer(settings.MEDIA_ROOT, name, start_prime, end_prime, size_min_prime,
+            outfile, alert = fasta2primer3.run(settings.MEDIA_ROOT, name, start_prime, end_prime, size_min_prime,
                                         size_opt_prime, size_max_prime, tm_min_prime, tm_opt_prime, tm_max_prime,
                                         tm_max_pair_prime, tm_gc_perc, user)
             if outfile is not None:
@@ -72,7 +66,7 @@ def primer(request):
     return render(request, 'misc/primer.html', {'uploadfile_name': '', 'url': '', 'outfile_name': '', 'abs_path': ''})
 
 
-def normalization(request):
+def normalization_view(request):
     if request.method == "POST":
         user = request.user
         if len(request.FILES) != 0:
@@ -83,7 +77,7 @@ def normalization(request):
             part_fmol = request.POST['part_fmol']
 
             ''' Calling Python Script'''
-            outfile, alert = run_normalization(settings.MEDIA_ROOT, name, int(in_well), int(out_well), int(bb_fmol), int(part_fmol), user)
+            outfile, alert = normalization.run(settings.MEDIA_ROOT, name, int(in_well), int(out_well), int(bb_fmol), int(part_fmol), user)
             if outfile is not None:
                 outfile_name = str(outfile)
                 outfile_url = fs.url(outfile_name)
@@ -95,7 +89,7 @@ def normalization(request):
     return render(request, 'misc/normalization.html', {'uploadfile_name': '', 'url': '', 'outfile_name': '', 'outfile_url': '', 'alert': ''})
 
 
-def nrc_sequence(request):
+def nrc_sequence_view(request):
     if request.method == "POST":
         user = request.user
         if len(request.FILES) != 0:
@@ -103,7 +97,7 @@ def nrc_sequence(request):
             sequence = request.POST['sequence']
 
             ''' Calling Python Script'''
-            outfile, alert = run_nrc_sequence(settings.MEDIA_ROOT, name, sequence, user)
+            outfile, alert = nrc_sequence.run(settings.MEDIA_ROOT, name, sequence, user)
             if outfile is not None:
                 outfile_name = str(outfile)
                 outfile_url = fs.url(outfile_name)
@@ -116,7 +110,7 @@ def nrc_sequence(request):
 
 
 @login_required(login_url="/accounts/login/")
-def echo_transfer_db(request):
+def echo_transfer_db_view(request):
     if request.method == "POST":
         scriptname = 'Echo Transfer from Worklist'
         user = request.user
@@ -134,28 +128,17 @@ def echo_transfer_db(request):
             template_conc = request.POST['template_conc']
             primer_f = request.POST['primer_f']
             primer_r = request.POST['primer_r']
-            # per_phusion = request.POST['phusion']
-            # per_buffer = request.POST['buffer']
-            # per_dntps = request.POST['dntps']
-            # total_vol = request.POST['total_vol']
-            # mantis_two_chips = 'mantis_two_chips' in request.POST
-            # add_water = 'add_water' in request.POST
             mix_parameters = \
                 float(template_conc), \
                 float(primer_f), \
                 float(primer_r), \
-                # float(per_buffer), \
-                # float(per_phusion), \
-                # float(per_dntps), \
-                # float(total_vol), \
-                # add_water
 
             """Destination plate"""
             num_well_destination = request.POST['num_well_destination']
             pattern = request.POST['pattern']
 
             ''' Calling Python Script'''
-            alerts, outfile_robot = run_echo_transfer_from_worklist(settings.MEDIA_ROOT,
+            alerts, outfile_robot = echo_transfer_db.run(settings.MEDIA_ROOT,
                   name_file, dispenser_parameters, mix_parameters, int(num_well_destination), int(pattern), user, scriptname)
 
             if len(alerts) == 0:

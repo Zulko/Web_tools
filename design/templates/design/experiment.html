@@ -41,28 +41,28 @@
                 </div>
                 <!-- Modal button to update experiment -->
                 <div class="modal fade" id="update_experiment" tabindex="-1" role="dialog" aria-labelledby="update_experimentLabel" aria-hidden="true">
-                      <div class="modal-dialog modal-lg" role="document">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h5 class="modal-title" id="update_experimentLabel">Update Experiment: {{ experiment.name }}</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                            </button>
-                          </div>
-
-                          <form id="form_edit_sample" method="post" enctype="multipart/form-data">{% csrf_token %}
-                            <div class="modal-body">
-                                {% csrf_token %}
-                                {{ form_experiment_update | bootstrap }}<br>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="submit" name= "submit_update_experiment" action="{% url 'design:experiment_update' experiment.id %}" class="btn btn-warning">Update</button>
-                            </div>
-                          </form>
-                        </div>
+                  <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="update_experimentLabel">Update Experiment: {{ experiment.name }}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
                       </div>
+
+                      <form id="form_edit_sample" method="post" enctype="multipart/form-data">{% csrf_token %}
+                        <div class="modal-body">
+                            {% csrf_token %}
+                            {{ form_experiment_update | bootstrap }}<br>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" name= "submit_update_experiment" action="{% url 'design:experiment_update' experiment.id %}" class="btn btn-warning">Update</button>
+                        </div>
+                      </form>
                     </div>
+                  </div>
+                </div>
 
                 <div class="shadow p-4 mb-4 bg-white">
                     <!-- Step Menu -->
@@ -167,8 +167,6 @@
                                             {% for plate in step.output_plates.all %}
                                                 <li><a href="{% url 'db:plate' plate.id %}" target="_blank">{{plate.name}} </a></li>
                                             {% endfor %}
-
-
                                         {% else %}
                                             {% if alert %}
                                             <div class="alert">
@@ -220,30 +218,29 @@
                             </div>
                         </div>
 
-                    <!-- Execute button at Experiment Bottom  -->
-
-                    {% if step.script == '' %}
-                        <div class="btn-group">
-                        <form id="form_run_step" method="post" enctype="multipart/form-data">{% csrf_token %}
-                            {% if step.status_run is False %}
-                                <button type="submit" name="submit_run_step" action="{% url 'design:step_run' experiment.id step.id %}" class="btn btn-success btn-sm"> Run <i class="fas fa-play"></i></button>
-                            {% else %}
-                                <button type="submit" name="submit_run_step" class="btn btn-success btn-sm disabled"> Run <i class="fas fa-play"></i></button>
-                            {% endif %}
-                        </form>
-                        </div>
-                    {% else %}
-{#                        {% if step.status_run is False %}#}
-                            <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#run_step"> Run <i class="fas fa-play"></i></button>
-{#                        {% else %}#}
-{#                            <button type="button" class="btn btn-success btn-sm disabled"> Run <i class="fas fa-play"></i></button>#}
-{#                        {% endif %}#}
-                    {% endif %}
-
+                        <!-- Execute button at Experiment Bottom  -->
+                        {% if step.script == '' %}
+                            <div class="btn-group">
+                            <form id="form_run_step" method="post" enctype="multipart/form-data">{% csrf_token %}
+                                {% if step.status_run is False %}
+                                    <button type="submit" name="submit_run_step" action="{% url 'design:step_run' experiment.id step.id %}" class="btn btn-success btn-sm"> Run <i class="fas fa-play"></i></button>
+                                {% else %}
+                                    <button type="submit" name="submit_run_step" class="btn btn-success btn-sm disabled"> Run <i class="fas fa-play"></i></button>
+                                {% endif %}
+                            </form>
+                            </div>
+                        {% else %}
+    {#                        {% if step.status_run is False %}#}
+                                <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#run_step"> Run <i class="fas fa-play"></i></button>
+    {#                        {% else %}#}
+    {#                            <button type="button" class="btn btn-success btn-sm disabled"> Run <i class="fas fa-play"></i></button>#}
+    {#                        {% endif %}#}
+                        {% endif %}
 
 {#                    {% if step.status_run is False %}#}
                         <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#update_step"> Update <i class="fas fa-edit"></i></button>
                         <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete_step"> Delete <i class="fas fa-trash-alt"></i></button>
+
                         <!-- Modal button to update step -->
                         <div class="modal fade" id="update_step" tabindex="-1" role="dialog" aria-labelledby="update_stepLabel" aria-hidden="true">
                           <div class="modal-dialog modal-lg" role="document">
@@ -268,22 +265,23 @@
                             </div>
                           </div>
                         </div>
-                        <!-- Modal button to delete experiment on inventory -->
-                        <div class="modal fade" id="delete_experiment" tabindex="-1" role="dialog" aria-labelledby="delete_experimentLabel" aria-hidden="true">
+
+                        <!-- Modal button to delete step on inventory -->
+                        <div class="modal fade" id="delete_step" tabindex="-1" role="dialog" aria-labelledby="delete_stepLabel" aria-hidden="true">
                           <div class="modal-dialog" role="document">
                             <div class="modal-content">
                               <div class="modal-header">
-                                <h5 class="modal-title" id="delete_experimentLabel">Delete Experiment</h5>
+                                <h5 class="modal-title" id="delete_stepLabel">Delete Step</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                                 </button>
                               </div>
                               <div class="modal-body">
-                                  <h6>Are you sure to delete the experiment {{ experiment.name }}?</h6>
+                                  <h6>Are you sure to delete the experiment {{ step.name }}?</h6>
                               </div>
                               <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                  <form method="POST" action="{% url 'design:experiment_delete' experiment.id %}">
+                                  <form method="POST" action="{% url 'design:step_delete' experiment.id step.id %}">
                                       {% csrf_token %}
                                     <button type="submit" class="btn btn-danger">Delete</button>
                                   </form>
@@ -735,9 +733,10 @@
             </div>
         </div>
 
-    <div class="col-2">
+        <div class="col-2">
 
-    </div>
+        </div>
+
     </div>
 
         <!-- Script -->

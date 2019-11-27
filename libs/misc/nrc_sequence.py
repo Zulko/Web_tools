@@ -1,2 +1,2 @@
-def run_nrc_sequence(path, filename, sequence, user):
+def run(path, filename, sequence, user):
     print('run sequence')

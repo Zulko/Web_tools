@@ -109,7 +109,7 @@ def create_output_file(path, fastafile):
     return outfile, outfilename
 
 
-def run_primer(path, fastafile, start, end, size_min_prime,
+def run(path, fastafile, start, end, size_min_prime,
                                         size_opt_prime, size_max_prime, tm_min_prime, tm_opt_prime, tm_max_prime, tm_max_pair_prime, tm_gc_perc, user):
     '''Read the fasta sequences from input file'''
     seqs = load_seqs(path, fastafile)

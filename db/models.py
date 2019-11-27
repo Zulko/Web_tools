@@ -134,6 +134,7 @@ class Plate(models.Model):
     num_well = models.IntegerField()
     location = models.CharField(max_length=30, choices=LOCATION, default=LOCATION[0][0], blank=True)
     contents = models.CharField(max_length=30, choices=CONTENTS, default=CONTENTS[0][0], blank=True)
+    file = models.FileField(upload_to='design/', max_length=10000, blank=True)
     active = models.BooleanField(default=True)
     status = models.CharField(max_length=30, choices=STATUS, blank=True)
     comments = models.TextField(max_length=500, blank=True)
@@ -193,28 +194,6 @@ class Sample(models.Model):
         ('R', 'Right'),
         ('L', 'Left'),
     )
-    # PROJECT = (
-    #     ('GF_General', 'GF_General'),
-    #     ('Sanguinarine', 'Sanguinarine'),
-    #     ('MoClo_Kit', 'MoClo_Kit'),
-    #     ('Yeast_CRISPR_Kit', 'Yeast_CRISPR_Kit'),
-    #     ('Foundry_Kit', 'Foundry_Kit'),
-    # )
-    # PART_TYPE = (
-    #     ('Promoter', 'Promoter'),
-    #     ('Terminator', 'Terminator'),
-    #     ('CDS', 'CDS'),
-    #     ('Connector_R', 'Connector_R'),
-    #     ('Connector_L', 'Connector_L'),
-    #     ('Backbone', 'Backbone'),
-    #     ('Counter_Screen', 'Counter_Screen'),
-    #     ('Marker', 'Marker'),
-    #     ('Miscellaneous', 'Miscellaneous'),
-    #     ('Complementation_Marker', 'Complementation_Marker'),
-    #     ('S. cerevisiae_marker', 'S. cerevisiae_marker'),
-    #     ('Homology', 'Homology'),
-    #
-    # )
     ORGANISM = (
         ('Human', 'Human'),
         ('Yeast', 'Yeast'),

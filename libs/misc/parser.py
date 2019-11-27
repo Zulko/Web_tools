@@ -52,7 +52,7 @@ def create_plate_on_database_old(path, file, num_well_destination, step):
     return plates_out
 
 
-def fill_plates(plates_out, num_well_destination, destination_plate_name, destination_well, volume, sample):
+def fill_plates(plates_out, num_well_destination, destination_plate_name, destination_well, volume, step, sample):
     found = False
     if len(plates_out) == 0:
         if num_well_destination == 96:
@@ -61,25 +61,28 @@ def fill_plates(plates_out, num_well_destination, destination_plate_name, destin
             plate = Plate.create(destination_plate_name, 'Plate', 'Process', 24, 16, 384)
         try:
             well = Well.create(name=destination_well, volume=volume, concentration=0, plate=plate, parent_well=None)
-            well.samples.add(sample)
-
+            if sample is not None: well.samples.add(sample)
+            well.plate.project.add(step.experiment.project)
+            well.save()
         except:
             well = get_object_or_404(Well, plate=plate, name=destination_well)
-            well.samples.add(sample)
+            if sample is not None: well.samples.add(sample)
             well.volume = well.volume + decimal.Decimal(volume)
             well.save()
-
-        # plates_out.append(plate)
-        return plate
+        plates_out.append(plate)
+        return plates_out
     else:
         for plate_out in plates_out:
             if plate_out.name == destination_plate_name:
                 try:
                     well = Well.create(name=destination_well, volume=volume, concentration=0,
                                        plate=plate_out, parent_well=None)
-                    well.samples.add(sample)
+                    if sample is not None: well.samples.add(sample)
+                    well.plate.project.add(step.experiment.project)
+                    well.save()
                 except:
                     well = get_object_or_404(Well, plate=plate_out, name=destination_well)
+                    if sample is not None: well.samples.add(sample)
                     well.volume = well.volume + decimal.Decimal(volume)
                     well.save()
                 found = True
@@ -95,9 +98,11 @@ def fill_plates(plates_out, num_well_destination, destination_plate_name, destin
             except:
                 well = get_object_or_404(Well, plate=plate, name=destination_well)
                 well.volume = well.volume + decimal.Decimal(volume)
+                if sample is not None: well.samples.add(sample)
                 well.save()
-            # plates_out.append(plate)
-
+            plates_out.append(plate)
+            return plates_out
+    return plates_out
 
 
 def create_plate_on_database(path, file, num_well_destination, step):
@@ -111,19 +116,17 @@ def create_plate_on_database(path, file, num_well_destination, step):
             source_id, source_plate, source_well, destination_plate_id, destination_plate_name, destination_well, \
             volume, source_row, source_col, destination_row, destination_col, plate_row = line
             volume = float(volume)/1000
-            plates_out.extend(
-                fill_plates(plates_out, num_well_destination, destination_plate_name, destination_well, volume, None))
+            plates_out = fill_plates(
+                plates_out, num_well_destination, destination_plate_name, destination_well, volume, step, None)
 
         else:
             '''Echo file used in PCR Script and Moclo Script'''
             part, source_plate, source_well, destination_plate_id, destination_plate_name, destination_well, volume = line
             sample = Sample.objects.get(name__exact=part)
             volume = float(volume)/1000
-            plates_out.extend(
-                fill_plates(plates_out, num_well_destination, destination_plate_name, destination_well, volume, sample))
-
-
-
+            plates_out = fill_plates(
+                plates_out, num_well_destination, destination_plate_name, destination_well, volume, step, sample)
+    print(plates_out)
     return plates_out
 
 

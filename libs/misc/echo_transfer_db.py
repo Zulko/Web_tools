@@ -370,7 +370,7 @@ def get_sets_in_filepath(reader):
     return lists_parts
 
 
-def run_echo_transfer_from_worklist(path, filename, dispenser_parameters, mix_parameters, out_num_well, pattern, user, scriptname):
+def run(path, filename, dispenser_parameters, mix_parameters, out_num_well, pattern, user, scriptname):
     total_alert = []
     name_machine, min_vol, res_vol, dead_vol = dispenser_parameters
     robot = machine.Machine(name_machine, min_vol, res_vol, dead_vol)
@@ -380,9 +380,12 @@ def run_echo_transfer_from_worklist(path, filename, dispenser_parameters, mix_pa
     filein = file.verify(path + "/" + filename)
 
     ''' Create write files'''
+    # db_mantis_name = 'mantis_' + str(os.path.splitext(filename)[0]) + '.csv'
     db_robot_name = str(robot.name) + "_" + str(os.path.splitext(filename)[0]) + '.csv'
     file_robot = file.create(path + "/docs/" + db_robot_name, 'w')
     robot_csv = file.create_writer_csv(file_robot)
+    # file_mantis = file.create(path + "/docs/" + db_mantis_name, 'w')
+    # mantis_csv = file.create_writer_csv(file_mantis)
 
     """Create combinations"""
     lists_parts = get_sets_in_filepath(filein)
