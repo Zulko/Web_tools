@@ -114,8 +114,9 @@ def echo_transfer_db_view(request):
     if request.method == "POST":
         scriptname = 'Echo Transfer from Worklist'
         user = request.user
-        if len(request.FILES) != 0:
-            upload, fs, name_file, url_file = upload_file(request, 'upload_file')
+        if len(request.FILES) > 1:
+            upload_p, fs_p, name_file_p, url_file_p = upload_file(request, 'upload_file_parts')
+            upload_v, fs_v, name_file_v, url_file_v = upload_file(request, 'upload_file_volume')
 
             """Dispenser parameters"""
             machine = request.POST['machine']
@@ -138,15 +139,31 @@ def echo_transfer_db_view(request):
             pattern = request.POST['pattern']
 
             ''' Calling Python Script'''
-            alerts, outfile_robot = echo_transfer_db.run(settings.MEDIA_ROOT,
-                  name_file, dispenser_parameters, mix_parameters, int(num_well_destination), int(pattern), user, scriptname)
-
+            alerts, outfile_robot = echo_transfer_db.run(settings.MEDIA_ROOT, name_file_p, name_file_v, dispenser_parameters, mix_parameters, int(num_well_destination), int(pattern), user, scriptname)
+            print(len(alerts))
             if len(alerts) == 0:
-                return render(request, 'misc/echo_transfer.html', {'uploadfile_name': upload, 'url_file': url_file,
-                                                      'outfile_robot': outfile_robot, 'alerts': alerts})
+                context = {
+                    'uploadfile_name': upload_p,
+                    'url_file': url_file_p,
+                    'outfile_robot': outfile_robot,
+                    'alerts': alerts
+                }
+                return render(request, 'misc/echo_transfer.html', context)
             else:
-                return render(request, 'misc/echo_transfer.html',
-                              {'uploadfile_name': upload, 'url_file': url_file,
-                               'outfile_mantis': '', 'outfile_robot': '',
-                               'alerts': alerts, 'mixer_recipe': '', 'chip_mantis': ''})
+                context = {
+                    'uploadfile_name': None,
+                    'url_file': None,
+                    'outfile_robot': None,
+                    'alerts': alerts
+                }
+                return render(request, 'misc/echo_transfer.html', context)
+        else:
+            alerts = ['Missing input file']
+            context = {
+                'uploadfile_name': None,
+                'url_file': None,
+                'outfile_robot': None,
+                'alerts': alerts
+            }
+            return render(request, 'misc/echo_transfer.html', context)
     return render(request, 'misc/echo_transfer.html')

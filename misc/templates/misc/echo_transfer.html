@@ -13,10 +13,20 @@
                     <div class="form-row align-items-center">
                         <div class="col-auto"></div>
                         <div class="col">
-                            <label for="file">Select a file: </label>
+                            <label for="file">Select a file with parts: </label>
                         </div>
                         <div class="col-left">
-                            <input type="file" class="form-control-file border" name="upload_file">
+                            <input type="file" class="form-control-file border" name="upload_file_parts">
+                        </div>
+                        <div class="col-auto"></div>
+                    </div><br>
+                    <div class="form-row align-items-center">
+                        <div class="col-auto"></div>
+                        <div class="col">
+                            <label for="file">Select a file with volumes: </label>
+                        </div>
+                        <div class="col-left">
+                            <input type="file" class="form-control-file border" name="upload_file_volume">
                         </div>
                         <div class="col-auto"></div>
                     </div><br>
@@ -177,7 +187,7 @@
             {% if outfile_robot %}<br>
                 <div class="form-row align-items-center">
                     <div class="col-auto"></div>
-                    <div class="col" >
+                    <div class="col-right" >
                         <label for="inputfile">Echo file:</label>
                     </div>
                     <div class="col" >

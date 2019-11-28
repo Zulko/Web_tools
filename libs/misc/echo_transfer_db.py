@@ -1,4 +1,4 @@
-import sys, os
+import sys, os, itertools
 
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -44,7 +44,7 @@ def get_plate_with_empty_well(destination_plates, pattern):
                 return p, i, j
 
 
-def populate_destination_plates(plates_out, list_destination_plate, list_source_wells, lists_parts, found_list, mix_parameters, pattern):
+def populate_destination_plates(plates_out, list_source_wells, lists_parts, found_list, mix_parameters, pattern):
     alert = []
     template_conc, primer_f, primer_r = mix_parameters
     out_dispenser = []
@@ -354,6 +354,21 @@ def get_list_no_repetition(lists_parts):
     return unique_list
 
 
+def check_lists_size(lists_parts, lists_volume):
+    alert = []
+    if len(lists_parts) != len(lists_volume):
+        alert.append('The number of parts and volume do not match')
+        return alert
+    else:
+        for set_parts, set_volume in itertools.zip_longest(lists_parts, lists_volume, fillvalue=None):
+            for part, volume in itertools.zip_longest(set_parts, set_volume, fillvalue=None):
+                print(part, volume)
+                if part is None or volume is None:
+                    alert.append('The number of parts and volume do not match')
+                    return alert
+    return None
+
+
 def get_sets_in_filepath(reader):
     lists_parts = []
     ''' For each line in file get the list'''
@@ -370,26 +385,33 @@ def get_sets_in_filepath(reader):
     return lists_parts
 
 
-def run(path, filename, dispenser_parameters, mix_parameters, out_num_well, pattern, user, scriptname):
+def run(path, filename_p, filename_v, dispenser_parameters, mix_parameters, out_num_well, pattern, user, scriptname):
     total_alert = []
     name_machine, min_vol, res_vol, dead_vol = dispenser_parameters
     robot = machine.Machine(name_machine, min_vol, res_vol, dead_vol)
     template_conc, primer_f, primer_r = mix_parameters
 
     ''' Create read files'''
-    filein = file.verify(path + "/" + filename)
+    filein_parts = file.verify(path + "/" + filename_p)
+    filein_volume = file.verify(path + "/" + filename_v)
 
     ''' Create write files'''
     # db_mantis_name = 'mantis_' + str(os.path.splitext(filename)[0]) + '.csv'
-    db_robot_name = str(robot.name) + "_" + str(os.path.splitext(filename)[0]) + '.csv'
+    db_robot_name = str(robot.name) + "_" + str(os.path.splitext(filename_p)[0]) + '.csv'
     file_robot = file.create(path + "/docs/" + db_robot_name, 'w')
     robot_csv = file.create_writer_csv(file_robot)
     # file_mantis = file.create(path + "/docs/" + db_mantis_name, 'w')
     # mantis_csv = file.create_writer_csv(file_mantis)
 
     """Create combinations"""
-    lists_parts = get_sets_in_filepath(filein)
+    lists_parts = get_sets_in_filepath(filein_parts)
+    lists_volume = get_sets_in_filepath(filein_volume)
     # print(lists_parts)
+
+    '''Check if the parts and volume files match size'''
+    alert = check_lists_size(lists_parts, lists_volume)
+    if alert is not None:
+        return alert, None
 
     ''' Get unique samples - no repetition'''
     unique_list = get_list_no_repetition(lists_parts)
@@ -406,7 +428,7 @@ def run(path, filename, dispenser_parameters, mix_parameters, out_num_well, patt
     if len(missing_list) > 0:
         for item in missing_list:
             total_alert.append('Missing info for part: ' + str(item))
-        return total_alert, None, None, None, None
+        return total_alert, None
 
     else:
         """Calculate the part volumes"""
@@ -416,7 +438,7 @@ def run(path, filename, dispenser_parameters, mix_parameters, out_num_well, patt
         """Verify parts volume in source plate"""
         list_source_wells, alert = verify_samples_volume(vol_for_part, count_unique_list, robot)
         if len(alert) > 0:
-            return alert, None, None, None, None
+            return alert, None
 
         else:
             """Create a destination plates"""
@@ -424,7 +446,7 @@ def run(path, filename, dispenser_parameters, mix_parameters, out_num_well, patt
 
             """Populate plate"""
             plates_out, out_dispenser, out_master_mix, out_water, alert = \
-                populate_destination_plates(plates_out, count_unique_list, list_source_wells, lists_parts, found_list,
+                populate_destination_plates(plates_out, list_source_wells, lists_parts, found_list,
                                             mix_parameters, pattern)
             ''' Robot Dispenser parts '''
             file.set_echo_header(robot_csv)
