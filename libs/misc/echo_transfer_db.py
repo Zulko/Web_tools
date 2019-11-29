@@ -337,6 +337,16 @@ def find_samples_database(unique_list):
     return found_list, missing_list
 
 
+def get_count_unique_vol_list(count_unique_list, part_vol_list):
+    count_unique_vol_list = []
+    for part in count_unique_list:
+        part_name = part[0]
+        part_count = part[1]
+        volume = calc.total_volume_part_list(part_name, part_vol_list)
+        count_unique_vol_list.append([part_name, volume, part_count])
+    return count_unique_vol_list
+
+
 def get_count_unique_list(unique_list, lists_parts):
     count_unique_list = []
     for part in unique_list:
@@ -356,17 +366,20 @@ def get_list_no_repetition(lists_parts):
 
 def check_lists_size(lists_parts, lists_volume):
     alert = []
+    part_vol_list = []
     if len(lists_parts) != len(lists_volume):
         alert.append('The number of parts and volume do not match')
-        return alert
+        return alert, None
     else:
         for set_parts, set_volume in itertools.zip_longest(lists_parts, lists_volume, fillvalue=None):
+            part_vol = []
             for part, volume in itertools.zip_longest(set_parts, set_volume, fillvalue=None):
-                print(part, volume)
+                part_vol.append([part, volume])
                 if part is None or volume is None:
                     alert.append('The number of parts and volume do not match')
-                    return alert
-    return None
+                    return alert, None
+            part_vol_list.append(part_vol)
+    return None, part_vol_list
 
 
 def get_sets_in_filepath(reader):
@@ -409,7 +422,7 @@ def run(path, filename_p, filename_v, dispenser_parameters, mix_parameters, out_
     # print(lists_parts)
 
     '''Check if the parts and volume files match size'''
-    alert = check_lists_size(lists_parts, lists_volume)
+    alert, part_vol_list = check_lists_size(lists_parts, lists_volume)
     if alert is not None:
         return alert, None
 
@@ -420,6 +433,9 @@ def run(path, filename_p, filename_v, dispenser_parameters, mix_parameters, out_
     ''' Verify how many times it appears'''
     count_unique_list = get_count_unique_list(unique_list, lists_parts)
     # print(count_unique_list)
+
+    count_unique_vol_list = get_count_unique_vol_list(count_unique_list, part_vol_list)
+    print(count_unique_vol_list)
 
     """Verify the parts on database"""
     found_list, missing_list = find_samples_database(unique_list)

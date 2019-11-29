@@ -5,10 +5,10 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 
+from db.models import File
+
 from .models import Experiment, Step
 from .forms import ExperimentForm, StepForm
-
-from db.models import File
 
 from libs.function.spotting import run_spotting
 from libs.function.pcr_db import run_pcr_db

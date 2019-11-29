@@ -126,6 +126,15 @@ def num_times_part(my_item, lists_parts):
     return count
 
 
+def total_volume_part_list(my_item, lists_parts):
+    volume = 0
+    for list in lists_parts:
+        for part in list:
+            if my_item == part[0]:
+                volume += float(part[1])
+    return volume
+
+
 def num_listsparts(lists_parts):
     list_set_num_parts = []
     for list in lists_parts:
