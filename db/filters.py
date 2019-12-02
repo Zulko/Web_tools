@@ -22,4 +22,6 @@ class PlateFilter(django_filters.FilterSet):
         fields = {
             'name': ['icontains', ],
             'barcode': ['exact', ],
+            'project': ['exact', ],
+            'function': ['exact', ],
         }
