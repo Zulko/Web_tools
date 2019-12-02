@@ -7,10 +7,10 @@ app_name = 'db'
 urlpatterns = [
 
     # Plate views
-    path('', views.plate_list_inventory, name='index'),
-    path('inventory_list/', views.plate_list_inventory, name='inventory_plates'),
-    path('reagent_list/', views.plate_list_reagents, name='reagents_plates'),
-    path('process_list/', views.plate_list_process, name='process_plates'),
+    path('', views.plate_list, name='index'),
+    # path('inventory_list/', views.plate_list_inventory, name='inventory_plates'),
+    # path('reagent_list/', views.plate_list_reagents, name='reagents_plates'),
+    # path('process_list/', views.plate_list_process, name='process_plates'),
     path('plate<int:plate_id>/', views.plate_view, name='plate'),
     path('add_plate/', views.plate_add, name='plate_add'),
     path('add_plate_file/', views.plate_add_file, name='plate_file_add'),

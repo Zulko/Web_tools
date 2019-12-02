@@ -1,4 +1,4 @@
-import os, decimal
+import os, decimal, re
 from django.shortcuts import get_object_or_404
 
 from ..misc import calc, file, parser
@@ -54,6 +54,12 @@ def create_plate_on_database_old(path, file, num_well_destination, step):
 
 def fill_plates(plates_out, num_well_destination, destination_plate_name, destination_well, volume, step, sample):
     found = False
+
+    num = int(re.search(r'\d+', destination_plate_name).group())
+    destination_plate_name = \
+        str(step.experiment.project.name) + '_E' + str(step.experiment.id) + '_' + str(step.name) + '_' + str(
+            num_well_destination) + '_' + str(num)
+
     if len(plates_out) == 0:
         if num_well_destination == 96:
             plate = Plate.create(destination_plate_name, 'Plate', 'Process', 12, 8, 96)

@@ -76,13 +76,14 @@
             <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
                 &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-database" style="font-size:15px; color:white;"></i>&nbsp; Database</a>
                 <ul class="dropdown-menu">
-                    <li class="dropdown-submenu" role="button" aria-haspopup="true" aria-expanded="false"><a class="dropdown-item dropdown-toggle" href="#">Plates</a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'db:inventory_plates' %}">Inventory</a></li>
-                            <li><a class="dropdown-item" href="{% url 'db:process_plates' %}">Process</a></li>
-                            <li><a class="dropdown-item" href="{% url 'db:reagents_plates' %}">Reagents</a></li>
-                        </ul>
-                    </li>
+{#                    <li class="dropdown-submenu" role="button" aria-haspopup="true" aria-expanded="false"><a class="dropdown-item dropdown-toggle" href="#">Plates</a>#}
+{#                        <ul class="dropdown-menu">#}
+{#                            <li><a class="dropdown-item" href="{% url 'db:inventory_plates' %}">Inventory</a></li>#}
+{#                            <li><a class="dropdown-item" href="{% url 'db:process_plates' %}">Process</a></li>#}
+{#                            <li><a class="dropdown-item" href="{% url 'db:reagents_plates' %}">Reagents</a></li>#}
+{#                        </ul>#}
+{#                    </li>#}
+                    <li><a class="dropdown-item" href="{% url 'db:index' %}">Plates</a></li>
                     <li><a class="dropdown-item" href="{% url 'db:samples_list' %}">Samples</a></li>
                     <li><a class="dropdown-item" href="{% url 'db:project_list' %}">Projects</a></li>
                     <li><a class="dropdown-item" href="{% url 'db:machine_list' %}">Machines</a></li>
