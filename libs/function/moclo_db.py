@@ -300,7 +300,7 @@ def find_samples_database(unique_list):
     for part in unique_list:
         print(part)
         found = False
-        wells = Well.objects.filter(samples__name__exact=str(part))
+        wells = Well.objects.filter(samples__name__exact=str(part), well__active__exact=True)
         print(len(wells))
         if len(wells) > 0:
             for well in wells:

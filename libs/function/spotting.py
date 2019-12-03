@@ -36,7 +36,6 @@ def verify_entry(type, num):
         return num
 
 
-
 def generate_random_names(name, init, end):
     """
     Returns a vector with a main name + number

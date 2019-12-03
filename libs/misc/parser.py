@@ -252,7 +252,6 @@ def list_to_source_plates(foundlist, plates):
                     plates[i].wells[row][col].samples.append(
                         plate.Sample(subsamp_name, samp_type, primer_direc, samp_conc, volume))
 
-
     else:
         for part in foundlist:
             samp_name, type, samp_len, samp_conc, volume, plate_name, plate_well, num_well = part
