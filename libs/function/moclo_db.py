@@ -300,14 +300,14 @@ def find_samples_database(unique_list):
     for part in unique_list:
         print(part)
         found = False
-        wells = Well.objects.filter(samples__name__exact=str(part), well__active__exact=True)
+        wells = Well.objects.filter(samples__name__exact=str(part))
         print(len(wells))
         if len(wells) > 0:
             for well in wells:
                 samples = well.samples.all()
                 if len(samples) == 1:
                     for sample in samples:
-                        if well.volume > 0 and sample.name == part and sample.length is not None and sample.sample_type is not None:
+                        if well.volume > 0 and sample.name == part and sample.length is not None and sample.sample_type is not None and well.active is True:
                             found = True
                             lista = [sample.name, str(sample.sample_type), int(sample.length), float(well.concentration), float(well.volume), well.plate.name, well.name, int(well.plate.num_well)]
                             found_list.append(lista)

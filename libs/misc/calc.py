@@ -126,12 +126,17 @@ def num_times_part(my_item, lists_parts):
     return count
 
 
-def total_volume_part_list(my_item, lists_parts, div):
+def total_volume_part_list(my_item, lists_parts, div, dispenser_parameters):
+    machine, min_vol, res_vol, dead_vol = dispenser_parameters
     volume = 0
     for list in lists_parts:
         for part in list:
             if my_item == part[0]:
-                volume += float(part[1])
+                '''Rounding the part volume according to machine resolution'''
+                vol_sample_add = round_at(float(part[1])/div, res_vol)
+                '''Minimal dispense volume'''
+                vol_part_add = max(vol_sample_add, min_vol)
+                volume += vol_part_add
     return volume
 
 

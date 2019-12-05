@@ -330,16 +330,15 @@ def find_templates_database(unique_list):
     for part in unique_list:
         #Need to search for sub_samples in wells
         print(part[0])
-        wells = Well.objects.filter(samples__sub_sample_id__name__exact=str(part[0]), well__active__exact=True)
+        wells = Well.objects.filter(samples__sub_sample_id__name__exact=str(part[0]))
 
         if len(wells) > 0:
             for well in wells:
                 #To be sure it is not a mix of samples and has only one sample on well
                 if well.samples.count() == 1:
                     for subsample in well.samples.all():
-                        if well.volume > 0:
+                        if well.volume > 0 and well.active is True:
                             lista = [part[0], subsample.name, 0, subsample.sample_type, float(well.concentration), float(well.volume), well.plate.name, well.name, int(well.plate.num_well)]
-                            print(lista)
                             found_list.append(lista)
                         else:
                             missing_list.append(part[0])
@@ -356,7 +355,7 @@ def find_primers_database(unique_list, found_parts):
     for part in unique_list:
         primer_fwd = []
         primer_rev = []
-        samples = Sample.objects.filter(name__exact=str(part[0]), well__active__exact=True)
+        samples = Sample.objects.filter(name__exact=str(part[0]))
         for sample in samples:
             if sample.primer_id is not None:
                 for primer in sample.primer_id.all():
@@ -370,20 +369,26 @@ def find_primers_database(unique_list, found_parts):
                     wells_fwd = []
                     wells_rev = []
                     for primer in primer_fwd:
-                        wells_fwd = Well.objects.filter(samples__name__exact=str(primer), well__active__exact=True)
+                        wells_fwd = Well.objects.filter(samples__name__exact=str(primer))
                         if len(wells_fwd) > 0:
                             for well in wells_fwd:
-                                lista = [part[0], primer.name, str(primer.direction), primer.sample_type, float(well.concentration), float(well.volume), well.plate.name, well.name, int(well.plate.num_well)]
-                                found_list.append(lista)
+                                if well.active is True:
+                                    lista = [part[0], primer.name, str(primer.direction), primer.sample_type, float(well.concentration), float(well.volume), well.plate.name, well.name, int(well.plate.num_well)]
+                                    found_list.append(lista)
+                                else:
+                                    missing_list.append(str(part[0]) + ' (' + str(primer) + ')')
                         else:
                             missing_list.append(str(part[0])+' ('+str(primer)+')')
 
                     for primer in primer_rev:
-                        wells_rev = Well.objects.filter(samples__name__exact=str(primer), well__active__exact=True)
+                        wells_rev = Well.objects.filter(samples__name__exact=str(primer))
                         if len(wells_rev) > 0:
                             for well in wells_rev:
-                                lista = [part[0], primer.name, str(primer.direction), primer.sample_type, float(well.concentration), float(well.volume), well.plate.name, well.name, int(well.plate.num_well)]
-                                found_list.append(lista)
+                                if well.active is True:
+                                    lista = [part[0], primer.name, str(primer.direction), primer.sample_type, float(well.concentration), float(well.volume), well.plate.name, well.name, int(well.plate.num_well)]
+                                    found_list.append(lista)
+                                else:
+                                    missing_list.append(str(part[0]) + ' (' + str(primer) + ')')
                         else:
                             missing_list.append(str(part[0])+' ('+str(primer)+')')
                 else:

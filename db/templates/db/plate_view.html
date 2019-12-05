@@ -378,8 +378,61 @@
                     {% endif %}
                  </ul>
               {% endif %}
+
               {% if well.active == False %}
                   <h5><span class="badge badge-pill badge-secondary">{{ well.name }}: Inactive </span></h5>
+                    <!-- Button for Well: Delete, Update -->
+                    <div align="right">
+                        <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#update_well"> <i class="fas fa-edit"></i></button>
+                        <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete_well"> <i class="fas fa-trash-alt"></i></button>
+                    </div>
+
+                    <!-- Modal for Well Update Button -->
+                    <div class="modal fade" id="update_well" tabindex="-1" role="dialog" aria-labelledby="update_wellLabel" aria-hidden="true">
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="update_wellLabel">Update well {{ well.name }}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <form id="form_update_well" method="post" enctype="multipart/form-data">{% csrf_token %}
+                            <div class="modal-body">
+                                {% csrf_token %}
+                                {{ form_update_well | bootstrap }}
+                            </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" name="submit_update_well" action="{% url 'db:well_update' well.plate.id well.id %}" class="btn btn-warning">Update</button>
+                          </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Modal for Well Delete Button -->
+                    <div class="modal fade" id="delete_well" tabindex="-1" role="dialog" aria-labelledby="delete_wellLabel" aria-hidden="true">
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="delete_wellLabel">Delete Well</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                              <h6>Are you sure to delete <a href="{% url 'db:well' well.plate.id well.id %}"> {{ well.name }}</a> ?</h6>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                          <form method="POST" action="{% url 'db:well_delete' well.plate.id well.id %}">{% csrf_token %}
+                            <button type="submit" name="submit_delete_well" class="btn btn-danger">Delete</button>
+                          </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div><br>
               {% endif %}
       </div>
     </div>

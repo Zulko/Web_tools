@@ -196,6 +196,11 @@ def plate_view(request, plate_id):
     elif 'submit_plate_update' in request.POST:
         formPlateUpdate = PlateForm(request.POST, request.FILES, instance=plate)
         if formPlateUpdate.is_valid():
+            if plate.active is False:
+                wells = Well.objects.filter(plate_id=plate.id)
+                for well in wells:
+                    well.active = False
+                    well.save()
             update_plate = formPlateUpdate.save()
             return redirect('db:plate', update_plate.id)
 
@@ -340,6 +345,11 @@ def plate_update(request, plate_id):
     if 'submit_plate_update' in request.POST:
         formPlate = PlateForm(instance=plate)
         if formPlate.is_valid():
+            if plate.active is False:
+                wells = Well.objects.filter(plate_id=plate.id)
+                for well in wells:
+                    well.active = False
+                    well.save()
             new_plate = formPlate.save()
             return redirect('db:plate', new_plate.id)
     else:
@@ -375,6 +385,11 @@ def well(request, plate_id, well_id):
     elif 'submit_plate_update' in request.POST:
         formPlateUpdate = PlateForm(request.POST, request.FILES, instance=plate)
         if formPlateUpdate.is_valid():
+            if plate.active is False:
+                wells = Well.objects.filter(plate_id=plate.id)
+                for well in wells:
+                    well.active = False
+                    well.save()
             update_plate = formPlateUpdate.save()
             return redirect('db:plate', update_plate.id)
 

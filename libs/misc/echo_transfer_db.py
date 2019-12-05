@@ -175,9 +175,9 @@ def calc_part_volumes_in_plate(count_unique_list, mix_parameters, dispenser_para
     for pair in count_unique_list:
         part_name = pair[0]
         times_needed = pair[1]  # Number of times it appears in experiment
-        wells = Well.objects.filter(samples__alias__exact=str(part_name),  well__active__exact=True)
+        wells = Well.objects.filter(samples__alias__exact=str(part_name))
         for well in wells:
-            if well.samples.count() == 1:
+            if well.samples.count() == 1 and well.active is True:
                 for sample in well.samples.all():
                     volume = 0
                     if sample.sample_type == 'Primer' and sample.direction == 'FWD':
@@ -318,13 +318,15 @@ def find_samples_database(unique_list):
     missing_list = []
     for part in unique_list:
         found = False
-        wells = Well.objects.filter(samples__alias__exact=str(part), well__active__exact=True)
+        wells = Well.objects.filter(samples__alias__exact=str(part))
+
+        # print(wells.active)
         if len(wells) > 0:
             for well in wells:
                 samples = well.samples.all()
                 if len(samples) == 1:
                     for sample in samples:
-                        if well.volume > 0 and sample.alias == part and sample.sample_type is not None:
+                        if well.volume > 0 and sample.alias == part and sample.sample_type is not None and well.active is True:
                             found = True
                             lista = [sample.name, sample.alias, str(sample.direction), str(sample.sample_type), float(well.concentration), float(well.volume), well.plate.name, well.name, int(well.plate.num_well)]
                             found_list.append(lista)
@@ -339,7 +341,6 @@ def find_samples_database(unique_list):
 
 def get_count_unique_vol_list(count_unique_list, part_vol_list, dispenser_parameters):
     count_unique_vol_list = []
-    machine, min_vol, res_vol, dead_vol = dispenser_parameters
     for part in count_unique_list:
         part_name = part[0]
         part_count = part[1]
@@ -348,7 +349,7 @@ def get_count_unique_vol_list(count_unique_list, part_vol_list, dispenser_parame
             div = 1000
         else:
             div = 1
-        volume = calc.total_volume_part_list(part_name, part_vol_list, div)
+        volume = calc.total_volume_part_list(part_name, part_vol_list, div, dispenser_parameters)
         count_unique_vol_list.append([part_name, volume, part_count])
     return count_unique_vol_list
 
@@ -454,7 +455,7 @@ def run(path, filename_p, filename_v, dispenser_parameters, mix_parameters, out_
 
     else:
         '''Calculate the part volumes'''
-        vol_for_part = calc_part_volumes_in_plate(count_unique_list, mix_parameters, dispenser_parameters)
+        vol_for_part = calc_part_volumes_in_plate(count_unique_vol_list, mix_parameters, dispenser_parameters)
         # print(vol_for_part)
 
         '''Verify parts volume in source plate'''
