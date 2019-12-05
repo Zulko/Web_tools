@@ -126,7 +126,7 @@ def num_times_part(my_item, lists_parts):
     return count
 
 
-def total_volume_part_list(my_item, lists_parts):
+def total_volume_part_list(my_item, lists_parts, div):
     volume = 0
     for list in lists_parts:
         for part in list:

@@ -4,7 +4,8 @@ from django.core.files.storage import FileSystemStorage
 from django.http import Http404, HttpResponse, FileResponse
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.contrib.auth.decorators import login_required
-from django.db.models.functions import Substr, Cast
+from django.db.models.functions import Substr
+from django.db.models.functions import Cast
 from django.db.models import IntegerField
 from django.conf import settings
 

@@ -58,7 +58,7 @@ def populate_destination_plates(plates_out, list_source_wells, lists_parts, foun
             name, sample_direction, sample_type, sample_wellconcentration, available_vol, times_needed, times_available, \
             vol_part_add, sample_platename, sample_wellname = part
 
-            """ Adding parts in destination plate """
+            """Adding parts in destination plate """
             plates_out[p].wells[i][j].samples.append(plate.Sample(partalias, sample_direction, sample_type, sample_wellconcentration, vol_part_add))
             out_dispenser.append([partalias, sample_type, sample_platename, sample_wellname, vol_part_add, plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
 
@@ -175,7 +175,7 @@ def calc_part_volumes_in_plate(count_unique_list, mix_parameters, dispenser_para
     for pair in count_unique_list:
         part_name = pair[0]
         times_needed = pair[1]  # Number of times it appears in experiment
-        wells = Well.objects.filter(samples__alias__exact=str(part_name))
+        wells = Well.objects.filter(samples__alias__exact=str(part_name),  well__active__exact=True)
         for well in wells:
             if well.samples.count() == 1:
                 for sample in well.samples.all():
@@ -312,13 +312,13 @@ def create_and_populate_sources_plate(found_list):
     return plates_in
 
 
+'''Verify parts in database'''
 def find_samples_database(unique_list):
-    ''' Verify parts in database '''
     found_list = []
     missing_list = []
     for part in unique_list:
         found = False
-        wells = Well.objects.filter(samples__alias__exact=str(part))
+        wells = Well.objects.filter(samples__alias__exact=str(part), well__active__exact=True)
         if len(wells) > 0:
             for well in wells:
                 samples = well.samples.all()
@@ -337,12 +337,18 @@ def find_samples_database(unique_list):
     return found_list, missing_list
 
 
-def get_count_unique_vol_list(count_unique_list, part_vol_list):
+def get_count_unique_vol_list(count_unique_list, part_vol_list, dispenser_parameters):
     count_unique_vol_list = []
+    machine, min_vol, res_vol, dead_vol = dispenser_parameters
     for part in count_unique_list:
         part_name = part[0]
         part_count = part[1]
-        volume = calc.total_volume_part_list(part_name, part_vol_list)
+        part_sample = Sample.objects.get(alias__iexact=str(part[0]))
+        if part_sample.sample_type == 'Primer':
+            div = 1000
+        else:
+            div = 1
+        volume = calc.total_volume_part_list(part_name, part_vol_list, div)
         count_unique_vol_list.append([part_name, volume, part_count])
     return count_unique_vol_list
 
@@ -384,7 +390,7 @@ def check_lists_size(lists_parts, lists_volume):
 
 def get_sets_in_filepath(reader):
     lists_parts = []
-    ''' For each line in file get the list'''
+    '''For each line in file get the list'''
     for line in reader:
         set = []
         parts = line.strip("\n").split(',')
@@ -393,7 +399,7 @@ def get_sets_in_filepath(reader):
             part = part.replace(", ", ",")
             part = part.replace('"', "")
             set.append(part)
-        ''' Create the single list of parts'''
+        '''Create the single list of parts'''
         lists_parts.append(list(set))
     return lists_parts
 
@@ -404,11 +410,11 @@ def run(path, filename_p, filename_v, dispenser_parameters, mix_parameters, out_
     robot = machine.Machine(name_machine, min_vol, res_vol, dead_vol)
     template_conc, primer_f, primer_r = mix_parameters
 
-    ''' Create read files'''
+    '''Create read files'''
     filein_parts = file.verify(path + "/" + filename_p)
     filein_volume = file.verify(path + "/" + filename_v)
 
-    ''' Create write files'''
+    '''Create write files'''
     # db_mantis_name = 'mantis_' + str(os.path.splitext(filename)[0]) + '.csv'
     db_robot_name = str(robot.name) + "_" + str(os.path.splitext(filename_p)[0]) + '.csv'
     file_robot = file.create(path + "/docs/" + db_robot_name, 'w')
@@ -416,28 +422,28 @@ def run(path, filename_p, filename_v, dispenser_parameters, mix_parameters, out_
     # file_mantis = file.create(path + "/docs/" + db_mantis_name, 'w')
     # mantis_csv = file.create_writer_csv(file_mantis)
 
-    """Create combinations"""
+    '''Create combinations'''
     lists_parts = get_sets_in_filepath(filein_parts)
-    # lists_volume = get_sets_in_filepath(filein_volume)
+    lists_volume = get_sets_in_filepath(filein_volume)
     # print(lists_parts)
 
     '''Check if the parts and volume files match size'''
-    # alert, part_vol_list = check_lists_size(lists_parts, lists_volume)
-    # if alert is not None:
-    #     return alert, None
+    alert, part_vol_list = check_lists_size(lists_parts, lists_volume)
+    if alert is not None:
+        return alert, None
 
-    ''' Get unique samples - no repetition'''
+    '''Get unique samples - no repetition'''
     unique_list = get_list_no_repetition(lists_parts)
     # print(unique_list)
 
-    ''' Verify how many times it appears'''
+    '''Verify how many times it appears'''
     count_unique_list = get_count_unique_list(unique_list, lists_parts)
     # print(count_unique_list)
 
-    # count_unique_vol_list = get_count_unique_vol_list(count_unique_list, part_vol_list)
-    # print(count_unique_vol_list)
+    count_unique_vol_list = get_count_unique_vol_list(count_unique_list, part_vol_list, dispenser_parameters)
+    print(count_unique_vol_list)
 
-    """Verify the parts on database"""
+    '''Verify the parts on database'''
     found_list, missing_list = find_samples_database(unique_list)
     # print(found_list)
 
@@ -447,24 +453,24 @@ def run(path, filename_p, filename_v, dispenser_parameters, mix_parameters, out_
         return total_alert, None
 
     else:
-        """Calculate the part volumes"""
+        '''Calculate the part volumes'''
         vol_for_part = calc_part_volumes_in_plate(count_unique_list, mix_parameters, dispenser_parameters)
         # print(vol_for_part)
 
-        """Verify parts volume in source plate"""
+        '''Verify parts volume in source plate'''
         list_source_wells, alert = verify_samples_volume(vol_for_part, count_unique_list, robot)
         if len(alert) > 0:
             return alert, None
 
         else:
-            """Create a destination plates"""
+            '''Create a destination plates'''
             plates_out = create_destination_plates(found_list, out_num_well)
 
-            """Populate plate"""
+            '''Populate plate'''
             plates_out, out_dispenser, out_master_mix, out_water, alert = \
                 populate_destination_plates(plates_out, list_source_wells, lists_parts, found_list,
                                             mix_parameters, pattern)
-            ''' Robot Dispenser parts '''
+            '''Robot Dispenser parts'''
             file.set_echo_header(robot_csv)
             file.write_dispenser_echo(out_dispenser, robot_csv)
 

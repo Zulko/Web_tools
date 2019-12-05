@@ -296,10 +296,7 @@ def pcr_script(request, step, user):
             plates_in = parser.list_plate_from_database(settings.MEDIA_ROOT, outfile_robot)
             for plate in plates_in:
                 step.input_plates.add(plate)
-                plate.export_csv()
-                filename = "{}.csv".format(plate)
-                filein = File(name=filename, script='Experiment:' + step.experiment.name, author=user, file=filename)
-                plate.file = filein
+                # plate.file =
 
             plates_out = parser.create_plate_on_database(settings.MEDIA_ROOT, outfile_robot, num_well_destination, step)
             for plate in plates_out:

@@ -3,13 +3,12 @@
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
+
+import libs.misc.calc as calc
+
 from django.db import models
-from django.db.models import IntegerField
-from django.db.models.functions import Substr, Cast
 from django.urls import reverse
 
-from db.resources import PlateResource
-import libs.misc.calc as calc
 
 class Machine(models.Model):
     MACHINE = (
@@ -181,13 +180,6 @@ class Plate(models.Model):
             rownames.append(calc.number_to_rowname(row))
         return colnames, rownames
 
-    # def export_csv(self):
-    #     plate_resource = PlateResource()
-    #     all_wells = Well.objects.filter(plate_id=self.id).annotate(letter=Substr('name', 1, 1)).annotate(
-    #         digits=Substr('name', 2)).annotate(number=Cast('digits', IntegerField())).order_by('letter',
-    #                                                                                            'number')
-    #     dataset = plate_resource.export(all_wells)
-    #     return dataset.csv
 
 class Sample(models.Model):
     # Choices
