@@ -418,13 +418,13 @@ def run(path, filename_p, filename_v, dispenser_parameters, mix_parameters, out_
 
     """Create combinations"""
     lists_parts = get_sets_in_filepath(filein_parts)
-    lists_volume = get_sets_in_filepath(filein_volume)
+    # lists_volume = get_sets_in_filepath(filein_volume)
     # print(lists_parts)
 
     '''Check if the parts and volume files match size'''
-    alert, part_vol_list = check_lists_size(lists_parts, lists_volume)
-    if alert is not None:
-        return alert, None
+    # alert, part_vol_list = check_lists_size(lists_parts, lists_volume)
+    # if alert is not None:
+    #     return alert, None
 
     ''' Get unique samples - no repetition'''
     unique_list = get_list_no_repetition(lists_parts)
@@ -434,8 +434,8 @@ def run(path, filename_p, filename_v, dispenser_parameters, mix_parameters, out_
     count_unique_list = get_count_unique_list(unique_list, lists_parts)
     # print(count_unique_list)
 
-    count_unique_vol_list = get_count_unique_vol_list(count_unique_list, part_vol_list)
-    print(count_unique_vol_list)
+    # count_unique_vol_list = get_count_unique_vol_list(count_unique_list, part_vol_list)
+    # print(count_unique_vol_list)
 
     """Verify the parts on database"""
     found_list, missing_list = find_samples_database(unique_list)
