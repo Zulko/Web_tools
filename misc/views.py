@@ -126,20 +126,20 @@ def echo_transfer_db_view(request):
             dispenser_parameters = machine, float(min_vol) * 1e-3, float(vol_resol) * 1e-3, float(dead_vol)
 
             """Reaction parameters"""
-            template_conc = request.POST['template_conc']
-            primer_f = request.POST['primer_f']
-            primer_r = request.POST['primer_r']
-            mix_parameters = \
-                float(template_conc), \
-                float(primer_f), \
-                float(primer_r), \
+            # template_conc = request.POST['template_conc']
+            # primer_f = request.POST['primer_f']
+            # primer_r = request.POST['primer_r']
+            # mix_parameters = \
+            #     float(template_conc), \
+            #     float(primer_f), \
+            #     float(primer_r), \
 
             """Destination plate"""
             num_well_destination = request.POST['num_well_destination']
             pattern = request.POST['pattern']
 
             ''' Calling Python Script'''
-            alerts, outfile_robot = echo_transfer_db.run(settings.MEDIA_ROOT, name_file_p, name_file_v, dispenser_parameters, mix_parameters, int(num_well_destination), int(pattern), user, scriptname)
+            alerts, outfile_robot = echo_transfer_db.run(settings.MEDIA_ROOT, name_file_p, name_file_v, dispenser_parameters, int(num_well_destination), int(pattern), user, scriptname)
             print(len(alerts))
             if len(alerts) == 0:
                 context = {

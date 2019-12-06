@@ -1,3 +1,5 @@
+import os
+
 from django.shortcuts import render
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
@@ -8,9 +10,6 @@ from libs.function.combinatorial import run_combination
 from libs.function.moclo import run_moclo
 from libs.function.moclo_db import run_moclo_db
 from libs.function.pcr_db import run_pcr_db
-
-
-import os
 
 
 def upload_file(request, filename):

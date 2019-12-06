@@ -124,7 +124,7 @@ def get_header(filein):
 
 
 def set_echo_header(fileout):
-    header = 'Part', 'Source Plate Name','Source Well','Destination ID','Destination Plate Name','Destination Well','Volume'
+    header = 'Part', 'Alias', 'Source Barcode', 'Source Plate Name','Source Well','Destination Barcode','Destination Plate Name','Destination Well','Volume'
     fileout.writerow(header)
 
 
@@ -307,10 +307,13 @@ def write_combinations(outfile, list_combinations):
 
 def write_dispenser_echo(dispenser_list, fileout):
     for part in dispenser_list:
-        name, type_part, source_plate, source_well, part_vol, dest_plate, dest_well, dest_id = part
-        vol_nl = part_vol * 1000
-        round_vol = int(vol_nl)
-        result = [name, source_plate, source_well, dest_id, dest_plate, dest_well, round_vol]
+        name, alias, type_part, source_barcode, source_plate, source_well, part_vol, dest_barcode, dest_plate, dest_well, dest_id = part
+        if type_part != 'Primer':
+            vol_nl = float(part_vol) * 1000
+        else:
+            vol_nl = float(part_vol)
+        round_vol = round(float(vol_nl),1)
+        result = [name, alias, source_barcode, source_plate, source_well, dest_barcode, dest_plate, dest_well, round_vol]
         fileout.writerow(result)
 
 
