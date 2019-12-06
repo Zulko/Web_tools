@@ -261,3 +261,26 @@ def list_to_source_plates(foundlist, plates):
                     plates[i].wells[row][col].samples.append(
                         plate.Sample(samp_name, type, samp_len, samp_conc, volume))
     return plates
+
+
+def find_samples_database(unique_list):
+    found_list = []
+    missing_list = []
+    for part in unique_list:
+        found = False
+        wells = Well.objects.filter(samples__alias__exact=str(part))
+        if len(wells) > 0:
+            for well in wells:
+                samples = well.samples.all()
+                if len(samples) == 1:
+                    for sample in samples:
+                        if well.volume > 0 and sample.alias == part and sample.sample_type is not None and well.active is True:
+                            found = True
+                            lista = [sample.name, sample.alias, str(sample.direction), str(sample.sample_type), float(well.concentration), float(well.volume), well.plate.name, well.name, int(well.plate.num_well)]
+                            found_list.append(lista)
+                        else:
+                            missing_list.append(part)
+        else:
+            missing_list.append(part)
+
+    return found_list, missing_list

@@ -11,6 +11,12 @@ BY_COL = 1
 MAX_VALUE = 999999
 
 
+def get_name_from_alias(part, found_list):
+    for line in found_list:
+        if part == line[1]:
+            return line[0]
+
+
 def get_localization_vol(part_name, list_source_wells):
     for i, item in enumerate(list_source_wells):
         sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, times_available, vol_part_add, plate_in_name, wellD_name = list_source_wells[i]
@@ -36,7 +42,7 @@ def get_plate_with_empty_well(destination_plates, pattern):
                 return p, i, j
 
 
-def populate_destination_plates(plates_out, list_destination_plate, list_source_wells, mix_parameters, pattern):
+def populate_destination_plates(plates_out, list_destination_plate, list_source_wells, mix_parameters, found_list, pattern):
     alert = []
     part_fmol, bb_fmol, total_vol, per_buffer, per_rest_enz, per_lig_enz, add_water = mix_parameters
     out_dispenser = []
@@ -51,8 +57,9 @@ def populate_destination_plates(plates_out, list_destination_plate, list_source_
             final_conc = calc.fmol_by_parttype(sample_type, bb_fmol, part_fmol)
 
             """ Adding parts in destination plate """
+            alias = get_name_from_alias(part, found_list)
             plates_out[p].wells[i][j].samples.append(plate.Sample(sample_name, sample_type, sample_length, final_conc, vol_part_add))
-            out_dispenser.append([sample_name, sample_type, source_plate, source_well, vol_part_add, plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
+            out_dispenser.append([sample_name, alias, sample_type, source_plate, source_well, vol_part_add, plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
 
             """ Sum of total volume of parts """
             total_parts_vol += vol_part_add
@@ -85,12 +92,14 @@ def create_plate(num_wells, name):
 
 
 def create_destination_plates(list_destination_plate, out_num_well):
+    num = Plate.objects.latest('id').id
     plates_out = []
     num_receipts = len(list_destination_plate)
     num_plates = calc.num_destination_plates(num_receipts, out_num_well)
 
     for i in range(0, num_plates):
-        plates_out.append(create_plate(out_num_well, 'Destination_' + str(i+1)))
+        num = num + 1
+        plates_out.append(create_plate(out_num_well, 'GF' + '{0:05}'.format(num)))
     return plates_out
 
 
@@ -293,33 +302,6 @@ def create_and_populate_sources_plate(found_list):
     return plates_in
 
 
-def find_samples_database(unique_list):
-    ''' Verify parts in database '''
-    found_list = []
-    missing_list = []
-    for part in unique_list:
-        print(part)
-        found = False
-        wells = Well.objects.filter(samples__name__exact=str(part))
-        print(len(wells))
-        if len(wells) > 0:
-            for well in wells:
-                samples = well.samples.all()
-                if len(samples) == 1:
-                    for sample in samples:
-                        if well.volume > 0 and sample.name == part and sample.length is not None and sample.sample_type is not None and well.active is True:
-                            found = True
-                            lista = [sample.name, str(sample.sample_type), int(sample.length), float(well.concentration), float(well.volume), well.plate.name, well.name, int(well.plate.num_well)]
-                            found_list.append(lista)
-
-                        else:
-                            missing_list.append(part)
-        else:
-            missing_list.append(part)
-
-    return found_list, missing_list
-
-
 def get_count_unique_list(unique_list, lists_parts):
     count_unique_list = []
     for part in unique_list:
@@ -359,15 +341,10 @@ def run_moclo_db(path, filename, dispenser_parameters, mix_parameters, out_num_w
     robot = machine.Machine(name_machine, min_vol, res_vol, dead_vol)
     part_fmol, bb_fmol, total_vol, per_buffer, per_rest_enz, per_lig_enz, add_water = mix_parameters
 
-    # print(name_machine, min_vol, res_vol, dead_vol)
-    # print(name_machine, min_vol, res_vol, dead_vol)
-    # print(part_fmol, bb_fmol, total_vol, per_buffer, per_rest_enz, per_lig_enz, add_water)
-
-
-    ''' Create read files'''
+    '''Create read files'''
     filein = file.verify(path + "/" + filename)
 
-    ''' Create write files'''
+    '''Create write files'''
     db_mantis_name = 'mantis_' + str(os.path.splitext(filename)[0]) + '.csv'
     db_robot_name = str(robot.name) + "_" + str(os.path.splitext(filename)[0]) + '.csv'
     file_mantis = file.create(path + "/docs/" + db_mantis_name, 'w')
@@ -379,16 +356,16 @@ def run_moclo_db(path, filename, dispenser_parameters, mix_parameters, out_num_w
     lists_parts = get_sets_in_filepath(filein)
     # print(lists_parts)
 
-    ''' Get unique samples - no repetition'''
+    '''Get unique samples - no repetition'''
     unique_list = get_list_no_repetition(lists_parts)
     # print(unique_list)
 
-    ''' Verify how many times it appears'''
+    '''Verify how many times it appears'''
     count_unique_list = get_count_unique_list(unique_list, lists_parts)
     print(count_unique_list)
 
     """Verify the parts on database"""
-    found_list, missing_list = find_samples_database(unique_list)
+    found_list, missing_list = parser.find_samples_database(unique_list)
 
     print(len(missing_list))
     if len(missing_list) > 0:
@@ -419,7 +396,8 @@ def run_moclo_db(path, filename, dispenser_parameters, mix_parameters, out_num_w
             plates_out = create_destination_plates(list_destination_plate, out_num_well)
 
             """Populate plate"""
-            plates_out, out_dispenser, out_master_mix, out_water, alert = populate_destination_plates(plates_out, list_destination_plate, list_source_wells, mix_parameters, pattern)
+            plates_out, out_dispenser, out_master_mix, out_water, alert = \
+                populate_destination_plates(plates_out, list_destination_plate, list_source_wells, mix_parameters, found_list, pattern)
             # file.write_plate_by_col(plates_out)
 
             """Mantis output file"""

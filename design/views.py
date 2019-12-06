@@ -391,6 +391,9 @@ def step_view(request, experiment_id, step_id):
         elif step.script == 'Moclo':
             print('Moclo: Yes')
 
+        elif step.script == 'Echo Transfer':
+            print('Echo Transfer: Yes')
+
         elif step.script == 'Normalization':
             print('Normalization: Yes')
 

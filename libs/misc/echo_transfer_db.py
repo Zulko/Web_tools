@@ -64,7 +64,7 @@ def populate_destination_plates(plates_out, list_source_wells, lists_parts, list
             )
             out_dispenser.append(
                 [name, partalias, sample_type, sample_plate_barcode, sample_platename, sample_wellname, vol,
-                 0, plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id]
+                 plates_out[p].name, plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id]
             )
 
     return plates_out, out_dispenser, out_master_mix, out_water, alert
@@ -86,7 +86,7 @@ def create_destination_plates(lists_parts, out_num_well):
     num_plates = calc.num_destination_plates(num_receipts, out_num_well)
     for i in range(0, num_plates):
         num = num+1
-        plates_out.append(create_plate(out_num_well, 'Echo_transfer' + '{0:07}'.format(num)))
+        plates_out.append(create_plate(out_num_well, 'GF' + '{0:05}'.format(num)))
     return plates_out
 
 
@@ -318,30 +318,6 @@ def add_on_list(lista, item):
 #     return plates_in
 
 
-'''Verify parts in database'''
-def find_samples_database(unique_list):
-    found_list = []
-    missing_list = []
-    for part in unique_list:
-        found = False
-        wells = Well.objects.filter(samples__alias__exact=str(part))
-        if len(wells) > 0:
-            for well in wells:
-                samples = well.samples.all()
-                if len(samples) == 1:
-                    for sample in samples:
-                        if well.volume > 0 and sample.alias == part and sample.sample_type is not None and well.active is True:
-                            found = True
-                            lista = [sample.name, sample.alias, str(sample.direction), str(sample.sample_type), float(well.concentration), float(well.volume), well.plate.name, well.name, int(well.plate.num_well)]
-                            found_list.append(lista)
-                        else:
-                            missing_list.append(part)
-        else:
-            missing_list.append(part)
-
-    return found_list, missing_list
-
-
 def get_count_unique_vol_list(count_unique_list, part_vol_list, dispenser_parameters):
     count_unique_vol_list = []
     for part in count_unique_list:
@@ -444,7 +420,7 @@ def run(path, filename_p, filename_v, dispenser_parameters, out_num_well, patter
     # print(count_unique_vol_list)
 
     '''Verify the parts on database'''
-    found_list, missing_list = find_samples_database(unique_list)
+    found_list, missing_list = parser.find_samples_database(unique_list)
     # print(found_list)
 
     if len(missing_list) > 0:

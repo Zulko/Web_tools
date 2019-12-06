@@ -30,6 +30,7 @@ class Step(models.Model):
         ('Normalization', 'Normalization'),
         ('Spotting', 'Spotting'),
         ('PCR', 'PCR'),
+        ('Echo Transfer', 'Echo Transfer'),
     )
 
     name = models.CharField(max_length=100)
