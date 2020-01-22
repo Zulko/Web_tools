@@ -1,7 +1,7 @@
 Web tools
 ----------
   
-####Work in progress. Documentation in construction.
+#### Work in progress. Documentation in construction.
 
 Project using Python 3.6
 
@@ -15,7 +15,7 @@ Packages to be installed:
                    nginx 
                    curl
 
-####Create a virtualenv
+#### Create a virtualenv
     virtualenv myprojectenv
 
 Install the requirements
@@ -28,7 +28,7 @@ Activate environment
 
 
 
-####Creating Database PostgreSQL
+#### Creating Database PostgreSQL
 Log into an interactive Postgres session by typing:
 
     sudo -u postgres psql
@@ -55,8 +55,8 @@ Close prompt
     
     postgres=# \q
 
-#####Django project
-######Edit settings.py
+##### Django project
+###### Edit settings.py
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
