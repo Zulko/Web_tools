@@ -1,7 +1,7 @@
 from ..biofoundry import db
 from ..misc import calc, file, parser
 from ..container import plate, machine
-import sys, os
+import os
 
 
 # Dispense modo in plate
