@@ -56,6 +56,7 @@ Close prompt
     postgres=# \q
 
 #####Django project
+
 ######Edit settings.py
     DATABASES = {
         'default': {
@@ -74,3 +75,6 @@ Close prompt
 
 ###### Add superuser
     python3 manage.py createsuperuser
+    
+
+Web tools is developed by Flavia Araujo for the Concordia Genome Foundry released on Github under the MIT license.

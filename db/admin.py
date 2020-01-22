@@ -12,8 +12,8 @@ from .models import Plate, Sample, Well, File, Machine, Project
 
 @admin.register(Well)
 class WellAdmin(ImportExportModelAdmin):
-    list_display = ['name','plate','active']
-    ordering = ['plate','name']
+    list_display = ['name', 'plate', 'active']
+    ordering = ['plate', 'name']
     pass
 
 
@@ -27,20 +27,23 @@ class PlateAdmin(ImportExportModelAdmin):
 
 @admin.register(Sample)
 class SampleAdmin(ImportExportModelAdmin):
-    list_display = ['name', 'alias', 'sample_type', 'description']
+    list_display = ['name', 'alias', 'sample_type', 'description', 'author']
     pass
 
 
 @admin.register(File)
 class FileAdmin(ImportExportModelAdmin):
+    list_display = ['name', 'script', 'author', 'file', 'created_at']
     pass
 
 
 @admin.register(Machine)
 class MachineAdmin(ImportExportModelAdmin):
+    list_display = ['name', 'author', 'status', 'comments', 'image', 'created_at']
     pass
 
 
 @admin.register(Project)
 class ProjectAdmin(ImportExportModelAdmin):
+    list_display = ['name', 'author', 'collaborators', 'comments', 'image', 'created_at']
     pass

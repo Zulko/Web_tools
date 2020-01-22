@@ -57,7 +57,7 @@ def populate_destination_plates(plates_out, list_destination_plate, list_source_
 
             """ Adding parts in destination plate """
             plates_out[p].wells[i][j].samples.append(plate.Sample(sample_name, sample_type, sample_length, final_conc, vol_part_add))
-            out_dispenser.append([sample_name, sample_type, source_plate, source_well, vol_part_add, plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
+            out_dispenser.append([sample_name, '', sample_type, '', source_plate, source_well, vol_part_add, '', plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
 
             """ Sum of total volume of parts """
             total_parts_vol += vol_part_add
