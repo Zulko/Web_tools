@@ -2,7 +2,7 @@ import os
 
 from django.core.files.storage import FileSystemStorage
 from django.http import Http404, HttpResponse, FileResponse
-from django.shortcuts import render, get_object_or_404, redirect, reverse
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.db.models.functions import Substr
 from django.db.models.functions import Cast
@@ -15,7 +15,6 @@ from .models import Plate, Well, Sample, File, Machine, Project
 from .forms import SampleForm, PlateForm, WellForm, MachineForm, ProjectForm
 from .filters import SampleFilter, PlateFilter
 from .resources import SampleResource, PlateResource
-
 from libs.misc import calc, file
 
 
@@ -69,93 +68,6 @@ def plate_list(request):
     }
 
     return render(request, 'db/index.html', context)
-
-
-# @login_required()
-# def plate_list_inventory(request):
-#     all_plates = Plate.objects.filter(function="Inventory")
-#     plate_filter = PlateFilter(request.GET, queryset=all_plates)
-#     formPlateAdd = PlateForm()
-#     formPlateUpdate = PlateForm()
-#
-#     if 'submit_plate_add' in request.POST:
-#         formPlateAdd = PlateForm(request.POST, request.FILES)
-#         if formPlateAdd.is_valid():
-#             new_plate = formPlateAdd.save()
-#             return redirect('db:plate', new_plate.id)
-#
-#     elif 'form_plate_update' in request.POST:
-#         formPlateUpdate = PlateForm(request.POST, request.FILES)
-#         if formPlateUpdate.is_valid():
-#             new_plate = formPlateUpdate.save()
-#             return redirect('db:plate', new_plate.id)
-#
-#     context = {
-#         'form_plate_add': formPlateAdd,
-#         'form_plate_update': formPlateUpdate,
-#         'all_plates': all_plates,
-#         'filter': plate_filter
-#     }
-#
-#     return render(request, 'db/index.html', context)
-#
-#
-# @login_required()
-# def plate_list_reagents(request):
-#     all_plates = Plate.objects.filter(function="Reagents")
-#     plate_filter = PlateFilter(request.GET, queryset=all_plates)
-#     formPlateAdd = PlateForm()
-#     formPlateUpdate = PlateForm()
-#
-#     if 'submit_plate_add' in request.POST:
-#         formPlateAdd = PlateForm(request.POST, request.FILES)
-#         if formPlateAdd.is_valid():
-#             new_plate = formPlateAdd.save()
-#             return redirect('db:plate', new_plate.id)
-#
-#     elif 'form_plate_update' in request.POST:
-#         formPlateUpdate = PlateForm(request.POST, request.FILES)
-#         if formPlateUpdate.is_valid():
-#             new_plate = formPlateUpdate.save()
-#             return redirect('db:plate', new_plate.id)
-#
-#     context = {
-#         'form_plate_add': formPlateAdd,
-#         'form_plate_update': formPlateUpdate,
-#         'all_plates': all_plates,
-#         'filter': plate_filter
-#     }
-#
-#     return render(request, 'db/index.html', context)
-#
-#
-# @login_required()
-# def plate_list_process(request):
-#     all_plates = Plate.objects.filter(function='Process')
-#     plate_filter = PlateFilter(request.GET, queryset=all_plates)
-#     formPlateAdd = PlateForm()
-#     formPlateUpdate = PlateForm()
-#
-#     if 'submit_plate_add' in request.POST:
-#         formPlateAdd = PlateForm(request.POST, request.FILES)
-#         if formPlateAdd.is_valid():
-#             new_plate = formPlateAdd.save()
-#             return redirect('db:plate', new_plate.id)
-#
-#     elif 'form_plate_update' in request.POST:
-#         formPlateUpdate = PlateForm(request.POST, request.FILES)
-#         if formPlateUpdate.is_valid():
-#             new_plate = formPlateUpdate.save()
-#             return redirect('db:plate', new_plate.id)
-#
-#     context = {
-#         'form_plate_add': formPlateAdd,
-#         'form_plate_update': formPlateUpdate,
-#         'all_plates': all_plates,
-#         'filter': plate_filter
-#     }
-#
-#     return render(request, 'db/index.html', context)
 
 
 def plate_layout(plate_id, all_wells):
@@ -295,16 +207,7 @@ def plate_print(request, plate_id):
 def plate_delete(request, plate_id):
     if request.method == 'POST':
         plate = Plate.objects.get(id=plate_id)
-        if plate.function == 'Inventory':
-            plate.delete()
-            return redirect('db:inventory_plates')
-        elif plate.function == 'Process':
-            plate.delete()
-            return redirect('db:process_plates')
-        elif plate.function == 'Reagents':
-            plate.delete()
-            return redirect('db:reagents_plates')
-
+        plate.delete()
     return redirect('db:index')
 
 
