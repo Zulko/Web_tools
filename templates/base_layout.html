@@ -53,9 +53,7 @@
                     &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-vial" style="font-size:15px; color:white;"></i> &nbsp;Scripts
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="navbardrop">
-                    <li><a class="dropdown-item" href="{% url 'scripts:spotting' %}">Spotting</a></li>
                     <li><a class="dropdown-item" href="{% url 'scripts:moclo' %}">MoClo</a></li>
-                    <li><a class="dropdown-item" href="{% url 'scripts:combinatorial' %}">Combinatorial</a></li>
                     <li><a class="dropdown-item" href="{% url 'scripts:moclodb' %}">MoClo DB</a></li>
                     <li><a class="dropdown-item" href="{% url 'scripts:pcrdb' %}">PCR DB</a></li>
                     <li><a class="dropdown-item" href="{% url 'misc:echo_transfer_db' %}">Echo Transfer DB</a></li>
@@ -73,7 +71,13 @@
             <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
                 &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-database" style="font-size:15px; color:white;"></i>&nbsp; Database</a>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{% url 'db:index' %}">Plates</a></li>
+                    <li class="dropdown-submenu" role="button" aria-haspopup="true" aria-expanded="false"><a class="dropdown-item dropdown-toggle" href="#">Plates</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'db:index' %}">Inventory</a></li>
+                            <li><a class="dropdown-item" href="#">Templates</a></li>
+                        </ul>
+                    </li>
+{#                    <li><a class="dropdown-item" href="{% url 'db:index' %}">Plates</a></li>#}
                     <li><a class="dropdown-item" href="{% url 'db:samples_list' %}">Samples</a></li>
                     <li><a class="dropdown-item" href="{% url 'db:project_list' %}">Projects</a></li>
                     <li><a class="dropdown-item" href="{% url 'db:machine_list' %}">Machines</a></li>
@@ -85,6 +89,8 @@
             <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
                 &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-tools" style="font-size:15px; color:white;"></i>&nbsp; Extras</a>
                 <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="{% url 'scripts:spotting' %}">Spotting</a></li>
+                    <li><a class="dropdown-item" href="{% url 'scripts:combinatorial' %}">Combinatorial</a></li>
                     <li><a class="dropdown-item" href="{% url 'misc:genbank' %}">GB Files</a></li>
                     <li><a class="dropdown-item" href="{% url 'misc:primer' %}">Primer</a></li>
                     <li><a class="dropdown-item" href="{% url 'misc:normalization' %}">Normalization</a></li>
