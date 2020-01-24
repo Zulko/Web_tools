@@ -89,26 +89,6 @@ def normalization_view(request):
     return render(request, 'misc/normalization.html', {'uploadfile_name': '', 'url': '', 'outfile_name': '', 'outfile_url': '', 'alert': ''})
 
 
-# def nrc_sequence_view(request):
-#     if request.method == "POST":
-#         user = request.user
-#         if len(request.FILES) != 0:
-#             upload, fs, name, url = upload_file(request, 'upload_file')
-#             sequence = request.POST['sequence']
-#
-#             ''' Calling Python Script'''
-#             outfile, alert = nrc_sequence.run(settings.MEDIA_ROOT, name, sequence, user)
-#             if outfile is not None:
-#                 outfile_name = str(outfile)
-#                 outfile_url = fs.url(outfile_name)
-#                 return render(request, 'misc/nrc_sequence.html', {'uploadfile_name': upload.name, 'url': url, 'outfile_name': outfile_name, 'outfile_url': outfile_url, 'alert':alert})
-#             else:
-#                 return render(request, 'misc/nrc_sequence.html',
-#                               {'uploadfile_name': upload.name, 'url': url, 'outfile_name': '',
-#                                'outfile_url': '', 'alert': alert})
-#     return render(request, 'misc/nrc_sequence.html', {'uploadfile_name': '', 'url': '', 'outfile_name': '', 'outfile_url': '', 'alert': ''})
-
-
 @login_required(login_url="/accounts/login/")
 def echo_transfer_db_view(request):
     if request.method == "POST":
@@ -116,6 +96,7 @@ def echo_transfer_db_view(request):
         user = request.user
         if len(request.FILES) > 0:
             upload_p, fs_p, name_file_p, url_file_p = upload_file(request, 'upload_file_parts')
+            plate_content = request.POST['plate_content']
 
             """Dispenser parameters"""
             machine = request.POST['machine']
@@ -129,7 +110,7 @@ def echo_transfer_db_view(request):
             pattern = request.POST['pattern']
 
             ''' Calling Python Script'''
-            alerts, outfile_robot = echo_transfer_db.run(settings.MEDIA_ROOT, name_file_p, dispenser_parameters, int(num_well_destination), int(pattern), user, scriptname)
+            alerts, outfile_robot = echo_transfer_db.run(settings.MEDIA_ROOT, name_file_p, plate_content, dispenser_parameters, int(num_well_destination), int(pattern), user, scriptname)
             print(len(alerts))
             if len(alerts) == 0:
                 context = {

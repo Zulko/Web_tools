@@ -335,7 +335,7 @@ def get_sets_in_filepath(reader):
     return lists_parts
 
 
-def run_moclo_db(path, filename, dispenser_parameters, mix_parameters, out_num_well, pattern, use_high_low_chip_mantis, user):
+def run_moclo_db(path, filename, plate_content, dispenser_parameters, mix_parameters, out_num_well, pattern, use_high_low_chip_mantis, user):
     total_alert = []
     name_machine, min_vol, res_vol, dead_vol = dispenser_parameters
     robot = machine.Machine(name_machine, min_vol, res_vol, dead_vol)
@@ -362,14 +362,14 @@ def run_moclo_db(path, filename, dispenser_parameters, mix_parameters, out_num_w
 
     '''Verify how many times it appears'''
     count_unique_list = get_count_unique_list(unique_list, lists_parts)
-    print(count_unique_list)
+    # print(count_unique_list)
 
     """Verify the parts on database"""
-    found_list, missing_list = parser.find_samples_database(unique_list)
+    found_list, missing_list = parser.find_samples_database(unique_list, plate_content)
 
-    print(len(missing_list))
+    # print(len(missing_list))
     if len(missing_list) > 0:
-        print(len(missing_list))
+        # print(len(missing_list))
         for item in missing_list:
             total_alert.append('Missing info for part: ' + str(item))
         return total_alert, None, None, None, None

@@ -2,7 +2,6 @@
 # Library to deal with input and output files
 """
 import os, re, sys, csv, math, operator
-from reportlab.pdfgen import canvas
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter, inch, landscape
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
@@ -123,19 +122,21 @@ def get_header(filein):
     return header
 
 
-def set_echo_header(fileout):
-    header = 'Part', 'Alias', 'Source Barcode', 'Source Plate Name','Source Well','Destination Barcode','Destination Plate Name','Destination Well','Volume'
+def set_header(fileout):
+    header = 'Source ID', 'Source Plate Name', 'Source Well', 'Destination ID', 'Destination Plate Name', \
+             'Destination Well', 'Volume'
     fileout.writerow(header)
 
 
-def set_header(fileout):
-    header = 'Source ID', 'Source Plate Name','Source Well','Destination ID','Destination Plate Name','Destination Well','Volume'
+def set_echo_header(fileout):
+    header = 'Part', 'Alias', 'Source Plate Barcode', 'Source Plate Name', 'Source Well', 'Destination Plate Barcode', \
+             'Destination Plate Name', 'Destination Well', 'Volume'
     fileout.writerow(header)
 
 
 def set_biomek_header(fileout):
-    header = 'Source ID', 'Source Plate Name','Source Well','Destination ID','Destination Plate Name','Destination Well','Volume',\
-             'Source Row','Source Column','Destination Row','Destination Column','Plate+Row'
+    header = 'Source ID', 'Source Plate Name', 'Source Well', 'Destination ID', 'Destination Plate Name', \
+             'Destination Well', 'Volume', 'Source Row', 'Source Column', 'Destination Row', 'Destination Column', 'Plate+Row'
     fileout.writerow(header)
 
 
@@ -315,7 +316,7 @@ def write_dispenser_echo(dispenser_list, fileout):
             vol_nl = float(part_vol) * 1000
         else:
             vol_nl = float(part_vol)
-        round_vol = round(float(vol_nl),1)
+        round_vol = round(float(vol_nl), 1)
         result = [name, alias, source_barcode, source_plate, source_well, dest_barcode, dest_plate, dest_well, round_vol]
         fileout.writerow(result)
 
