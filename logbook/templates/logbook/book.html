@@ -49,7 +49,7 @@
 
             <!-- Table entry list -->
             <table id="file_list_table" class="table table-hover table-striped table-sm" cellspacing="0" width="100%">
-              <thead align="center">
+              <thead>
                 <tr class="table-dark text-dark">
                     <th>User</th>
                     <th>Supervisor</th>
@@ -60,7 +60,7 @@
               </thead>
               <tbody>
                 {% for logbook in all_logbook %}
-                <tr align="center">
+                <tr>
                     <td>{{ logbook.user }}</td>
                     <td>{{ logbook.supervisor }}</td>
                     <td>{{ logbook.time_used }}</td>
@@ -80,8 +80,9 @@
     </div>
       <script type="text/javascript">
         $('#file_list_table').DataTable({
-            {#searching: false,#}
-            "columnDefs": [{type:'date', 'targets':[3]}],
+            {#searching: true,#}
+            {#"scrollX": true,#}
+            columnDefs: [{type:'date', 'targets':[3], className: 't-body-center'}],
             "order":[[3, "desc"]]
         });
 
