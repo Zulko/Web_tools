@@ -306,7 +306,10 @@ def write_combinations(outfile, list_combinations):
 
 
 def write_dispenser_echo(dispenser_list, fileout):
-    for part in dispenser_list:
+    '''Output file sorted by source plate barcode - required by Echo dispenser'''
+    sorted_dispenser_list = sorted(dispenser_list, key=operator.itemgetter(3))
+
+    for part in sorted_dispenser_list:
         name, alias, type_part, source_barcode, source_plate, source_well, part_vol, dest_barcode, dest_plate, dest_well, dest_id = part
         if type_part != 'Primer':
             vol_nl = float(part_vol) * 1000
@@ -315,9 +318,6 @@ def write_dispenser_echo(dispenser_list, fileout):
         round_vol = round(float(vol_nl),1)
         result = [name, alias, source_barcode, source_plate, source_well, dest_barcode, dest_plate, dest_well, round_vol]
         fileout.writerow(result)
-    sort = sorted(fileout, key=operator.itemgetter(0))
-    for eachline in sort:
-        print(eachline)
 
 
 def write_dispenser_mantis(file_mantis, reagents):

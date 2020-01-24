@@ -89,24 +89,24 @@ def normalization_view(request):
     return render(request, 'misc/normalization.html', {'uploadfile_name': '', 'url': '', 'outfile_name': '', 'outfile_url': '', 'alert': ''})
 
 
-def nrc_sequence_view(request):
-    if request.method == "POST":
-        user = request.user
-        if len(request.FILES) != 0:
-            upload, fs, name, url = upload_file(request, 'upload_file')
-            sequence = request.POST['sequence']
-
-            ''' Calling Python Script'''
-            outfile, alert = nrc_sequence.run(settings.MEDIA_ROOT, name, sequence, user)
-            if outfile is not None:
-                outfile_name = str(outfile)
-                outfile_url = fs.url(outfile_name)
-                return render(request, 'misc/nrc_sequence.html', {'uploadfile_name': upload.name, 'url': url, 'outfile_name': outfile_name, 'outfile_url': outfile_url, 'alert':alert})
-            else:
-                return render(request, 'misc/nrc_sequence.html',
-                              {'uploadfile_name': upload.name, 'url': url, 'outfile_name': '',
-                               'outfile_url': '', 'alert': alert})
-    return render(request, 'misc/nrc_sequence.html', {'uploadfile_name': '', 'url': '', 'outfile_name': '', 'outfile_url': '', 'alert': ''})
+# def nrc_sequence_view(request):
+#     if request.method == "POST":
+#         user = request.user
+#         if len(request.FILES) != 0:
+#             upload, fs, name, url = upload_file(request, 'upload_file')
+#             sequence = request.POST['sequence']
+#
+#             ''' Calling Python Script'''
+#             outfile, alert = nrc_sequence.run(settings.MEDIA_ROOT, name, sequence, user)
+#             if outfile is not None:
+#                 outfile_name = str(outfile)
+#                 outfile_url = fs.url(outfile_name)
+#                 return render(request, 'misc/nrc_sequence.html', {'uploadfile_name': upload.name, 'url': url, 'outfile_name': outfile_name, 'outfile_url': outfile_url, 'alert':alert})
+#             else:
+#                 return render(request, 'misc/nrc_sequence.html',
+#                               {'uploadfile_name': upload.name, 'url': url, 'outfile_name': '',
+#                                'outfile_url': '', 'alert': alert})
+#     return render(request, 'misc/nrc_sequence.html', {'uploadfile_name': '', 'url': '', 'outfile_name': '', 'outfile_url': '', 'alert': ''})
 
 
 @login_required(login_url="/accounts/login/")
@@ -114,7 +114,7 @@ def echo_transfer_db_view(request):
     if request.method == "POST":
         scriptname = 'Echo Transfer from Worklist'
         user = request.user
-        if len(request.FILES) > 1:
+        if len(request.FILES) > 0:
             upload_p, fs_p, name_file_p, url_file_p = upload_file(request, 'upload_file_parts')
 
             """Dispenser parameters"""

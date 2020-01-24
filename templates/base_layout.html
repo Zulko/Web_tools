@@ -19,7 +19,6 @@
     <!-- SCRIPTS -->
     <script src="{% static 'js/jquery.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/jquery.twbsPagination.min.js' %}"></script>
-{#    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>#}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
@@ -61,7 +60,6 @@
                     <li><a class="dropdown-item" href="{% url 'scripts:moclodb' %}">Moclo DB</a></li>
                     <li><a class="dropdown-item" href="{% url 'scripts:pcrdb' %}">PCR DB</a></li>
                     <li><a class="dropdown-item" href="{% url 'misc:echo_transfer_db' %}">Echo Transfer DB</a></li>
-{#                    <a class="dropdown-item" href="{% url 'scripts:assembly' %}">Assembly</a>#}
                 </ul>
             </li>
             <li class="nav-item dropdown">
@@ -76,19 +74,11 @@
             <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
                 &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-database" style="font-size:15px; color:white;"></i>&nbsp; Database</a>
                 <ul class="dropdown-menu">
-{#                    <li class="dropdown-submenu" role="button" aria-haspopup="true" aria-expanded="false"><a class="dropdown-item dropdown-toggle" href="#">Plates</a>#}
-{#                        <ul class="dropdown-menu">#}
-{#                            <li><a class="dropdown-item" href="{% url 'db:inventory_plates' %}">Inventory</a></li>#}
-{#                            <li><a class="dropdown-item" href="{% url 'db:process_plates' %}">Process</a></li>#}
-{#                            <li><a class="dropdown-item" href="{% url 'db:reagents_plates' %}">Reagents</a></li>#}
-{#                        </ul>#}
-{#                    </li>#}
                     <li><a class="dropdown-item" href="{% url 'db:index' %}">Plates</a></li>
                     <li><a class="dropdown-item" href="{% url 'db:samples_list' %}">Samples</a></li>
                     <li><a class="dropdown-item" href="{% url 'db:project_list' %}">Projects</a></li>
                     <li><a class="dropdown-item" href="{% url 'db:machine_list' %}">Machines</a></li>
                     <li><a class="dropdown-item" href="{% url 'db:file_sharing' %}">File sharing</a></li>
-
                 </ul>
             </li>
 
@@ -99,7 +89,6 @@
                     <li><a class="dropdown-item" href="{% url 'misc:genbank' %}">GB Files</a></li>
                     <li><a class="dropdown-item" href="{% url 'misc:primer' %}">Primer</a></li>
                     <li><a class="dropdown-item" href="{% url 'misc:normalization' %}">Normalization</a></li>
-                    <li><a class="dropdown-item" href="{% url 'misc:nrc_sequence' %}">NRC sequence</a></li>
                 </ul>
             </li>
 
