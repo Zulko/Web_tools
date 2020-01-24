@@ -10,7 +10,7 @@ class LogBook(models.Model):
     supervisor = models.CharField(max_length=100)
     time_used = models.CharField(max_length=30, blank=True)
     comments = models.CharField(max_length=100, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateField(auto_now_add=True)
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE)
 
     # Meta Class

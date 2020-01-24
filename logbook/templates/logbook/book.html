@@ -81,6 +81,7 @@
       <script type="text/javascript">
         $('#file_list_table').DataTable({
             {#searching: false,#}
+            "columnDefs": [{type:'date', 'targets':[3]}],
             "order":[[3, "desc"]]
         });
 
