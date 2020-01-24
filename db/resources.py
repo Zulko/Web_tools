@@ -24,7 +24,7 @@ class SampleResource(resources.ModelResource):
         model = Sample
         exclude = ('id', 'created_at', 'updated_at')
         import_id_fields = ['name']
-        skip_unchanged = True
+        skip_unchanged = False
         report_skipped = False
         fields = ('name', 'alias', 'sample_type', 'description', 'project', 'author', 'sequence',
                   'length', 'genbank', 'source_reference', 'comments', 'parent_id',

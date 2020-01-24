@@ -1,7 +1,7 @@
 """
 # Library to deal with input and output files
 """
-import os, re, sys, csv, math
+import os, re, sys, csv, math, operator
 from reportlab.pdfgen import canvas
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter, inch, landscape
@@ -315,6 +315,9 @@ def write_dispenser_echo(dispenser_list, fileout):
         round_vol = round(float(vol_nl),1)
         result = [name, alias, source_barcode, source_plate, source_well, dest_barcode, dest_plate, dest_well, round_vol]
         fileout.writerow(result)
+    sort = sorted(fileout, key=operator.itemgetter(0))
+    for eachline in sort:
+        print(eachline)
 
 
 def write_dispenser_mantis(file_mantis, reagents):
