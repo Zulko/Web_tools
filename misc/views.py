@@ -94,7 +94,7 @@ def normalization_view(request):
 @login_required(login_url="/accounts/login/")
 def echo_transfer_db_view(request):
     user = request.user
-    projects = Project.objects.filter(author=user)
+    projects = Project.objects.filter(collaborators=user)
 
     if request.method == "POST":
         scriptname = 'Echo Transfer from Worklist'
@@ -102,6 +102,7 @@ def echo_transfer_db_view(request):
         if len(request.FILES) > 0:
             upload_p, fs_p, name_file_p, url_file_p = upload_file(request, 'upload_file_parts')
             plate_content = request.POST['plate_content']
+            plate_project = request.POST['plate_project']
 
             """Dispenser parameters"""
             machine = request.POST['machine']
@@ -115,7 +116,7 @@ def echo_transfer_db_view(request):
             pattern = request.POST['pattern']
 
             ''' Calling Python Script'''
-            alerts, outfile_robot = echo_transfer_db.run(settings.MEDIA_ROOT, name_file_p, plate_content, dispenser_parameters, int(num_well_destination), int(pattern), user, scriptname)
+            alerts, outfile_robot = echo_transfer_db.run(settings.MEDIA_ROOT, name_file_p, plate_content, plate_project, dispenser_parameters, int(num_well_destination), int(pattern), user, scriptname)
             print(len(alerts))
             if len(alerts) == 0:
                 context = {

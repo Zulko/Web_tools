@@ -126,7 +126,7 @@ def moclo(request):
 @login_required(login_url="/accounts/login/")
 def moclo_db(request):
     user = request.user
-    projects = Project.objects.filter(author=user)
+    projects = Project.objects.filter(collaborators=user)
 
     if request.method == "POST":
         if len(request.FILES) != 0:

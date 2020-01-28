@@ -263,12 +263,12 @@ def list_to_source_plates(foundlist, plates):
     return plates
 
 
-def find_samples_database(unique_list, plate_content):
+def find_samples_database(unique_list, plate_content, plate_project):
     found_list = []
     missing_list = []
     for part in unique_list:
         found = False
-        wells = Well.objects.filter(samples__alias__exact=str(part), plate__contents__iexact=str(plate_content))
+        wells = Well.objects.filter(samples__alias__exact=str(part), plate__contents__iexact=str(plate_content), plate__project__id=plate_project)
         # wells = Well.objects.filter(samples__alias__exact=str(part))
         if len(wells) > 0:
             for well in wells:

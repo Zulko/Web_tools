@@ -3,7 +3,7 @@ import os, itertools
 from ..biofoundry import db
 from libs.misc import file, calc, parser
 from libs.container import plate, machine
-from db.models import Plate, Well, Sample
+from db.models import Plate, Well, Sample, Project
 
 
 # Dispense modo in plate
@@ -206,7 +206,7 @@ def get_sets_in_filepath(reader):
     return lists_parts, lists_volume
 
 
-def run(path, filename_p, plate_content, dispenser_parameters, out_num_well, pattern, user, scriptname):
+def run(path, filename_p, plate_content, plate_project, dispenser_parameters, out_num_well, pattern, user, scriptname):
     total_alert = []
     name_machine, min_vol, res_vol, dead_vol = dispenser_parameters
     robot = machine.Machine(name_machine, min_vol, res_vol, dead_vol)
@@ -238,7 +238,7 @@ def run(path, filename_p, plate_content, dispenser_parameters, out_num_well, pat
         return alert, None
 
     '''Verify the parts on database'''
-    found_list, missing_list = parser.find_samples_database(unique_list, plate_content)
+    found_list, missing_list = parser.find_samples_database(unique_list, plate_content, plate_project)
 
     if len(missing_list) > 0:
         for item in missing_list:

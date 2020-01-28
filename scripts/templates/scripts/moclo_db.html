@@ -31,7 +31,21 @@
                                 <option value="Cells">Cells</option>
                                 <option value="Reagents">Reagents</option>
                             </select>
+                        </div>
                         <div class="col-auto"></div>
+                    </div><br>
+                    <div class="form-row align-items-center">
+                        <div class="col-auto"></div>
+                        <div class="col">
+                            <label for="num_well">Plate project filter: </label>
+                        </div>
+                        <div class="col">
+                            <select class="form-control" id="plate_project" name="plate_project">
+                                {% for project in projects %}
+                                    {{ project }}
+                                    <option value={{project.id}}>{{project.name}}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                         <div class="col-auto"></div>
                     </div><br>
