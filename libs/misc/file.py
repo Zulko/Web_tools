@@ -312,10 +312,10 @@ def write_dispenser_echo(dispenser_list, fileout):
 
     for part in sorted_dispenser_list:
         name, alias, type_part, source_barcode, source_plate, source_well, part_vol, dest_barcode, dest_plate, dest_well, dest_id = part
-        if type_part != 'Primer':
-            vol_nl = float(part_vol) * 1000
-        else:
-            vol_nl = float(part_vol)
+        # if type_part != 'Primer':
+        vol_nl = float(part_vol) * 1000
+        # else:
+        #     vol_nl = float(part_vol)
         round_vol = round(float(vol_nl), 1)
         result = [name, alias, source_barcode, source_plate, source_well, dest_barcode, dest_plate, dest_well, round_vol]
         fileout.writerow(result)
@@ -327,7 +327,7 @@ def write_dispenser_mantis(file_mantis, reagents):
         name = part[0]
         volume = round(float(part[1]), 1)
         well = part[2]
-        result = [well,volume,name]
+        result = [well, volume, name]
         file_mantis.writerow(result)
         total_vol += volume
     return total_vol
@@ -349,8 +349,8 @@ def write_dispenser_mantis_in_low_high_chip(file_mantis, reagents):
         ''' Create different reagents '''
         name_dec = name + '_low'
         name_int = name + '_high'
-        result1 = [well,vol_dec,name_dec]
-        result2 = [well,vol_int,name_int]
+        result1 = [well, vol_dec, name_dec]
+        result2 = [well, vol_int, name_int]
         total_vol_high += vol_int
         total_vol_low += vol_dec
 

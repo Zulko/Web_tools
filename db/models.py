@@ -55,8 +55,9 @@ class Project(models.Model):
     )
 
     name = models.CharField(max_length=100)
-    author = models.CharField(max_length=50)
-    collaborators = models.CharField(max_length=500)
+    author = models.CharField(max_length=50, blank=True)
+    # collaborators = models.CharField(max_length=500)
+    collaborators = models.ManyToManyField(User, blank=True)
     status = models.CharField(max_length=50, choices=STATUS, default='Working')
     comments = models.CharField(max_length=100, blank=True)
     image = models.ImageField(upload_to="pics", max_length=10000, blank=True)

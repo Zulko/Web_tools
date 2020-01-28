@@ -45,5 +45,5 @@ class MachineAdmin(ImportExportModelAdmin):
 
 @admin.register(Project)
 class ProjectAdmin(ImportExportModelAdmin):
-    list_display = ['name', 'author', 'collaborators', 'comments', 'image', 'created_at']
+    list_display = ['name', 'author', 'comments', 'image', 'created_at']
     pass

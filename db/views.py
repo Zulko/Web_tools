@@ -4,8 +4,8 @@ from django.core.files.storage import FileSystemStorage
 from django.http import Http404, HttpResponse, FileResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from django.db.models.functions import Substr
-from django.db.models.functions import Cast
+from django.contrib.auth.models import User
+from django.db.models.functions import Substr, Cast
 from django.db.models import IntegerField
 from django.conf import settings
 
@@ -699,7 +699,7 @@ def project(request, project_id):
     all_project = Project.objects.all()
     project = Project.objects.get(id=project_id)
     # plate_filter = PlateFilter(request.GET, queryset=all_plates)
-    formProjectAdd = ProjectForm()
+    formProjectAdd = ProjectForm(initial={'author': request.user.username})
     formProjectUpdate = ProjectForm(instance=project)
 
     if 'submit_project_add' in request.POST:
@@ -727,12 +727,12 @@ def project(request, project_id):
 @login_required()
 def project_add(request):
     if 'submit_project_add' in request.POST:
-        formProject = ProjectForm(request.POST, request.FILES)
+        formProject = ProjectForm(request.POST, request.FILES, initial={'author': request.user.username})
         if formProject.is_valid():
             formProject.save()
             return redirect('db:project_list')
     else:
-        formProject = ProjectForm()
+        formProject = ProjectForm(initial={'author': request.user.username})
 
     context = {
         'form_project_add': formProject,
@@ -743,6 +743,7 @@ def project_add(request):
 @login_required()
 def project_update(request, project_id):
     project = Project.objects.get(id=project_id)
+
     if 'submit_update_project' in request.POST:
         formProjectUpdate = ProjectForm(request.POST, instance=project)
         if formProjectUpdate.is_valid():

@@ -137,10 +137,7 @@ def get_count_unique_vol_list(count_unique_list, part_vol_list, dispenser_parame
         part_count = part[1]
         try:
             part_sample = Sample.objects.get(alias__iexact=str(part[0]))
-            if part_sample.sample_type == 'Primer':
-                div = 1000
-            else:
-                div = 1
+            div = 1000
             volume = calc.total_volume_part_list(part_name, part_vol_list, div, dispenser_parameters)
             count_unique_vol_list.append([part_name, volume, part_count])
         except:

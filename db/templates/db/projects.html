@@ -134,7 +134,10 @@
                       <td> {{ project.id }} </td>
                       <td><a href="{% url 'db:project' project.id %}" > {{ project.name }} </a></td>
                       <td> {{ project.author }} </td>
-                      <td> {{ project.collaborators }} </td>
+                      <td>  {% for col in project.collaborators.all %}
+                                 {{ col }},
+                            {% endfor %}
+                      </td>
                       <td> {{ project.status }} </td>
                       <td> {{ project.comments }} </td>
                       <td> {{ project.created_at }} </td>
