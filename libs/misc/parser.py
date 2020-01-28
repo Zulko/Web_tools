@@ -182,7 +182,7 @@ def create_source_plates_from_foundlist(foundlist):
     else:
         for part in foundlist:
             found = False
-            samp_name, samp_type, samp_len, samp_conc, volume, plate_name, plate_well, plate_num_well = part
+            samp_name, alias, samp_len, samp_direction, samp_type, samp_moclotype, samp_conc, volume, barcode, plate_name, plate_well, plate_num_well = part
             if plate_name != '':
                 if len(plates_in) == 0:
                     plates_in.append(create_plate(plate_num_well, plate_name))
@@ -254,12 +254,12 @@ def list_to_source_plates(foundlist, plates):
 
     else:
         for part in foundlist:
-            samp_name, type, samp_len, samp_conc, volume, plate_name, plate_well, num_well = part
+            samp_name, alias, samp_len, samp_direction, samp_type, samp_moclotype, samp_conc, volume, barcode, plate_name, plate_well, plate_num_well = part
             for i in range(0, len(plates)):
                 if plates[i].name == plate_name:
                     row, col = calc.wellname_to_coordinates(plate_well)
                     plates[i].wells[row][col].samples.append(
-                        plate.Sample(samp_name, type, samp_len, samp_conc, volume))
+                        plate.Sample(alias, samp_moclotype, samp_len, samp_conc, volume))
     return plates
 
 
@@ -269,6 +269,7 @@ def find_samples_database(unique_list, plate_content):
     for part in unique_list:
         found = False
         wells = Well.objects.filter(samples__alias__exact=str(part), plate__contents__iexact=str(plate_content))
+        # wells = Well.objects.filter(samples__alias__exact=str(part))
         if len(wells) > 0:
             for well in wells:
                 samples = well.samples.all()
@@ -276,7 +277,7 @@ def find_samples_database(unique_list, plate_content):
                     for sample in samples:
                         if well.volume > 0 and sample.alias == part and sample.sample_type is not None and well.active is True:
                             found = True
-                            lista = [sample.name, sample.alias, str(sample.direction), str(sample.sample_type), float(well.concentration), float(well.volume), well.plate.name, well.name, int(well.plate.num_well)]
+                            lista = [sample.name, sample.alias, sample.length, str(sample.direction), str(sample.sample_type), sample.moclo_type, float(well.concentration), float(well.volume), well.plate.name, well.name, int(well.plate.num_well)]
                             found_list.append(lista)
                         else:
                             missing_list.append(part)

@@ -41,9 +41,12 @@
                         </div>
                         <div class="col">
                             <select class="form-control" id="plate_content" name="plate_content">
-                                <option value="DNA">DNA</option>
-                                <option value="Cells">Cells</option>
-                                <option value="Reagents">Reagents</option>
+                                {% for project in projects %}
+                                    {{ project }}
+                                    <option value={{project.id}}>{{project.name}}</option>
+                                {% endfor %}
+{#                                <option value="Cells">Cells</option>#}
+{#                                <option value="Reagents">Reagents</option>#}
                             </select>
                         </div>
                         <div class="col-auto"></div>
@@ -146,7 +149,16 @@
             </ol>
         </div>
     {% endif %}
-  <p> Example of an input file with parts and volume in nL (<a href="{% static 'docs/echo_worklist_v2.csv' %}" target="_blank" download><strong> echo_worklist.csv </strong></a>) </p> <br>
+  <p> Example of an input file with parts and volume in nL (<a href="{% static 'docs/echo_worklist_v2.csv' %}" target="_blank" download><strong> echo_worklist.csv </strong></a>)
+
+      {% for project in projects.all %}
+        {{ project }}
+    {% endfor %}
+
+
+  </p> <br>
+
+
 
   </div>
 

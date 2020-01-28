@@ -3,6 +3,8 @@ from django.conf import settings
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
+from db.models import Project
+
 from libs.function import normalization, fasta2primer3
 from libs.misc import genbank, nrc_sequence, echo_transfer_db
 
@@ -91,6 +93,9 @@ def normalization_view(request):
 
 @login_required(login_url="/accounts/login/")
 def echo_transfer_db_view(request):
+    user = request.user
+    projects = Project.objects.filter(author=user)
+
     if request.method == "POST":
         scriptname = 'Echo Transfer from Worklist'
         user = request.user
@@ -117,7 +122,8 @@ def echo_transfer_db_view(request):
                     'uploadfile_name': upload_p,
                     'url_file': url_file_p,
                     'outfile_robot': outfile_robot,
-                    'alerts': alerts
+                    'alerts': alerts,
+                    'projects': projects
                 }
                 return render(request, 'misc/echo_transfer.html', context)
             else:
@@ -125,7 +131,8 @@ def echo_transfer_db_view(request):
                     'uploadfile_name': None,
                     'url_file': None,
                     'outfile_robot': None,
-                    'alerts': alerts
+                    'alerts': alerts,
+                    'projects': projects
                 }
                 return render(request, 'misc/echo_transfer.html', context)
         else:
@@ -134,7 +141,8 @@ def echo_transfer_db_view(request):
                 'uploadfile_name': None,
                 'url_file': None,
                 'outfile_robot': None,
-                'alerts': alerts
+                'alerts': alerts,
+                'projects': projects
             }
             return render(request, 'misc/echo_transfer.html', context)
-    return render(request, 'misc/echo_transfer.html')
+    return render(request, 'misc/echo_transfer.html', {'projects': projects})
