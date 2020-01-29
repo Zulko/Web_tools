@@ -132,7 +132,7 @@ def create_plate_on_database(path, file, num_well_destination, step):
             volume = float(volume)/1000
             plates_out = fill_plates(
                 plates_out, num_well_destination, destination_plate_name, destination_well, volume, step, sample)
-    print(plates_out)
+    # print(plates_out)
     return plates_out
 
 

@@ -83,7 +83,7 @@ def rows_columns(num_wells):
     # a = int(np.round(np.sqrt(num_wells / 6)))
     a = np.sqrt(num_wells / 6)
     n_rows = int(np.round(2*a))
-    n_columns = int(np.round(3*a))
+    n_columns = int(np.round(math.ceil(3*a)))
     return n_rows, n_columns
 
 

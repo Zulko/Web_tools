@@ -66,6 +66,22 @@ class Plate:
                     return i, j
         return None
 
+    '''Remove the outer wells'''
+    def get_empty_in_well_by_row(self):
+        for i in range(1, self.num_rows-1):
+            for j in range(1, self.num_cols-1):
+                if len(self.wells[i][j].samples) == 0:
+                    return i, j
+        return None
+
+    '''Remove the outer wells'''
+    def get_empty_in_well_by_col(self):
+        for j in range(1, self.num_cols-1):
+            for i in range(1, self.num_rows-1):
+                if len(self.wells[i][j].samples) == 0:
+                    return i, j
+        return None
+
     def iterR(self, n):
         for i in range(self.num_rows):
             for j in range(self.num_cols):

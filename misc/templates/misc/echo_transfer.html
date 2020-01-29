@@ -13,7 +13,7 @@
                     <div class="form-row align-items-center">
                         <div class="col-auto"></div>
                         <div class="col">
-                            <label for="file">Select a file with parts: </label>
+                            <label for="file">Select a file: </label>
                         </div>
                         <div class="col-left">
                             <input type="file" class="form-control-file border" name="upload_file_parts">
@@ -115,7 +115,6 @@
                     </div><br>
                     <div class="form-row align-items-center">
                         <div class="col-auto"></div>
-
                         <div class="col">
                             <label for="filled_by">Filled by: </label>
                         </div>
@@ -127,6 +126,28 @@
                         </div>
                         <div class="col-auto"></div>
                     </div><br>
+                    <div class="form-row align-items-center">
+                        <div class="col-auto"></div>
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="remove_outer_wells" name="remove_outer_wells" value="True">
+                                <label class="custom-control-label" for="remove_outer_wells">Remove outer wells</label>
+                            </div>
+                        <div class="col-auto"></div>
+                    </div><br>
+{#                    <div class="form-row align-items-center">#}
+{#                        <div class="col-auto"></div>#}
+{#                        <div class="col">#}
+{#                            <label for="filled_by">Start at specific well: </label>#}
+{#                        </div>#}
+{#                        <div class="col">#}
+{#                            <select class="form-control" id="start_well" name="start_well">#}
+{#                                <option selected value="0">No</option>#}
+{#                                <option value="1">Yes</option>#}
+{#                            </select>#}
+{#                        </div>#}
+{#                        <div class="col-auto"></div>#}
+{#                    </div><br>#}
+
                 </fieldset>
 
             <input type="submit" class="btn btn-info btn-block btn-lg" value="Submit">

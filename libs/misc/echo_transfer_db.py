@@ -42,13 +42,29 @@ def get_plate_with_empty_well(destination_plates, pattern):
                 return p, i, j
 
 
-def populate_destination_plates(plates_out, list_source_wells, lists_parts, lists_volume, found_list, pattern):
+def get_plate_with_empty_well_removed_outerwells(destination_plates, pattern):
+    if pattern == BY_ROW:
+        for p in range(0, len(destination_plates)):
+            if destination_plates[p].get_empty_in_well_by_row() is not None:
+                i, j = destination_plates[p].get_empty_in_well_by_row()
+                return p, i, j
+    else:
+        for p in range(0, len(destination_plates)):
+            if destination_plates[p].get_empty_in_well_by_row() is not None:
+                i, j = destination_plates[p].get_empty_in_well_by_col()
+                return p, i, j
+
+
+def populate_destination_plates(plates_out, list_source_wells, lists_parts, lists_volume, found_list, pattern, num_removed_wells):
     alert = []
     out_dispenser = []
     out_master_mix = []
     out_water = []
     for set_p, set_v in zip(lists_parts, lists_volume):
-        p, i, j = get_plate_with_empty_well(plates_out, pattern)
+        if num_removed_wells == 0:
+            p, i, j = get_plate_with_empty_well(plates_out, pattern)
+        else:
+            p, i, j = get_plate_with_empty_well_removed_outerwells(plates_out, pattern)
         total_parts_vol = 0
         for partalias, vol in zip(set_p, set_v):
             list_source_wells, part = get_localization_vol(partalias, list_source_wells, found_list)
@@ -74,18 +90,27 @@ def create_plate(num_wells, name):
     return new_plate
 
 
-def create_destination_plates(lists_parts, out_num_well):
+def create_destination_plates(lists_parts, num_well_destination, remove_outer_wells):
     num = Plate.objects.latest('id').id
     plates_out = []
     num_receipts = 0
     for set in lists_parts:
         num_receipts += 1
 
-    num_plates = calc.num_destination_plates(num_receipts, out_num_well)
+    if remove_outer_wells is False:
+        num_removed_wells = 0
+        num_plates = calc.num_destination_plates(num_receipts, num_well_destination)
+    else:
+        rows, cols = calc.rows_columns(int(num_well_destination))
+        num_removed_wells = 2*(cols+rows)-4
+        num_remained_wells = num_well_destination - num_removed_wells
+        num_plates = calc.num_destination_plates(num_receipts, num_remained_wells)
+
     for i in range(0, num_plates):
-        num = num+1
-        plates_out.append(create_plate(out_num_well, 'GF' + '{0:05}'.format(num)))
-    return plates_out
+        num = num + 1
+        plates_out.append(create_plate(num_well_destination, 'GF' + '{0:05}'.format(num)))
+
+    return plates_out, num_removed_wells
 
 
 def check_sample_volume_plate(count_unique_vol_list, dispenser_parameters):
@@ -206,9 +231,10 @@ def get_sets_in_filepath(reader):
     return lists_parts, lists_volume
 
 
-def run(path, filename_p, plate_content, plate_project, dispenser_parameters, out_num_well, pattern, user, scriptname):
+def run(path, filename_p, plate_content, plate_project, dispenser_parameters, dest_plate_parameters, user, scriptname):
     total_alert = []
     name_machine, min_vol, res_vol, dead_vol = dispenser_parameters
+    num_well_destination, pattern, remove_outer_wells = dest_plate_parameters
     robot = machine.Machine(name_machine, min_vol, res_vol, dead_vol)
 
     '''Create read files'''
@@ -253,12 +279,12 @@ def run(path, filename_p, plate_content, plate_project, dispenser_parameters, ou
 
         else:
             '''Create a destination plates'''
-            plates_out = create_destination_plates(lists_parts, out_num_well)
+            plates_out, num_removed_wells = create_destination_plates(lists_parts, num_well_destination, remove_outer_wells)
 
             '''Populate plate'''
             plates_out, out_dispenser, out_master_mix, out_water, alert = \
                 populate_destination_plates(plates_out, list_source_wells, lists_parts, lists_volume, found_list,
-                                            pattern)
+                                            pattern, num_removed_wells)
             '''Robot Dispenser parts'''
             file.set_echo_header(robot_csv)
             file.write_dispenser_echo(out_dispenser, robot_csv)

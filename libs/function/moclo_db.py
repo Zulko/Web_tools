@@ -36,6 +36,19 @@ def get_localization_vol(part_name, list_source_wells):
         #     print(part_name, times_available, wellD_name)
 
 
+def get_plate_with_empty_well_removed_outerwells(destination_plates, pattern):
+    if pattern == BY_ROW:
+        for p in range(0, len(destination_plates)):
+            if destination_plates[p].get_empty_in_well_by_row() is not None:
+                i, j = destination_plates[p].get_empty_in_well_by_row()
+                return p, i, j
+    else:
+        for p in range(0, len(destination_plates)):
+            if destination_plates[p].get_empty_in_well_by_row() is not None:
+                i, j = destination_plates[p].get_empty_in_well_by_col()
+                return p, i, j
+
+
 def get_plate_with_empty_well(destination_plates, pattern):
     if pattern == BY_ROW:
         for p in range(0, len(destination_plates)):
@@ -49,14 +62,17 @@ def get_plate_with_empty_well(destination_plates, pattern):
                 return p, i, j
 
 
-def populate_destination_plates(plates_out, list_destination_plate, list_source_wells, mix_parameters, found_list, pattern):
+def populate_destination_plates(plates_out, list_destination_plate, list_source_wells, mix_parameters, found_list, pattern, num_removed_wells):
     alert = []
     part_fmol, bb_fmol, total_vol, per_buffer, per_rest_enz, per_lig_enz, add_water = mix_parameters
     out_dispenser = []
     out_master_mix = []
     out_water = []
     for set in list_destination_plate:
-        p, i, j = get_plate_with_empty_well(plates_out, pattern)
+        if num_removed_wells == 0:
+            p, i, j = get_plate_with_empty_well(plates_out, pattern)
+        else:
+            p, i, j = get_plate_with_empty_well_removed_outerwells(plates_out, pattern)
         total_parts_vol = 0
         for part in set:
             list_source_wells, part = get_localization_vol(part, list_source_wells)
@@ -100,16 +116,27 @@ def create_plate(num_wells, name):
     return new_plate
 
 
-def create_destination_plates(list_destination_plate, out_num_well):
+def create_destination_plates(list_destination_plate, num_well_destination, remove_outer_wells):
     num = Plate.objects.latest('id').id
     plates_out = []
     num_receipts = len(list_destination_plate)
-    num_plates = calc.num_destination_plates(num_receipts, out_num_well)
+    num_removed_wells = 0
 
-    for i in range(0, num_plates):
-        num = num + 1
-        plates_out.append(create_plate(out_num_well, 'GF' + '{0:05}'.format(num)))
-    return plates_out
+    if remove_outer_wells is False:
+        num_plates = calc.num_destination_plates(num_receipts, num_well_destination)
+        for i in range(0, num_plates):
+            num = num + 1
+            plates_out.append(create_plate(num_well_destination, 'GF' + '{0:05}'.format(num)))
+    else:
+        rows, cols = calc.rows_columns(int(num_well_destination))
+        num_removed_wells = 2 * (cols + rows) - 4
+        num_remained_wells = num_well_destination - num_removed_wells
+        num_plates = calc.num_destination_plates(num_receipts, num_remained_wells)
+        for i in range(0, num_plates):
+            num = num + 1
+            plates_out.append(create_plate(num_well_destination, 'GF' + '{0:05}'.format(num)))
+
+    return plates_out, num_removed_wells
 
 
 def create_entry_list_for_destination_plate(lists_parts, list_part_low_vol):
@@ -372,10 +399,11 @@ def find_samples_database(unique_list, plate_content):
     return found_list, missing_list
 
 
-def run_moclo_db(path, filename, plate_content, dispenser_parameters, mix_parameters, out_num_well, pattern, use_high_low_chip_mantis, user):
+def run_moclo_db(path, filename, plate_content, dispenser_parameters, mix_parameters, dest_plate_parameters, use_high_low_chip_mantis, user):
     total_alert = []
     name_machine, min_vol, res_vol, dead_vol = dispenser_parameters
     robot = machine.Machine(name_machine, min_vol, res_vol, dead_vol)
+    num_well_destination, pattern, remove_outer_wells = dest_plate_parameters
     part_fmol, bb_fmol, total_vol, per_buffer, per_rest_enz, per_lig_enz, add_water = mix_parameters
 
     '''Create read files'''
@@ -428,11 +456,11 @@ def run_moclo_db(path, filename, plate_content, dispenser_parameters, mix_parame
 
         if len(list_destination_plate) > 0:
             """Create a destination plates"""
-            plates_out = create_destination_plates(list_destination_plate, out_num_well)
+            plates_out, num_removed_wells = create_destination_plates(list_destination_plate, num_well_destination, remove_outer_wells)
 
             """Populate plate"""
             plates_out, out_dispenser, out_master_mix, out_water, alert = \
-                populate_destination_plates(plates_out, list_destination_plate, list_source_wells, mix_parameters, found_list, pattern)
+                populate_destination_plates(plates_out, list_destination_plate, list_source_wells, mix_parameters, found_list, pattern, num_removed_wells)
             # file.write_plate_by_col(plates_out)
 
             """Mantis output file"""

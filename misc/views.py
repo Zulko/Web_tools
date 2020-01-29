@@ -114,9 +114,19 @@ def echo_transfer_db_view(request):
             """Destination plate"""
             num_well_destination = request.POST['num_well_destination']
             pattern = request.POST['pattern']
-
+            remove_outer_wells = 'remove_outer_wells' in request.POST
+            dest_plate_parameters = int(num_well_destination), int(pattern), remove_outer_wells
             ''' Calling Python Script'''
-            alerts, outfile_robot = echo_transfer_db.run(settings.MEDIA_ROOT, name_file_p, plate_content, plate_project, dispenser_parameters, int(num_well_destination), int(pattern), user, scriptname)
+            alerts, outfile_robot = echo_transfer_db.run(
+                settings.MEDIA_ROOT,
+                name_file_p,
+                plate_content,
+                plate_project,
+                dispenser_parameters,
+                dest_plate_parameters,
+                user,
+                scriptname
+            )
             print(len(alerts))
             if len(alerts) == 0:
                 context = {

@@ -154,9 +154,11 @@ def moclo_db(request):
             """Destination plate"""
             num_well_destination = request.POST['num_well_destination']
             pattern = request.POST['pattern']
+            remove_outer_wells = 'remove_outer_wells' in request.POST
+            dest_plate_parameters = int(num_well_destination), int(pattern), remove_outer_wells
 
             ''' Calling Python Script'''
-            alerts, outfile_mantis, outfile_robot, mixer_recipe, chip_mantis = run_moclo_db(settings.MEDIA_ROOT, name_file, plate_content, dispenser_parameters, mix_parameters, int(num_well_destination), int(pattern), mantis_two_chips, user)
+            alerts, outfile_mantis, outfile_robot, mixer_recipe, chip_mantis = run_moclo_db(settings.MEDIA_ROOT, name_file, plate_content, dispenser_parameters, mix_parameters, dest_plate_parameters, mantis_two_chips, user)
 
             if mixer_recipe is not None:
                 return render(request, 'scripts/moclo_db.html', {'uploadfile_name': upload, 'url_file': url_file,
