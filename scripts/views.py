@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.decorators import login_required
-from db.models import Project
+from db.models import Project, Plate
 
 from libs.function.spotting import run_spotting
 from libs.function.combinatorial import run_combination
@@ -127,6 +127,7 @@ def moclo(request):
 def moclo_db(request):
     user = request.user
     projects = Project.objects.filter(collaborators=user)
+    plates = Plate.objects.filter(project__in=projects)
 
     if request.method == "POST":
         if len(request.FILES) != 0:
@@ -169,7 +170,7 @@ def moclo_db(request):
                               {'uploadfile_name': upload, 'url_file': url_file,
                                'outfile_mantis': '', 'outfile_robot': '',
                                'alerts': alerts, 'mixer_recipe': '', 'chip_mantis': ''})
-    return render(request, 'scripts/moclo_db.html', {'projects': projects})
+    return render(request, 'scripts/moclo_db.html', {'projects': projects, 'plates':plates})
 
 
 @login_required(login_url="/accounts/login/")
