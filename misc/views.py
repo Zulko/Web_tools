@@ -3,7 +3,7 @@ from django.conf import settings
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
-from db.models import Project
+from db.models import Project, Plate
 
 from libs.function import normalization, fasta2primer3
 from libs.misc import genbank, nrc_sequence, echo_transfer_db
@@ -157,3 +157,22 @@ def echo_transfer_db_view(request):
             }
             return render(request, 'misc/echo_transfer.html', context)
     return render(request, 'misc/echo_transfer.html', {'projects': projects})
+
+
+def dot_plate_view(request):
+    user = request.user
+    projects = Project.objects.filter(collaborators=user)
+    plates = Plate.objects.filter(project__in=projects)
+    if request.method == "POST":
+        user = request.user
+        if len(request.FILES) != 0:
+            upload, fs, name, url = upload_file(request, 'myFile')
+
+            ''' Calling Python Script'''
+            outfile = genbank.generate_from_csv(settings.MEDIA_ROOT, name, user)
+            if outfile is not None:
+                outfile_name = str(outfile)
+                outfile_url = fs.url(outfile_name)
+                return render(request, 'misc/dot_plate.html')
+
+    return render(request, 'misc/dot_plate.html',{'projects': projects, 'plates':plates})

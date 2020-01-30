@@ -337,7 +337,8 @@ def get_sets_in_filepath(reader):
         '''List of parts'''
         for part in parts:
             part = part.replace(" ", "")
-            set.append(part)
+            if part != '':
+                set.append(part)
         ''' Create the single list of parts'''
         lists_parts.append(list(set))
     return lists_parts
