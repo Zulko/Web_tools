@@ -56,7 +56,6 @@ class Project(models.Model):
 
     name = models.CharField(max_length=100)
     author = models.CharField(max_length=50, blank=True)
-    # collaborators = models.CharField(max_length=500)
     collaborators = models.ManyToManyField(User, blank=True)
     status = models.CharField(max_length=50, choices=STATUS, default='Working')
     comments = models.CharField(max_length=100, blank=True)
@@ -79,13 +78,13 @@ class Plate(models.Model):
         ('Backup', 'Backup'),
     )
     CONTAINER_TYPES = (
-        # ('Plate: 384PP (Labcyte P-05525))', 'Plate: 384PP (Labcyte P-05525))'),
-        # ('Plate: 384LDV (Labcyte LP-0200)', 'Plate: 384LDV (Labcyte LP-0200)'),
-        # ('Plate: 96 Twin.tec PCR (Eppendorf 951020401)', 'Plate: 96 Twin.tec PCR (Eppendorf 951020401)')
-        # ('Plate: 384 BioRad PCR (HSP3801)', 'Plate: 384 BioRad PCR (HSP3801)')
-        # ('Plate: 384 MicroAmp EnduraPlate (Applied Biosystems 4483273)', 'Plate: 384 MicroAmp EnduraPlate (Applied Biosystems 4483273)')
-        # ('Plate: 384 Greiner Flat Bottom (p/n 781096)', 'Plate: 384 Greiner Flat Bottom (p/n 781096)')
-        # ('Plate: 96 Nunc Flat Bottom (p/n 266120)', 'Plate: 96 Nunc Flat Bottom (p/n 266120)')
+        ('Plate: 384PP', 'Plate: 384PP'),
+        ('Plate: 384LDV', 'Plate: 384LDV'),
+        ('Plate: 96 Twin.tec PCR', 'Plate: 96 Twin.tec PCR'),
+        ('Plate: 384 BioRad PCR', 'Plate: 384 BioRad PCR'),
+        ('Plate: 384 MicroAmp EnduraPlate', 'Plate: 384 MicroAmp EnduraPlate'),
+        ('Plate: 384 Greiner Flat Bottom', 'Plate: 384 Greiner Flat Bottom'),
+        ('Plate: 96 Nunc Flat Bottom', 'Plate: 96 Nunc Flat Bottom'),
         ('Plate', 'Plate'),
         ('Box', 'Box'),
     )
@@ -135,9 +134,11 @@ class Plate(models.Model):
     num_well = models.IntegerField()
     location = models.CharField(max_length=30, choices=LOCATION, default=LOCATION[0][0], blank=True)
     contents = models.CharField(max_length=30, choices=CONTENTS, default=CONTENTS[0][0], blank=True)
+    medium = models.CharField(max_length=50, blank=True)
     file = models.FileField(upload_to='design/', max_length=10000, blank=True)
     active = models.BooleanField(default=True)
     status = models.CharField(max_length=30, choices=STATUS, blank=True)
+    description = models.TextField(max_length=500, blank=True)
     comments = models.TextField(max_length=500, blank=True)
     created_at = models.DateField(auto_now_add=True, editable=False)
     updated_at = models.DateField(auto_now=True)
@@ -287,9 +288,12 @@ class Well(models.Model):
     concentration = models.DecimalField(max_digits=10, decimal_places=2)
     plate = models.ForeignKey(Plate, on_delete=models.CASCADE)
     samples = models.ManyToManyField(Sample)
+    parent_well = models.ForeignKey('Well', null=True, blank=True, on_delete=models.SET_NULL)
+    quadrant = models.IntegerField(blank=True, null=True)
     active = models.BooleanField(default=True)
     status = models.CharField(max_length=1, choices=STATUS, blank=True)
-    parent_well = models.ForeignKey('Well', null=True, blank=True, on_delete=models.SET_NULL)
+    description = models.TextField(max_length=500, blank=True)
+    comments = models.TextField(max_length=500, blank=True)
 
     class Meta:
         ordering = ('name', 'plate',)

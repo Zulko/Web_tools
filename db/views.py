@@ -121,6 +121,7 @@ def plate_view(request, plate_id):
         dataset = Dataset()
         new_plate = request.FILES['upload_file_plate']
         imported_data = dataset.load(new_plate.read().decode('utf-8'), format='csv')
+        print(imported_data)
         result = plate_resources.import_data(imported_data, dry_run=True, raise_errors=True,
                                              collect_failed_rows=True)
         if not result.has_errors():

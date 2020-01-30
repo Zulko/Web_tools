@@ -12,7 +12,7 @@ from .models import Plate, Sample, Well, File, Machine, Project
 
 @admin.register(Well)
 class WellAdmin(ImportExportModelAdmin):
-    list_display = ['name', 'plate', 'active']
+    list_display = ['name', 'plate', 'volume', 'concentration', 'active']
     ordering = ['plate', 'name']
     pass
 
