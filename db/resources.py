@@ -63,44 +63,43 @@ class PlateResource(resources.ModelResource):
         attribute='plate',
         widget=widgets.ForeignKeyWidget(Plate, field='barcode')
     )
-    # function = fields.Field(
-    #     column_name='function',
-    #     attribute='plate',
-    #     widget=widgets.ForeignKeyWidget(Plate, field='function')
-    # )
-    # plate_content = fields.Field(
-    #     column_name='content',
-    #     attribute='plate',
-    #     widget=widgets.ForeignKeyWidget(Plate, field='contents')
-    # )
-    # plate_medium = fields.Field(
-    #     column_name='medium',
-    #     attribute='plate',
-    #     widget=widgets.ForeignKeyWidget(Plate, field='medium')
-    # )
-    # plate_wells = fields.Field(
-    #     column_name='wells',
-    #     attribute='plate',
-    #     widget=widgets.ForeignKeyWidget(Plate, field='num_well')
-    # )
-    # plate_type = fields.Field(
-    #     column_name='type',
-    #     attribute='plate',
-    #     widget=widgets.ForeignKeyWidget(Plate, field='type')
-    # )
-    # well_description = fields.Field(
-    #     column_name='description',
-    #     attribute='description',
-    # )
-    # well_comments = fields.Field(
-    #     column_name='comments',
-    #     attribute='comments',
-    # )
-    # well_quadrant = fields.Field(
-    #     column_name='quadrant',
-    #     attribute='quadrant'
-    # )
-
+    function = fields.Field(
+        column_name='function',
+        attribute='plate',
+        widget=widgets.ForeignKeyWidget(Plate, field='function')
+    )
+    plate_content = fields.Field(
+        column_name='contents',
+        attribute='plate',
+        widget=widgets.ForeignKeyWidget(Plate, field='contents')
+    )
+    plate_medium = fields.Field(
+        column_name='medium',
+        attribute='plate',
+        widget=widgets.ForeignKeyWidget(Plate, field='medium')
+    )
+    plate_wells = fields.Field(
+        column_name='wells',
+        attribute='plate',
+        widget=widgets.ForeignKeyWidget(Plate, field='num_well')
+    )
+    plate_type = fields.Field(
+        column_name='type',
+        attribute='plate',
+        widget=widgets.ForeignKeyWidget(Plate, field='type')
+    )
+    well_description = fields.Field(
+        column_name='description',
+        attribute='description',
+    )
+    well_comments = fields.Field(
+        column_name='comments',
+        attribute='comments',
+    )
+    well_quadrant = fields.Field(
+        column_name='quadrant',
+        attribute='quadrant'
+    )
 
     # def import_row(self, row, instance_loader, **kwargs):
     #     # overriding import_row to ignore errors and skip rows that fail to import
@@ -126,6 +125,10 @@ class PlateResource(resources.ModelResource):
         model = Well
 
         fields = ('name', 'plate', 'samples', 'alias', 'volume', 'concentration', 'active', 'status')
+        # fields = ('name', 'plate', 'samples', 'alias', 'project', 'barcode', 'function', 'plate_content',
+        #           'plate_medium', 'plate_wells', 'plate_type', 'well_description', 'well_comments', 'well_quadrant',
+        #           'volume', 'concentration', 'active', 'status')
+
         # export_order = (
         #     'project',
         #     'barcode',
