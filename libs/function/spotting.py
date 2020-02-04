@@ -156,7 +156,7 @@ def create_output_file(total_source, num_wells, total_destination, pattern):
         return outfile_name, file_path_out, outfile_worlistname, file_worklist_path_out
 
 
-def run_spotting(num_source_plates, num_wells, num_pattern, pattern, user):
+def run(num_source_plates, num_wells, num_pattern, pattern, user):
     """
     Calls a function to create a output file
     The output file has the source plate and the distribution of the samples according to the num_pattern and pattern

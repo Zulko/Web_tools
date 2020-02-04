@@ -10,8 +10,7 @@ from db.models import File
 from .models import Experiment, Step
 from .forms import ExperimentForm, StepForm
 
-from libs.function.spotting import run_spotting
-from libs.function.pcr_db import run_pcr_db
+from libs.function import spotting, pcr_db
 from libs.misc import parser
 from libs.biofoundry.db import save_file
 from libs.misc import file
@@ -207,7 +206,7 @@ def spotting_script(request, step, user):
     num_pattern = request.POST['num_pattern']
     pattern = request.POST['pattern']
     ''' Calling Python Script'''
-    outfile, worklist, alert = run_spotting(int(num_sources), int(num_well), int(num_pattern), int(pattern),
+    outfile, worklist, alert = spotting.run(int(num_sources), int(num_well), int(num_pattern), int(pattern),
                                             user)
 
     if outfile is not None:
@@ -273,7 +272,7 @@ def pcr_script(request, step, user):
         pattern = request.POST['pattern']
 
         ''' Calling Python Script'''
-        alerts, outfile_mantis, outfile_robot, mixer_recipe, chip_mantis = run_pcr_db(settings.MEDIA_ROOT,
+        alerts, outfile_mantis, outfile_robot, mixer_recipe, chip_mantis = pcr_db.run(settings.MEDIA_ROOT,
                                                                                       name_file, dispenser_parameters,
                                                                                       mix_parameters,
                                                                                       int(num_well_destination),

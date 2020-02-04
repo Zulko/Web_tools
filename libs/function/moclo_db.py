@@ -367,7 +367,8 @@ def get_sets_in_filepath(reader):
         for part in parts:
             part = part.replace(" ", "")
             part = part.replace('"', "")
-            set.append(part)
+            if part != '':
+                set.append(part)
         ''' Create the single list of parts'''
         lists_parts.append(list(set))
     return lists_parts
@@ -399,7 +400,7 @@ def find_samples_database(unique_list, plate_content):
     return found_list, missing_list
 
 
-def run_moclo_db(path, filename, plate_content, dispenser_parameters, mix_parameters, dest_plate_parameters, use_high_low_chip_mantis, user):
+def run(path, filename, plate_content, dispenser_parameters, mix_parameters, dest_plate_parameters, use_high_low_chip_mantis, user):
     total_alert = []
     name_machine, min_vol, res_vol, dead_vol = dispenser_parameters
     robot = machine.Machine(name_machine, min_vol, res_vol, dead_vol)

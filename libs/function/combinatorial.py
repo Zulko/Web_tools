@@ -24,7 +24,7 @@ def get_sets(parts_dct, header):
     return parts
 
 
-def run_combination(path, filename, user):
+def run(path, filename, user):
     lists_parts = []
     lists_combination_parts = []
 

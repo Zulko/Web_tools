@@ -6,11 +6,7 @@ from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.decorators import login_required
 from db.models import Project, Plate
 
-from libs.function.spotting import run_spotting
-from libs.function.combinatorial import run_combination
-from libs.function.moclo import run_moclo
-from libs.function.moclo_db import run_moclo_db
-from libs.function.pcr_db import run_pcr_db
+from libs.function import spotting, combinatorial, moclo, moclo_db, pcr_db, dnacauldron
 
 
 def upload_file(request, filename):
@@ -21,7 +17,7 @@ def upload_file(request, filename):
     return upload, fs, name, url
 
 
-def spotting(request):
+def spotting_view(request):
     context = {}
     if request.method == "POST":
         user = request.user
@@ -30,7 +26,7 @@ def spotting(request):
         num_pattern = request.POST['num_pattern']
         pattern = request.POST['pattern']
         ''' Calling Python Script'''
-        outfile, worklist, alert = run_spotting(int(num_sources), int(num_well), int(num_pattern), int(pattern), user)
+        outfile, worklist, alert = spotting.run(int(num_sources), int(num_well), int(num_pattern), int(pattern), user)
 
         if alert is not None:
             return render(request, 'scripts/spotting.html', {'outfile': '', 'worklist': '', 'alert': alert})
@@ -40,14 +36,14 @@ def spotting(request):
 
 
 # @login_required(login_url="/accounts/login/")
-def combinatorial(request):
+def combinatorial_view(request):
     if request.method == "POST":
         user = request.user
         if len(request.FILES) != 0:
             upload, fs, name, url = upload_file(request, 'myFile')
 
             ''' Calling Python Script'''
-            outfile, list_num_parts, list_num_combinations = run_combination(settings.MEDIA_ROOT, name, user)
+            outfile, list_num_parts, list_num_combinations = combinatorial.run(settings.MEDIA_ROOT, name, user)
             if outfile is not None:
                 outfile_name = os.path.basename(outfile.name)
                 outfile_url = fs.url(outfile_name)
@@ -65,15 +61,7 @@ def combinatorial(request):
 
 
 # @login_required(login_url="/accounts/login/")
-def assembly(request):
-    # if len(request.FILES) != 0:
-    #     upload, fs, name, url = upload_file(request, 'myFile')
-    return render(request, 'scripts/assembly.html',
-                  {'uploadfile_name': '', 'url': '', 'outfile_name': '', 'outfile_url': '', 'num_parts': '', 'num_combin': ''})
-
-
-# @login_required(login_url="/accounts/login/")
-def moclo(request):
+def moclo_view(request):
     if request.method == "POST":
         user = request.user
         if len(request.FILES) != 0:
@@ -104,7 +92,7 @@ def moclo(request):
 
             ''' Calling Python Script'''
             alerts, outfile_mantis, outfile_robot, mixer_recipe, chip_mantis = \
-                run_moclo(settings.MEDIA_ROOT, name_file, name_db, dispenser_parameters, mix_parameters, int(num_well_destination), int(pattern), mantis_two_chips, user)
+                moclo.run(settings.MEDIA_ROOT, name_file, name_db, dispenser_parameters, mix_parameters, int(num_well_destination), int(pattern), mantis_two_chips, user)
 
             if mixer_recipe is not None:
                 outfile_mantis_name = os.path.basename(outfile_mantis.name)
@@ -124,7 +112,7 @@ def moclo(request):
 
 
 @login_required(login_url="/accounts/login/")
-def moclo_db(request):
+def moclo_db_view(request):
     user = request.user
     projects = Project.objects.filter(collaborators=user)
     plates = Plate.objects.filter(project__in=projects)
@@ -159,7 +147,7 @@ def moclo_db(request):
             dest_plate_parameters = int(num_well_destination), int(pattern), remove_outer_wells
 
             ''' Calling Python Script'''
-            alerts, outfile_mantis, outfile_robot, mixer_recipe, chip_mantis = run_moclo_db(settings.MEDIA_ROOT, name_file, plate_content, dispenser_parameters, mix_parameters, dest_plate_parameters, mantis_two_chips, user)
+            alerts, outfile_mantis, outfile_robot, mixer_recipe, chip_mantis = moclo_db.run(settings.MEDIA_ROOT, name_file, plate_content, dispenser_parameters, mix_parameters, dest_plate_parameters, mantis_two_chips, user)
 
             if mixer_recipe is not None:
                 return render(request, 'scripts/moclo_db.html', {'uploadfile_name': upload, 'url_file': url_file,
@@ -174,7 +162,7 @@ def moclo_db(request):
 
 
 @login_required(login_url="/accounts/login/")
-def pcr_db(request):
+def pcr_db_view(request):
     if request.method == "POST":
         scriptname = 'Script PCR_DB'
         user = request.user
@@ -213,7 +201,7 @@ def pcr_db(request):
             pattern = request.POST['pattern']
 
             ''' Calling Python Script'''
-            alerts, outfile_mantis, outfile_robot, mixer_recipe, chip_mantis = run_pcr_db(settings.MEDIA_ROOT,
+            alerts, outfile_mantis, outfile_robot, mixer_recipe, chip_mantis = pcr_db.run(settings.MEDIA_ROOT,
                   name_file, dispenser_parameters, mix_parameters, int(num_well_destination), int(pattern), mantis_two_chips, user, scriptname)
 
             if mixer_recipe is not None:
@@ -226,3 +214,29 @@ def pcr_db(request):
                                'outfile_mantis': '', 'outfile_robot': '',
                                'alerts': alerts, 'mixer_recipe': '', 'chip_mantis': ''})
     return render(request, 'scripts/pcr_db.html')
+
+
+# @login_required(login_url="/accounts/login/")
+def dnacauldron_view(request):
+    if request.method == "POST":
+        user = request.user
+        if len(request.FILES) != 0:
+            upload, fs, name, url = upload_file(request, 'myFile')
+            upload_zip, fs_zip, name_zip, url_zip = upload_file(request, 'myzipFile')
+            enzyme = request.POST['enzyme']
+            topology = request.POST['topology']
+
+            '''Calling Python Script'''
+            alerts, out_zip = dnacauldron.run(settings.MEDIA_ROOT, name, name_zip, topology, enzyme, user)
+
+            content = {
+                'url_file': url,
+                'upload': upload,
+                'url_zip': url_zip,
+                'upload_zip': upload_zip,
+                'alerts': alerts,
+                'out_zip': out_zip,
+            }
+
+            return render(request, 'scripts/dnacauldron.html', content)
+    return render(request, 'scripts/dnacauldron.html')
