@@ -157,13 +157,15 @@ def moclo_db_view(request):
             if mixer_recipe is not None:
                 return render(request, 'scripts/moclo_db.html', {'uploadfile_name': upload, 'url_file': url_file,
                                                       'outfile_mantis': outfile_mantis, 'outfile_robot': outfile_robot,
-                                                      'alerts': alerts, 'mixer_recipe': mixer_recipe, 'chip_mantis': chip_mantis})
+                                                      'alerts': alerts, 'mixer_recipe': mixer_recipe,
+                                                     'chip_mantis': chip_mantis, 'projects': projects, 'plates': plates})
             else:
                 return render(request, 'scripts/moclo_db.html',
                               {'uploadfile_name': upload, 'url_file': url_file,
                                'outfile_mantis': '', 'outfile_robot': '',
-                               'alerts': alerts, 'mixer_recipe': '', 'chip_mantis': ''})
-    return render(request, 'scripts/moclo_db.html', {'projects': projects, 'plates':plates})
+                               'alerts': alerts, 'mixer_recipe': '', 'chip_mantis': '',
+                               'projects': projects, 'plates': plates})
+    return render(request, 'scripts/moclo_db.html', {'projects': projects, 'plates': plates})
 
 
 @login_required(login_url="/accounts/login/")

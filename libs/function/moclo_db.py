@@ -375,7 +375,6 @@ def get_sets_in_filepath(reader):
 
 def find_samples_database(unique_list, plate_filters):
     plate_content, plate_project, plate_ids = plate_filters
-    print(plate_project)
     found_list = []
     missing_list = []
     for part in unique_list:

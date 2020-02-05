@@ -113,10 +113,10 @@ def create_destination_plates(lists_parts, num_well_destination, remove_outer_we
     return plates_out, num_removed_wells
 
 
-def check_sample_volume_plate(count_unique_vol_list, dispenser_parameters):
+def check_sample_volume_plate(count_unique_vol_list, plate_filters, dispenser_parameters):
     total_vol_parts = []
     for pair in count_unique_vol_list:
-        vector, alert = calc_part_volumes_in_plate(pair, dispenser_parameters)
+        vector, alert = calc_part_volumes_in_plate(pair, plate_filters, dispenser_parameters)
         if vector is not None:
             total_vol_parts.extend(vector)
         else:
@@ -124,11 +124,12 @@ def check_sample_volume_plate(count_unique_vol_list, dispenser_parameters):
     return total_vol_parts, None
 
 
-def calc_part_volumes_in_plate(pair, dispenser_parameters):
+def calc_part_volumes_in_plate(pair, plate_filters, dispenser_parameters):
     machine, min_vol, res_vol, dead_vol = dispenser_parameters
     total_vol_parts = []
     part_name, total_vol, times_needed = pair
-    wells = Well.objects.filter(samples__alias__exact=str(part_name))
+    # wells = Well.objects.filter(samples__alias__exact=str(part_name))
+    wells = parser.get_wells(part_name, plate_filters)
     available_vol = 0
     for well in wells:
         if well.samples.count() == 1 and well.active is True:
@@ -231,10 +232,11 @@ def get_sets_in_filepath(reader):
     return lists_parts, lists_volume
 
 
-def run(path, filename_p, plate_content, plate_project, dispenser_parameters, dest_plate_parameters, user, scriptname):
+def run(path, filename_p, plate_filters, dispenser_parameters, dest_plate_parameters, user, scriptname):
     total_alert = []
     name_machine, min_vol, res_vol, dead_vol = dispenser_parameters
     num_well_destination, pattern, remove_outer_wells = dest_plate_parameters
+    plate_content, plate_project, plate_ids = plate_filters
     robot = machine.Machine(name_machine, min_vol, res_vol, dead_vol)
 
     '''Create read files'''
@@ -264,7 +266,7 @@ def run(path, filename_p, plate_content, plate_project, dispenser_parameters, de
         return alert, None
 
     '''Verify the parts on database'''
-    found_list, missing_list = parser.find_samples_database(unique_list, plate_content, plate_project)
+    found_list, missing_list = parser.find_samples_database(unique_list, plate_filters)
 
     if len(missing_list) > 0:
         for item in missing_list:
@@ -273,7 +275,7 @@ def run(path, filename_p, plate_content, plate_project, dispenser_parameters, de
 
     else:
         '''Calculate the part volumes'''
-        list_source_wells, alert = check_sample_volume_plate(count_unique_vol_list, dispenser_parameters)
+        list_source_wells, alert = check_sample_volume_plate(count_unique_vol_list, plate_filters, dispenser_parameters)
         if alert is not None:
             return alert, None
 

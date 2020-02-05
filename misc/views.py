@@ -95,6 +95,7 @@ def normalization_view(request):
 def echo_transfer_db_view(request):
     user = request.user
     projects = Project.objects.filter(collaborators=user)
+    plates = Plate.objects.filter(project__in=projects)
 
     if request.method == "POST":
         scriptname = 'Echo Transfer from Worklist'
@@ -103,6 +104,8 @@ def echo_transfer_db_view(request):
             upload_p, fs_p, name_file_p, url_file_p = upload_file(request, 'upload_file_parts')
             plate_content = request.POST['plate_content']
             plate_project = request.POST['plate_project']
+            plate_ids = request.POST.get('plate_ids')
+            plate_filters = plate_content, plate_project, plate_ids
 
             """Dispenser parameters"""
             machine = request.POST['machine']
@@ -120,8 +123,7 @@ def echo_transfer_db_view(request):
             alerts, outfile_robot = echo_transfer_db.run(
                 settings.MEDIA_ROOT,
                 name_file_p,
-                plate_content,
-                plate_project,
+                plate_filters,
                 dispenser_parameters,
                 dest_plate_parameters,
                 user,
@@ -134,7 +136,8 @@ def echo_transfer_db_view(request):
                     'url_file': url_file_p,
                     'outfile_robot': outfile_robot,
                     'alerts': alerts,
-                    'projects': projects
+                    'projects': projects,
+                    'plates': plates
                 }
                 return render(request, 'misc/echo_transfer.html', context)
             else:
@@ -143,7 +146,8 @@ def echo_transfer_db_view(request):
                     'url_file': None,
                     'outfile_robot': None,
                     'alerts': alerts,
-                    'projects': projects
+                    'projects': projects,
+                    'plates': plates
                 }
                 return render(request, 'misc/echo_transfer.html', context)
         else:
@@ -153,10 +157,11 @@ def echo_transfer_db_view(request):
                 'url_file': None,
                 'outfile_robot': None,
                 'alerts': alerts,
-                'projects': projects
+                'projects': projects,
+                'plates': plates
             }
             return render(request, 'misc/echo_transfer.html', context)
-    return render(request, 'misc/echo_transfer.html', {'projects': projects})
+    return render(request, 'misc/echo_transfer.html', {'projects': projects, 'plates':plates})
 
 
 def dot_plate_view(request):

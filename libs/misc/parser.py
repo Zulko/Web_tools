@@ -136,9 +136,8 @@ def create_plate_on_database(path, file, num_well_destination, step):
     return plates_out
 
 
-
 def list_plate_from_database(path, file):
-    filein = open(path +'/docs/' + file.name, 'r')
+    filein = open(path + '/docs/' + file.name, 'r')
     plates_in = []
     filein.readline() # jump header
     for line in filein:
@@ -263,13 +262,28 @@ def list_to_source_plates(foundlist, plates):
     return plates
 
 
-def find_samples_database(unique_list, plate_content, plate_project):
+def get_wells(part, plate_filters):
+    plate_content, plate_project, plate_ids = plate_filters
+    if plate_ids is None:
+        wells = Well.objects.filter(
+            samples__alias__exact=str(part),
+            plate__contents__exact=str(plate_content),
+            plate__project=str(plate_project))
+    else:
+        wells = Well.objects.filter(
+            samples__alias__exact=str(part),
+            plate__in=plate_ids)
+    return wells
+
+
+def find_samples_database(unique_list, plate_filters):
     found_list = []
     missing_list = []
+
     for part in unique_list:
         found = False
-        wells = Well.objects.filter(samples__alias__exact=str(part), plate__contents__iexact=str(plate_content), plate__project__id=plate_project)
-        # wells = Well.objects.filter(samples__alias__exact=str(part))
+        wells = get_wells(part, plate_filters)
+        # wells = Well.objects.filter(samples__alias__exact=str(part), plate__contents__iexact=str(plate_content), plate__project__id=plate_project)
         if len(wells) > 0:
             for well in wells:
                 samples = well.samples.all()
