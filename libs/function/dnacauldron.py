@@ -37,15 +37,15 @@ def build_plasmid(filein, out_zip, path, topology, ENZYME):
 
         if ENZYME == "BsmBI":
             mix = dc.RestrictionLigationMix(
-                constructs=all_records_parts,
-                enzyme="BsmBI",
-                fragments_filters=(has_less_than_2_bsmbi_sites,)
+                parts=all_records_parts,
+                enzymes={'BsmBI',},
+                fragment_filters=(has_less_than_2_bsmbi_sites,)
             )
         else:
             mix = dc.RestrictionLigationMix(
-                constructs=all_records_parts,
-                enzyme="BsaI",
-                fragments_filters=(has_less_than_2_bsai_sites,)
+                parts=all_records_parts,
+                enzymes={'BsaI',},
+                fragment_filters=(has_less_than_2_bsai_sites,)
             )
 
         circular_assemblies = list(mix.compute_circular_assemblies())
@@ -105,21 +105,6 @@ def run(path, combination_filename, zip_filename, topology, enzyme, user):
 
         zip_out = db.save_file('assemblies.zip', 'Cauldron', user)
 
+        # '''Delete temp files'''
+
     return alerts, zip_out
-
-    # '''Delete temp files'''
-    # for zip_filename in temp_folder:
-    #     os.unlink(zip_filename)
-    # os.mkdir(temp_folder)
-
-
-
-
-# if __name__ == '__main__':
-#     path = '/home/flavia/PycharmProjects/DnaCauldron/tests/data/assemblies/build_EV'
-#     build_entry_vector(path, ENZYME="BsmBI")
-    # path = '/home/flavia/PycharmProjects/DnaCauldron/tests/data/assemblies/build_TU'
-    # build_tu(path, ENZYME="BsaI")
-    # path = '/home/flavia/PycharmProjects/DnaCauldron/tests/data/assemblies/build_multi_TU'
-    # file_name = 'sanguinarine_combinatorial.txt'
-    # build_multi_tu(path, file_name, ENZYME="BsmBI")
