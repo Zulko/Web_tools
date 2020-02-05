@@ -82,7 +82,7 @@
                     <div class="col">
                         <center><label for="inputfile"><strong>Input File:</strong></label></center>
                     </div>
-                    <div class="col"><center><label for="num_parts"><strong> Number of Parts/Experiment </strong></label></center></div>
+{#                    <div class="col"><center><label for="num_parts"><strong> Number of Parts/Experiment </strong></label></center></div>#}
                     <div class="col-auto"></div>
                 </div>
 
@@ -93,15 +93,15 @@
                             <label for="inputfile"><a href="{{ url }}" target="_blank" download> <strong> {{ uploadfile_name }} </strong> </a></label>
                         </center>
                      </div>
-                     <div class="col">
-                        {% for set in num_parts %}
-                            <center>
-                            {% for num in set %}
-                                <span class="badge badge-info">{{ num }}</span>
-                            {% endfor %}<br>
-                            </center>
-                        {% endfor %}
-                     </div>
+{#                     <div class="col">#}
+{#                        {% for set in num_parts %}#}
+{#                            <center>#}
+{#                            {% for num in set %}#}
+{#                                <span class="badge badge-info">{{ num }}</span>#}
+{#                            {% endfor %}<br>#}
+{#                            </center>#}
+{#                        {% endfor %}#}
+{#                     </div>#}
                     <div class="col-auto"></div>
                 </div><br>
             </fieldset><br>
@@ -113,7 +113,7 @@
                     <div class="col">
                         <center><label for="outputfile"><strong>Output File:</strong></label></center>
                     </div>
-                    <div class="col"><center><label for="num_parts"><strong> Combinations </strong></label></center></div>
+{#                    <div class="col"><center><label for="num_parts"><strong> Combinations </strong></label></center></div>#}
                     <div class="col-auto"></div>
                 </div>
 
@@ -124,11 +124,11 @@
                             <label for="outputfile"><a href="{{ outfile_url }}" target="_blank" download> <strong> {{ outfile_name }} </strong> </a></label>
                         </center>
                     </div>
-                    <div class="col">
-                        {% for num in num_combin %}
-                            <center><span class="badge badge-info">{{ num }}</span><br></center>
-                        {% endfor %}
-                    </div>
+{#                    <div class="col">#}
+{#                        {% for num in num_combin %}#}
+{#                            <center><span class="badge badge-info">{{ num }}</span><br></center>#}
+{#                        {% endfor %}#}
+{#                    </div>#}
                     <div class="col-auto"></div>
                 </div>
                 {% endif %}<br>
