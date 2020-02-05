@@ -1,3 +1,4 @@
+import os
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from django.shortcuts import render
@@ -6,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from db.models import Project, Plate
 
 from libs.function import normalization, fasta2primer3
-from libs.misc import genbank, nrc_sequence, echo_transfer_db
+from libs.misc import genbank, nrc_sequence, echo_transfer_db, echo_transfer
 
 
 def upload_file(request, filename):
@@ -91,6 +92,45 @@ def normalization_view(request):
     return render(request, 'misc/normalization.html', {'uploadfile_name': '', 'url': '', 'outfile_name': '', 'outfile_url': '', 'alert': ''})
 
 
+def echo_transfer_view(request):
+    if request.method == "POST":
+        user = request.user
+        if len(request.FILES) != 0:
+            upload_f, fs, name_file, url_file = upload_file(request, 'upload_file')
+            upload_db, fs, name_db, url_db = upload_file(request, 'upload_db')
+
+            """Dispenser parameters"""
+            machine = request.POST['machine']
+            min_vol = request.POST['min_vol']
+            vol_resol = request.POST['vol_resol']
+            dead_vol = request.POST['dead_vol']
+            dispenser_parameters = machine, float(min_vol) * 1e-3, float(vol_resol) * 1e-3, float(dead_vol)
+
+            """Destination plate"""
+            num_well_destination = request.POST['num_well_destination']
+            pattern = request.POST['pattern']
+            remove_outer_wells = 'remove_outer_wells' in request.POST
+            dest_plate_parameters = int(num_well_destination), int(pattern), remove_outer_wells
+
+            ''' Calling Python Script'''
+            alerts, outfile_robot = \
+                echo_transfer.run(settings.MEDIA_ROOT, name_file, name_db, dispenser_parameters, dest_plate_parameters, user, scriptname='Echo Transfer')
+
+            if outfile_robot is not None:
+                outfile_robot_name = os.path.basename(outfile_robot.name)
+                outfile_robot_url = fs.url(outfile_robot_name)
+                return render(request, 'misc/echo_transfer.html',
+                              {'uploadfile_name': upload_f, 'upload_db': upload_db, 'url_file': url_file,
+                               'url_db': url_db, 'outfile_robot_name': outfile_robot_name,
+                               'outfile_robot_url': outfile_robot_url, 'alerts': alerts})
+            else:
+                return render(request, 'misc/echo_transfer.html',
+                              {'uploadfile_name': upload_f, 'upload_db': upload_db, 'url_file': url_file,
+                               'url_db': url_db, 'outfile_mantis_name': '', 'outfile_robot_name': '',
+                               'outfile_robot_url': '', 'alerts': alerts})
+    return render(request, 'misc/echo_transfer.html')
+
+
 @login_required(login_url="/accounts/login/")
 def echo_transfer_db_view(request):
     user = request.user
@@ -119,6 +159,7 @@ def echo_transfer_db_view(request):
             pattern = request.POST['pattern']
             remove_outer_wells = 'remove_outer_wells' in request.POST
             dest_plate_parameters = int(num_well_destination), int(pattern), remove_outer_wells
+
             ''' Calling Python Script'''
             alerts, outfile_robot = echo_transfer_db.run(
                 settings.MEDIA_ROOT,
@@ -139,7 +180,7 @@ def echo_transfer_db_view(request):
                     'projects': projects,
                     'plates': plates
                 }
-                return render(request, 'misc/echo_transfer.html', context)
+                return render(request, 'misc/echo_transfer_db.html', context)
             else:
                 context = {
                     'uploadfile_name': None,
@@ -149,7 +190,7 @@ def echo_transfer_db_view(request):
                     'projects': projects,
                     'plates': plates
                 }
-                return render(request, 'misc/echo_transfer.html', context)
+                return render(request, 'misc/echo_transfer_db.html', context)
         else:
             alerts = ['Missing input file']
             context = {
@@ -160,8 +201,8 @@ def echo_transfer_db_view(request):
                 'projects': projects,
                 'plates': plates
             }
-            return render(request, 'misc/echo_transfer.html', context)
-    return render(request, 'misc/echo_transfer.html', {'projects': projects, 'plates':plates})
+            return render(request, 'misc/echo_transfer_db.html', context)
+    return render(request, 'misc/echo_transfer_db.html', {'projects': projects, 'plates':plates})
 
 
 def dot_plate_view(request):

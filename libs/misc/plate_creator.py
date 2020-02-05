@@ -1,5 +1,5 @@
 
-def dot_plate():
+# def dot_plate():
 
     #getplatefromfille
     #getplatefromdb

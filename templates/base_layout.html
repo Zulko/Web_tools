@@ -57,6 +57,7 @@
                     <li><a class="dropdown-item" href="{% url 'scripts:moclodb' %}">MoClo DB</a></li>
                     <li><a class="dropdown-item" href="{% url 'scripts:pcrdb' %}">PCR DB</a></li>
                     <li><a class="dropdown-item" href="{% url 'misc:echo_transfer_db' %}">Echo Transfer DB</a></li>
+                    <li><a class="dropdown-item" href="{% url 'misc:echo_transfer' %}">Echo Transfer</a></li>
                     <li><a class="dropdown-item" href="{% url 'scripts:dnacauldron' %}">DNA Cauldron</a></li>
                     <li class="dropdown-submenu" role="button" aria-haspopup="true" aria-expanded="false"><a class="dropdown-item dropdown-toggle" href="#">Plate Creators</a>
                         <ul class="dropdown-menu">
@@ -149,9 +150,8 @@
                             <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
                                 &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-vial" style="font-size:15px; color:white;"></i> &nbsp;Scripts</a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{% url 'scripts:spotting' %}">Spotting</a></li>
+{#                                <li><a class="dropdown-item" href="{% url 'scripts:spotting' %}">Spotting</a></li>#}
                                 <li><a class="dropdown-item" href="{% url 'scripts:moclo' %}">Moclo</a></li>
-                                <li><a class="dropdown-item" href="{% url 'scripts:combinatorial' %}">Combinatorial</a></li>
                             </ul>
                         </li>
 
@@ -162,6 +162,7 @@
                                 <li><a class="dropdown-item" href="{% url 'misc:genbank' %}">GB Files</a></li>
                                 <li><a class="dropdown-item" href="{% url 'misc:primer' %}">Primer</a></li>
                                 <li><a class="dropdown-item" href="{% url 'misc:normalization' %}">Normalization</a></li>
+                                <li><a class="dropdown-item" href="{% url 'scripts:combinatorial' %}">Combinatorial</a></li>
                             </ul>
                         </li>
                     </ul>
