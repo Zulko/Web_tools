@@ -23,7 +23,6 @@ def get_barcode_from_plate(source_plate, found_list):
             return line[8]
 
 
-
 def get_localization_vol(part_name, list_source_wells):
     for i, item in enumerate(list_source_wells):
         sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, times_available, vol_part_add, plate_in_name, wellD_name = list_source_wells[i]
@@ -374,12 +373,23 @@ def get_sets_in_filepath(reader):
     return lists_parts
 
 
-def find_samples_database(unique_list, plate_content):
+def find_samples_database(unique_list, plate_filters):
+    plate_content, plate_project, plate_ids = plate_filters
+    print(plate_project)
     found_list = []
     missing_list = []
     for part in unique_list:
         found = False
-        wells = Well.objects.filter(samples__alias__exact=str(part), plate__contents__iexact=str(plate_content))
+        if plate_ids is None:
+            wells = Well.objects.filter(
+                samples__alias__exact=str(part),
+                plate__contents__exact=str(plate_content),
+                plate__project=str(plate_project))
+        else:
+            wells = Well.objects.filter(
+                samples__alias__exact=str(part),
+                plate__in=plate_ids)
+
         # wells = Well.objects.filter(samples__alias__exact=str(part))
         if len(wells) > 0:
             for well in wells:
@@ -400,8 +410,9 @@ def find_samples_database(unique_list, plate_content):
     return found_list, missing_list
 
 
-def run(path, filename, plate_content, dispenser_parameters, mix_parameters, dest_plate_parameters, use_high_low_chip_mantis, user):
+def run(path, filename, plate_filters, dispenser_parameters, mix_parameters, dest_plate_parameters, use_high_low_chip_mantis, user):
     total_alert = []
+    plate_content, plate_project, plate_ids = plate_filters
     name_machine, min_vol, res_vol, dead_vol = dispenser_parameters
     robot = machine.Machine(name_machine, min_vol, res_vol, dead_vol)
     num_well_destination, pattern, remove_outer_wells = dest_plate_parameters
@@ -431,7 +442,7 @@ def run(path, filename, plate_content, dispenser_parameters, mix_parameters, des
     # print(count_unique_list)
 
     """Verify the parts on database"""
-    found_list, missing_list = find_samples_database(unique_list, plate_content)
+    found_list, missing_list = find_samples_database(unique_list, plate_filters)
 
     if len(missing_list) > 0:
         for item in missing_list:
@@ -514,7 +525,6 @@ def run(path, filename, plate_content, dispenser_parameters, mix_parameters, des
 
         else:
             return total_alert, None, None, None, None
-            # sys.exit()
     db_mantis = db.save_file(db_mantis_name, 'Moclo_DB', user)
     db_robot = db.save_file(db_robot_name, 'Moclo_DB', user)
     return total_alert, db_mantis, db_robot, mixer_recipe_zip, chip_mantis_zip

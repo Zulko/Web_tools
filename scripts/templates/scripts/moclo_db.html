@@ -59,10 +59,10 @@
                             <label for="num_well">Barcode Plate: </label>
                         </div>
                         <div class="col">
-                            <select class="form-control" id="plate_barcode" name="plate_barcode" multiple>
+                            <select class="form-control" id="plate_ids" name="plate_ids" multiple>
                                 {% for plate in plates %}
                                     {{ plate }}
-                                    <option value={{plate.id}}>{{plate.barcode}}</option>
+                                    <option value={{plate.id}}>{{plate.name}}</option>
                                 {% endfor %}
                             </select>
                         </div>

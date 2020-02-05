@@ -121,6 +121,9 @@ def moclo_db_view(request):
         if len(request.FILES) != 0:
             upload, fs, name_file, url_file = upload_file(request, 'upload_file')
             plate_content = request.POST['plate_content']
+            plate_project = request.POST['plate_project']
+            plate_ids = request.POST.get('plate_ids')
+            plate_filters = plate_content, plate_project, plate_ids
 
             """Dispenser parameters"""
             machine = request.POST['machine']
@@ -147,7 +150,9 @@ def moclo_db_view(request):
             dest_plate_parameters = int(num_well_destination), int(pattern), remove_outer_wells
 
             ''' Calling Python Script'''
-            alerts, outfile_mantis, outfile_robot, mixer_recipe, chip_mantis = moclo_db.run(settings.MEDIA_ROOT, name_file, plate_content, dispenser_parameters, mix_parameters, dest_plate_parameters, mantis_two_chips, user)
+            alerts, outfile_mantis, outfile_robot, mixer_recipe, chip_mantis = moclo_db.run(
+                settings.MEDIA_ROOT, name_file, plate_filters, dispenser_parameters, mix_parameters,
+                dest_plate_parameters, mantis_two_chips, user)
 
             if mixer_recipe is not None:
                 return render(request, 'scripts/moclo_db.html', {'uploadfile_name': upload, 'url_file': url_file,
