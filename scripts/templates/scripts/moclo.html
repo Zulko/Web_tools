@@ -10,11 +10,11 @@
             <form method="post" enctype="multipart/form-data"> {% csrf_token %}
 {#            <fieldset class="form-group">#}
                 <fieldset class="form-group">
-                    <legend>Assembly file</legend>
+                    <legend>Input file</legend>
                     <div class="form-row align-items-center">
                         <div class="col-auto"></div>
                         <div class="col">
-                            <label for="file">Select a file: </label>
+                            <label for="file">Select a worklist file: </label>
                         </div>
                         <div class="col-left">
                             <input type="file" class="form-control-file border" name="upload_file">
@@ -24,7 +24,7 @@
                     <div class="form-row align-items-center">
                         <div class="col-auto"></div>
                         <div class="col">
-                            <label for="database">Select database: </label>
+                            <label for="database">Select a database file: </label>
                         </div>
                         <div class="col-left">
                             <input type="file" class="form-control-file border" name="upload_db">
@@ -50,7 +50,7 @@
                     <div class="form-row align-items-center">
                         <div class="col-auto"></div>
                         <div class="col">
-                            <label for="min_vol">Min Volume(nL): </label>
+                            <label for="min_vol">Min Volume (nL): </label>
                         </div>
                         <div class="col">
                             <input type="number" class="form-control" name="min_vol" min="1" max="5" step="0.5" value="2.5">
@@ -61,7 +61,7 @@
                     <div class="form-row align-items-center">
                         <div class="col-auto"></div>
                         <div class="col">
-                            <label for="vol_res">Volume resolution(nL): </label>
+                            <label for="vol_res">Volume resolution (nL): </label>
                         </div>
                         <div class="col">
                             <input type="number" class="form-control" name="vol_resol" min="1" max="10" step="0.5" value="2.5">
@@ -81,7 +81,7 @@
                 </fieldset>
 
                 <fieldset class="form-group">
-                    <legend>Mixer</legend>
+                    <legend>Reaction parameters</legend>
                     <div class="form-row align-items-center">
                         <div class="col-auto"></div>
                         <div class="col">
@@ -159,7 +159,7 @@
                         <div class="col">
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" class="custom-control-input" id="mantis_two_chips" name="mantis_two_chips" value="True">
-                                <label class="custom-control-label" for="mantis_two_chips">Use Mantis with low/high chips</label>
+                                <label class="custom-control-label" for="mantis_two_chips">Use both a low- and high-volume Mantis chip per reagent</label>
                             </div>
                          </div>
                         <div class="col-auto"></div>
@@ -167,7 +167,7 @@
                 </fieldset>
 
                 <fieldset class="form-group">
-                    <legend>Destination Plate</legend>
+                    <legend>Destination plate options</legend>
                     <div class="form-row align-items-center">
                         <div class="col-auto"></div>
                         <div class="col">
@@ -204,7 +204,7 @@
   </div>
 
   <div class="col-6">
-    <h5>MoClo Script</h5><br>
+    <h5>Golden Gate</h5><br>
     {% if alerts %}
         <div class="alert">
         <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
@@ -222,8 +222,31 @@
             </ol>
         </div>
     {% endif %}
-  <p> Example of a database file (<a href="{% static 'docs/database.csv' %}" target="_blank" download><strong> Database.csv </strong></a>) </p>
-  <p> Example of an input file with parts (<a href="{% static 'docs/combination_parts.txt' %}" target="_blank" download><strong> File.csv </strong></a>) </p> <br>
+
+  <p>
+      This tool creates dispense instruction files for
+      <ul>
+        <li>(i) the Echo to combine your DNA parts and
+        <li>(ii) the Mantis to add your reaction master mix for Golden Gate assemblies.
+      </ul>
+      It calculates the volumes of DNA to dispense from your
+      inventory plate(s) based on the amount (in fmol) of parts and backbone input in the fields at left under reaction
+      parameters. Also set your total volume for all reactions, and the % (vol/vol) of each component of the reaction
+      master mix.<br>
+  </p>
+
+  <p>
+      Input a CSV spreadsheet ‘database’ file containing your inventory of plasmids and/or parts to be used in a Golden
+      Gate reaction. See example:
+      <a href="{% static 'docs/database.csv' %}" target="_blank" download><strong> Database_File_Example </strong></a>
+  </p>
+
+  <p>
+      Input a text or CSV worklist file of plasmids and/or parts to combine in a Golden Gate reaction. Items listed per
+      line will be combined in a single well. See example:
+      <a href="{% static 'docs/combination_parts.txt' %}" target="_blank" download><strong> GoldenGate_Input_Example </strong></a>
+  </p>
+
 
   <div class="card-0">
       <div class="card-img-top">
