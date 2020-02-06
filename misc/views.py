@@ -27,11 +27,8 @@ def genbank_view(request):
             ''' Calling Python Script'''
             outfile = genbank.generate_from_csv(settings.MEDIA_ROOT, name, user)
             if outfile is not None:
-                outfile_name = str(outfile)
-                outfile_url = fs.url(outfile_name)
                 return render(request, 'misc/genbank.html',
-                              {'uploadfile_name': upload.name, 'url': url, 'outfile_name': outfile_name,
-                               'outfile_url': outfile_url})
+                              {'uploadfile_name': upload.name, 'url': url, 'outfile': outfile})
 
     return render(request, 'misc/genbank.html',
                   {'uploadfile_name': '', 'url': '', 'outfile_name': '', 'outfile_url': ''})
