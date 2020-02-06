@@ -5,7 +5,7 @@
 
 <div class="row">
     <div class="col-3">
-    <h4>Options Genbank</h4>
+    <h5>Options Genbank</h5>
         <div class="options">
             <form id='genbank' method="post" enctype="multipart/form-data"> {% csrf_token %}
               <fieldset class="form-group"><br>
@@ -31,7 +31,7 @@
         <h4>Create Genbank files from a CSV</h4>
           <p>
               This tool creates genbank files in batch from a list of sequence files. See the example
-              <a href="{% static 'docs/get_gbfiles.csv' %}" target="_blank" download><strong> input file </strong></a>
+              <a href="{% static 'docs/get_gbfiles.csv' %}" target="_blank" download><strong> input file. </strong></a>
               At the moment the input only reads 3 columns for sequence name, type, and the sequence itself.
               It can be adapted to write annotated genbank files.
               This tool uses <a href="https://biopython.org/">Biopython package</a>.

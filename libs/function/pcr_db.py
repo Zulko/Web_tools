@@ -70,13 +70,14 @@ def populate_destination_plates(plates_out, list_part_count, list_source_wells, 
             plates_out[p].wells[i][j].samples.append(plate.Sample(primer_r[1], primer_r[2], primer_r[3], primer_r[4], primer_r[8]))
             plates_out[p].wells[i][j].samples.append(plate.Sample(primer_f[1], primer_f[2], primer_f[3], primer_f[4], primer_f[8]))
             plates_out[p].wells[i][j].samples.append(plate.Sample(template[1], template[2], template[3], template[4], template[8]))
-            # header = 'Part', 'Source Plate Name', 'Source Well', 'Destination ID', 'Destination Plate Name', 'Destination Well', 'Volume'
+            #'Part', 'Alias', 'Source Plate Barcode', 'Source Plate Name', 'Source Well', 'Destination Plate Barcode', 'Destination Plate Name', 'Destination Well', 'Volume'
+            # name, alias, type_part, source_barcode, source_plate, source_well, part_vol, dest_barcode, dest_plate, dest_well, dest_id
             # out_dispenser.append([name_part_pf+'-'+pf_name, pf_type, pf_platename, pf_wellname, pf_vol_part_add, plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
-            out_dispenser.append([pf_name, pf_type, pf_platename, pf_wellname, pf_vol_part_add, plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
+            out_dispenser.append([name_part_pf, pf_name, pf_type, '', pf_platename, pf_wellname, pf_vol_part_add, '', plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
             # out_dispenser.append([name_part_pr+'-'+pr_name, pr_type, pr_platename, pr_wellname, pr_vol_part_add, plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
-            out_dispenser.append([pr_name, pr_type, pr_platename, pr_wellname, pr_vol_part_add, plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
+            out_dispenser.append([name_part_pr, pr_name, pr_type, '', pr_platename, pr_wellname, pr_vol_part_add, '', plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
             # out_dispenser.append([name_part_t+'-'+t_name, t_type, t_platename, t_wellname, t_vol_part_add, plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
-            out_dispenser.append([t_name, t_type, t_platename, t_wellname, t_vol_part_add, plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
+            out_dispenser.append([name_part_t, t_name, t_type, '', t_platename, t_wellname, t_vol_part_add, '', plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
 
             """ Sum of total volume of parts """
             total_parts_vol += pf_vol_part_add + pr_vol_part_add + t_vol_part_add
