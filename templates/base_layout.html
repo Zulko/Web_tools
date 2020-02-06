@@ -51,7 +51,7 @@
 
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-vial" style="font-size:15px; color:white;"></i> &nbsp;Design
+                    &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-pencil-alt" style="font-size:15px; color:white;"></i> &nbsp;Design
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="navbardrop">
                     <li><a class="dropdown-item" href="{% url 'misc:primer' %}">Primer</a></li>
@@ -82,7 +82,7 @@
 
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-                    &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-dna" style="font-size:15px; color:white;"></i> &nbsp;Analyze</a>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-chart-line" style="font-size:15px; color:white;"></i> &nbsp;Analyze</a>
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" href="#">Frag Analysis</a></li>
                     <li><a class="dropdown-item" href="#">Growth Curves</a></li>
@@ -169,7 +169,7 @@
 
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-vial" style="font-size:15px; color:white;"></i> &nbsp;Design
+                                &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-pencil-alt" style="font-size:15px; color:white;"></i> &nbsp;Design
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbardrop">
                                 <li><a class="dropdown-item" href="{% url 'misc:primer' %}">Primer</a></li>
@@ -195,6 +195,12 @@
                                 <li><a class="dropdown-item" href="{% url 'scripts:combinatorial' %}">Combinatorial</a></li>
                             </ul>
                         </li>
+
+                        <li class="navbar-nav">
+                        <a class="nav-link" href="{% url 'about' %}">
+                            &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-info-circle" style="font-size:15px; color:white;"></i>&nbsp; About</a> </li>
+                        </li>
+
                     </ul>
 
                     <ul class="nav navbar-nav flex-row justify-content-between ml-auto">
