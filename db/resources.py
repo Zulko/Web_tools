@@ -18,6 +18,11 @@ class SampleResource(resources.ModelResource):
         attribute='project',
         widget=widgets.ManyToManyWidget(Project, field='name')
     )
+    primer_id = fields.Field(
+        column_name='primer_id',
+        attribute='primer_id',
+        widget=widgets.ManyToManyWidget(Sample, field='name')
+    )
 
     class Meta:
         model = Sample
