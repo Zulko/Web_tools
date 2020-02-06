@@ -14,3 +14,21 @@ from db.models import Plate
 #                                    'onchange': "Dajaxice.tdportal.updatefilter(Dajax.process,{'option':this.value})",
 #                                    'name': 'combo1', 'id': 'combo1', },
 #                                                         renderer=HorizRadioRenderer),
+
+class NameForm(forms.Form):
+    in_file = forms.FileField(label='Combination file')
+    zip_file = forms.FileField(label='Zip file')
+    enzyme = forms.ChoiceField(
+        label='Enzyme',
+        choices=(
+            ('BsmBI', 'BsmBI'),
+            ('BsaI', 'BsaI')
+        )
+    )
+    topology = forms.ChoiceField(
+        label='Topology',
+        choices=(
+            ('Circular', 'Circular'),
+            ('Linear', 'Linear')
+        )
+    )

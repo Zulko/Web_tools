@@ -5,6 +5,7 @@ from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.decorators import login_required
 from db.models import Project, Plate
+from scripts.forms import NameForm
 
 from libs.function import spotting, combinatorial, moclo, moclo_db, pcr_db, dnacauldron
 
@@ -227,23 +228,37 @@ def pcr_db_view(request):
 def dnacauldron_view(request):
     if request.method == "POST":
         user = request.user
-        if len(request.FILES) != 0:
-            upload, fs, name, url = upload_file(request, 'myFile')
-            upload_zip, fs_zip, name_zip, url_zip = upload_file(request, 'myzipFile')
-            enzyme = request.POST['enzyme']
-            topology = request.POST['topology']
+        form = NameForm(request.POST, request.FILES)
+        Post = True
+        data = form.cleaned_data.get('data')
+        file = data['in_file']
+        if form.is_valid():
+        # if len(request.FILES) != 0:
+        #     upload, fs, name, url = upload_file(request, 'myFile')
+        #     upload_zip, fs_zip, name_zip, url_zip = upload_file(request, 'myzipFile')
+        #     enzyme = request.POST['enzyme']
+        #     topology = request.POST['topology']
+            in_file = form.cleaned_data['in_file']
+            zip_file = form.cleaned_data['zip_file']
+            topology = form.cleaned_data['topology']
+            enzyme = form.cleaned_data['enzyme']
 
             '''Calling Python Script'''
-            alerts, out_zip = dnacauldron.run(settings.MEDIA_ROOT, name, name_zip, topology, enzyme, user)
+            alerts, out_zip = dnacauldron.run(settings.MEDIA_ROOT, in_file, zip_file, topology, enzyme, user)
 
             content = {
-                'url_file': url,
-                'upload': upload,
-                'url_zip': url_zip,
-                'upload_zip': upload_zip,
+                'form': form,
+                # 'url_file': url,
+                # 'upload': upload,
+                # 'url_zip': url_zip,
+                # 'upload_zip': upload_zip,
                 'alerts': alerts,
                 'out_zip': out_zip,
             }
-
             return render(request, 'scripts/dnacauldron.html', content)
-    return render(request, 'scripts/dnacauldron.html')
+        else:
+            print('form not valid')
+    else:
+        form = NameForm()
+
+    return render(request, 'scripts/dnacauldron.html', {'form': form})
