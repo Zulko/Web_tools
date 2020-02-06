@@ -1,0 +1,8 @@
+experiment,letters,animals,fruit,strings,parts
+1,A,monkey,apple,violin,Part1
+1,B,donkey,,viola,
+1,C,,,guitar,
+2,G,monkey,apple,ukele,Part1
+2,,,banana,,Part2
+2,,,,,Part3
+2,,,,,Part4

@@ -5,7 +5,7 @@
 
 <div class="row">
     <div class="col-3">
-    <h5>Options</h5>
+    <h5>Input table</h5>
         <div class="options">
 
             <form method="post" enctype="multipart/form-data"> {% csrf_token %}
@@ -13,7 +13,7 @@
                   <div class="form-row align-items-center">
                     <div class="col-auto"></div>
                     <div class="col">
-                        <label for="file">Select a file with DNA parts: </label>
+                        <label for="file">Select an input file: </label>
                     </div>
                     <div class="col-left">
                         <input type="file" class="form-control-file border" name="myFile">
@@ -29,7 +29,16 @@
 
       <div class="col-6">
         <h5>Combinatorial Script</h5>
-            <br><p> Example of an input file to be normalized (<a href="{% static 'docs/parts.csv' %}" target="_blank" download><strong> parts.csv </strong></a>)</p><br>
+            <br>
+          <p>
+              This tool creates worklist files that can be read by the Golden Gate script, e.g. It creates all
+              permutations of each item in your input file per category per experiment. <br> Create your input as a
+              spreadsheet table and save it as a CSV. The table should look like the example below
+              <a href="{% static 'docs/Combinatorial_Input_Example.csv' %}" target="_blank" download><strong> Combinatorial_Input_Example. </strong></a>
+              The layout allows you to use different combinations of plasmids or parts per experiment.
+              The header names are not read by the script.
+          </p><br>
+
           <table class="table table table-hover">
               <thead>
                 <tr class="table-dark text-dark">
