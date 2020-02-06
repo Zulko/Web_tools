@@ -48,30 +48,45 @@
     <!-- Navbar links -->
     <div class="collapse navbar-collapse" id="collapsibleNavbar">
         <ul class="navbar-nav ">
+
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-vial" style="font-size:15px; color:white;"></i> &nbsp;Scripts
+                    &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-vial" style="font-size:15px; color:white;"></i> &nbsp;Design
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="navbardrop">
-                    <li><a class="dropdown-item" href="{% url 'scripts:moclo' %}">MoClo</a></li>
-                    <li><a class="dropdown-item" href="{% url 'scripts:moclodb' %}">MoClo DB</a></li>
-                    <li><a class="dropdown-item" href="{% url 'scripts:pcrdb' %}">PCR DB</a></li>
-                    <li><a class="dropdown-item" href="{% url 'misc:echo_transfer_db' %}">Echo Transfer DB</a></li>
-{#                    <li><a class="dropdown-item" href="{% url 'misc:echo_transfer' %}">Echo Transfer</a></li>#}
-                    <li><a class="dropdown-item" href="{% url 'scripts:dnacauldron' %}">DNA Cauldron</a></li>
-                    <li class="dropdown-submenu" role="button" aria-haspopup="true" aria-expanded="false"><a class="dropdown-item dropdown-toggle" href="#">Plate Creators</a>
-                        <ul class="dropdown-menu">
-{#                            <li><a class="dropdown-item" href="{% url 'misc:dot_plate' %}">Dot-Plate</a></li>#}
-                            <li><a class="dropdown-item" href="#">Dot-Plate</a></li>
-                        </ul>
-                    </li>
+                    <li><a class="dropdown-item" href="{% url 'misc:primer' %}">Primer</a></li>
+                    <li><a class="dropdown-item" href="{% url 'scripts:dnacauldron' %}">Golden Gate Maps</a></li>
                 </ul>
             </li>
+
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-vial" style="font-size:15px; color:white;"></i> &nbsp;Automate
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbardrop">
+                    <li><a class="dropdown-item" href="{% url 'scripts:moclodb' %}">Golden Gate_db</a></li>
+                    <li><a class="dropdown-item" href="{% url 'scripts:pcrdb' %}">PCR_db</a></li>
+                    <li><a class="dropdown-item" href="{% url 'misc:echo_transfer_db' %}">Echo Transfer_db</a></li>
+                    <li><a class="dropdown-item" href="{% url 'scripts:moclo' %}">Golden Gate</a></li>
+{#                    <li><a class="dropdown-item" href="{% url 'misc:echo_transfer' %}">Echo Transfer</a></li>#}
+                </ul>
+            </li>
+
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-                    &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-dna" style="font-size:15px; color:white;"></i> &nbsp;Workflow</a>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-dna" style="font-size:15px; color:white;"></i> &nbsp;Experiment</a>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{% url 'design:design_view' %}">Experiment</a></li>
+                    <li><a class="dropdown-item" href="{% url 'design:design_view' %}">Workflows</a></li>
+                </ul>
+            </li>
+
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+                    &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-dna" style="font-size:15px; color:white;"></i> &nbsp;Analyze</a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">Frag Analysis</a></li>
+                    <li><a class="dropdown-item" href="#">Growth Curves</a></li>
+                    <li><a class="dropdown-item" href="#">Flow Plot</a></li>
                 </ul>
             </li>
 
@@ -88,7 +103,7 @@
                     <li><a class="dropdown-item" href="{% url 'db:samples_list' %}">Samples</a></li>
                     <li><a class="dropdown-item" href="{% url 'db:project_list' %}">Projects</a></li>
                     <li><a class="dropdown-item" href="{% url 'db:machine_list' %}">Machines</a></li>
-                    <li><a class="dropdown-item" href="{% url 'db:file_sharing' %}">File sharing</a></li>
+{#                    <li><a class="dropdown-item" href="{% url 'db:file_sharing' %}">File sharing</a></li>#}
                 </ul>
             </li>
 
@@ -97,11 +112,16 @@
                 &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-tools" style="font-size:15px; color:white;"></i>&nbsp; Extras</a>
                 <ul class="dropdown-menu">
 {#                    <li><a class="dropdown-item" href="{% url 'scripts:spotting' %}">Spotting</a></li>#}
-                    <li><a class="dropdown-item" href="#">Templates</a></li>
+{#                    <li><a class="dropdown-item" href="#">Templates</a></li>#}
                     <li><a class="dropdown-item" href="{% url 'scripts:combinatorial' %}">Combinatorial</a></li>
-                    <li><a class="dropdown-item" href="{% url 'misc:genbank' %}">GB Files</a></li>
-                    <li><a class="dropdown-item" href="{% url 'misc:primer' %}">Primer</a></li>
-                    <li><a class="dropdown-item" href="{% url 'misc:normalization' %}">Normalization</a></li>
+                    <li><a class="dropdown-item" href="{% url 'misc:genbank' %}">CSV to GB</a></li>
+                    <li class="dropdown-submenu" role="button" aria-haspopup="true" aria-expanded="false"><a class="dropdown-item dropdown-toggle" href="#">Plate Creators</a>
+                        <ul class="dropdown-menu">
+{#                            <li><a class="dropdown-item" href="{% url 'misc:dot_plate' %}">Dot-Plate</a></li>#}
+                            <li><a class="dropdown-item" href="#">Dot_Plate</a></li>
+                        </ul>
+                    </li>
+{#                    <li><a class="dropdown-item" href="{% url 'misc:normalization' %}">Normalization</a></li>#}
                 </ul>
             </li>
 
@@ -146,6 +166,17 @@
                 <div class="collapse navbar-collapse" id="collapsibleNavbar">
 
                     <ul class="navbar-nav ">
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-vial" style="font-size:15px; color:white;"></i> &nbsp;Design
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbardrop">
+                                <li><a class="dropdown-item" href="{% url 'misc:primer' %}">Primer</a></li>
+                                <li><a class="dropdown-item" href="{% url 'scripts:dnacauldron' %}">Golden Gate Maps</a></li>
+                            </ul>
+                        </li>
+
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
                                 &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-vial" style="font-size:15px; color:white;"></i> &nbsp;Automate</a>
@@ -160,7 +191,6 @@
                             &nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-tools" style="font-size:15px; color:white;"></i>&nbsp; Extras</a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{% url 'misc:genbank' %}">CSV to Genbank</a></li>
-                                <li><a class="dropdown-item" href="{% url 'misc:primer' %}">Primer</a></li>
 {#                                <li><a class="dropdown-item" href="{% url 'misc:normalization' %}">Normalization</a></li>#}
                                 <li><a class="dropdown-item" href="{% url 'scripts:combinatorial' %}">Combinatorial</a></li>
                             </ul>
