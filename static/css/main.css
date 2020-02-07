@@ -93,7 +93,6 @@ td {
   border-bottom: 1px solid #ddd;
 }
 
-
 /* left column with functions*/
 fieldset {
     background-color:#ddd;
@@ -103,6 +102,16 @@ fieldset {
     border:1px solid #333;
     box-shadow:0 0 10px #666;
     padding: 20px 20px 20px 20px;
+}
+
+fieldset legend {
+    font-size: 30px;
+    background: #1F497D;
+    color: #fff;
+    padding: 5px 10px ;
+    border-radius: 5px;
+    box-shadow: 0 0 10px #666;
+    margin-left: 0px;
 }
 
 /*Plates format at Database*/

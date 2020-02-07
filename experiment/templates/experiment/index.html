@@ -37,7 +37,7 @@
                             {{ form_experiment_add | bootstrap }}<br>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" name="submit_add_experiment" action="{% url 'design:experiment_add' %}" class="btn btn-info">Add</button>
+                            <button type="submit" name="submit_add_experiment" action="{% url 'experiment:experiment_add' %}" class="btn btn-info">Add</button>
                         </div>
                         </form>
                     </div>
@@ -54,7 +54,7 @@
 {#                        <div class="modal-footer">#}
 {#                            <a class="btn btn-secondary mr-auto" href="{% static 'docs/import_sample_file.csv' %}" target="_blank" download> Sample File </a>#}
 {#                            <button type="button" class="btn btn-secondary " data-dismiss="modal">Close</button>#}
-{#                            <button type="submit" name="upload_file_samples" action="{% url 'design:experiment_add' %}" class="btn btn-info">Add</button>#}
+{#                            <button type="submit" name="upload_file_samples" action="{% url 'experiment:experiment_add' %}" class="btn btn-info">Add</button>#}
 {#                        </div>#}
 {#                        </form>#}
 {#                    </div>#}
@@ -83,7 +83,7 @@
           <tbody>
             {% for experiment in all_experiments %}
                 <tr>
-                <td><a href="{% url 'design:experiment_view' experiment.id %}" style="font-size: 12px;" class="btn btn-outline-secondary btn-sm m-0;"> {{ experiment.name }} </a> </td>
+                <td><a href="{% url 'experiment:experiment_view' experiment.id %}" style="font-size: 12px;" class="btn btn-outline-secondary btn-sm m-0;"> {{ experiment.name }} </a> </td>
                 <td>{{ experiment.project }}
                 </td>
                 <td>{{ experiment.author }} </td>

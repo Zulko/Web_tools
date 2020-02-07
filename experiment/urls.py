@@ -2,12 +2,12 @@ from django.urls import path
 from . import views
 
 
-app_name = 'design'
+app_name = 'experiment'
 
 urlpatterns = [
 
-    # Design views
-    path('', views.design_view, name='design_view'),
+    # Experiment list views
+    path('', views.experiment_list_view, name='experiment_list_view'),
     path('add_experiment/', views.experiment_add, name='experiment_add'),
 
     # Experiment views

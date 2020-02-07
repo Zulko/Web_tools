@@ -18,12 +18,6 @@ def upload_file(request, filename):
     return upload, fs, name, url
 
 
-def save_file(f, name):
-    with open(os.path.join(settings.MEDIA_ROOT, str(name)),'wb+') as destination:
-        for chunk in f.chunks():
-            destination.write(chunk)
-
-
 def spotting_view(request):
     context = {}
     if request.method == "POST":
@@ -236,22 +230,20 @@ def dnacauldron_view(request):
         user = request.user
         form = CauldronForm(request.POST, request.FILES)
         if form.is_valid():
-            in_file = str(form.cleaned_data['in_file'])
-            save_file(request.FILES['in_file'], in_file)
-            zip_file = str(form.cleaned_data['zip_file'])
-            save_file(request.FILES['zip_file'], zip_file)
             topology = form.cleaned_data['topology']
             enzyme = form.cleaned_data['enzyme']
+            upload, fs, name_file, url_file = upload_file(request, 'in_file')
+            upload_zip, fs_zip, name_zipfile, url_zip = upload_file(request, 'zip_file')
 
             '''Calling Python Script'''
-            alerts, out_zip = dnacauldron.run(settings.MEDIA_ROOT, in_file, zip_file, topology, enzyme, user)
+            alerts, out_zip = dnacauldron.run(settings.MEDIA_ROOT, name_file, name_zipfile, topology, enzyme, user)
 
             content = {
                 'form': form,
-                # 'url_file': url,
-                # 'upload': upload,
-                # 'url_zip': url_zip,
-                # 'upload_zip': upload_zip,
+                'url_file': url_file,
+                'upload': upload,
+                'url_zip': url_zip,
+                'upload_zip': upload_zip,
                 'alerts': alerts,
                 'out_zip': out_zip,
             }

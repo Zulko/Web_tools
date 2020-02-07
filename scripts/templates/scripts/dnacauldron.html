@@ -48,48 +48,49 @@
 
     <div class="col-3">
         <!-- output files -->
-{#        {% if url_file %}#}
-{#            <fieldset class="form-group">#}
-{#                <legend>Files</legend>#}
-{#                <div class="form-row align-items-center">#}
-{#                    <div class="col-auto"></div>#}
-{#                    <div class="col-right" >#}
-{#                        <label for="inputfile">Input file:</label>#}
-{#                    </div>#}
-{#                    <div class="col" >#}
-{#                        <label for="inputfile_url"><a href="{{ url_file }}" target="_blank" >{{ upload }}</a></label>#}
-{#                    </div>#}
-{#                    <div class="col-auto"></div>#}
-{#                </div>#}
-{##}
-{#                <div class="form-row align-items-center">#}
-{#                    <div class="col-auto"></div>#}
-{#                    <div class="col-right" >#}
-{#                        <label for="inputfile">Input zipfile:</label>#}
-{#                    </div>#}
-{#                    <div class="col" >#}
-{#                        <label for="inputfile_url"><a href="{{ url_zip }}" target="_blank" >{{ upload_zip }}</a></label>#}
-{#                    </div>#}
-{#                    <div class="col-auto"></div>#}
-{#                </div>#}
-{#            {% endif %}#}
+        {% if upload %}
+            <fieldset class="form-group">
+                <legend><h5>Input files</h5></legend>
+                <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col-right" >
+                        <label for="inputfile">Input file:</label>
+                    </div>
+                    <div class="col" >
+                        <label for="inputfile_url"><a href="{{ url_file }}" target="_blank" >{{ upload }}</a></label>
+                    </div>
+                    <div class="col-auto"></div>
+                </div>
+
+                <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col-right" >
+                        <label for="inputfile">Input zipfile:</label>
+                    </div>
+                    <div class="col" >
+                        <label for="inputfile_url"><a href="{{ url_zip }}" target="_blank" >{{ upload_zip }}</a></label>
+                    </div>
+                    <div class="col-auto"></div>
+                </div>
+            </fieldset>
+            {% endif %}
+
             {% if out_zip %}
-                <h5>Output </h5>
-                    <fieldset class="form-group">
-                        <legend><h5>Files</h5></legend>
-                        <div class="form-row align-items-center">
-                            <div class="col-auto"></div>
-                            <div class="col-right">
-                                <label for="outputfile">Assembly file:</label>
-                            </div>
-                            <div class="col">
-                                <label for="outputfile">
-                                    <a href="{{ out_zip.file.url }}" target="_blank" download> {{ out_zip.name }} </a>
-                                </label>
-                            </div>
-                            <div class="col-auto"></div>
+                <fieldset class="form-group">
+                    <legend><h5>Output files</h5></legend>
+                    <div class="form-row align-items-center">
+                        <div class="col-auto"></div>
+                        <div class="col-right">
+                            <label for="outputfile">Assembly file:</label>
                         </div>
-                    </fieldset>
+                        <div class="col">
+                            <label for="outputfile">
+                                <a href="{{ out_zip.file.url }}" target="_blank" download> {{ out_zip.name }} </a>
+                            </label>
+                        </div>
+                        <div class="col-auto"></div>
+                    </div>
+                </fieldset>
             {% endif %}
     </div>
 </div>

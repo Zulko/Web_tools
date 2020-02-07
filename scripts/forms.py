@@ -1,6 +1,10 @@
 from django import forms
-from django.contrib.auth.models import User
-from db.models import Plate
+
+
+#Design Script Forms
+class PrimerForm(forms.Form):
+    in_file = forms.FileField(label='Combination file')
+
 
 
 class CauldronForm(forms.Form):
@@ -22,3 +26,4 @@ class CauldronForm(forms.Form):
         ),
         initial='circular',
     )
+
