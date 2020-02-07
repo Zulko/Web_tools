@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.decorators import login_required
 from db.models import Project, Plate
-from scripts.forms import NameForm
+from scripts.forms import CauldronForm
 
 from libs.function import spotting, combinatorial, moclo, moclo_db, pcr_db, dnacauldron
 
@@ -16,6 +16,12 @@ def upload_file(request, filename):
     name = fs.save(upload.name, upload)
     url = fs.url(name)
     return upload, fs, name, url
+
+
+def save_file(f, name):
+    with open(os.path.join(settings.MEDIA_ROOT, str(name)),'wb+') as destination:
+        for chunk in f.chunks():
+            destination.write(chunk)
 
 
 def spotting_view(request):
@@ -228,18 +234,12 @@ def pcr_db_view(request):
 def dnacauldron_view(request):
     if request.method == "POST":
         user = request.user
-        form = NameForm(request.POST, request.FILES)
-        Post = True
-        data = form.cleaned_data.get('data')
-        file = data['in_file']
+        form = CauldronForm(request.POST, request.FILES)
         if form.is_valid():
-        # if len(request.FILES) != 0:
-        #     upload, fs, name, url = upload_file(request, 'myFile')
-        #     upload_zip, fs_zip, name_zip, url_zip = upload_file(request, 'myzipFile')
-        #     enzyme = request.POST['enzyme']
-        #     topology = request.POST['topology']
-            in_file = form.cleaned_data['in_file']
-            zip_file = form.cleaned_data['zip_file']
+            in_file = str(form.cleaned_data['in_file'])
+            save_file(request.FILES['in_file'], in_file)
+            zip_file = str(form.cleaned_data['zip_file'])
+            save_file(request.FILES['zip_file'], zip_file)
             topology = form.cleaned_data['topology']
             enzyme = form.cleaned_data['enzyme']
 
@@ -259,6 +259,6 @@ def dnacauldron_view(request):
         else:
             print('form not valid')
     else:
-        form = NameForm()
+        form = CauldronForm()
 
     return render(request, 'scripts/dnacauldron.html', {'form': form})
