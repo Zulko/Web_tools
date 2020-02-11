@@ -182,25 +182,21 @@ def calc_part_volumes_in_plate(count_unique_list, plates_in, mix_parameters, dis
             while list_wells:
                 try:
                     wellD = next(list_wells)
-
                     for sample in wellD.samples:
-
                         if sample.name == part_name:
+                            print(sample.name)
                             # print(sample.name, sample.type, sample.length, sample.concentration, sample.volume)
                             '''fmol -> ng  of the part to give 80 or 40 fmol of that part'''
                             fmol, concent_fmol = calc.fmol(sample.type, sample.length, bb_fmol, part_fmol)
 
                             '''Volume of part to get the selected fmol in ng '''
                             vol_part_add = float(fmol) / float(sample.concentration)
-                            # print(vol_part_add)
 
                             '''Rounding the part volume according to machine resolution'''
                             vol_part_add = calc.round_at(vol_part_add, res_vol)
-                            # print(vol_part_add)
 
                             '''Minimal dispense volume'''
                             vol_part_add = max(vol_part_add, min_vol)
-                            # print(vol_part_add)
 
                             total_vol_parts.append([sample.name, sample.type, sample.length, sample.concentration, sample.volume, count, vol_part_add, plate_in.name, wellD.name])
 
@@ -377,6 +373,7 @@ def find_samples_database(unique_list, plate_filters):
     plate_content, plate_project, plate_ids = plate_filters
     found_list = []
     missing_list = []
+
     for part in unique_list:
         found = False
         if plate_ids is None:

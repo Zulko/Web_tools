@@ -6,7 +6,6 @@ class PrimerForm(forms.Form):
     in_file = forms.FileField(label='Combination file')
 
 
-
 class CauldronForm(forms.Form):
     in_file = forms.FileField(label='Combination file')
     zip_file = forms.FileField(label='Zip file')

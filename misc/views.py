@@ -5,9 +5,10 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
 from db.models import Project, Plate
+from misc.forms import DotPlateForm, DestinationPlateForm
 
 from libs.function import normalization, fasta2primer3
-from libs.misc import genbank, nrc_sequence, echo_transfer_db, echo_transfer
+from libs.misc import genbank, nrc_sequence, echo_transfer_db, echo_transfer, plate_creator
 
 
 def upload_file(request, filename):
@@ -204,18 +205,36 @@ def echo_transfer_db_view(request):
 
 def dot_plate_view(request):
     user = request.user
-    projects = Project.objects.filter(collaborators=user)
-    plates = Plate.objects.filter(project__in=projects)
     if request.method == "POST":
-        user = request.user
-        if len(request.FILES) != 0:
-            upload, fs, name, url = upload_file(request, 'myFile')
+        form_plate = DotPlateForm(request.POST)
+        form_dest_plate = DestinationPlateForm(request.POST)
+
+        if form_plate.is_valid() and form_dest_plate.is_valid():
+            id = form_plate.cleaned_data['plate_name']
+
+            num_dots = int(form_dest_plate.cleaned_data['num_dots'])
+            dot_vol = int(form_dest_plate.cleaned_data['dot_vol'])
+            num_wells = int(form_dest_plate.cleaned_data['num_wells'])
+            filled_by = int(form_dest_plate.cleaned_data['filled_by'])
+            remov_out_wells = form_dest_plate.cleaned_data['remov_out_wells']
 
             ''' Calling Python Script'''
-            outfile = genbank.generate_from_csv(settings.MEDIA_ROOT, name, user)
-            if outfile is not None:
-                outfile_name = str(outfile)
-                outfile_url = fs.url(outfile_name)
-                return render(request, 'misc/dot_plate.html')
+            out_file = plate_creator.run_dot_plate(settings.MEDIA_ROOT, id, num_dots, dot_vol, num_wells, filled_by, remov_out_wells, user)
 
-    return render(request, 'misc/dot_plate.html',{'projects': projects, 'plates':plates})
+            context = {
+                'outfile_robot': out_file,
+                'form_plate': form_plate,
+                'form_dest_plate': form_dest_plate,
+            }
+
+            return render(request, 'misc/dot_plate.html', context)
+
+    form_plate = DotPlateForm()
+    form_dest_plate = DestinationPlateForm()
+
+    context = {
+        'form_plate': form_plate,
+        'form_dest_plate': form_dest_plate,
+    }
+
+    return render(request, 'misc/dot_plate.html', context)

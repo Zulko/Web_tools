@@ -195,6 +195,14 @@ def create_source_plates_from_foundlist(foundlist):
     return plates_in
 
 
+def create_source_plates_from_db(plates):
+    plates_in = []
+    for plate in plates:
+        plates_in.append(create_plate(int(plate.num_well), plate.name))
+
+    return plates_in
+
+
 def create_source_plates_from_csv(filein):
     """
     Returns a list of Source Plates got from filein
@@ -260,6 +268,18 @@ def list_to_source_plates(foundlist, plates):
                     plates[i].wells[row][col].samples.append(
                         plate.Sample(alias, samp_moclotype, samp_len, samp_conc, volume))
     return plates
+
+
+def db_plates_to_source_plates(platesdb, plates_in):
+    for i in range(0, len(plates_in)):
+        wells = Well.objects.filter(plate__name=plates_in[i].name)
+        for well in wells:
+            row, col = calc.wellname_to_coordinates(well.name)
+            for sample in well.samples.all():
+                plates_in[i].wells[row][col].samples.append(
+                plate.Sample(sample.name, sample.sample_type, sample.direction, well.concentration, well.volume))
+
+    return plates_in
 
 
 def get_wells(part, plate_filters):

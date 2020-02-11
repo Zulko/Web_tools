@@ -1,5 +1,6 @@
 {% extends 'base_layout.html' %}
 {% load static from staticfiles %}
+{% load bootstrap %}
 
 {% block content %}
 
@@ -8,292 +9,46 @@
     <h5>Options</h5>
         <div class="options">
             <form method="post" enctype="multipart/form-data"> {% csrf_token %}
-                <fieldset class="form-group">
-                    <legend><h5>Assembly file</h5></legend>
-                    <div class="form-row align-items-center">
-                        <div class="col-auto"></div>
-                        <div class="col">
-                            <label for="file">Select a file: </label>
-                        </div>
-                        <div class="col-left">
-                            <input type="file" class="form-control-file border" name="upload_file">
-                        </div>
-                        <div class="col-auto"></div>
-                    </div><br>
-                </fieldset>
-
-                <fieldset class="form-group">
-                    <legend><h5>Plate Filters</h5></legend>
-                    <div class="form-row align-items-center">
-                        <div class="col-auto"></div>
-                        <div class="col">
-                            <label for="num_well">Content: </label>
-                        </div>
-                        <div class="col">
-                            <select class="form-control" id="plate_content" name="plate_content">
-                                <option value="DNA">DNA</option>
-                                <option value="Cells">Cells</option>
-                                <option value="Reagents">Reagents</option>
-                            </select>
-                        </div>
-                        <div class="col-auto"></div>
-                    </div><br>
-                    <div class="form-row align-items-center">
-                        <div class="col-auto"></div>
-                        <div class="col">
-                            <label for="num_well">Project: </label>
-                        </div>
-                        <div class="col">
-                            <select class="form-control" id="plate_project" name="plate_project">
-                                {% for project in projects %}
-                                    {{ project }}
-                                    <option value={{project.id}}>{{project.name}}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-auto"></div>
-                    </div><br>
-                    <div class="form-row align-items-center">
-                        <div class="col-auto"></div>
-                        <div class="col">
-                            <label for="num_well">Barcode Plate: </label>
-                        </div>
-                        <div class="col">
-                            <select class="form-control" id="plate_barcode" name="plate_barcode" multiple>
-                                {% for plate in plates %}
-                                    {{ plate }}
-                                    <option value={{plate.id}}>{{plate.barcode}}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-auto"></div>
-                    </div><br>
-                </fieldset>
-
-                <fieldset class="form-group">
-                    <legend>Dispenser</legend>
-                    <div class="form-row align-items-center">
-                        <div class="col-auto"></div>
-                        <div class="col">
-                            <label for="machine">Machine: </label>
-                        </div>
-                        <div class="col">
-                            <select class="form-control" id="machine" name="machine">
-                                <option value="echo">Echo</option>
-                            </select>
-                        </div>
-                        <div class="col-auto"></div>
-                    </div><br>
-                    <div class="form-row align-items-center">
-                        <div class="col-auto"></div>
-                        <div class="col">
-                            <label for="min_vol">Min Volume(nL): </label>
-                        </div>
-                        <div class="col">
-                            <input type="number" class="form-control" name="min_vol" min="1" max="5" step="0.5" value="2.5">
-                        </div>
-                        <div class="col-auto"></div>
-                    </div><br>
-
-                    <div class="form-row align-items-center">
-                        <div class="col-auto"></div>
-                        <div class="col">
-                            <label for="vol_res">Volume resolution(nL): </label>
-                        </div>
-                        <div class="col">
-                            <input type="number" class="form-control" name="vol_resol" min="1" max="10" step="0.5" value="2.5">
-                        </div>
-                        <div class="col-auto"></div>
-                    </div><br>
-                    <div class="form-row align-items-center">
-                        <div class="col-auto"></div>
-                        <div class="col">
-                            <label for="vol_res">Dead Volume (µL): </label>
-                        </div>
-                        <div class="col">
-                            <input type="number" class="form-control" name="dead_vol" min="1" max="15" step="0.5" value="13">
-                        </div>
-                        <div class="col-auto"></div>
-                    </div><br>
-                </fieldset>
-
-                <fieldset class="form-group">
-                    <legend>Mixer</legend>
-                    <div class="form-row align-items-center">
-                        <div class="col-auto"></div>
-                        <div class="col">
-                            <label for="part">Part (fmol): </label>
-                        </div>
-                        <div class="col">
-                            <input type="number" class="form-control" name="part_fmol" min="0.5" max="80" step="0.5" value="40">
-                        </div>
-                        <div class="col-auto"></div>
-                    </div><br>
-
-                    <div class="form-row align-items-center">
-                        <div class="col-auto"></div>
-                        <div class="col">
-                            <label for="backbone">Backbone (fmol): </label>
-                        </div>
-                        <div class="col">
-                            <input type="number" class="form-control" name="bb_fmol" min="0.5" max="80" step="0.5" value="20">
-                        </div>
-                        <div class="col-auto"></div>
-                    </div><br>
-
-                    <div class="form-row align-items-center">
-                        <div class="col-auto"></div>
-                        <div class="col">
-                            <label for="tot_vol">Total Volume (µL): </label>
-                        </div>
-                        <div class="col">
-                            <input type="number" class="form-control" name="total_vol" min="1" max="15" step="0.5" value="10">
-                        </div>
-                        <div class="col-auto"></div>
-                    </div><br>
-
-                    <div class="form-row align-items-center">
-                        <div class="col-auto"></div>
-                        <div class="col">
-                            <label for="buffer">Buffer (%): </label>
-                        </div>
-                        <div class="col">
-                            <input type="number" class="form-control" name="buffer" min="1" max="20" step="0.5" value="10">
-                        </div>
-                        <div class="col-auto"></div>
-                    </div><br>
-
-                    <div class="form-row align-items-center">
-                        <div class="col-auto"></div>
-                        <div class="col">
-                            <label for="rest_enz">Rest Enz (%): </label>
-                        </div>
-                        <div class="col">
-                            <input type="number" class="form-control" name="enz_restric" min="1" max="20" step="0.5" value="10">
-                        </div>
-                        <div class="col-auto"></div>
-                    </div><br>
-
-                    <div class="form-row align-items-center">
-                        <div class="col-auto"></div>
-                        <div class="col">
-                            <label for="lig_enz">Ligase Enz (%): </label>
-                        </div>
-                        <div class="col">
-                            <input type="number" class="form-control" name="enz_ligase" min="1" max="20" step="0.5" value="10">
-                        </div>
-                        <div class="col-auto"></div>
-                    </div><br>
-
-                    <div class="form-row align-items-center">
-                        <div class="col-auto"></div>
-                        <div class="col">
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="add_water" name="add_water" value="True" checked>
-                                <label class="custom-control-label" for="add_water">Add water in Master Mix</label>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="mantis_two_chips" name="mantis_two_chips" value="True">
-                                <label class="custom-control-label" for="mantis_two_chips">Use Mantis with low/high chips</label>
-                            </div>
-                         </div>
-                        <div class="col-auto"></div>
-                    </div><br>
-                </fieldset>
-
-                <fieldset class="form-group">
-                    <legend>Destination Plate</legend>
-                    <div class="form-row align-items-center">
-                        <div class="col-auto"></div>
-                        <div class="col">
-                            <label for="num_well">Num Wells: </label>
-                        </div>
-                        <div class="col">
-                            <select class="form-control" id="num_well_destination" name="num_well_destination">
-                                <option value="96">96 Wells</option>
-                                <option value="384">384 Wells</option>
-                            </select>
-                        </div>
-                        <div class="col-auto"></div>
-                    </div><br>
-                    <div class="form-row align-items-center">
-                        <div class="col-auto"></div>
-
-                        <div class="col">
-                            <label for="filled_by">Filled by: </label>
-                        </div>
-                        <div class="col">
-                            <select class="form-control" id="pattern" name="pattern">
-                                <option value="0">by row</option>
-                                <option selected value="1">by column</option>
-                            </select>
-                        </div>
-                        <div class="col-auto"></div>
-                    </div><br>
-                    <div class="form-row align-items-center">
-                        <div class="col-auto"></div>
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="remove_outer_wells" name="remove_outer_wells" value="True">
-                                <label class="custom-control-label" for="remove_outer_wells">Remove outer wells</label>
-                            </div>
-                        <div class="col-auto"></div>
-                    </div><br>
-                </fieldset>
+            <fieldset>
+                <legend><h5>Select plate</h5></legend>
+                    <div style="padding: 10px">
+                        {% csrf_token %}
+                        {{ form_plate|bootstrap }}
+                    </div>
+            </fieldset><br>
+            <fieldset>
+                <legend><h5>Destination plate options</h5></legend>
+                    <div style="padding: 10px">
+                        {% csrf_token %}
+                        {{ form_dest_plate|bootstrap }}
+                    </div>
+            </fieldset><br>
 
             <input type="submit" class="btn btn-info btn-block btn-lg" value="Submit">
-{#          </fieldset>#}
             </form>
-    </div>
-  </div>
-
-  <div class="col-6">
-    <h5>MoClo Script connected with Database</h5><br>
-    {% if alerts %}
-        <div class="alert">
-        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-            <ol>
-            {% for alert in alerts %}
-                <li>{{ alert }} </li>
-            {% endfor %}
-            </ol>
         </div>
-    {% endif %}
-    <p> MoClo Script uses the output file from Combinatorial Script </p>
-    <p> An example of an input file (<a href="{% static 'docs/combination_parts.txt' %}" target="_blank" download><strong> combination_parts.txt </strong></a>).
-        All the parts in the input file must exist in the database for the script to work. </p> <br>
+    </div>
 
-  </div>
-
+    <div class="col-6">
+        <h5>Dot-plating Script on Biomek</h5><br>
+            {% if alerts %}
+            <div class="alert">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    <ol>
+                    {% for alert in alerts %}
+                        <li>{{ alert }} </li>
+                    {% endfor %}
+                    </ol>
+            </div>
+            {% endif %}
+        <p> Create a new destination plate to be used on biomek. </p> <br>
+    </div>
 
     <div class="col-3">
-        {% if url_file %}
+        {% if outfile_robot %}
             <h5>Output </h5>
             <fieldset class="form-group">
-                <legend>Files</legend>
-                <div class="form-row align-items-center">
-                    <div class="col-auto"></div>
-                    <div class="col-right" >
-                        <label for="inputfile">Input file:</label>
-                    </div>
-                    <div class="col" >
-                        <label for="inputfile_url"><a href="{{ url_file }}" target="_blank" >{{ uploadfile_name }}</a></label>
-                    </div>
-                    <div class="col-auto"></div>
-                </div>
-
-            {% if outfile_mantis %}<br>
-                <div class="form-row align-items-center">
-                    <div class="col-auto"></div>
-                    <div class="col" >
-                        <label for="outputfile">Mantis file:</label>
-                    </div>
-                    <div class="col" >
-                        <label for="outputfile"><a href="{{ outfile_mantis.file.url }}" target="_blank" download> {{ outfile_mantis.name }} </a></label>
-                    </div>
-                    <div class="col-auto"></div>
-                </div>
+                <legend><h5>Files</h5></legend>
 
                 <div class="form-row align-items-center">
                     <div class="col-auto"></div>
@@ -305,38 +60,8 @@
                     </div>
                     <div class="col-auto"></div>
                 </div>
-            {% endif %}
             </fieldset><br>
         {% endif %}
-
-        {%  if mixer_recipe %}
-        <fieldset class="form-group">
-            <legend>Master Mix Recipe </legend>
-            <table class="table">
-                <tbody>
-                    {% for item in mixer_recipe %}
-                        <tr>
-                            <td> {{ item.1 }}: </td><td> {{ item.0 }}ul </td>
-                        </tr>
-                        {% endfor %}
-                </tbody>
-            </table>
-        </fieldset>
-        <br>
-        <fieldset class="form-group">
-            <legend> Mantis Configuration </legend>
-            <table class="table">
-                <tbody>
-                    {% for item in chip_mantis %}
-                        <tr>
-                            <td> {{ item.0 }}: </td><td> {{ item.1 }}ul </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </fieldset>
-        {% endif %}
     </div>
-
 </div>
 {% endblock%}
