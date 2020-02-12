@@ -60,7 +60,7 @@ class Project(models.Model):
     comments = models.CharField(max_length=100, blank=True)
     image = models.ImageField(upload_to="pics", max_length=10000, blank=True)
     created_at = models.DateField(auto_now_add=True, editable=False)
-    description = models.CharField(max_length=500, blank=True)
+    # description = models.CharField(max_length=500, blank=True)
 
     class Meta:
         ordering = ('name',)
