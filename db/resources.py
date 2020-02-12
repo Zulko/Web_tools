@@ -129,7 +129,7 @@ class PlateResource(resources.ModelResource):
         # raise_errors = False
         model = Well
 
-        fields = ('name', 'plate', 'samples', 'alias', 'volume', 'concentration', 'active', 'status')
+        fields = ('name', 'plate', 'samples', 'volume', 'concentration', 'active', 'status')
         # fields = ('name', 'plate', 'samples', 'alias', 'project', 'barcode', 'function', 'plate_content',
         #           'plate_medium', 'plate_wells', 'plate_type', 'well_description', 'well_comments', 'well_quadrant',
         #           'volume', 'concentration', 'active', 'status')

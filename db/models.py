@@ -27,7 +27,6 @@ class Machine(models.Model):
         ('inSPIRE', 'inSPIRE'),
         ('FACSMelody', 'FACSMelody'),
         ('QuantStudio 3D', 'QuantStudio 3D'),
-
     )
     STATUS = (
         ('Working', 'Working'),
@@ -61,6 +60,7 @@ class Project(models.Model):
     comments = models.CharField(max_length=100, blank=True)
     image = models.ImageField(upload_to="pics", max_length=10000, blank=True)
     created_at = models.DateField(auto_now_add=True, editable=False)
+    description = models.CharField(max_length=500, blank=True)
 
     class Meta:
         ordering = ('name',)
@@ -128,7 +128,7 @@ class Plate(models.Model):
     type = models.CharField(max_length=50, choices=CONTAINER_TYPES, default=CONTAINER_TYPES[0][0])
     function = models.CharField(max_length=50, choices=CONTAINER_FUNCTION, default=CONTAINER_FUNCTION[0][0])
     barcode = models.CharField(max_length=30, unique=True, default=get_barcode)
-    project = models.ManyToManyField(Project, blank=True)
+    project = models.ManyToManyField(Project)
     num_cols = models.IntegerField()
     num_rows = models.IntegerField()
     num_well = models.IntegerField()
@@ -190,7 +190,6 @@ class Sample(models.Model):
         ('Plasmid', 'Plasmid'),
         ('Part', 'Part'),
         ('Linker', 'Linker'),
-        ('Other', 'Other'),
     )
     END_TYPES = (
         ('R', 'Right'),
@@ -212,7 +211,7 @@ class Sample(models.Model):
     # Database Fields
     name = models.CharField('Name', max_length=50, unique=True)
     alias = models.CharField(max_length=50)
-    sample_type = models.CharField(max_length=50, choices=SAMPLE_TYPES, default=SAMPLE_TYPES[4][0])
+    sample_type = models.CharField(max_length=50, choices=SAMPLE_TYPES, default=SAMPLE_TYPES[3][0])
     description = models.CharField(max_length=500, blank=True)
     project = models.ManyToManyField(Project, blank=True)
     author = models.CharField(max_length=50, blank=True)
@@ -318,6 +317,9 @@ class Well(models.Model):
 
     def sample_names(self):
         return '\n'.join([a.name for a in self.samples.all()])
+
+    def sample_types(self):
+        return '\n'.join([a.sample_type for a in self.samples.all()])
 
 
 class File(models.Model):
