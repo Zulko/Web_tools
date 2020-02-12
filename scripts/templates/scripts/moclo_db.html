@@ -55,7 +55,7 @@
     </div>
 
     <div class="col-6">
-        <h5>MoClo Script connected with Database</h5><br>
+        <h5>Golden Gate connected with Database</h5><br>
             {% if alerts %}
                 <div class="alert">
                     <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
@@ -66,9 +66,22 @@
                         </ol>
                 </div>
             {% endif %}
-        <p> MoClo Script uses the output file from Combinatorial Script </p>
-        <p> An example of an input file (<a href="{% static 'docs/combination_parts.txt' %}" target="_blank" download><strong> combination_parts.txt </strong></a>).
-            All the parts in the input file must exist in the database for the script to work. </p> <br>
+            <p>
+              This tool creates dispense instruction files for
+              <ul>
+                <li>(i) the Echo to combine your DNA parts and
+                <li>(ii) the Mantis to add your reaction master mix for Golden Gate assemblies.
+              </ul>
+              It calculates the volumes of DNA to dispense from your
+              inventory plate(s) based on the amount (in fmol) of parts and backbone input in the fields at left under reaction
+              parameters. Also set your total volume for all reactions, and the % (vol/vol) of each component of the reaction
+              master mix.<br>
+            </p>
+            <p>
+              Input a text or CSV worklist file of plasmids and/or parts to combine in a Golden Gate reaction. Items listed per
+              line will be combined in a single well. See example:
+              <a href="{% static 'docs/GoldenGate_Input_Example.csv' %}" target="_blank" download><strong>GoldenGate_Input_Example</strong>.</a>
+            </p>
     </div>
 
     <div class="col-3">

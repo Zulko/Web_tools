@@ -75,6 +75,7 @@ def populate_destination_plates(plates_out, list_destination_plate, list_source_
         total_parts_vol = 0
         for part in set:
             list_source_wells, part = get_localization_vol(part, list_source_wells)
+            # print(list_source_wells, part)
             sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, new_times_available, vol_part_add, source_plate, source_well = part
             final_conc = calc.fmol_by_parttype(sample_type, bb_fmol, part_fmol)
 
@@ -376,12 +377,11 @@ def find_samples_database(unique_list, plate_filters):
     for part in unique_list:
         found = False
         if len(plate_ids) < 1:
-            print(part, plate_content, plate_project)
             wells = Well.objects.filter(
                 samples__alias__exact=str(part),
                 plate__contents__exact=str(plate_content),
                 plate__project__id=plate_project)
-            print(wells)
+            # print(wells)
         else:
             wells = Well.objects.filter(
                 samples__alias__exact=str(part),
@@ -401,6 +401,8 @@ def find_samples_database(unique_list, plate_filters):
                             found_list.append(lista)
                         else:
                             missing_list.append(part)
+                else:
+                    missing_list.append(part)
         else:
             missing_list.append(part)
 
@@ -415,7 +417,7 @@ def run(path, filename, plate_filters, dispenser_parameters, mix_parameters, des
     num_well_destination, pattern, remove_outer_wells = dest_plate_parameters
     part_fmol, bb_fmol, total_vol, per_buffer, per_rest_enz, per_lig_enz, add_water = mix_parameters
 
-    print(plate_filters, dispenser_parameters, mix_parameters, dest_plate_parameters, use_high_low_chip_mantis, user)
+    # print(plate_filters, dispenser_parameters, mix_parameters, dest_plate_parameters, use_high_low_chip_mantis, user)
 
     '''Create read files'''
     filein = file.verify(path + "/" + filename)

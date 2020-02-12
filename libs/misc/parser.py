@@ -1,7 +1,7 @@
 import os, decimal, re
 from django.shortcuts import get_object_or_404
 
-from ..misc import calc, file, parser
+from ..misc import calc, file
 from ..container import plate, machine
 from db.models import Plate, Well, Sample
 
@@ -21,7 +21,7 @@ def create_plate(num_wells, name):
 def create_plate_on_database_old(path, file, num_well_destination, step):
     filein = open(path + '/docs/' + file.name, 'r')
     plates_out = []
-    filein.readline()  # jump header
+    filein.readline()  # skip header
     for line in filein:
         found = False
         line = line.split(',')

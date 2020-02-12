@@ -48,12 +48,6 @@ def create_destination_plates(plates, list_source_wells, num_dots, num_dest_id, 
         for row in col:
             count +=1
     num_receipts = count
-
-    # num_receipts = 0
-    # for plate in plates:
-    #     num_receipts += plate.num_well
-    # num_receipts = num_receipts * num_dots
-    # print('num_receipts: ' + str(num_receipts))
     num_removed_wells = 0
 
     if remove_outer_wells is False:
@@ -152,8 +146,7 @@ def run_dot_plate(path, plate_id, num_dots, dot_vol, num_well_destination, patte
         plates_out, out_plate_dispenser = populate_destination_plates(plate_in, plates_out, list_source_wells, dot_vol, pattern, num_removed_wells)
         out_dispenser.extend(out_plate_dispenser)
 
-    # ''' Robot Dispenser parts '''
-
+    ''' Robot Dispenser parts '''
     file.set_echo_header(robot_csv)
     file.write_dispenser_echo(out_dispenser, robot_csv)
     db_robot = db.save_file(db_robot_name, 'Dot_plating_db', user)
@@ -161,3 +154,4 @@ def run_dot_plate(path, plate_id, num_dots, dot_vol, num_well_destination, patte
     file_robot.close()
 
     return db_robot
+
