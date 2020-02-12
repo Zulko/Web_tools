@@ -207,34 +207,36 @@ def dot_plate_view(request):
     user = request.user
     if request.method == "POST":
         form_plate = DotPlateForm(request.POST)
-        form_dest_plate = DestinationPlateForm(request.POST)
+        form_destinationplate = DestinationPlateForm(request.POST)
 
-        if form_plate.is_valid() and form_dest_plate.is_valid():
+        if form_plate.is_valid() and form_destinationplate.is_valid():
+            '''Select plate'''
             id = form_plate.cleaned_data['plate_name']
+            num_dots = int(form_plate.cleaned_data['num_dots'])
+            dot_vol = int(form_plate.cleaned_data['dot_vol'])
 
-            num_dots = int(form_dest_plate.cleaned_data['num_dots'])
-            dot_vol = int(form_dest_plate.cleaned_data['dot_vol'])
-            num_wells = int(form_dest_plate.cleaned_data['num_wells'])
-            filled_by = int(form_dest_plate.cleaned_data['filled_by'])
-            remov_out_wells = form_dest_plate.cleaned_data['remov_out_wells']
+            '''Destination plate'''
+            num_wells = int(form_destinationplate.cleaned_data['num_wells'])
+            filled_by = int(form_destinationplate.cleaned_data['filled_by'])
+            remove_outer_wells = form_destinationplate.cleaned_data['remove_outer_wells']
 
             ''' Calling Python Script'''
-            out_file = plate_creator.run_dot_plate(settings.MEDIA_ROOT, id, num_dots, dot_vol, num_wells, filled_by, remov_out_wells, user)
+            out_file = plate_creator.run_dot_plate(settings.MEDIA_ROOT, id, num_dots, dot_vol, num_wells, filled_by, remove_outer_wells, user)
 
             context = {
                 'outfile_robot': out_file,
                 'form_plate': form_plate,
-                'form_dest_plate': form_dest_plate,
+                'form_dest_plate': form_destinationplate,
             }
 
             return render(request, 'misc/dot_plate.html', context)
 
     form_plate = DotPlateForm()
-    form_dest_plate = DestinationPlateForm()
+    form_destinationplate = DestinationPlateForm()
 
     context = {
         'form_plate': form_plate,
-        'form_dest_plate': form_dest_plate,
+        'form_dest_plate': form_destinationplate,
     }
 
     return render(request, 'misc/dot_plate.html', context)

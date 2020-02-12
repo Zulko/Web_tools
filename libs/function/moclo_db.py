@@ -414,6 +414,8 @@ def run(path, filename, plate_filters, dispenser_parameters, mix_parameters, des
     num_well_destination, pattern, remove_outer_wells = dest_plate_parameters
     part_fmol, bb_fmol, total_vol, per_buffer, per_rest_enz, per_lig_enz, add_water = mix_parameters
 
+    print(plate_filters, dispenser_parameters, mix_parameters, dest_plate_parameters, use_high_low_chip_mantis, user)
+
     '''Create read files'''
     filein = file.verify(path + "/" + filename)
 

@@ -126,7 +126,7 @@ def run_dot_plate(path, plate_id, num_dots, dot_vol, num_well_destination, patte
     plates = Plate.objects.filter(pk__in=plate_id)
     num_dest_id = Plate.objects.latest('id').id
 
-    db_robot_name = str('echo') + "_" + str('dot-plating') + '.csv'
+    db_robot_name = str('biomek') + "_" + str('dot-plating') + '.csv'
     file_robot = file.create(path + "/docs/" + db_robot_name, 'w')
     robot_csv = file.create_writer_csv(file_robot)
     out_dispenser = []

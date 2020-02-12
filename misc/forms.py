@@ -8,9 +8,6 @@ class DotPlateForm(forms.Form):
         widget=forms.SelectMultiple,
         choices=[(c.pk, c.name) for c in Plate.objects.all()],
     )
-
-
-class DestinationPlateForm(forms.Form):
     num_dots = forms.IntegerField(
         label='Number of dots',
         max_value=10,
@@ -23,6 +20,9 @@ class DestinationPlateForm(forms.Form):
         min_value=1,
         initial=1,
     )
+
+
+class DestinationPlateForm(forms.Form):
     num_wells = forms.ChoiceField(
         label='Num wells',
         choices=(
@@ -39,7 +39,7 @@ class DestinationPlateForm(forms.Form):
         ),
         initial='row',
     )
-    remov_out_wells = forms.BooleanField(
+    remove_outer_wells = forms.BooleanField(
         label='Remove outer wells',
         required=False,
         initial=False,

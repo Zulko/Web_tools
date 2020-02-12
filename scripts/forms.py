@@ -1,4 +1,5 @@
 from django import forms
+from db.models import Plate, Project, Machine
 
 
 #Design Script Forms
@@ -15,7 +16,7 @@ class CauldronForm(forms.Form):
             ('BsmBI', 'BsmBI'),
             ('BsaI', 'BsaI')
         ),
-        initial='BsmBI',
+        initial=['BsmBI', 'BsmBI'],
     )
     topology = forms.ChoiceField(
         label='Topology',
@@ -23,6 +24,111 @@ class CauldronForm(forms.Form):
             ('circular', 'Circular'),
             ('linear', 'Linear')
         ),
-        initial='circular',
+        initial=['circular', 'Circular'],
     )
 
+
+#Automate Script Forms
+class InputFileForm(forms.Form):
+    in_file = forms.FileField(label='Select file')
+
+
+class PlateFilterForm(forms.Form):
+    content = forms.CharField(
+        label='Content',
+        widget=forms.Select(
+            choices=Plate.CONTENTS
+        ),
+        initial=[Plate.CONTENTS[0][0], Plate.CONTENTS[0][0]],
+        # initial=None,
+    )
+    project = forms.ChoiceField(
+        label='Project',
+        widget=forms.Select,
+        choices=[(p.pk, p.name) for p in Project.objects.all()],
+        initial=None,
+    )
+    plate_ids = forms.MultipleChoiceField(
+        label='Plate name',
+        widget=forms.SelectMultiple,
+        choices=[(p.pk, p.name) for p in Plate.objects.all()],
+        required=False,
+        initial=None,
+    )
+
+
+class DispenserForm(forms.Form):
+    machine = forms.ChoiceField(
+        label='Machine',
+        widget=forms.Select,
+        choices=[(p.pk, p.name) for p in Machine.objects.all()],
+        required=False,
+        initial=['4', 'Echo 550'],
+    )
+    min_vol = forms.FloatField(
+        label='Min volume (nL)',
+        max_value=5,
+        min_value=1,
+        initial=2.5,
+    )
+    vol_resolution = forms.FloatField(
+        label='Volume resolution (nL)',
+        max_value=5,
+        min_value=1,
+        initial=2.5,
+    )
+    dead_vol = forms.FloatField(
+        label='Dead volume (µL)',
+        max_value=20,
+        min_value=1,
+        initial=13,
+    )
+
+
+class MocloReactionParametersForm(forms.Form):
+    part_fmol = forms.IntegerField(
+        label='Part (fmol)',
+        max_value=40,
+        min_value=1,
+        initial=40,
+    )
+    bb_fmol = forms.IntegerField(
+        label='Backbone (fmol)',
+        max_value=20,
+        min_value=1,
+        initial=20,
+    )
+    total_volume = forms.IntegerField(
+        label='Total Volume (µL)',
+        max_value=20,
+        min_value=1,
+        initial=10,
+    )
+    buffer_per = forms.IntegerField(
+        label='Buffer (%)',
+        max_value=20,
+        min_value=1,
+        initial=10,
+    )
+    rest_enz_perc = forms.IntegerField(
+        label='Restriction Enzyme (%)',
+        max_value=20,
+        min_value=1,
+        initial=10,
+    )
+    ligase_per = forms.IntegerField(
+        label='Ligase Enzyme (%)',
+        max_value=20,
+        min_value=1,
+        initial=10,
+    )
+    add_water = forms.BooleanField(
+        label='Add water in Master Mix',
+        required=False,
+        initial=False,
+    )
+    mantis_two_chips = forms.BooleanField(
+        label='Use both a low- and high-volume Mantis chip per reagent',
+        required=False,
+        initial=False,
+    )
