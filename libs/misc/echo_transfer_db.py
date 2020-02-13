@@ -225,7 +225,8 @@ def get_sets_in_filepath(reader):
         for volume in volumes:
             volume = volume.replace(", ", ",")
             volume = volume.replace('"', "")
-            set_volume.append(volume)
+            #input file with nL, change to microL
+            set_volume.append(float(volume)/1000)
         '''Create the single list of parts'''
         lists_parts.append(list(set_sample))
         lists_volume.append(list(set_volume))
@@ -270,7 +271,7 @@ def run(path, filename_p, plate_filters, dispenser_parameters, dest_plate_parame
 
     if len(missing_list) > 0:
         for item in missing_list:
-            total_alert.append('Missing info for part: ' + str(item))
+            total_alert.append('Missing part: ' + str(item) + ' at project: ' + str(Project.objects.get(id=plate_project).name))
         return total_alert, None
 
     else:

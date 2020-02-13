@@ -290,9 +290,12 @@ def get_wells(part, plate_filters):
             plate__contents__exact=str(plate_content),
             plate__project=str(plate_project))
     else:
+        print('select a plate')
+        print(plate_ids)
         wells = Well.objects.filter(
             samples__alias__exact=str(part),
             plate__in=plate_ids)
+        print(wells)
     return wells
 
 
