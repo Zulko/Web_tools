@@ -9,8 +9,7 @@ from .models import Experiment, Step
 from .forms import ExperimentForm, StepForm
 
 from libs.function import pcr_db
-from misc import spotting
-from libs.misc import parser
+from libs.misc import parser, spotting
 
 # Create your views here.
 
