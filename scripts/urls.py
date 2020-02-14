@@ -5,7 +5,6 @@ from . import views
 app_name = 'scripts'
 
 urlpatterns = [
-    path('spotting/', views.spotting_view, name='spotting'),
     path('dnacauldron/', views.dnacauldron_view, name='dnacauldron'),
     path('moclo_db/', views.moclo_db_view, name='moclodb'),
     path('moclo/', views.moclo_view, name='moclo'),

@@ -5,6 +5,7 @@ from . import views
 app_name = 'misc'
 
 urlpatterns = [
+    path('spotting/', views.spotting_view, name='spotting'),
     path('genbank/', views.genbank_view, name='genbank'),
     path('primer/', views.primer_view, name='primer'),
     path('normalization/', views.normalization_view, name='normalization'),

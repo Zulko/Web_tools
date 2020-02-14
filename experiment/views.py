@@ -1,5 +1,3 @@
-import os
-
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
@@ -10,7 +8,8 @@ from db.models import File
 from .models import Experiment, Step
 from .forms import ExperimentForm, StepForm
 
-from libs.function import spotting, pcr_db
+from libs.function import pcr_db
+from misc import spotting
 from libs.misc import parser
 
 # Create your views here.

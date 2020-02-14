@@ -8,7 +8,7 @@ from db.models import Project, Plate
 from misc.forms import DotPlateForm, DestinationPlateForm, InputFileForm
 
 from libs.function import normalization, fasta2primer3
-from libs.misc import genbank, plate_creator, combinatorial
+from libs.misc import genbank, plate_creator, combinatorial, spotting
 
 
 def upload_file(request, filename):
@@ -19,20 +19,64 @@ def upload_file(request, filename):
     return upload, fs, name, url
 
 
+def spotting_view(request):
+    user = request.user
+
+    if request.method == "POST":
+        num_sources = request.POST['num_sources']
+        num_well = request.POST['num_well']
+        num_pattern = request.POST['num_pattern']
+        pattern = request.POST['pattern']
+
+        ''' Calling Python Script'''
+        outfile, worklist, alert = spotting.run(int(num_sources), int(num_well), int(num_pattern), int(pattern), user)
+
+        if alert is not None:
+            context = {
+                'outfile': '',
+                'worklist': '',
+                'alert': alert
+            }
+            return render(request, 'misc/spotting.html', context)
+        else:
+            context = {
+                'outfile': outfile,
+                'worklist': worklist,
+                'alert': alert
+            }
+            return render(request, 'misc/spotting.html', context)
+    return render(request, 'misc/spotting.html', {'outfile': '', 'worklist': ''})
+
+
 def genbank_view(request):
+    form_inputfile = InputFileForm()
+
     if request.method == "POST":
         user = request.user
-        if len(request.FILES) != 0:
-            upload, fs, name, url = upload_file(request, 'myFile')
+        form_inputfile = InputFileForm(request.POST, request.FILES)
+
+        if form_inputfile.is_valid():
+            upload, fs, name_file, url_file = upload_file(request, 'in_file')
 
             ''' Calling Python Script'''
-            outfile = genbank.generate_from_csv(settings.MEDIA_ROOT, name, user)
-            if outfile is not None:
-                return render(request, 'misc/genbank.html',
-                              {'uploadfile_name': upload.name, 'url': url, 'outfile': outfile})
+            outfile = genbank.generate_from_csv(settings.MEDIA_ROOT, name_file, user)
 
-    return render(request, 'misc/genbank.html',
-                  {'uploadfile_name': '', 'url': '', 'outfile_name': '', 'outfile_url': ''})
+            if outfile is not None:
+                content = {
+                    'form_inputfile': form_inputfile,
+                    'uploadfile_name': upload.name,
+                    'url': url_file,
+                    'outfile_name': outfile,
+                }
+                return render(request, 'misc/genbank.html', content)
+
+    content = {
+        'form_inputfile': form_inputfile,
+        'uploadfile_name': '',
+        'url': '',
+        'outfile_name': '',
+    }
+    return render(request, 'misc/genbank.html', content)
 
 
 def primer_view(request):

@@ -7,9 +7,9 @@ PlateS1,A1,PlateD1,B1,4
 PlateS1,A2,PlateD1,C1,4
 PlateS1,A2,PlateD1,D1,4
 """
-from ..biofoundry import db
-from ..misc import calc, file
-from ..container import plate
+from biofoundry import db
+from misc import calc, file
+from container import plate
 from db.models import Plate
 import sys, os
 

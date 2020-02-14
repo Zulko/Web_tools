@@ -45,23 +45,28 @@ class PlateFilterForm(forms.Form):
     project = forms.ChoiceField(
         label='Project',
         widget=forms.Select,
-        choices=[(p.pk, p.name) for p in Project.objects.all()],
+        choices=[],
         initial=None,
     )
     plate_ids = forms.MultipleChoiceField(
         label='Plate name',
         widget=forms.SelectMultiple,
-        choices=[(p.pk, p.name) for p in Plate.objects.all()],
+        choices=[],
         required=False,
         initial=None,
     )
+
+    def __init__(self, *args, **kwargs):
+        super(PlateFilterForm, self).__init__(*args, **kwargs)
+        self.fields['project'].choices = [(c.id, c.name) for c in Project.objects.all()]
+        self.fields['plate_ids'].choices = [(c.id, c.name) for c in Plate.objects.all()]
 
 
 class DispenserForm(forms.Form):
     machine = forms.ChoiceField(
         label='Machine',
         widget=forms.Select,
-        choices=[(p.pk, p.name) for p in Machine.objects.all()],
+        choices=[],
         required=False,
         initial=['4', 'Echo 550'],
     )
@@ -83,6 +88,10 @@ class DispenserForm(forms.Form):
         min_value=1,
         initial=13,
     )
+
+    def __init__(self, *args, **kwargs):
+        super(DispenserForm, self).__init__(*args, **kwargs)
+        self.fields['machine'].choices = [(p.pk, p.name) for p in Machine.objects.all()]
 
 
 class MocloReactionParametersForm(forms.Form):

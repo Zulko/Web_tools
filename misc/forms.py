@@ -10,7 +10,7 @@ class DotPlateForm(forms.Form):
     plate_name = forms.MultipleChoiceField(
         label='Plate name',
         widget=forms.SelectMultiple,
-        choices=[(c.pk, c.name) for c in Plate.objects.all()],
+        choices=[],
     )
     num_dots = forms.IntegerField(
         label='Number of dots',
@@ -24,6 +24,10 @@ class DotPlateForm(forms.Form):
         min_value=1,
         initial=1,
     )
+
+    def __init__(self, *args, **kwargs):
+        super(DotPlateForm, self).__init__(*args, **kwargs)
+        self.fields['plate_name'].choices = [(c.id, c.name) for c in Plate.objects.all()]
 
 
 class DestinationPlateForm(forms.Form):
