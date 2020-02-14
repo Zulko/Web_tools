@@ -370,31 +370,17 @@ def get_sets_in_filepath(reader):
 
 
 def find_samples_database(unique_list, plate_filters):
-    plate_content, plate_project, plate_ids = plate_filters
     found_list = []
     missing_list = []
 
     for part in unique_list:
-        found = False
-        if len(plate_ids) < 1:
-            wells = Well.objects.filter(
-                samples__alias__exact=str(part),
-                plate__contents__exact=str(plate_content),
-                plate__project__id=plate_project)
-            # print(wells)
-        else:
-            wells = Well.objects.filter(
-                samples__alias__exact=str(part),
-                plate__in=plate_ids)
-
-        # wells = Well.objects.filter(samples__alias__exact=str(part))
+        wells = parser.get_wells(part, plate_filters)
         if len(wells) > 0:
             for well in wells:
                 samples = well.samples.all()
                 if len(samples) == 1:
                     for sample in samples:
                         if well.volume > 0 and sample.alias == part and sample.sample_type is not None and well.active is True:
-                            found = True
                             lista = [sample.name, sample.alias, sample.length, str(sample.direction),
                                      str(sample.sample_type), sample.moclo_type, float(well.concentration),
                                      float(well.volume), well.plate.barcode, well.plate.name, well.name, int(well.plate.num_well)]

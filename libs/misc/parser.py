@@ -284,18 +284,16 @@ def db_plates_to_source_plates(platesdb, plates_in):
 
 def get_wells(part, plate_filters):
     plate_content, plate_project, plate_ids = plate_filters
-    if plate_ids is None:
+    if len(plate_ids) < 1:
         wells = Well.objects.filter(
             samples__alias__exact=str(part),
             plate__contents__exact=str(plate_content),
-            plate__project=str(plate_project))
+            plate__project__id=plate_project)
     else:
-        print('select a plate')
-        print(plate_ids)
+
         wells = Well.objects.filter(
             samples__alias__exact=str(part),
             plate__in=plate_ids)
-        print(wells)
     return wells
 
 
@@ -304,20 +302,21 @@ def find_samples_database(unique_list, plate_filters):
     missing_list = []
 
     for part in unique_list:
-        found = False
         wells = get_wells(part, plate_filters)
-        # wells = Well.objects.filter(samples__alias__exact=str(part), plate__contents__iexact=str(plate_content), plate__project__id=plate_project)
         if len(wells) > 0:
             for well in wells:
                 samples = well.samples.all()
                 if len(samples) == 1:
                     for sample in samples:
                         if well.volume > 0 and sample.alias == part and sample.sample_type is not None and well.active is True:
-                            found = True
-                            lista = [sample.name, sample.alias, sample.length, str(sample.direction), str(sample.sample_type), sample.moclo_type, float(well.concentration), float(well.volume), well.plate.name, well.name, int(well.plate.num_well)]
+                            lista = [sample.name, sample.alias, sample.length, str(sample.direction),
+                                     str(sample.sample_type), sample.moclo_type, float(well.concentration),
+                                     float(well.volume), well.plate.name, well.name, int(well.plate.num_well)]
                             found_list.append(lista)
                         else:
                             missing_list.append(part)
+                else:
+                    missing_list.append(part)
         else:
             missing_list.append(part)
 
