@@ -2,6 +2,10 @@ from django import forms
 from db.models import Plate
 
 
+class InputFileForm(forms.Form):
+    in_file = forms.FileField(label='Select file')
+
+
 class DotPlateForm(forms.Form):
     plate_name = forms.MultipleChoiceField(
         label='Plate name',

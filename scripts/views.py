@@ -4,11 +4,16 @@ from django.shortcuts import render
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.decorators import login_required
-from db.models import Project, Plate
-from scripts.forms import CauldronForm, InputFileForm, PlateFilterForm, DispenserForm, MocloReactionParametersForm
-from misc.forms import DestinationPlateForm
 
-from libs.function import spotting, combinatorial, moclo, moclo_db, pcr_db, dnacauldron
+from db.models import Project, Plate
+
+from misc.forms import DestinationPlateForm, InputFileForm
+from scripts.forms import (
+    CauldronForm, PlateFilterForm, DispenserForm, MocloReactionParametersForm
+)
+from libs.function import (
+    spotting, moclo, moclo_db, pcr_db, dnacauldron, echo_transfer, echo_transfer_db
+)
 
 
 def upload_file(request, filename):
@@ -35,31 +40,6 @@ def spotting_view(request):
         else:
             return render(request, 'scripts/spotting.html', {'outfile': outfile, 'worklist': worklist})
     return render(request, 'scripts/spotting.html', {'outfile': '', 'worklist': ''})
-
-
-# @login_required(login_url="/accounts/login/")
-def combinatorial_view(request):
-    if request.method == "POST":
-        user = request.user
-        if len(request.FILES) != 0:
-            upload, fs, name, url = upload_file(request, 'myFile')
-
-            ''' Calling Python Script'''
-            outfile, list_num_parts, list_num_combinations = combinatorial.run(settings.MEDIA_ROOT, name, user)
-            if outfile is not None:
-                outfile_name = os.path.basename(outfile.name)
-                outfile_url = fs.url(outfile_name)
-                return render(request, 'scripts/combinatorial.html',
-                              {'uploadfile_name': upload.name, 'url': url, 'outfile_name': outfile_name,
-                               'outfile_url': outfile_url, 'num_parts': list_num_parts, 'num_combin': list_num_combinations})
-            else:
-                return render(request, 'scripts/combinatorial.html',
-                              {'uploadfile_name': '', 'url': '', 'outfile_name': '',
-                               'outfile_url': '', 'num_parts': '', 'num_combin': ''})
-
-    return render(request, 'scripts/combinatorial.html',
-                  {'uploadfile_name': '', 'url': '', 'outfile_name': '',
-                   'outfile_url': '', 'num_parts': '', 'num_combin': ''})
 
 
 # @login_required(login_url="/accounts/login/")
@@ -313,10 +293,10 @@ def dnacauldron_view(request):
         user = request.user
         form = CauldronForm(request.POST, request.FILES)
         if form.is_valid():
-            topology = form.cleaned_data['topology']
-            enzyme = form.cleaned_data['enzyme']
             upload, fs, name_file, url_file = upload_file(request, 'in_file')
             upload_zip, fs_zip, name_zipfile, url_zip = upload_file(request, 'zip_file')
+            topology = form.cleaned_data['topology']
+            enzyme = form.cleaned_data['enzyme']
 
             '''Calling Python Script'''
             alerts, out_zip = dnacauldron.run(settings.MEDIA_ROOT, name_file, name_zipfile, topology, enzyme, user)
@@ -337,3 +317,116 @@ def dnacauldron_view(request):
         form = CauldronForm()
 
     return render(request, 'scripts/dnacauldron.html', {'form': form})
+
+
+def echo_transfer_view(request):
+    if request.method == "POST":
+        user = request.user
+        if len(request.FILES) != 0:
+            upload_f, fs, name_file, url_file = upload_file(request, 'upload_file')
+            upload_db, fs, name_db, url_db = upload_file(request, 'upload_db')
+
+            """Dispenser parameters"""
+            machine = request.POST['machine']
+            min_vol = request.POST['min_vol']
+            vol_resol = request.POST['vol_resol']
+            dead_vol = request.POST['dead_vol']
+            dispenser_parameters = machine, float(min_vol) * 1e-3, float(vol_resol) * 1e-3, float(dead_vol)
+
+            """Destination plate"""
+            num_well_destination = request.POST['num_well_destination']
+            pattern = request.POST['pattern']
+            remove_outer_wells = 'remove_outer_wells' in request.POST
+            dest_plate_parameters = int(num_well_destination), int(pattern), remove_outer_wells
+
+            ''' Calling Python Script'''
+            alerts, outfile_robot = \
+                echo_transfer.run(settings.MEDIA_ROOT, name_file, name_db, dispenser_parameters, dest_plate_parameters, user, scriptname='Echo Transfer')
+
+            if outfile_robot is not None:
+                outfile_robot_name = os.path.basename(outfile_robot.name)
+                outfile_robot_url = fs.url(outfile_robot_name)
+                return render(request, 'scripts/echo_transfer.html',
+                              {'uploadfile_name': upload_f, 'upload_db': upload_db, 'url_file': url_file,
+                               'url_db': url_db, 'outfile_robot_name': outfile_robot_name,
+                               'outfile_robot_url': outfile_robot_url, 'alerts': alerts})
+            else:
+                return render(request, 'scripts/echo_transfer.html',
+                              {'uploadfile_name': upload_f, 'upload_db': upload_db, 'url_file': url_file,
+                               'url_db': url_db, 'outfile_mantis_name': '', 'outfile_robot_name': '',
+                               'outfile_robot_url': '', 'alerts': alerts})
+    return render(request, 'scripts/echo_transfer.html')
+
+
+@login_required(login_url="/accounts/login/")
+def echo_transfer_db_view(request):
+    user = request.user
+    projects = Project.objects.filter(collaborators=user)
+    plates = Plate.objects.filter(project__in=projects)
+
+    if request.method == "POST":
+        scriptname = 'Echo Transfer from Worklist'
+        user = request.user
+        if len(request.FILES) > 0:
+            upload_p, fs_p, name_file_p, url_file_p = upload_file(request, 'upload_file_parts')
+            plate_content = request.POST['plate_content']
+            plate_project = request.POST['plate_project']
+            plate_ids = request.POST.get('plate_ids')
+            plate_filters = plate_content, plate_project, plate_ids
+
+            """Dispenser parameters"""
+            machine = request.POST['machine']
+            min_vol = request.POST['min_vol']
+            vol_resol = request.POST['vol_resol']
+            dead_vol = request.POST['dead_vol']
+            dispenser_parameters = machine, float(min_vol) * 1e-3, float(vol_resol) * 1e-3, float(dead_vol)
+
+            """Destination plate"""
+            num_well_destination = request.POST['num_well_destination']
+            pattern = request.POST['pattern']
+            remove_outer_wells = 'remove_outer_wells' in request.POST
+            dest_plate_parameters = int(num_well_destination), int(pattern), remove_outer_wells
+
+            ''' Calling Python Script'''
+            alerts, outfile_robot = echo_transfer_db.run(
+                settings.MEDIA_ROOT,
+                name_file_p,
+                plate_filters,
+                dispenser_parameters,
+                dest_plate_parameters,
+                user,
+                scriptname
+            )
+            print(len(alerts))
+            if len(alerts) == 0:
+                context = {
+                    'uploadfile_name': upload_p,
+                    'url_file': url_file_p,
+                    'outfile_robot': outfile_robot,
+                    'alerts': alerts,
+                    'projects': projects,
+                    'plates': plates
+                }
+                return render(request, 'scripts/echo_transfer_db.html', context)
+            else:
+                context = {
+                    'uploadfile_name': None,
+                    'url_file': None,
+                    'outfile_robot': None,
+                    'alerts': alerts,
+                    'projects': projects,
+                    'plates': plates
+                }
+                return render(request, 'scripts/echo_transfer_db.html', context)
+        else:
+            alerts = ['Missing input file']
+            context = {
+                'uploadfile_name': None,
+                'url_file': None,
+                'outfile_robot': None,
+                'alerts': alerts,
+                'projects': projects,
+                'plates': plates
+            }
+            return render(request, 'scripts/echo_transfer_db.html', context)
+    return render(request, 'scripts/echo_transfer_db.html', {'projects': projects, 'plates':plates})

@@ -1,6 +1,6 @@
 import itertools, csv, os
-from ..biofoundry import db
-from ..misc import file, calc
+from libs.biofoundry import db
+from libs.misc import file, calc
 
 
 

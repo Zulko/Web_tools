@@ -139,7 +139,7 @@ def check_barcode_skippedwells(filepath, xml_files, barcode):
             obj_file_date = datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f')
             dif_time = today - obj_file_date
 
-            if num_skippedwells > 0 and barcode == plate_barcode and dif_time.days < 15:
+            if num_skippedwells > 0 and barcode == plate_barcode and dif_time.days < 1:
                 files_skippedwells.append([xml, num_skippedwells, date])
         except:
             empty_files.append(xml)
