@@ -92,6 +92,8 @@
             columnDefs: [{ targets: -1, className: 't-body-center'}],
             "scrollX": true,
             lengthMenu: [[-1, 10, 50, 100], ["All", 10, 50, 100]],
+            {#"processing": true,#}
+            {#"serverSide": true,#}
         });
 
         $('.dataTables_length').addClass('bs-select');
