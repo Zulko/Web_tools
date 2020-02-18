@@ -44,8 +44,9 @@
 
 
       <div class="col-10">
+        <font size="2">
             <!-- Table with list of plates on inventory -->
-            {% if all_plates %}
+{#            {% if all_plates %}#}
               <div class="form-row align-items-center">
                 <div class="col">
                   <table id="plate_list_table" class="table table-hover table-striped table-sm" cellspacing="0" width="100%">
@@ -63,7 +64,7 @@
                     </tr>
                    </thead>
                    <tbody>
-                   {% for plate in filter.qs %}
+                   {% for plate in plates %}
                     <tr>
                       <td> {{ plate.id }} </td>
                       <td> <a href="{% url 'db:plate' plate.id %}"> {{ plate.name }} </a></td>
@@ -78,20 +79,49 @@
                    {% endfor %}
                    </tbody>
                   </table>
+
+
+                    {% if plates.has_other_pages %}
+
+                        <ul class="pagination pagination justify-content-center">
+                            {% if plates.has_previous %}
+                              <li class="page-item"><a class="page-link" href="?page={{ plates.previous_page_number }}">Previous</a></li>
+                            {% else %}
+                                <li class="page-item disabled"><a class="page-link"><span>Previous</span></a></li>
+                            {% endif %}
+                            {% for i in plates.paginator.page_range %}
+                              {% if plates.number == i %}
+                                <li class="page-item active"><a class="page-link"> <span>{{ i }} <span class="sr-only">(current)</span></span></a></li>
+                              {% else %}
+                                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                              {% endif %}
+                            {% endfor %}
+                            {% if plates.has_next %}
+                              <li class="page-item"><a class="page-link" href="?page={{ plates.next_page_number }}">Next</a></li>
+                            {% else %}
+                                <li class="page-item disabled"><a class="page-link"><span>Next</span></a></li>
+                            {% endif %}
+                          </ul>
+
+                    {% endif %}
+
                 </div><br>
               </div>
-            {% else %}
-              <h6> No plates in database </h6>
-            {% endif %}
+{#            {% else %}#}
+{#              <h6> No plates in database </h6>#}
+{#            {% endif %}#}
+        </font>
       </div>
 
         <!-- Script to use datatables -->
         <script type="text/javascript">
         $('#plate_list_table').DataTable({
-            searching: true,
             columnDefs: [{ targets: -1, className: 't-body-center'}],
+            searching: false,
             "scrollX": true,
+            "scrollY": true,
             lengthMenu: [[-1, 10, 50, 100], ["All", 10, 50, 100]],
+            dom: 'rtfRi',
             {#"processing": true,#}
             {#"serverSide": true,#}
         });

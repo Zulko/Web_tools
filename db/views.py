@@ -1,12 +1,10 @@
 import os
 
-from django.core import serializers
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.files.storage import FileSystemStorage
-from django.http import Http404, HttpResponse, FileResponse, JsonResponse
+from django.http import Http404, HttpResponse, FileResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.db.models.functions import Substr, Cast
 from django.db.models import IntegerField
 from django.conf import settings
@@ -47,6 +45,8 @@ def upload_file(request, filename):
 def plate_list(request):
     all_plates = Plate.objects.all()
     plate_filter = PlateFilter(request.GET, queryset=all_plates)
+    page = request.GET.get('page', 1)
+    paginator = Paginator(plate_filter.qs, 20)
     formPlateAdd = PlateForm()
     formPlateUpdate = PlateForm()
 
@@ -61,12 +61,19 @@ def plate_list(request):
         if formPlateUpdate.is_valid():
             new_plate = formPlateUpdate.save()
             return redirect('db:plate', new_plate.id)
+    try:
+        plates = paginator.page(page)
+    except PageNotAnInteger:
+        plates = paginator.page(1)
+    except EmptyPage:
+        plates = paginator.page(paginator.num_pages)
 
     context = {
         'form_plate_add': formPlateAdd,
         'form_plate_update': formPlateUpdate,
         "all_plates": all_plates,
-        'filter': plate_filter
+        'filter': plate_filter,
+        'plates': plates,
     }
 
     return render(request, 'db/index.html', context)
@@ -384,7 +391,6 @@ def well_delete(request, plate_id, well_id):
     return redirect('db:plate', plate_id=plate_id)
 
 
-#TODO: Use the filter configuration to create an output file
 @login_required()
 def sample_export(request):
     sample_resource = SampleResource()
@@ -426,7 +432,6 @@ def samples_list(request):
     sample_filter = SampleFilter(request.GET, queryset=all_samples)
     page = request.GET.get('page', 1)
     paginator = Paginator(sample_filter.qs, 500)
-
     formSampleAdd = SampleForm()
     formSampleUpdate = SampleForm()
 
