@@ -29,8 +29,8 @@ class CauldronForm(forms.Form):
 
 
 #Automate Script Forms
-class InputFileForm(forms.Form):
-    in_file = forms.FileField(label='Select file')
+# class InputFileForm(forms.Form):
+#     in_file = forms.FileField(label='Select file')
 
 
 class PlateFilterForm(forms.Form):

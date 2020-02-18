@@ -1,7 +1,9 @@
 import os
 
+from django.core import serializers
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.files.storage import FileSystemStorage
-from django.http import Http404, HttpResponse, FileResponse
+from django.http import Http404, HttpResponse, FileResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -386,7 +388,6 @@ def well_delete(request, plate_id, well_id):
 @login_required()
 def sample_export(request):
     sample_resource = SampleResource()
-    # sample_filter = Sample.objects.filter(sample_type='Pr')
     sample_filter = Sample.objects.all()
     dataset = sample_resource.export(sample_filter)
     response = HttpResponse(dataset.csv, content_type='text/csv')
@@ -406,10 +407,26 @@ def sample_delete(request, sample_id):
     return redirect('db:samples_list')
 
 
+# def myModel_asJson(request):
+#     all_samples = Sample.objects.all()[0:100]#or any kind of queryset
+#     json = serializers.serialize('json', all_samples)
+#     # data = [sample.to_dict_json() for sample in all_samples]
+#     # response = {
+#     #     'data': data,
+#         # 'recordsTotal': total,
+#         # 'recordsFiltered': total,
+#     # }
+#     return HttpResponse(json, content_type='application/json')
+#     # return JsonResponse(response)
+
+
 @login_required()
 def samples_list(request):
     all_samples = Sample.objects.all()
     sample_filter = SampleFilter(request.GET, queryset=all_samples)
+    page = request.GET.get('page', 1)
+    paginator = Paginator(sample_filter.qs, 500)
+
     formSampleAdd = SampleForm()
     formSampleUpdate = SampleForm()
 
@@ -439,11 +456,19 @@ def samples_list(request):
             print(result.invalid_rows)
         return redirect('db:samples_list')
 
+    try:
+        samples = paginator.page(page)
+    except PageNotAnInteger:
+        samples = paginator.page(1)
+    except EmptyPage:
+        samples = paginator.page(paginator.num_pages)
+
     context = {
         'form_sample': formSampleAdd,
         'form_sample_update': formSampleUpdate,
         "all_samples": all_samples,
-        "filter": sample_filter
+        "filter": sample_filter,
+        'samples': samples,
     }
 
     return render(request, 'db/samples_list.html', context)

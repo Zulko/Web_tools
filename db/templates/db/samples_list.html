@@ -76,8 +76,8 @@
 
       <div class="col-10">
         <div align="right">
-          <a href="{% url 'db:sample_export' %}" class="btn btn-info"> <i class="fas fa-file-export"></i> Export data </a>
-        </div>
+          <a href="{% url 'db:sample_export'%}" class="btn btn-info"> <i class="fas fa-file-export"></i> Export all data </a>
+        </div><br>
           <font size="2">
           <!-- Details of samples in inventory -->
           {% if sample %}
@@ -156,12 +156,22 @@
                     </div>
           {% endif %}
 
-         <!-- Table list of samples -->
-         <font size="2">
-         {{ form_sample.errors }}
-         <table id="sample_list_table" class="table table-hover table-striped table-sm cell-border" cellspacing="0" width="100%">
-              <thead>
+        <!-- Table list of samples -->
+        <font size="2">
+        {{ form_sample.errors }}
+
+        <style>
+          div.dt-buttons {
+           float: right;
+           margin-left:10px;
+        }
+        </style>
+
+
+        <table id="sample_list_table" class="table table-hover table-striped table-sm cell-border" cellspacing="0" width="100%">
+            <thead>
                 <tr class="table-dark text-dark">
+{#                <th class="th-sm">id</th>#}
                 <th class="th-sm">Name</th>
                 <th class="th-sm">Alias</th>
                 <th class="th-sm">Type</th>
@@ -197,12 +207,14 @@
                 </tr>
               </thead>
               <tbody>
-                  {% for sample in filter.qs %}
+                  {% for sample in samples %}
                     <tr>
+{#                        <td>{{ sample.id }}</td>#}
                         <td>
                             <a href="{% url 'db:sample' sample.id %}" > {{ sample.name }} </a>
                         </td>
                         <td>{{ sample.alias }}</td>
+
                         <td>{{ sample.sample_type }}</td>
                         <td>{{ sample.description }}</td>
                         <td>
@@ -256,25 +268,92 @@
                     </tr>
                   {% endfor %}
               </tbody>
-         </table>
+        </table>
+
+        {% if samples.has_other_pages %}
+
+            <ul class="pagination pagination justify-content-center">
+                {% if samples.has_previous %}
+                  <li class="page-item"><a class="page-link" href="?page={{ samples.previous_page_number }}">Previous</a></li>
+                {% else %}
+                    <li class="page-item disabled"><a class="page-link"><span>Previous</span></a></li>
+                {% endif %}
+                {% for i in samples.paginator.page_range %}
+                  {% if samples.number == i %}
+                    <li class="page-item active"><a class="page-link"> <span>{{ i }} <span class="sr-only">(current)</span></span></a></li>
+                  {% else %}
+                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                  {% endif %}
+                {% endfor %}
+                {% if samples.has_next %}
+                  <li class="page-item"><a class="page-link" href="?page={{ samples.next_page_number }}">Next</a></li>
+                {% else %}
+                    <li class="page-item disabled"><a class="page-link"><span>Next</span></a></li>
+                {% endif %}
+              </ul>
+
+        {% endif %}
+
 
          </font>
+{#      <table id="sample_list_table" class="table table-hover table-striped table-sm cell-border" cellspacing="0" width="100%">#}
+{#        <thead>#}
+{#            <tr class="table-dark text-dark">#}
+{#            <th class="th-sm">Name</th>#}
+{#            <th class="th-sm">Alias</th>#}
+{#            <th class="th-sm">Type</th>#}
+{#            <th class="th-sm">Description</th>#}
+{#            <th class="th-sm">Project</th>#}
+{#            <th class="th-sm">Author</th>#}
+{#            <th class="th-sm">Length</th>#}
+{##}
+{#            </tr>#}
+{#        </thead>#}
+{#        <tbody>#}
+{#          #}
+{#        </tbody>#}
+{#      </table>#}
+
+
+
       </div>
     </div>
 
+
+
       <script type="text/javascript">
+
         $('#sample_list_table').DataTable({
             columnDefs: [{ targets: -1, className: 't-body-center'}],
             "scrollX": true,
+            "scrollY": true,
             searching: false,
             lengthMenu: [[-1, 10, 50, 100], ["All", 10, 50, 100]],
-            {#"processing": true,#}
-            {#serverSide: true,#}
-            {#ajax: '/data-source',#}
+            {#dom: '<"top"lB>rt<"bottom"frRip>',#}
+            dom: '<"top"B>rt<"bottom"frRi>',
+            buttons: ['copy', 'csv', 'excel', 'pdf', 'print'],
+            {#ServerSide: true,#}
+            {#Processing: true,#}
+            {#'ajax': {#}
+            {#    "processing": true,#}
+            {#    "dataSrc": "",#}
+            {#    'url': '{% url 'db:my_ajax_url' %}', },#}
+            {#destroy:true,#}
+            {#"columns": [#}
+            {#         { 'data': "fields.name" },#}
+            {#         { 'data': "fields.alias" },#}
+            {#         { 'data': "fields.sample_type" },#}
+            {#         { 'data': "fields.description" },#}
+            {#         { 'data': "fields.project" },#}
+            {#         { 'data': "fields.author" },#}
+            {#         { 'data': "fields.length" },#}
+            {#     ]#}
 
         });
 
         $('.dataTables_length').addClass('bs-select');
+
+
       </script>
 
 {% endblock%}

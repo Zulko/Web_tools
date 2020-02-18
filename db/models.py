@@ -273,6 +273,35 @@ class Sample(models.Model):
     def subsample_names(self):
         return '\n'.join([a.name for a in self.sub_sample_id.all()])
 
+    # def to_dict_json(self):
+    #     return {
+    #         'id': self.id,
+    #         'name': self.name,
+    #         'alias': self.alias,
+    #         'sample_type': self.sample_type,
+    #         'description': self.description,
+    #         'project': self.project,
+    #         'author': self.author,
+    #         'sequence': self.sequence,
+    #         'length': self.length,
+    #         'genbank': self.genbank,
+    #         'source_reference': self.source_reference,
+    #         'comments': self.comments,
+    #         'created_at': self.created_at,
+    #         'updated_at': self.updated_at,
+    #         'parent_id': self.parent_id,
+    #         'organism': self.organism,
+    #         'genus_specie': self.genus_specie,
+    #         'marker': self.marker,
+    #         'application': self.application,
+    #         'strategy': self.strategy,
+    #         'seq_verified': self.seq_verified,
+    #         'origin_rep': self.origin_rep,
+    #         'cloning_system': self.cloning_system,
+    #         'strand': self.strand,
+    #         'order_number': self.order_number,
+    #     }
+
 
 class Well(models.Model):
     STATUS = (

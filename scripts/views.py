@@ -6,14 +6,9 @@ from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.decorators import login_required
 
 from db.models import Project, Plate
-
 from misc.forms import DestinationPlateForm, InputFileForm
-from scripts.forms import (
-    CauldronForm, PlateFilterForm, DispenserForm, MocloReactionParametersForm
-)
-from libs.function import (
-    moclo, moclo_db, pcr_db, dnacauldron, echo_transfer, echo_transfer_db
-)
+from scripts.forms import CauldronForm, PlateFilterForm, DispenserForm, MocloReactionParametersForm
+from libs.function import moclo, moclo_db, pcr_db, dnacauldron, echo_transfer, echo_transfer_db
 
 
 def upload_file(request, filename):

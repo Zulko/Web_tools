@@ -33,6 +33,7 @@ urlpatterns = [
     path('export_sample/export', views.sample_export, name='sample_export'),
     path('delete/sample<int:sample_id>/', views.sample_delete, name='sample_delete'),
     path('update/sample<int:sample_id>/', views.sample_update, name='sample_update'),
+    # path('view_sample/table', views.myModel_asJson, name='my_ajax_url'),
 
     # File views
     path('file_sharing/', views.file_sharing, name='file_sharing'),
