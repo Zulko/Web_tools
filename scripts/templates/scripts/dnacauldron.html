@@ -1,0 +1,97 @@
+{% extends 'base_layout.html' %}
+{% load static from staticfiles %}
+{% load bootstrap %}
+
+{% block content %}
+
+<div class="row">
+    <!-- input files and parameters -->
+    <div class="col-3">
+    <h5>Options</h5>
+        <form action="" class="form-group" method="post" enctype="multipart/form-data">
+            <fieldset>
+                <legend><h5>Assembly parts</h5></legend>
+                    <div style="padding: 10px">
+                        {% csrf_token %}
+                        {{ form|bootstrap }}
+                    </div>
+            </fieldset><br>
+            <input type="submit" class="btn btn-info btn-block btn-lg" value="Submit">
+        </form>
+    </div>
+
+    <div class="col-6">
+    <h5>DNA Cauldron Script</h5>
+        <!-- alert message -->
+        {% if alerts %}
+            <div class="alert">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                <ol>{% for alert in alerts %}
+                    {% for num in alert %}
+                        {% if num.count > 1 %} <li>{{ num }} </li>
+                        {% else %} <li>{{ alert }} </li>
+                        {% endif %}
+                    {% endfor %}<br>
+                </ol>{% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- text -->
+            Software developed at Edinburgh Genome Foundry.<br>
+            Source: <a href="https://github.com/Edinburgh-Genome-Foundry/DnaCauldron">https://github.com/Edinburgh-Genome-Foundry/DnaCauldron</a>
+            <br><br>
+
+            Example of combination file (<a href="{% static 'docs/Assembly_Parts.txt' %}" target="_blank" download><strong> Assembly_Parts </strong></a>)<br>
+            Example of genbank zip file (<a href="{% static 'docs/GB_Files.zip' %}" target="_blank" download><strong> GB_Files </strong></a>)<br>
+    </div>
+
+
+    <div class="col-3">
+        <!-- output files -->
+        {% if upload %}
+            <fieldset class="form-group">
+                <legend><h5>Input files</h5></legend>
+                <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col-right" >
+                        <label for="inputfile">Input file:</label>
+                    </div>
+                    <div class="col" >
+                        <label for="inputfile_url"><a href="{{ url_file }}" target="_blank" >{{ upload }}</a></label>
+                    </div>
+                    <div class="col-auto"></div>
+                </div>
+
+                <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col-right" >
+                        <label for="inputfile">Input zipfile:</label>
+                    </div>
+                    <div class="col" >
+                        <label for="inputfile_url"><a href="{{ url_zip }}" target="_blank" >{{ upload_zip }}</a></label>
+                    </div>
+                    <div class="col-auto"></div>
+                </div>
+            </fieldset>
+            {% endif %}
+
+            {% if out_zip %}
+                <fieldset class="form-group">
+                    <legend><h5>Output files</h5></legend>
+                    <div class="form-row align-items-center">
+                        <div class="col-auto"></div>
+                        <div class="col-right">
+                            <label for="outputfile">Assembly file:</label>
+                        </div>
+                        <div class="col">
+                            <label for="outputfile">
+                                <a href="{{ out_zip.file.url }}" target="_blank" download> {{ out_zip.name }} </a>
+                            </label>
+                        </div>
+                        <div class="col-auto"></div>
+                    </div>
+                </fieldset>
+            {% endif %}
+    </div>
+</div>
+{% endblock%}

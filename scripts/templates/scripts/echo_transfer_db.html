@@ -1,0 +1,299 @@
+{% extends 'base_layout.html' %}
+{% load static from staticfiles %}
+{% load bootstrap %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-3">
+    <h5>Options</h5>
+        <div class="options">
+            <form method="post" class="form-group" enctype="multipart/form-data">
+                <fieldset>
+                    <legend><h5>Input File</h5></legend>
+                        <div style="padding: 10px">
+                            {% csrf_token %}
+                            {{ form_inputfile|bootstrap }}
+                        </div>
+                </fieldset><br>
+
+                <fieldset>
+                    <legend><h5>Plate Filters</h5></legend>
+                        <div style="padding: 10px">
+                            {% csrf_token %}
+                            {{ form_platefilter|bootstrap }}
+                        </div>
+                </fieldset><br>
+
+                <fieldset>
+                    <legend><h5>Dispenser</h5></legend>
+                        <div style="padding: 10px">
+                            {% csrf_token %}
+                            {{ form_dispenser|bootstrap }}
+                        </div>
+                </fieldset><br>
+
+                <fieldset>
+                    <legend><h5>Destination plate options</h5></legend>
+                        <div style="padding: 10px">
+                            {% csrf_token %}
+                            {{ form_destinationplate|bootstrap }}
+                        </div>
+                </fieldset><br>
+            <input type="submit" class="btn btn-info btn-block btn-lg" value="Submit">
+            </form>
+
+
+
+
+{#            <form method="post" enctype="multipart/form-data"> {% csrf_token %}#}
+{#                <fieldset class="form-group">#}
+{#                    <legend><h5>Echo Transfer from Worklist</h5></legend>#}
+{#                    <div class="form-row align-items-center">#}
+{#                        <div class="col-auto"></div>#}
+{#                        <div class="col">#}
+{#                            <label for="file">Select a file: </label>#}
+{#                        </div>#}
+{#                        <div class="col-left">#}
+{#                            <input type="file" class="form-control-file border" name="upload_file_parts">#}
+{#                        </div>#}
+{#                        <div class="col-auto"></div>#}
+{#                    </div><br>#}
+{#                </fieldset>#}
+{##}
+{#                <fieldset class="form-group">#}
+{#                    <legend><h5>Plate Filters</h5></legend>#}
+{#                    <div class="form-row align-items-center">#}
+{#                        <div class="col-auto"></div>#}
+{#                        <div class="col">#}
+{#                            <label for="num_well">Content: </label>#}
+{#                        </div>#}
+{#                        <div class="col">#}
+{#                            <select class="form-control" id="plate_content" name="plate_content">#}
+{#                                <option value="DNA">DNA</option>#}
+{#                                <option value="Cells">Cells</option>#}
+{#                                <option value="Reagents">Reagents</option>#}
+{#                            </select>#}
+{#                        </div>#}
+{#                        <div class="col-auto"></div>#}
+{#                    </div><br>#}
+{#                    <div class="form-row align-items-center">#}
+{#                        <div class="col-auto"></div>#}
+{#                        <div class="col">#}
+{#                            <label for="num_well">Project: </label>#}
+{#                        </div>#}
+{#                        <div class="col">#}
+{#                            <select class="form-control" id="plate_project" name="plate_project">#}
+{#                                {% for project in projects %}#}
+{#                                    {{ project }}#}
+{#                                    <option value={{project.id}}>{{project.name}}</option>#}
+{#                                {% endfor %}#}
+{#                            </select>#}
+{#                        </div>#}
+{#                        <div class="col-auto"></div>#}
+{#                    </div><br>#}
+{##}
+{#                    <div class="form-row align-items-center">#}
+{#                        <div class="col-auto"></div>#}
+{#                        <div class="col">#}
+{#                            <label for="num_well">Plate Name: </label>#}
+{#                        </div>#}
+{#                        <div class="col">#}
+{#                            <select class="form-control" id="plate_ids" name="plate_ids" multiple>#}
+{#                                {% for plate in plates %}#}
+{#                                    {{ plate }}#}
+{#                                    <option value={{plate.id}}>{{plate.name}}</option>#}
+{#                                {% endfor %}#}
+{#                            </select>#}
+{#                        </div>#}
+{#                        <div class="col-auto"></div>#}
+{#                    </div><br>#}
+{#                </fieldset>#}
+{##}
+{##}
+{#                <fieldset class="form-group">#}
+{#                    <legend><h5>Dispenser</h5></legend>#}
+{#                    <div class="form-row align-items-center">#}
+{#                        <div class="col-auto"></div>#}
+{#                        <div class="col">#}
+{#                            <label for="machine">Machine: </label>#}
+{#                        </div>#}
+{#                        <div class="col">#}
+{#                            <select class="form-control" id="machine" name="machine">#}
+{#                                <option value="echo">Echo</option>#}
+{#                            </select>#}
+{#                        </div>#}
+{#                        <div class="col-auto"></div>#}
+{#                    </div><br>#}
+{#                    <div class="form-row align-items-center">#}
+{#                        <div class="col-auto"></div>#}
+{#                        <div class="col">#}
+{#                            <label for="min_vol">Min Volume(nL): </label>#}
+{#                        </div>#}
+{#                        <div class="col">#}
+{#                            <input type="number" class="form-control" name="min_vol" min="1" max="5" step="0.5" value="2.5">#}
+{#                        </div>#}
+{#                        <div class="col-auto"></div>#}
+{#                    </div><br>#}
+{##}
+{#                    <div class="form-row align-items-center">#}
+{#                        <div class="col-auto"></div>#}
+{#                        <div class="col">#}
+{#                            <label for="vol_res">Volume resolution(nL): </label>#}
+{#                        </div>#}
+{#                        <div class="col">#}
+{#                            <input type="number" class="form-control" name="vol_resol" min="1" max="10" step="0.5" value="2.5">#}
+{#                        </div>#}
+{#                        <div class="col-auto"></div>#}
+{#                    </div><br>#}
+{#                    <div class="form-row align-items-center">#}
+{#                        <div class="col-auto"></div>#}
+{#                        <div class="col">#}
+{#                            <label for="vol_res">Dead Volume (µL): </label>#}
+{#                        </div>#}
+{#                        <div class="col">#}
+{#                            <input type="number" class="form-control" name="dead_vol" min="1" max="15" step="0.5" value="13">#}
+{#                        </div>#}
+{#                        <div class="col-auto"></div>#}
+{#                    </div><br>#}
+{#                </fieldset>#}
+{##}
+{#                <fieldset class="form-group">#}
+{#                    <legend><h5>Destination plate options</h5></legend>#}
+{#                    <div class="form-row align-items-center">#}
+{#                        <div class="col-auto"></div>#}
+{#                        <div class="col">#}
+{#                            <label for="num_well">Num Wells: </label>#}
+{#                        </div>#}
+{#                        <div class="col">#}
+{#                            <select class="form-control" id="num_well_destination" name="num_well_destination">#}
+{#                                <option value="96">96 Wells</option>#}
+{#                                <option value="384">384 Wells</option>#}
+{#                            </select>#}
+{#                        </div>#}
+{#                        <div class="col-auto"></div>#}
+{#                    </div><br>#}
+{#                    <div class="form-row align-items-center">#}
+{#                        <div class="col-auto"></div>#}
+{#                        <div class="col">#}
+{#                            <label for="filled_by">Filled by: </label>#}
+{#                        </div>#}
+{#                        <div class="col">#}
+{#                            <select class="form-control" id="pattern" name="pattern">#}
+{#                                <option value="0">by row</option>#}
+{#                                <option selected value="1">by column</option>#}
+{#                            </select>#}
+{#                        </div>#}
+{#                        <div class="col-auto"></div>#}
+{#                    </div><br>#}
+{#                    <div class="form-row align-items-center">#}
+{#                        <div class="col-auto"></div>#}
+{#                            <div class="custom-control custom-checkbox">#}
+{#                                <input type="checkbox" class="custom-control-input" id="remove_outer_wells" name="remove_outer_wells" value="True">#}
+{#                                <label class="custom-control-label" for="remove_outer_wells">Remove outer wells</label>#}
+{#                            </div>#}
+{#                        <div class="col-auto"></div>#}
+{#                    </div><br>#}
+{#                    <div class="form-row align-items-center">#}
+{#                        <div class="col-auto"></div>#}
+{#                        <div class="col">#}
+{#                            <label for="filled_by">Start at specific well: </label>#}
+{#                        </div>#}
+{#                        <div class="col">#}
+{#                            <select class="form-control" id="start_well" name="start_well">#}
+{#                                <option selected value="0">No</option>#}
+{#                                <option value="1">Yes</option>#}
+{#                            </select>#}
+{#                        </div>#}
+{#                        <div class="col-auto"></div>#}
+{#                    </div><br>#}
+
+{#                </fieldset>#}
+{##}
+{#            <input type="submit" class="btn btn-info btn-block btn-lg" value="Submit">#}
+{#          </fieldset>#}
+{#            </form>#}
+    </div>
+  </div>
+
+  <div class="col-6">
+    <h5>Echo Transfer from Worklist connected to Database</h5><br>
+
+    {% if alerts %}
+        <div class="alert">
+        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            <ol>
+            {% for alert in alerts %}
+                <li>{{ alert }} </li>
+            {% endfor %}
+            </ol>
+        </div>
+    {% endif %}
+
+    <p> Example of an input file with parts and volume in nL (<a href="{% static 'docs/echo_worklist_v2.csv' %}" target="_blank" download><strong> echo_worklist.csv </strong></a>)
+    </p> <br>
+
+  </div>
+
+    <div class="col-3">
+        {% if url_file %}
+            <h5>Output </h5>
+            <fieldset class="form-group">
+                <legend><h5>Files</h5></legend>
+                <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col-right" >
+                        <label for="inputfile">Input file:</label>
+                    </div>
+                    <div class="col" >
+                        <label for="inputfile_url"><a href="{{ url_file }}" target="_blank" >{{ uploadfile_name }}</a></label>
+                    </div>
+                    <div class="col-auto"></div>
+                </div>
+
+            {% if outfile_robot %}<br>
+                <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col-right" >
+                        <label for="inputfile">Echo file:</label>
+                    </div>
+                    <div class="col" >
+                        <label for="inputfile_url"><a href="{{ outfile_robot.file.url }}" target="_blank" download>{{ outfile_robot.name }}</a></label>
+                    </div>
+                    <div class="col-auto"></div>
+                </div>
+            {% endif %}
+            </fieldset><br>
+        {% endif %}
+
+        {%  if mixer_recipe %}
+        <fieldset class="form-group">
+            <legend><h5>Master Mix Recipe</h5></legend>
+            <table class="table">
+                <tbody>
+                    {% for item in mixer_recipe %}
+                        <tr>
+                            <td> {{ item.1 }}: </td><td> {{ item.0 }}ul </td>
+                        </tr>
+                        {% endfor %}
+                </tbody>
+            </table>
+        </fieldset>
+        <br>
+        <fieldset class="form-group">
+            <legend><h5>Mantis Configuration</h5></legend>
+            <table class="table">
+                <tbody>
+                    {% for item in chip_mantis %}
+                        <tr>
+                            <td> {{ item.0 }}: </td><td> {{ item.1 }}ul </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </fieldset>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock%}

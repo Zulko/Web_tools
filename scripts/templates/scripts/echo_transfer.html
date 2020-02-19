@@ -10,30 +10,32 @@
             <form method="post" enctype="multipart/form-data"> {% csrf_token %}
                 <fieldset class="form-group">
                     <legend><h5>Echo Transfer from Worklist</h5></legend>
+
                     <div class="form-row align-items-center">
                         <div class="col-auto"></div>
                         <div class="col">
-                            <label for="file">Select a file with parts: </label>
+                            <label for="file">Select a file: </label>
                         </div>
                         <div class="col-left">
-                            <input type="file" class="form-control-file border" name="upload_file_parts">
+                            <input type="file" class="form-control-file border" name="upload_file">
                         </div>
                         <div class="col-auto"></div>
                     </div><br>
+
                     <div class="form-row align-items-center">
                         <div class="col-auto"></div>
                         <div class="col">
-                            <label for="file">Select a file with volumes: </label>
+                            <label for="file">Select database: </label>
                         </div>
                         <div class="col-left">
-                            <input type="file" class="form-control-file border" name="upload_file_volume">
+                            <input type="file" class="form-control-file border" name="upload_db">
                         </div>
                         <div class="col-auto"></div>
                     </div><br>
                 </fieldset>
 
                 <fieldset class="form-group">
-                    <legend>Dispenser</legend>
+                    <legend><h5>Dispenser</h5></legend>
                     <div class="form-row align-items-center">
                         <div class="col-auto"></div>
                         <div class="col">
@@ -80,7 +82,7 @@
                 </fieldset>
 
                 <fieldset class="form-group">
-                    <legend>Destination Plate</legend>
+                    <legend><h5>Destination Plate</h5></legend>
                     <div class="form-row align-items-center">
                         <div class="col-auto"></div>
                         <div class="col">
@@ -96,7 +98,6 @@
                     </div><br>
                     <div class="form-row align-items-center">
                         <div class="col-auto"></div>
-
                         <div class="col">
                             <label for="filled_by">Filled by: </label>
                         </div>
@@ -108,16 +109,24 @@
                         </div>
                         <div class="col-auto"></div>
                     </div><br>
+                    <div class="form-row align-items-center">
+                        <div class="col-auto"></div>
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="remove_outer_wells" name="remove_outer_wells" value="True">
+                                <label class="custom-control-label" for="remove_outer_wells">Remove outer wells</label>
+                            </div>
+                        <div class="col-auto"></div>
+                    </div><br>
                 </fieldset>
 
             <input type="submit" class="btn btn-info btn-block btn-lg" value="Submit">
-{#          </fieldset>#}
             </form>
     </div>
   </div>
 
   <div class="col-6">
-    <h5>Echo Transfer from Worklist connected to Database</h5><br>
+    <h5>Echo Transfer from Worklist</h5><br>
+
     {% if alerts %}
         <div class="alert">
         <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
@@ -128,16 +137,18 @@
             </ol>
         </div>
     {% endif %}
-  <p> Example of an input file with parts (<a href="{% static 'docs/echo_worklist.csv' %}" target="_blank" download><strong> echo_worklist.csv </strong></a>) </p> <br>
-  <p> Example of an input file with parts volume (<a href="{% static 'docs/echo_worklist_volume.csv' %}" target="_blank" download><strong> echo_worklist_volume.csv </strong></a>) </p> <br>
+
+    <p> Example of an input file with parts (<a href="{% static 'docs/echo_worklist.csv' %}" target="_blank" download><strong> echo_worklist.csv </strong></a>)
+    <p> Example of an input file with parts (<a href="{% static 'docs/database.csv' %}" target="_blank" download><strong> database.csv </strong></a>)
+    </p> <br>
 
   </div>
 
     <div class="col-3">
         {% if url_file %}
-            <h5>Output </h5>
+            <h5>Output</h5>
             <fieldset class="form-group">
-                <legend>Files</legend>
+                <legend><h5>Files</h5></legend>
                 <div class="form-row align-items-center">
                     <div class="col-auto"></div>
                     <div class="col-right" >
@@ -162,34 +173,6 @@
                 </div>
             {% endif %}
             </fieldset><br>
-        {% endif %}
-
-        {%  if mixer_recipe %}
-        <fieldset class="form-group">
-            <legend>Master Mix Recipe </legend>
-            <table class="table">
-                <tbody>
-                    {% for item in mixer_recipe %}
-                        <tr>
-                            <td> {{ item.1 }}: </td><td> {{ item.0 }}ul </td>
-                        </tr>
-                        {% endfor %}
-                </tbody>
-            </table>
-        </fieldset>
-        <br>
-        <fieldset class="form-group">
-            <legend> Mantis Configuration </legend>
-            <table class="table">
-                <tbody>
-                    {% for item in chip_mantis %}
-                        <tr>
-                            <td> {{ item.0 }}: </td><td> {{ item.1 }}ul </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </fieldset>
         {% endif %}
     </div>
 

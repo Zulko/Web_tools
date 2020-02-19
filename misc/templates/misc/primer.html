@@ -46,8 +46,6 @@
                     <div class="col-auto"></div>
                 </div><br>
 
-
-
                 <div class="form-row align-items-center">
                     <div class="col-auto"></div>
                     <div class="col">
@@ -118,15 +116,20 @@
     </div>
 
     <div class="col-6">
-        <h4>Primer Script</h4>
+        <h5>Primer Script</h5>
         {% if alert %}
             <div class="alert">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> {{ alert }}
             </div>
         {% endif %}
-        <p> Example of an input fasta file (<a href="{% static 'docs/seq.fasta' %}" target="_blank" download><strong> Example file.fasta </strong></a>)</p><br>
-        <h5> Primer Script uses <a href="https://pypi.org/project/primer3-py/" target="_blank">Primer3 package</a> to create the forward and reverse primers. </h5>
-        <br>
+        <p>
+            This tool creates batches of forward and reverse primers for DNA sequences listed in fasta format.
+            Set parameters at left for primer length, Tm, and GC content. Use the ‘Move start position’ inputs to
+            stagger the starting position of your primers from the ends of your sequences.
+            This tool uses <a href="https://pypi.org/project/primer3-py/" target="_blank">Primer3 package</a> and
+            is adapted from a script from John Laurent NYU.
+            See this example file (<a href="{% static 'docs/Primer_Input_Example.fasta' %}" target="_blank"
+                                               download><strong>Primer_Input_Example</strong></a>).</p><br>
 
         <div class="form-group">
             <label for="fasta"><h6> Example of input file: </h6></label>

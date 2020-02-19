@@ -57,7 +57,7 @@ def populate_destination_plates(plates_out, list_destination_plate, list_source_
 
             """ Adding parts in destination plate """
             plates_out[p].wells[i][j].samples.append(plate.Sample(sample_name, sample_type, sample_length, final_conc, vol_part_add))
-            out_dispenser.append([sample_name, sample_type, source_plate, source_well, vol_part_add, plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
+            out_dispenser.append([sample_name, '', sample_type, '', source_plate, source_well, vol_part_add, '', plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
 
             """ Sum of total volume of parts """
             total_parts_vol += vol_part_add
@@ -337,7 +337,8 @@ def get_sets_in_filepath(reader):
         '''List of parts'''
         for part in parts:
             part = part.replace(" ", "")
-            set.append(part)
+            if part != '':
+                set.append(part)
         ''' Create the single list of parts'''
         lists_parts.append(list(set))
     return lists_parts
@@ -351,7 +352,7 @@ def create_and_populate_sources_plate(db_reader, database):
     return plates_in
 
 
-def run_moclo(path, filename, database, dispenser_parameters, mix_parameters, out_num_well, pattern, use_high_low_chip_mantis, user):
+def run(path, filename, database, dispenser_parameters, mix_parameters, out_num_well, pattern, use_high_low_chip_mantis, user):
     total_alert = []
     name_machine, min_vol, res_vol, dead_vol = dispenser_parameters
     robot = machine.Machine(name_machine, min_vol, res_vol, dead_vol)

@@ -1,99 +1,80 @@
 {% extends 'base_layout.html' %}
 {% load static from staticfiles %}
+{% load bootstrap %}
 
 {% block content %}
 
 <div class="row">
+
     <div class="col-3">
-    <h4>Options Genbank</h4>
+    <h5>Options Genbank</h5>
         <div class="options">
-            <form id='genbank' method="post" enctype="multipart/form-data"> {% csrf_token %}
-              <fieldset class="form-group"><br>
-                  <legend>Generate gb files</legend>
-                  <div class="form-row align-items-center">
-                    <div class="col-auto"></div>
-                    <div class="col">
-                        <label for="file">Select a csv with DNA sequence: </label>
+            <form method="post" enctype="multipart/form-data"> {% csrf_token %}
+            <fieldset>
+                <legend><h5>Select plate</h5></legend>
+                    <div style="padding: 10px">
+                        {% csrf_token %}
+                        {{ form_inputfile|bootstrap }}
                     </div>
-                    <div class="col-left">
-                        <input type="file" class="form-control-file border" name="myFile">
-                    </div>
-                    <div class="col-auto"></div>
-                </div><br><br>
-                <input type="submit" class="btn btn-info btn-block btn-lg" value="Submit">
-              </fieldset>
+            </fieldset><br>
+            <input type="submit" class="btn btn-info btn-block btn-lg" value="Submit">
             </form>
             <br><br>
         </div>
-      </div>
+    </div>
 
-      <div class="col-6">
-        <h4>Create Genbank files from a CSV</h4>
-          <p> Example of a csv file (<a href="{% static 'docs/get_gbfiles.csv' %}" target="_blank" download><strong> get_gbfiles.csv </strong></a>) </p>
+    <div class="col-6">
+        <h5>Create Genbank files from a CSV</h5>
+          <p>
+              This tool creates genbank files in batch from a list of sequence files. See the example
+              <a href="{% static 'docs/get_gbfiles.csv' %}" target="_blank" download><strong> input file. </strong></a>
+              At the moment the input only reads 3 columns for sequence name, type, and the sequence itself.
+              It can be adapted to write annotated genbank files.
+              This tool uses <a href="https://biopython.org/">Biopython package</a>.
+          </p>
+    </div>
 
-      </div>
-
-      <div class="col-3">
-          {% if url %}
-            <h4>Output </h4>
+    <div class="col-3">
+        {% if url %}
+            <h5>Output </h5>
             <fieldset class="form-group"><br>
                 <div class="form-row align-items-center">
                     <div class="col-auto"></div>
                     <div class="col">
-                        <center><label for="inputfile"><strong>Input File:</strong></label></center>
+                        <label for="inputfile"><strong>Input File:</strong></label>
                     </div>
-                    <div class="col"><center><label for="num_parts"><strong> Number of Parts/Experiment </strong></label></center></div>
                     <div class="col-auto"></div>
                 </div>
 
                 <div class="form-row align-items-center">
                     <div class="col-auto"></div>
-                     <div class="col">
-                        <center>
-                            <label for="inputfile"><a href="{{ url }}" target="_blank" download> <strong> {{ uploadfile_name }} </strong> </a></label>
-                        </center>
-                     </div>
-                     <div class="col">
-                        {% for set in num_parts %}
-                            <center>
-                            {% for num in set %}
-                                <span class="badge badge-info">{{ num }}</span>
-                            {% endfor %}<br>
-                            </center>
-                        {% endfor %}
-                     </div>
+                    <div class="col">
+                        <label for="inputfile"><a href="{{ url }}" target="_blank" download> <strong> {{ uploadfile_name }} </strong> </a></label>
+                    </div>
                     <div class="col-auto"></div>
                 </div><br>
             </fieldset><br>
 
             <fieldset class="form-group"><br>
-                {% if outfile_name %}
-                <div class="form-row align-items-center">
-                    <div class="col-auto"></div>
-                    <div class="col">
-                        <center><label for="outputfile"><strong>Output File:</strong></label></center>
+                {% if outfile %}
+                    <div class="form-row align-items-center">
+                        <div class="col-auto"></div>
+                        <div class="col">
+                            <label for="outputfile"><strong>Output File:</strong></label>
+                        </div>
+                        <div class="col-auto"></div>
                     </div>
-                    <div class="col"><center><label for="num_parts"><strong> Combinations </strong></label></center></div>
-                    <div class="col-auto"></div>
-                </div>
 
-                <div class="form-row align-items-center">
-                    <div class="col-auto"></div>
-                    <div class="col">
-                        <center>
-                            <label for="outputfile"><a href="{{ outfile_url }}" target="_blank" download> <strong> {{ outfile_name }} </strong> </a></label>
-                        </center>
+                    <div class="form-row align-items-center">
+                        <div class="col-auto"></div>
+                        <div class="col">
+                                <label for="outputfile"><a href="{{ outfile.file.url }}" target="_blank" download> <strong> {{ outfile.file.name }} </strong> </a></label>
+                        </div>
+                        <div class="col-auto"></div>
                     </div>
-                    <div class="col">
-                        {% for num in num_combin %}
-                            <center><span class="badge badge-info">{{ num }}</span><br></center>
-                        {% endfor %}
-                    </div>
-                    <div class="col-auto"></div>
-                </div>
                 {% endif %}<br>
             </fieldset>
-            {% endif %}
-      </div>
+        {% endif %}
     </div>
+</div>
 {% endblock%}

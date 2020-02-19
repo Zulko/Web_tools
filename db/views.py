@@ -1,11 +1,11 @@
 import os
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.files.storage import FileSystemStorage
 from django.http import Http404, HttpResponse, FileResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from django.db.models.functions import Substr
-from django.db.models.functions import Cast
+from django.db.models.functions import Substr, Cast
 from django.db.models import IntegerField
 from django.conf import settings
 
@@ -45,6 +45,8 @@ def upload_file(request, filename):
 def plate_list(request):
     all_plates = Plate.objects.all()
     plate_filter = PlateFilter(request.GET, queryset=all_plates)
+    page = request.GET.get('page', 1)
+    paginator = Paginator(plate_filter.qs, 20)
     formPlateAdd = PlateForm()
     formPlateUpdate = PlateForm()
 
@@ -59,12 +61,19 @@ def plate_list(request):
         if formPlateUpdate.is_valid():
             new_plate = formPlateUpdate.save()
             return redirect('db:plate', new_plate.id)
+    try:
+        plates = paginator.page(page)
+    except PageNotAnInteger:
+        plates = paginator.page(1)
+    except EmptyPage:
+        plates = paginator.page(paginator.num_pages)
 
     context = {
         'form_plate_add': formPlateAdd,
         'form_plate_update': formPlateUpdate,
         "all_plates": all_plates,
-        'filter': plate_filter
+        'filter': plate_filter,
+        'plates': plates,
     }
 
     return render(request, 'db/index.html', context)
@@ -382,11 +391,9 @@ def well_delete(request, plate_id, well_id):
     return redirect('db:plate', plate_id=plate_id)
 
 
-#TODO: Use the filter configuration to create an output file
 @login_required()
 def sample_export(request):
     sample_resource = SampleResource()
-    # sample_filter = Sample.objects.filter(sample_type='Pr')
     sample_filter = Sample.objects.all()
     dataset = sample_resource.export(sample_filter)
     response = HttpResponse(dataset.csv, content_type='text/csv')
@@ -406,10 +413,25 @@ def sample_delete(request, sample_id):
     return redirect('db:samples_list')
 
 
+# def myModel_asJson(request):
+#     all_samples = Sample.objects.all()[0:100]#or any kind of queryset
+#     json = serializers.serialize('json', all_samples)
+#     # data = [sample.to_dict_json() for sample in all_samples]
+#     # response = {
+#     #     'data': data,
+#         # 'recordsTotal': total,
+#         # 'recordsFiltered': total,
+#     # }
+#     return HttpResponse(json, content_type='application/json')
+#     # return JsonResponse(response)
+
+
 @login_required()
 def samples_list(request):
     all_samples = Sample.objects.all()
     sample_filter = SampleFilter(request.GET, queryset=all_samples)
+    page = request.GET.get('page', 1)
+    paginator = Paginator(sample_filter.qs, 500)
     formSampleAdd = SampleForm()
     formSampleUpdate = SampleForm()
 
@@ -439,11 +461,19 @@ def samples_list(request):
             print(result.invalid_rows)
         return redirect('db:samples_list')
 
+    try:
+        samples = paginator.page(page)
+    except PageNotAnInteger:
+        samples = paginator.page(1)
+    except EmptyPage:
+        samples = paginator.page(paginator.num_pages)
+
     context = {
         'form_sample': formSampleAdd,
         'form_sample_update': formSampleUpdate,
         "all_samples": all_samples,
-        "filter": sample_filter
+        "filter": sample_filter,
+        'samples': samples,
     }
 
     return render(request, 'db/samples_list.html', context)
@@ -699,7 +729,7 @@ def project(request, project_id):
     all_project = Project.objects.all()
     project = Project.objects.get(id=project_id)
     # plate_filter = PlateFilter(request.GET, queryset=all_plates)
-    formProjectAdd = ProjectForm()
+    formProjectAdd = ProjectForm(initial={'author': request.user.username})
     formProjectUpdate = ProjectForm(instance=project)
 
     if 'submit_project_add' in request.POST:
@@ -727,12 +757,12 @@ def project(request, project_id):
 @login_required()
 def project_add(request):
     if 'submit_project_add' in request.POST:
-        formProject = ProjectForm(request.POST, request.FILES)
+        formProject = ProjectForm(request.POST, request.FILES, initial={'author': request.user.username})
         if formProject.is_valid():
             formProject.save()
             return redirect('db:project_list')
     else:
-        formProject = ProjectForm()
+        formProject = ProjectForm(initial={'author': request.user.username})
 
     context = {
         'form_project_add': formProject,
@@ -743,6 +773,7 @@ def project_add(request):
 @login_required()
 def project_update(request, project_id):
     project = Project.objects.get(id=project_id)
+
     if 'submit_update_project' in request.POST:
         formProjectUpdate = ProjectForm(request.POST, instance=project)
         if formProjectUpdate.is_valid():

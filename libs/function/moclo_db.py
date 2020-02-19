@@ -17,6 +17,12 @@ def get_name_from_alias(part, found_list):
             return line[0]
 
 
+def get_barcode_from_plate(source_plate, found_list):
+    for line in found_list:
+        if source_plate == line[9]:
+            return line[8]
+
+
 def get_localization_vol(part_name, list_source_wells):
     for i, item in enumerate(list_source_wells):
         sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, times_available, vol_part_add, plate_in_name, wellD_name = list_source_wells[i]
@@ -27,6 +33,19 @@ def get_localization_vol(part_name, list_source_wells):
             return list_source_wells, list_source_wells[i]
         # elif part_name == sample_name and times_available == 0:
         #     print(part_name, times_available, wellD_name)
+
+
+def get_plate_with_empty_well_removed_outerwells(destination_plates, pattern):
+    if pattern == BY_ROW:
+        for p in range(0, len(destination_plates)):
+            if destination_plates[p].get_empty_in_well_by_row() is not None:
+                i, j = destination_plates[p].get_empty_in_well_by_row()
+                return p, i, j
+    else:
+        for p in range(0, len(destination_plates)):
+            if destination_plates[p].get_empty_in_well_by_row() is not None:
+                i, j = destination_plates[p].get_empty_in_well_by_col()
+                return p, i, j
 
 
 def get_plate_with_empty_well(destination_plates, pattern):
@@ -42,24 +61,30 @@ def get_plate_with_empty_well(destination_plates, pattern):
                 return p, i, j
 
 
-def populate_destination_plates(plates_out, list_destination_plate, list_source_wells, mix_parameters, found_list, pattern):
+def populate_destination_plates(plates_out, list_destination_plate, list_source_wells, mix_parameters, found_list, pattern, num_removed_wells):
     alert = []
     part_fmol, bb_fmol, total_vol, per_buffer, per_rest_enz, per_lig_enz, add_water = mix_parameters
     out_dispenser = []
     out_master_mix = []
     out_water = []
     for set in list_destination_plate:
-        p, i, j = get_plate_with_empty_well(plates_out, pattern)
+        if num_removed_wells == 0:
+            p, i, j = get_plate_with_empty_well(plates_out, pattern)
+        else:
+            p, i, j = get_plate_with_empty_well_removed_outerwells(plates_out, pattern)
         total_parts_vol = 0
         for part in set:
             list_source_wells, part = get_localization_vol(part, list_source_wells)
+            # print(list_source_wells, part)
             sample_name, sample_type, sample_length, sample_concentration, sample_volume, times_needed, new_times_available, vol_part_add, source_plate, source_well = part
             final_conc = calc.fmol_by_parttype(sample_type, bb_fmol, part_fmol)
 
             """ Adding parts in destination plate """
-            alias = get_name_from_alias(part, found_list)
+            alias = get_name_from_alias(sample_name, found_list)
+            barcode = get_barcode_from_plate(source_plate, found_list)
             plates_out[p].wells[i][j].samples.append(plate.Sample(sample_name, sample_type, sample_length, final_conc, vol_part_add))
-            out_dispenser.append([sample_name, alias, sample_type, source_plate, source_well, vol_part_add, plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
+                                    # name, alias, type_part, source_barcode, source_plate, source_well, part_vol, dest_barcode, dest_plate, dest_well, dest_id = part
+            out_dispenser.append([sample_name, alias, sample_type, barcode, source_plate, source_well, vol_part_add, plates_out[p].name, plates_out[p].name, plates_out[p].wells[i][j].name, plates_out[p].id])
 
             """ Sum of total volume of parts """
             total_parts_vol += vol_part_add
@@ -91,16 +116,27 @@ def create_plate(num_wells, name):
     return new_plate
 
 
-def create_destination_plates(list_destination_plate, out_num_well):
+def create_destination_plates(list_destination_plate, num_well_destination, remove_outer_wells):
     num = Plate.objects.latest('id').id
     plates_out = []
     num_receipts = len(list_destination_plate)
-    num_plates = calc.num_destination_plates(num_receipts, out_num_well)
+    num_removed_wells = 0
 
-    for i in range(0, num_plates):
-        num = num + 1
-        plates_out.append(create_plate(out_num_well, 'GF' + '{0:05}'.format(num)))
-    return plates_out
+    if remove_outer_wells is False:
+        num_plates = calc.num_destination_plates(num_receipts, num_well_destination)
+        for i in range(0, num_plates):
+            num = num + 1
+            plates_out.append(create_plate(num_well_destination, 'GF' + '{0:05}'.format(num)))
+    else:
+        rows, cols = calc.rows_columns(int(num_well_destination))
+        num_removed_wells = 2 * (cols + rows) - 4
+        num_remained_wells = num_well_destination - num_removed_wells
+        num_plates = calc.num_destination_plates(num_receipts, num_remained_wells)
+        for i in range(0, num_plates):
+            num = num + 1
+            plates_out.append(create_plate(num_well_destination, 'GF' + '{0:05}'.format(num)))
+
+    return plates_out, num_removed_wells
 
 
 def create_entry_list_for_destination_plate(lists_parts, list_part_low_vol):
@@ -126,7 +162,7 @@ def create_entry_list_for_destination_plate(lists_parts, list_part_low_vol):
 
 def get_part_info(found_list, name):
     for part in found_list:
-        part_name, part_type, part_length, part_conc, part_vol, source_plate, source_well, num_well = part
+        part_name, part_type, part_length, part_conc, part_vol, barcode, source_plate, source_well, num_well = part
         if part_name == name:
             part_conc = float(part_conc)
             return part_type, part_length, part_conc
@@ -147,7 +183,6 @@ def calc_part_volumes_in_plate(count_unique_list, plates_in, mix_parameters, dis
             while list_wells:
                 try:
                     wellD = next(list_wells)
-
                     for sample in wellD.samples:
                         if sample.name == part_name:
                             # print(sample.name, sample.type, sample.length, sample.concentration, sample.volume)
@@ -156,15 +191,12 @@ def calc_part_volumes_in_plate(count_unique_list, plates_in, mix_parameters, dis
 
                             '''Volume of part to get the selected fmol in ng '''
                             vol_part_add = float(fmol) / float(sample.concentration)
-                            # print(vol_part_add)
 
                             '''Rounding the part volume according to machine resolution'''
                             vol_part_add = calc.round_at(vol_part_add, res_vol)
-                            # print(vol_part_add)
 
                             '''Minimal dispense volume'''
                             vol_part_add = max(vol_part_add, min_vol)
-                            # print(vol_part_add)
 
                             total_vol_parts.append([sample.name, sample.type, sample.length, sample.concentration, sample.volume, count, vol_part_add, plate_in.name, wellD.name])
 
@@ -265,6 +297,7 @@ def verify_samples_volume(vol_for_part, count_unique_list, robot):
         times_needed = pair[1]  # Number of times it appears in experiment
         for part in vol_for_part:
             sample_name, sample_type, sample_length, sample_concentration, sample_volume, sample_times_needed, vol_part_add, plate_in_name, wellD_name = part
+
             if part_name == sample_name:
                 '''Calculate how many 'vol_part_add' have in the total volume in one well'''
                 available_vol = float(sample_volume) - robot.dead_vol
@@ -329,17 +362,48 @@ def get_sets_in_filepath(reader):
         for part in parts:
             part = part.replace(" ", "")
             part = part.replace('"', "")
-            set.append(part)
+            if part != '':
+                set.append(part)
         ''' Create the single list of parts'''
         lists_parts.append(list(set))
     return lists_parts
 
 
-def run_moclo_db(path, filename, dispenser_parameters, mix_parameters, out_num_well, pattern, use_high_low_chip_mantis, user):
+def find_samples_database(unique_list, plate_filters):
+    found_list = []
+    missing_list = []
+
+    for part in unique_list:
+        wells = parser.get_wells(part, plate_filters)
+        if len(wells) > 0:
+            for well in wells:
+                samples = well.samples.all()
+                if len(samples) == 1:
+                    for sample in samples:
+                        if well.volume > 0 and sample.alias == part and sample.sample_type is not None and well.active is True:
+                            lista = [sample.name, sample.alias, sample.length, str(sample.direction),
+                                     str(sample.sample_type), sample.moclo_type, float(well.concentration),
+                                     float(well.volume), well.plate.barcode, well.plate.name, well.name, int(well.plate.num_well)]
+                            found_list.append(lista)
+                        else:
+                            missing_list.append(part)
+                else:
+                    missing_list.append(part)
+        else:
+            missing_list.append(part)
+
+    return found_list, missing_list
+
+
+def run(path, filename, plate_filters, dispenser_parameters, mix_parameters, dest_plate_parameters, use_high_low_chip_mantis, user):
     total_alert = []
+    plate_content, plate_project, plate_ids = plate_filters
     name_machine, min_vol, res_vol, dead_vol = dispenser_parameters
     robot = machine.Machine(name_machine, min_vol, res_vol, dead_vol)
+    num_well_destination, pattern, remove_outer_wells = dest_plate_parameters
     part_fmol, bb_fmol, total_vol, per_buffer, per_rest_enz, per_lig_enz, add_water = mix_parameters
+
+    # print(plate_filters, dispenser_parameters, mix_parameters, dest_plate_parameters, use_high_low_chip_mantis, user)
 
     '''Create read files'''
     filein = file.verify(path + "/" + filename)
@@ -362,14 +426,12 @@ def run_moclo_db(path, filename, dispenser_parameters, mix_parameters, out_num_w
 
     '''Verify how many times it appears'''
     count_unique_list = get_count_unique_list(unique_list, lists_parts)
-    print(count_unique_list)
+    # print(count_unique_list)
 
     """Verify the parts on database"""
-    found_list, missing_list = parser.find_samples_database(unique_list)
+    found_list, missing_list = find_samples_database(unique_list, plate_filters)
 
-    print(len(missing_list))
     if len(missing_list) > 0:
-        print(len(missing_list))
         for item in missing_list:
             total_alert.append('Missing info for part: ' + str(item))
         return total_alert, None, None, None, None
@@ -393,11 +455,11 @@ def run_moclo_db(path, filename, dispenser_parameters, mix_parameters, out_num_w
 
         if len(list_destination_plate) > 0:
             """Create a destination plates"""
-            plates_out = create_destination_plates(list_destination_plate, out_num_well)
+            plates_out, num_removed_wells = create_destination_plates(list_destination_plate, num_well_destination, remove_outer_wells)
 
             """Populate plate"""
             plates_out, out_dispenser, out_master_mix, out_water, alert = \
-                populate_destination_plates(plates_out, list_destination_plate, list_source_wells, mix_parameters, found_list, pattern)
+                populate_destination_plates(plates_out, list_destination_plate, list_source_wells, mix_parameters, found_list, pattern, num_removed_wells)
             # file.write_plate_by_col(plates_out)
 
             """Mantis output file"""
@@ -450,7 +512,6 @@ def run_moclo_db(path, filename, dispenser_parameters, mix_parameters, out_num_w
 
         else:
             return total_alert, None, None, None, None
-            # sys.exit()
     db_mantis = db.save_file(db_mantis_name, 'Moclo_DB', user)
     db_robot = db.save_file(db_robot_name, 'Moclo_DB', user)
     return total_alert, db_mantis, db_robot, mixer_recipe_zip, chip_mantis_zip

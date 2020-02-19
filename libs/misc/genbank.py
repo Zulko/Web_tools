@@ -21,7 +21,7 @@ def generate_from_csv(path, filename, user):
     for row in csv_file:
         name = row[0]
         description = row[1]
-        sequence = row[3]
+        sequence = row[2]
         list_to_zip.append(generate_from_sequence(sequence, name, description, path))
 
         ''' Create a zip file and return it'''

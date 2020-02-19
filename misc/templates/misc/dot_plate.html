@@ -1,0 +1,67 @@
+{% extends 'base_layout.html' %}
+{% load static from staticfiles %}
+{% load bootstrap %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-3">
+    <h5>Options</h5>
+        <div class="options">
+            <form method="post" enctype="multipart/form-data"> {% csrf_token %}
+            <fieldset>
+                <legend><h5>Select plate</h5></legend>
+                    <div style="padding: 10px">
+                        {% csrf_token %}
+                        {{ form_plate|bootstrap }}
+                    </div>
+            </fieldset><br>
+            <fieldset>
+                <legend><h5>Destination plate options</h5></legend>
+                    <div style="padding: 10px">
+                        {% csrf_token %}
+                        {{ form_dest_plate|bootstrap }}
+                    </div>
+            </fieldset><br>
+
+            <input type="submit" class="btn btn-info btn-block btn-lg" value="Submit">
+            </form>
+        </div>
+    </div>
+
+    <div class="col-6">
+        <h5>Dot-plating Script on Biomek</h5><br>
+            {% if alerts %}
+            <div class="alert">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    <ol>
+                    {% for alert in alerts %}
+                        <li>{{ alert }} </li>
+                    {% endfor %}
+                    </ol>
+            </div>
+            {% endif %}
+        <p> Create a new destination plate to be used on biomek. </p> <br>
+    </div>
+
+    <div class="col-3">
+        {% if outfile_robot %}
+            <h5>Output </h5>
+            <fieldset class="form-group">
+                <legend><h5>Files</h5></legend>
+
+                <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col" >
+                        <label for="inputfile">Biomek file:</label>
+                    </div>
+                    <div class="col" >
+                        <label for="inputfile_url"><a href="{{ outfile_robot.file.url }}" target="_blank" download>{{ outfile_robot.name }}</a></label>
+                    </div>
+                    <div class="col-auto"></div>
+                </div>
+            </fieldset><br>
+        {% endif %}
+    </div>
+</div>
+{% endblock%}

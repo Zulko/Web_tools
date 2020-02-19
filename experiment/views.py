@@ -1,5 +1,3 @@
-import os
-
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
@@ -10,12 +8,8 @@ from db.models import File
 from .models import Experiment, Step
 from .forms import ExperimentForm, StepForm
 
-from libs.function.spotting import run_spotting
-from libs.function.pcr_db import run_pcr_db
-from libs.misc import parser
-from libs.biofoundry.db import save_file
-from libs.misc import file
-from libs.biofoundry import db
+from libs.function import pcr_db
+from libs.misc import parser, spotting
 
 # Create your views here.
 
@@ -39,8 +33,7 @@ def delete_plates(list_plates):
 
 
 @login_required()
-def design_view(request):
-    print('design_view')
+def experiment_list_view(request):
     user = request.user
     all_experiments = Experiment.objects.all()
     all_steps = Step.objects.all().order_by('-id').reverse()
@@ -49,19 +42,16 @@ def design_view(request):
     formStepAdd = StepForm()
 
     if 'submit_add_experiment' in request.POST:
-        print('design_view: submit_add_experiment')
         formExperimentAdd = ExperimentForm(request.POST, request.FILES, initial={'author': user})
         if formExperimentAdd.is_valid():
             formExperimentAdd.save()
-            return redirect('design:design_view')
+            return redirect('experiment:experiment_list_view')
 
     elif 'submit_add_step' in request.POST:
-        print('design_view: submit_add_step')
         formStepAdd = StepForm(request.POST, request.FILES)
         if formStepAdd.is_valid():
-            print('form valid')
             formStepAdd.save()
-            return redirect('design:design_view')
+            return redirect('experiment:experiment_list_view')
         else:
             print('form invalid')
 
@@ -72,12 +62,11 @@ def design_view(request):
         'all_experiments': all_experiments,
         'all_steps': all_steps,
     }
-    return render(request, 'design/index.html', context)
+    return render(request, 'experiment/index.html', context)
 
 
 @login_required()
 def experiment_view(request, experiment_id):
-    print('experiment_view')
     experiment = get_object_or_404(Experiment, id=experiment_id)
     all_steps = Step.objects.filter(experiment_id=experiment.id).order_by('-id').reverse()
     formExperimentUpdate = ExperimentForm(instance=experiment)
@@ -85,29 +74,18 @@ def experiment_view(request, experiment_id):
     formStepUpdate = StepForm(initial={'experiment': experiment})
 
     if 'submit_update_experiment' in request.POST:
-        print('found the form update')
         formExperimentUpdate = ExperimentForm(request.POST, request.FILES, instance=experiment)
         if formExperimentUpdate.is_valid():
             formExperimentUpdate.save()
             return redirect('design:experiment_view', experiment.id)
 
     elif 'submit_add_step' in request.POST:
-        print('try add step')
         formStepAdd = StepForm(request.POST, request.FILES, initial={'experiment': experiment})
         if formStepAdd.is_valid():
-            print('form is valid')
             formStepAdd.save()
             return redirect('design:experiment_view',  experiment.id)
         else:
             print('form is not valid')
-
-    # elif 'submit_update_step' in request.POST:
-    #     print('try to update')
-    #     formStepUpdate = StepForm(request.POST, request.FILES)
-    #     if formStepUpdate.is_valid():
-    #         formStepUpdate.save()
-    #         return redirect('design:experiment_view', experiment.id)
-
 
     context = {
         'all_steps': all_steps,
@@ -117,7 +95,7 @@ def experiment_view(request, experiment_id):
         'form_step_update': formStepUpdate,
     }
 
-    return render(request, 'design/experiment.html', context)
+    return render(request, 'experiment/experiment.html', context)
 
 
 @login_required()
@@ -146,7 +124,7 @@ def experiment_add(request):
         'form_step_add': formStepAdd,
         'all_experiments': all_experiments,
     }
-    return render(request, 'design/index.html', context)
+    return render(request, 'experiment/index.html', context)
 
 
 @login_required()
@@ -174,7 +152,7 @@ def experiment_update(request, experiment_id):
         'form_step_add': formStepAdd,
     }
 
-    return render(request, 'design/experiment.html', context)
+    return render(request, 'experiment/experiment.html', context)
 
 
 @login_required()
@@ -193,7 +171,7 @@ def step_add(request, experiment_id):
         'form_experiment_update': formExperimentUpdate,
         'form_step_add': formStepAdd,
     }
-    return render(request, 'design/index.html', context)
+    return render(request, 'experiment/index.html', context)
 
 
 def spotting_script(request, step, user):
@@ -201,13 +179,12 @@ def spotting_script(request, step, user):
     delete_files(step.output_files.all())
     delete_plates(step.output_plates.all())
     step.save()
-
     num_sources = request.POST['num_sources']
     num_well = request.POST['num_well']
     num_pattern = request.POST['num_pattern']
     pattern = request.POST['pattern']
     ''' Calling Python Script'''
-    outfile, worklist, alert = run_spotting(int(num_sources), int(num_well), int(num_pattern), int(pattern),
+    outfile, worklist, alert = spotting.run(int(num_sources), int(num_well), int(num_pattern), int(pattern),
                                             user)
 
     if outfile is not None:
@@ -273,7 +250,7 @@ def pcr_script(request, step, user):
         pattern = request.POST['pattern']
 
         ''' Calling Python Script'''
-        alerts, outfile_mantis, outfile_robot, mixer_recipe, chip_mantis = run_pcr_db(settings.MEDIA_ROOT,
+        alerts, outfile_mantis, outfile_robot, mixer_recipe, chip_mantis = pcr_db.run(settings.MEDIA_ROOT,
                                                                                       name_file, dispenser_parameters,
                                                                                       mix_parameters,
                                                                                       int(num_well_destination),
@@ -366,7 +343,7 @@ def step_view(request, experiment_id, step_id):
                 'alert': alert,
             }
 
-            return render(request, 'design/experiment.html', context)
+            return render(request, 'experiment/experiment.html', context)
 
         elif step.script == 'PCR':
             print('PCR: Yes')
@@ -386,7 +363,7 @@ def step_view(request, experiment_id, step_id):
                 'chip_mantis': chip_mantis,
                 'alert': alerts,
             }
-            return render(request, 'design/experiment.html', context)
+            return render(request, 'experiment/experiment.html', context)
 
         elif step.script == 'Moclo':
             print('Moclo: Yes')
@@ -417,7 +394,7 @@ def step_view(request, experiment_id, step_id):
         'worklist': None,
     }
 
-    return render(request, 'design/experiment.html', context)
+    return render(request, 'experiment/experiment.html', context)
 
 @login_required()
 def step_update(request, experiment_id, step_id):
@@ -437,7 +414,7 @@ def step_update(request, experiment_id, step_id):
         'form_step_update': formStepUpdate,
     }
 
-    return render(request, 'design/experiment.html', context)
+    return render(request, 'experiment/experiment.html', context)
 
 
 @login_required()

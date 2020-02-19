@@ -1,0 +1,152 @@
+{% extends 'base_layout.html' %}
+{% load static from staticfiles %}
+{% load bootstrap %}
+
+{% block content %}
+
+<div class="row">
+
+    <div class="col-3">
+    <h5>Input table</h5>
+        <div class="options">
+            <form method="post" enctype="multipart/form-data"> {% csrf_token %}
+            <fieldset>
+                <legend><h5>Select plate</h5></legend>
+                    <div style="padding: 10px">
+                        {% csrf_token %}
+                        {{ form_inputfile|bootstrap }}
+                    </div>
+            </fieldset><br>
+            <input type="submit" class="btn btn-info btn-block btn-lg" value="Submit">
+            </form>
+            <br><br>
+        </div>
+    </div>
+
+    <div class="col-6">
+        <h5>Combinatorial Script</h5>
+            <br>
+          <p>
+              This tool creates worklist files that can be read by the Golden Gate script, e.g. It creates all
+              permutations of each item in your input file per category per experiment. Create your input as a
+              spreadsheet table and save it as a CSV. The table should look like the example below
+              <a href="{% static 'docs/Combinatorial_Input_Example.csv' %}" target="_blank" download><strong> (Combinatorial_Input_Example). </strong></a>
+              The header names are not read by the script.
+          </p><br>
+
+          <table class="table table table-hover">
+              <thead>
+                <tr class="table-dark text-dark">
+                <th>Experiment</th>
+                <th>Letters</th>
+                <th>Animals</th>
+                <th>Fruit</th>
+                <th>Strings</th>
+                <th>Parts</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>A</td>
+                    <td>monkey</td>
+                    <td>apple</td>
+                    <td>violin</td>
+                    <td>Part1</td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>B</td>
+                    <td>donkey</td>
+                    <td></td>
+                    <td>viola</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>C</td>
+                    <td></td>
+                    <td></td>
+                    <td>guitar</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>G</td>
+                    <td>monkey</td>
+                    <td>apple</td>
+                    <td>ukele</td>
+                    <td>Part1</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td></td>
+                    <td></td>
+                    <td>banana</td>
+                    <td></td>
+                    <td>Part2</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>Part3</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>Part4</td>
+                </tr>
+              </tbody>
+          </table>
+    </div>
+
+    <div class="col-3">
+          {% if url %}
+            <h5>Output </h5>
+            <fieldset class="form-group"><br>
+                <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col">
+                        <label for="inputfile"><strong>Input File:</strong></label>
+                    </div>
+                    <div class="col-auto"></div>
+                </div>
+
+                <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                     <div class="col">
+                        <label for="inputfile"><a href="{{ url }}" target="_blank" download> <strong> {{ uploadfile_name }} </strong> </a></label>
+                     </div>
+                    <div class="col-auto"></div>
+                </div><br>
+            </fieldset><br>
+
+            <fieldset class="form-group"><br>
+                {% if outfile_name %}
+                <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col">
+                        <label for="outputfile"><strong>Output File:</strong></label>
+                    </div>
+                    <div class="col-auto"></div>
+                </div>
+
+                <div class="form-row align-items-center">
+                    <div class="col-auto"></div>
+                    <div class="col">
+                        <label for="outputfile"><a href="{{ outfile_url }}" target="_blank" download> <strong> {{ outfile_name }} </strong> </a></label>
+                    </div>
+                    <div class="col-auto"></div>
+                </div>
+                {% endif %}<br>
+            </fieldset>
+            {% endif %}
+      </div>
+</div>
+{% endblock%}

@@ -27,7 +27,6 @@ class Machine(models.Model):
         ('inSPIRE', 'inSPIRE'),
         ('FACSMelody', 'FACSMelody'),
         ('QuantStudio 3D', 'QuantStudio 3D'),
-
     )
     STATUS = (
         ('Working', 'Working'),
@@ -55,12 +54,13 @@ class Project(models.Model):
     )
 
     name = models.CharField(max_length=100)
-    author = models.CharField(max_length=50)
-    collaborators = models.CharField(max_length=500)
+    author = models.CharField(max_length=50, blank=True)
+    collaborators = models.ManyToManyField(User, blank=True)
     status = models.CharField(max_length=50, choices=STATUS, default='Working')
     comments = models.CharField(max_length=100, blank=True)
     image = models.ImageField(upload_to="pics", max_length=10000, blank=True)
     created_at = models.DateField(auto_now_add=True, editable=False)
+    # description = models.CharField(max_length=500, blank=True)
 
     class Meta:
         ordering = ('name',)
@@ -78,13 +78,13 @@ class Plate(models.Model):
         ('Backup', 'Backup'),
     )
     CONTAINER_TYPES = (
-        # ('Plate: 384PP (Labcyte P-05525))', 'Plate: 384PP (Labcyte P-05525))'),
-        # ('Plate: 384LDV (Labcyte LP-0200)', 'Plate: 384LDV (Labcyte LP-0200)'),
-        # ('Plate: 96 Twin.tec PCR (Eppendorf 951020401)', 'Plate: 96 Twin.tec PCR (Eppendorf 951020401)')
-        # ('Plate: 384 BioRad PCR (HSP3801)', 'Plate: 384 BioRad PCR (HSP3801)')
-        # ('Plate: 384 MicroAmp EnduraPlate (Applied Biosystems 4483273)', 'Plate: 384 MicroAmp EnduraPlate (Applied Biosystems 4483273)')
-        # ('Plate: 384 Greiner Flat Bottom (p/n 781096)', 'Plate: 384 Greiner Flat Bottom (p/n 781096)')
-        # ('Plate: 96 Nunc Flat Bottom (p/n 266120)', 'Plate: 96 Nunc Flat Bottom (p/n 266120)')
+        ('Plate: 384PP', 'Plate: 384PP'),
+        ('Plate: 384LDV', 'Plate: 384LDV'),
+        ('Plate: 96 Twin.tec PCR', 'Plate: 96 Twin.tec PCR'),
+        ('Plate: 384 BioRad PCR', 'Plate: 384 BioRad PCR'),
+        ('Plate: 384 MicroAmp EnduraPlate', 'Plate: 384 MicroAmp EnduraPlate'),
+        ('Plate: 384 Greiner Flat Bottom', 'Plate: 384 Greiner Flat Bottom'),
+        ('Plate: 96 Nunc Flat Bottom', 'Plate: 96 Nunc Flat Bottom'),
         ('Plate', 'Plate'),
         ('Box', 'Box'),
     )
@@ -128,15 +128,17 @@ class Plate(models.Model):
     type = models.CharField(max_length=50, choices=CONTAINER_TYPES, default=CONTAINER_TYPES[0][0])
     function = models.CharField(max_length=50, choices=CONTAINER_FUNCTION, default=CONTAINER_FUNCTION[0][0])
     barcode = models.CharField(max_length=30, unique=True, default=get_barcode)
-    project = models.ManyToManyField(Project, blank=True)
+    project = models.ManyToManyField(Project)
     num_cols = models.IntegerField()
     num_rows = models.IntegerField()
     num_well = models.IntegerField()
     location = models.CharField(max_length=30, choices=LOCATION, default=LOCATION[0][0], blank=True)
     contents = models.CharField(max_length=30, choices=CONTENTS, default=CONTENTS[0][0], blank=True)
+    medium = models.CharField(max_length=50, blank=True)
     file = models.FileField(upload_to='design/', max_length=10000, blank=True)
     active = models.BooleanField(default=True)
     status = models.CharField(max_length=30, choices=STATUS, blank=True)
+    description = models.TextField(max_length=500, blank=True)
     comments = models.TextField(max_length=500, blank=True)
     created_at = models.DateField(auto_now_add=True, editable=False)
     updated_at = models.DateField(auto_now=True)
@@ -188,7 +190,6 @@ class Sample(models.Model):
         ('Plasmid', 'Plasmid'),
         ('Part', 'Part'),
         ('Linker', 'Linker'),
-        ('Other', 'Other'),
     )
     END_TYPES = (
         ('R', 'Right'),
@@ -210,7 +211,7 @@ class Sample(models.Model):
     # Database Fields
     name = models.CharField('Name', max_length=50, unique=True)
     alias = models.CharField(max_length=50)
-    sample_type = models.CharField(max_length=50, choices=SAMPLE_TYPES, default=SAMPLE_TYPES[4][0])
+    sample_type = models.CharField(max_length=50, choices=SAMPLE_TYPES, default=SAMPLE_TYPES[3][0])
     description = models.CharField(max_length=500, blank=True)
     project = models.ManyToManyField(Project, blank=True)
     author = models.CharField(max_length=50, blank=True)
@@ -272,6 +273,35 @@ class Sample(models.Model):
     def subsample_names(self):
         return '\n'.join([a.name for a in self.sub_sample_id.all()])
 
+    # def to_dict_json(self):
+    #     return {
+    #         'id': self.id,
+    #         'name': self.name,
+    #         'alias': self.alias,
+    #         'sample_type': self.sample_type,
+    #         'description': self.description,
+    #         'project': self.project,
+    #         'author': self.author,
+    #         'sequence': self.sequence,
+    #         'length': self.length,
+    #         'genbank': self.genbank,
+    #         'source_reference': self.source_reference,
+    #         'comments': self.comments,
+    #         'created_at': self.created_at,
+    #         'updated_at': self.updated_at,
+    #         'parent_id': self.parent_id,
+    #         'organism': self.organism,
+    #         'genus_specie': self.genus_specie,
+    #         'marker': self.marker,
+    #         'application': self.application,
+    #         'strategy': self.strategy,
+    #         'seq_verified': self.seq_verified,
+    #         'origin_rep': self.origin_rep,
+    #         'cloning_system': self.cloning_system,
+    #         'strand': self.strand,
+    #         'order_number': self.order_number,
+    #     }
+
 
 class Well(models.Model):
     STATUS = (
@@ -286,9 +316,12 @@ class Well(models.Model):
     concentration = models.DecimalField(max_digits=10, decimal_places=2)
     plate = models.ForeignKey(Plate, on_delete=models.CASCADE)
     samples = models.ManyToManyField(Sample)
+    parent_well = models.ForeignKey('Well', null=True, blank=True, on_delete=models.SET_NULL)
+    quadrant = models.IntegerField(blank=True, null=True)
     active = models.BooleanField(default=True)
     status = models.CharField(max_length=1, choices=STATUS, blank=True)
-    parent_well = models.ForeignKey('Well', null=True, blank=True, on_delete=models.SET_NULL)
+    description = models.TextField(max_length=500, blank=True)
+    comments = models.TextField(max_length=500, blank=True)
 
     class Meta:
         ordering = ('name', 'plate',)
@@ -313,6 +346,9 @@ class Well(models.Model):
 
     def sample_names(self):
         return '\n'.join([a.name for a in self.samples.all()])
+
+    def sample_types(self):
+        return '\n'.join([a.sample_type for a in self.samples.all()])
 
 
 class File(models.Model):

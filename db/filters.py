@@ -21,7 +21,7 @@ class PlateFilter(django_filters.FilterSet):
         model = Plate
         fields = {
             'name': ['icontains', ],
-            'barcode': ['exact', ],
+            'barcode': ['icontains', ],
             'project': ['exact', ],
             'function': ['exact', ],
         }

@@ -36,7 +36,7 @@ urlpatterns = [
     path('db/', include('db.urls')),
     path('misc/', include('misc.urls')),
     path('scripts/', include('scripts.urls')),
-    path('design/', include('design.urls')),
+    path('experiment/', include('experiment.urls')),
     path('logbook/', include('logbook.urls')),
 ]
 

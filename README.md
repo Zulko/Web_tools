@@ -55,8 +55,10 @@ Close prompt
     
     postgres=# \q
 
+
 ##### Django project
 ###### Edit settings.py
+
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -74,3 +76,9 @@ Close prompt
 
 ###### Add superuser
     python3 manage.py createsuperuser
+
+=======
+    
+
+Web tools is developed by Flavia Araujo for the Concordia Genome Foundry released on Github under the MIT license.
+

@@ -23,7 +23,7 @@
                 </fieldset>
 
                 <fieldset class="form-group">
-                    <legend>Dispenser</legend>
+                    <legend><h5>Dispenser</h5></legend>
                     <div class="form-row align-items-center">
                         <div class="col-auto"></div>
                         <div class="col">
@@ -70,7 +70,7 @@
                 </fieldset>
 
                 <fieldset class="form-group">
-                    <legend>Reaction Conditions</legend>
+                    <legend><h5>Reaction parameters</h5></legend>
                     <div class="form-row align-items-center">
                         <div class="col-auto"></div>
                         <div class="col">
@@ -167,7 +167,7 @@
                 </fieldset>
 
                 <fieldset class="form-group">
-                    <legend>Destination Plate</legend>
+                    <legend><h5>Destination plate options</h5></legend>
                     <div class="form-row align-items-center">
                         <div class="col-auto"></div>
                         <div class="col">
@@ -215,15 +215,28 @@
             </ol>
         </div>
     {% endif %}
-  <p> Example of an input file with parts (<a href="{% static 'docs/parts2pcr.txt' %}" target="_blank" download><strong> Example file </strong></a>) </p> <br>
+  <p>
+      This tool creates dispense instruction files for
+      <ul>
+        <li>(i) the Echo to combine your template and primers and</li>
+        <li>(ii) the Mantis to add your PCR master mix.</li>
+      </ul>
 
+      This script works for parts associated in the database with the primer pair (forward and reverse) required to create it.
+      As input for the script, you need only specify the name of the part to amplify and the number of times to make
+      a copy. See the example input file.
+      <a href="{% static 'docs/parts2pcr.txt' %}" target="_blank" download><strong> [PCR_Input_Example] </strong></a>
+
+      <br><br>This tool is inspired by a script from Lauren Narcross Concordia University.
+
+  </p>
   </div>
 
     <div class="col-3">
         {% if url_file %}
             <h5>Output </h5>
             <fieldset class="form-group">
-                <legend>Files</legend>
+                <legend><h5>Files</h5></legend>
                 <div class="form-row align-items-center">
                     <div class="col-auto"></div>
                     <div class="col-right" >
@@ -263,7 +276,7 @@
 
         {%  if mixer_recipe %}
         <fieldset class="form-group">
-            <legend>Master Mix Recipe </legend>
+            <legend><h5>Master Mix Recipe</h5></legend>
             <table class="table">
                 <tbody>
                     {% for item in mixer_recipe %}
@@ -276,7 +289,7 @@
         </fieldset>
         <br>
         <fieldset class="form-group">
-            <legend> Mantis Configuration </legend>
+            <legend><h5>Mantis Configuration</h5></legend>
             <table class="table">
                 <tbody>
                     {% for item in chip_mantis %}

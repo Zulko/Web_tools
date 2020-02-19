@@ -1,10 +1,14 @@
+import os
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
+from db.models import Project, Plate
+from misc.forms import DotPlateForm, DestinationPlateForm, InputFileForm
+
 from libs.function import normalization, fasta2primer3
-from libs.misc import genbank, nrc_sequence, echo_transfer_db
+from libs.misc import genbank, plate_creator, combinatorial, spotting
 
 
 def upload_file(request, filename):
@@ -15,23 +19,64 @@ def upload_file(request, filename):
     return upload, fs, name, url
 
 
+def spotting_view(request):
+    user = request.user
+
+    if request.method == "POST":
+        num_sources = request.POST['num_sources']
+        num_well = request.POST['num_well']
+        num_pattern = request.POST['num_pattern']
+        pattern = request.POST['pattern']
+
+        ''' Calling Python Script'''
+        outfile, worklist, alert = spotting.run(int(num_sources), int(num_well), int(num_pattern), int(pattern), user)
+
+        if alert is not None:
+            context = {
+                'outfile': '',
+                'worklist': '',
+                'alert': alert
+            }
+            return render(request, 'misc/spotting.html', context)
+        else:
+            context = {
+                'outfile': outfile,
+                'worklist': worklist,
+                'alert': alert
+            }
+            return render(request, 'misc/spotting.html', context)
+    return render(request, 'misc/spotting.html', {'outfile': '', 'worklist': ''})
+
+
 def genbank_view(request):
+    form_inputfile = InputFileForm()
+
     if request.method == "POST":
         user = request.user
-        if len(request.FILES) != 0:
-            upload, fs, name, url = upload_file(request, 'myFile')
+        form_inputfile = InputFileForm(request.POST, request.FILES)
+
+        if form_inputfile.is_valid():
+            upload, fs, name_file, url_file = upload_file(request, 'in_file')
 
             ''' Calling Python Script'''
-            outfile = genbank.generate_from_csv(settings.MEDIA_ROOT, name, user)
-            if outfile is not None:
-                outfile_name = str(outfile)
-                outfile_url = fs.url(outfile_name)
-                return render(request, 'misc/genbank.html',
-                              {'uploadfile_name': upload.name, 'url': url, 'outfile_name': outfile_name,
-                               'outfile_url': outfile_url})
+            outfile = genbank.generate_from_csv(settings.MEDIA_ROOT, name_file, user)
 
-    return render(request, 'misc/genbank.html',
-                  {'uploadfile_name': '', 'url': '', 'outfile_name': '', 'outfile_url': ''})
+            if outfile is not None:
+                content = {
+                    'form_inputfile': form_inputfile,
+                    'uploadfile_name': upload.name,
+                    'url': url_file,
+                    'outfile_name': outfile,
+                }
+                return render(request, 'misc/genbank.html', content)
+
+    content = {
+        'form_inputfile': form_inputfile,
+        'uploadfile_name': '',
+        'url': '',
+        'outfile_name': '',
+    }
+    return render(request, 'misc/genbank.html', content)
 
 
 def primer_view(request):
@@ -89,81 +134,84 @@ def normalization_view(request):
     return render(request, 'misc/normalization.html', {'uploadfile_name': '', 'url': '', 'outfile_name': '', 'outfile_url': '', 'alert': ''})
 
 
-def nrc_sequence_view(request):
+def dot_plate_view(request):
+    user = request.user
     if request.method == "POST":
-        user = request.user
-        if len(request.FILES) != 0:
-            upload, fs, name, url = upload_file(request, 'upload_file')
-            sequence = request.POST['sequence']
+        form_plate = DotPlateForm(request.POST)
+        form_destinationplate = DestinationPlateForm(request.POST)
+
+        if form_plate.is_valid() and form_destinationplate.is_valid():
+            '''Select plate'''
+            id = form_plate.cleaned_data['plate_name']
+            num_dots = int(form_plate.cleaned_data['num_dots'])
+            dot_vol = int(form_plate.cleaned_data['dot_vol'])
+
+            '''Destination plate'''
+            num_wells = int(form_destinationplate.cleaned_data['num_wells'])
+            filled_by = int(form_destinationplate.cleaned_data['filled_by'])
+            remove_outer_wells = form_destinationplate.cleaned_data['remove_outer_wells']
 
             ''' Calling Python Script'''
-            outfile, alert = nrc_sequence.run(settings.MEDIA_ROOT, name, sequence, user)
-            if outfile is not None:
-                outfile_name = str(outfile)
-                outfile_url = fs.url(outfile_name)
-                return render(request, 'misc/nrc_sequence.html', {'uploadfile_name': upload.name, 'url': url, 'outfile_name': outfile_name, 'outfile_url': outfile_url, 'alert':alert})
-            else:
-                return render(request, 'misc/nrc_sequence.html',
-                              {'uploadfile_name': upload.name, 'url': url, 'outfile_name': '',
-                               'outfile_url': '', 'alert': alert})
-    return render(request, 'misc/nrc_sequence.html', {'uploadfile_name': '', 'url': '', 'outfile_name': '', 'outfile_url': '', 'alert': ''})
+            out_file = plate_creator.run_dot_plate(settings.MEDIA_ROOT, id, num_dots, dot_vol, num_wells, filled_by, remove_outer_wells, user)
 
-
-@login_required(login_url="/accounts/login/")
-def echo_transfer_db_view(request):
-    if request.method == "POST":
-        scriptname = 'Echo Transfer from Worklist'
-        user = request.user
-        if len(request.FILES) > 1:
-            upload_p, fs_p, name_file_p, url_file_p = upload_file(request, 'upload_file_parts')
-            upload_v, fs_v, name_file_v, url_file_v = upload_file(request, 'upload_file_volume')
-
-            """Dispenser parameters"""
-            machine = request.POST['machine']
-            min_vol = request.POST['min_vol']
-            vol_resol = request.POST['vol_resol']
-            dead_vol = request.POST['dead_vol']
-            dispenser_parameters = machine, float(min_vol) * 1e-3, float(vol_resol) * 1e-3, float(dead_vol)
-
-            """Reaction parameters"""
-            # template_conc = request.POST['template_conc']
-            # primer_f = request.POST['primer_f']
-            # primer_r = request.POST['primer_r']
-            # mix_parameters = \
-            #     float(template_conc), \
-            #     float(primer_f), \
-            #     float(primer_r), \
-
-            """Destination plate"""
-            num_well_destination = request.POST['num_well_destination']
-            pattern = request.POST['pattern']
-
-            ''' Calling Python Script'''
-            alerts, outfile_robot = echo_transfer_db.run(settings.MEDIA_ROOT, name_file_p, name_file_v, dispenser_parameters, int(num_well_destination), int(pattern), user, scriptname)
-            print(len(alerts))
-            if len(alerts) == 0:
-                context = {
-                    'uploadfile_name': upload_p,
-                    'url_file': url_file_p,
-                    'outfile_robot': outfile_robot,
-                    'alerts': alerts
-                }
-                return render(request, 'misc/echo_transfer.html', context)
-            else:
-                context = {
-                    'uploadfile_name': None,
-                    'url_file': None,
-                    'outfile_robot': None,
-                    'alerts': alerts
-                }
-                return render(request, 'misc/echo_transfer.html', context)
-        else:
-            alerts = ['Missing input file']
             context = {
-                'uploadfile_name': None,
-                'url_file': None,
-                'outfile_robot': None,
-                'alerts': alerts
+                'outfile_robot': out_file,
+                'form_plate': form_plate,
+                'form_dest_plate': form_destinationplate,
             }
-            return render(request, 'misc/echo_transfer.html', context)
-    return render(request, 'misc/echo_transfer.html')
+
+            return render(request, 'misc/dot_plate.html', context)
+
+    form_plate = DotPlateForm()
+    form_destinationplate = DestinationPlateForm()
+
+    context = {
+        'form_plate': form_plate,
+        'form_dest_plate': form_destinationplate,
+    }
+
+    return render(request, 'misc/dot_plate.html', context)
+
+
+# @login_required(login_url="/accounts/login/")
+def combinatorial_view(request):
+    form_inputfile = InputFileForm()
+
+    if request.method == "POST":
+        user = request.user
+        form_inputfile = InputFileForm(request.POST, request.FILES)
+
+        if form_inputfile.is_valid():
+            upload, fs, name_file, url_file = upload_file(request, 'in_file')
+
+            ''' Calling Python Script'''
+            outfile, list_num_parts, list_num_combinations = combinatorial.run(settings.MEDIA_ROOT, name_file, user)
+            if outfile is not None:
+                outfile_name = os.path.basename(outfile.name)
+                outfile_url = fs.url(outfile_name)
+
+                content = {
+                    'form_inputfile': form_inputfile,
+                    'uploadfile_name': upload.name,
+                    'url': url_file,
+                    'outfile_name': outfile_name,
+                    'outfile_url': outfile_url,
+                    'num_parts': list_num_parts,
+                    'num_combin': list_num_combinations,
+                }
+                return render(request, 'misc/combinatorial.html', content)
+            # else:
+            #     return render(request, 'misc/combinatorial.html',
+            #                   {'uploadfile_name': '', 'url': '', 'outfile_name': '',
+            #                    'outfile_url': '', 'num_parts': '', 'num_combin': ''})
+
+    content = {
+        'form_inputfile': form_inputfile,
+        'uploadfile_name': '',
+        'url': '',
+        'outfile_name': '',
+        'outfile_url': '',
+        'num_parts': '',
+        'num_combin': ''
+    }
+    return render(request, 'misc/combinatorial.html', content)

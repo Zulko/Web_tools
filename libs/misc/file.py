@@ -1,8 +1,7 @@
 """
 # Library to deal with input and output files
 """
-import os, re, sys, csv, math
-from reportlab.pdfgen import canvas
+import os, re, sys, csv, math, operator
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter, inch, landscape
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
@@ -123,19 +122,21 @@ def get_header(filein):
     return header
 
 
-def set_echo_header(fileout):
-    header = 'Part', 'Alias', 'Source Barcode', 'Source Plate Name','Source Well','Destination Barcode','Destination Plate Name','Destination Well','Volume'
+def set_header(fileout):
+    header = 'Source ID', 'Source Plate Name', 'Source Well', 'Destination ID', 'Destination Plate Name', \
+             'Destination Well', 'Volume'
     fileout.writerow(header)
 
 
-def set_header(fileout):
-    header = 'Source ID', 'Source Plate Name','Source Well','Destination ID','Destination Plate Name','Destination Well','Volume'
+def set_echo_header(fileout):
+    header = 'Part', 'Alias', 'Source Plate Barcode', 'Source Plate Name', 'Source Well', 'Destination Plate Barcode', \
+             'Destination Plate Name', 'Destination Well', 'Volume'
     fileout.writerow(header)
 
 
 def set_biomek_header(fileout):
-    header = 'Source ID', 'Source Plate Name','Source Well','Destination ID','Destination Plate Name','Destination Well','Volume',\
-             'Source Row','Source Column','Destination Row','Destination Column','Plate+Row'
+    header = 'Source ID', 'Source Plate Name', 'Source Well', 'Destination ID', 'Destination Plate Name', \
+             'Destination Well', 'Volume', 'Source Row', 'Source Column', 'Destination Row', 'Destination Column', 'Plate+Row'
     fileout.writerow(header)
 
 
@@ -301,18 +302,21 @@ def write_combinations(outfile, list_combinations):
         for parts in list:
             for i in range(0, len(parts)-1):
                 outfile.write(parts[i] + ",")
-            outfile.write(parts[i+1] + "\n")
+            outfile.write(parts[len(parts)-1] + "\n")
     outfile.close()
 
 
 def write_dispenser_echo(dispenser_list, fileout):
-    for part in dispenser_list:
+    '''Output file sorted by source plate barcode - required by Echo dispenser'''
+    sorted_dispenser_list = sorted(dispenser_list, key=operator.itemgetter(3))
+
+    for part in sorted_dispenser_list:
         name, alias, type_part, source_barcode, source_plate, source_well, part_vol, dest_barcode, dest_plate, dest_well, dest_id = part
-        if type_part != 'Primer':
-            vol_nl = float(part_vol) * 1000
-        else:
-            vol_nl = float(part_vol)
-        round_vol = round(float(vol_nl),1)
+        # if type_part != 'Primer':
+        vol_nl = float(part_vol) * 1000
+        # else:
+        #     vol_nl = float(part_vol)
+        round_vol = round(float(vol_nl), 1)
         result = [name, alias, source_barcode, source_plate, source_well, dest_barcode, dest_plate, dest_well, round_vol]
         fileout.writerow(result)
 
@@ -323,7 +327,7 @@ def write_dispenser_mantis(file_mantis, reagents):
         name = part[0]
         volume = round(float(part[1]), 1)
         well = part[2]
-        result = [well,volume,name]
+        result = [well, volume, name]
         file_mantis.writerow(result)
         total_vol += volume
     return total_vol
@@ -345,8 +349,8 @@ def write_dispenser_mantis_in_low_high_chip(file_mantis, reagents):
         ''' Create different reagents '''
         name_dec = name + '_low'
         name_int = name + '_high'
-        result1 = [well,vol_dec,name_dec]
-        result2 = [well,vol_int,name_int]
+        result1 = [well, vol_dec, name_dec]
+        result2 = [well, vol_int, name_int]
         total_vol_high += vol_int
         total_vol_low += vol_dec
 

@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth.models import User
 from .models import File, Sample, Plate, Well, Machine, Project
 
 
@@ -9,9 +10,14 @@ class MachineForm(forms.ModelForm):
 
 
 class ProjectForm(forms.ModelForm):
+    collaborators = forms.ModelMultipleChoiceField(queryset=User.objects.all())
+
     class Meta:
         model = Project
         fields = ['name', 'author', 'collaborators', 'status', 'comments']
+        widgets = {
+            'author': forms.TextInput(attrs={'readonly': 'readonly'}),
+        }
 
 
 class FileForm(forms.ModelForm):

@@ -56,7 +56,7 @@ INSTALLED_APPS = [
     'db.apps.DbConfig',
     'misc',
     'scripts',
-    'design',
+    'experiment',
     'logbook',
 
 ]

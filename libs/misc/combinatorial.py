@@ -1,6 +1,6 @@
 import itertools, csv, os
-from ..biofoundry import db
-from ..misc import file, calc
+from libs.biofoundry import db
+from libs.misc import file, calc
 
 
 
@@ -24,13 +24,13 @@ def get_sets(parts_dct, header):
     return parts
 
 
-def run_combination(path, filename, user):
+def run(path, filename, user):
     lists_parts = []
     lists_combination_parts = []
 
     filein = file.verify(path + "/" + filename)
     with open(filein.name, 'r') as csvfile:
-        reader = csv.DictReader(csvfile, delimiter=';')
+        reader = csv.DictReader(csvfile, delimiter=',')
         header = reader.fieldnames
         exp_id = -1
         parts_dct = []
