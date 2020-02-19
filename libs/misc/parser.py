@@ -297,6 +297,18 @@ def get_wells(part, plate_filters):
     return wells
 
 
+def is_foundlist_complete(unique_list, found_list):
+    missing_list = []
+    for part in unique_list:
+        found = False
+        for found_part in found_list:
+            if part == found_part[1]:
+                found = True
+        if found == False:
+            missing_list.append(part)
+    return missing_list
+
+
 def find_samples_database(unique_list, plate_filters):
     found_list = []
     missing_list = []
@@ -319,5 +331,5 @@ def find_samples_database(unique_list, plate_filters):
                     missing_list.append(part)
         else:
             missing_list.append(part)
-
+    missing_list = is_foundlist_complete(unique_list, found_list)
     return found_list, missing_list

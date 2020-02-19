@@ -144,7 +144,7 @@ def calc_part_volumes_in_plate(pair, plate_filters, dispenser_parameters):
                                         well.plate.name, well.plate.barcode, well.name])
                 if available_vol >= total_vol_needed:
                     return total_vol_parts, None
-    alert = 'Not enough volume for %s. Volume needed: %d, available: %d', part_name, total_vol, available_vol
+    alert = ['Not enough volume for ' + str(part_name) + '.' + 'Volume needed: ' + str(total_vol) + ', available: ' + str(available_vol)]
     return None, alert
 
 
